@@ -1,0 +1,247 @@
+/*******************
+Login register and recover password Page
+******************/
+.toxo {
+  color:#fc6724;
+  text-align: center;
+  font-size: 2.25rem;
+  font-weight: 900;
+}
+.login-register {
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  height: 100%;
+  width: 100%;
+  padding: 5% 0;
+  min-height: 500px;
+}
+.login-box {
+  max-width: 400px;
+  margin: 0 auto; 
+}
+.login-box .footer {
+    width: 100%;
+    left: 0px;
+    right: 0px; 
+}
+.login-box .social {
+    display: block;
+    margin-bottom: 30px;
+ }
+
+#recoverform {
+  display: none; 
+}
+
+.login-sidebar {
+  padding: 0px;
+  margin-top: 0px; 
+}
+  
+.login-sidebar .login-box {
+  right: 0px;
+  position: absolute;
+  height: 100%; 
+}
+
+/*panels*/
+.card {
+  -webkit-box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.1);
+  border-radius: 4px; 
+}
+.form-horizontal label {
+  margin-bottom: 0px; 
+}
+
+/*******************
+Buttons
+******************/
+.btn {
+  padding: 7px 12px;
+  cursor: pointer;
+ }
+
+.btn-facebook {
+  color: #ffffff;
+  background-color: #3b5998;
+  margin-right: 5px;
+}
+.btn-googleplus {
+  color: #ffffff;
+  background-color: #dd4b39;
+}
+
+.btn-info,
+.btn-info.disabled {
+  background: #03a9f3;
+  border: 1px solid #03a9f3;
+  -webkit-box-shadow: 0 2px 2px 0 rgba(66, 165, 245, 0.14), 0 3px 1px -2px rgba(66, 165, 245, 0.2), 0 1px 5px 0 rgba(66, 165, 245, 0.12);
+  box-shadow: 0 2px 2px 0 rgba(66, 165, 245, 0.14), 0 3px 1px -2px rgba(66, 165, 245, 0.2), 0 1px 5px 0 rgba(66, 165, 245, 0.12);
+  -webkit-transition: 0.2s ease-in;
+  -o-transition: 0.2s ease-in;
+  transition: 0.2s ease-in; }
+  .btn-info:hover,
+  .btn-info.disabled:hover {
+    background: #03a9f3;
+    border: 1px solid #03a9f3;
+    -webkit-box-shadow: 0 14px 26px -12px rgba(23, 105, 255, 0.42), 0 4px 23px 0 rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(23, 105, 255, 0.2);
+    box-shadow: 0 14px 26px -12px rgba(23, 105, 255, 0.42), 0 4px 23px 0 rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(23, 105, 255, 0.2); }
+  .btn-info.active, .btn-info:active, .btn-info:focus,
+  .btn-info.disabled.active,
+  .btn-info.disabled:active,
+  .btn-info.disabled:focus {
+    background: #028ee1;
+    -webkit-box-shadow: 0 14px 26px -12px rgba(23, 105, 255, 0.42), 0 4px 23px 0 rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(23, 105, 255, 0.2);
+    box-shadow: 0 14px 26px -12px rgba(23, 105, 255, 0.42), 0 4px 23px 0 rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(23, 105, 255, 0.2); }
+
+
+.form-group {
+  margin-bottom: 25px; 
+}
+
+html body .m-b-20 {
+  margin-bottom: 20px; }
+  html body .p-t-0 {
+    padding-top: 0px; }
+
+    .btn-lg {
+      padding: .75rem 1.5rem;
+      font-size: 1.25rem; }
+
+
+
+      /*******************
+Wave Effects
+*******************/
+.waves-effect {
+  position: relative;
+  cursor: pointer;
+  display: inline-block;
+  overflow: hidden;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  vertical-align: middle;
+  z-index: 1;
+  will-change: opacity, transform;
+  -webkit-transition: all 0.1s ease-out;
+  -moz-transition: all 0.1s ease-out;
+  -o-transition: all 0.1s ease-out;
+  -ms-transition: all 0.1s ease-out;
+  transition: all 0.1s ease-out; }
+  .waves-effect .waves-ripple {
+    position: absolute;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    margin-top: -10px;
+    margin-left: -10px;
+    opacity: 0;
+    background: rgba(0, 0, 0, 0.2);
+    -webkit-transition: all 0.7s ease-out;
+    -moz-transition: all 0.7s ease-out;
+    -o-transition: all 0.7s ease-out;
+    -ms-transition: all 0.7s ease-out;
+    transition: all 0.7s ease-out;
+    -webkit-transition-property: -webkit-transform, opacity;
+    -moz-transition-property: -moz-transform, opacity;
+    -o-transition-property: -o-transform, opacity;
+    -webkit-transition-property: opacity, -webkit-transform;
+    transition-property: opacity, -webkit-transform;
+    -o-transition-property: transform, opacity;
+    transition-property: transform, opacity;
+    transition-property: transform, opacity, -webkit-transform;
+    -webkit-transform: scale(0);
+    -moz-transform: scale(0);
+    -ms-transform: scale(0);
+    -o-transform: scale(0);
+    transform: scale(0);
+    pointer-events: none; }
+
+.waves-effect.waves-light .waves-ripple {
+  background-color: rgba(255, 255, 255, 0.45); }
+
+.waves-effect.waves-red .waves-ripple {
+  background-color: rgba(244, 67, 54, 0.7); }
+
+.waves-effect.waves-yellow .waves-ripple {
+  background-color: rgba(255, 235, 59, 0.7); }
+
+.waves-effect.waves-orange .waves-ripple {
+  background-color: rgba(255, 152, 0, 0.7); }
+
+.waves-effect.waves-purple .waves-ripple {
+  background-color: rgba(156, 39, 176, 0.7); }
+
+.waves-effect.waves-green .waves-ripple {
+  background-color: rgba(76, 175, 80, 0.7); }
+
+.waves-effect.waves-teal .waves-ripple {
+  background-color: rgba(0, 150, 136, 0.7); }
+
+html body .waves-notransition {
+  -webkit-transition: none;
+  -moz-transition: none;
+  -o-transition: none;
+  -ms-transition: none;
+  transition: none; }
+
+.waves-circle {
+  -webkit-transform: translateZ(0);
+  -moz-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  -o-transform: translateZ(0);
+  transform: translateZ(0);
+  text-align: center;
+  width: 2.5em;
+  height: 2.5em;
+  line-height: 2.5em;
+  border-radius: 50%;
+  -webkit-mask-image: none; }
+
+.waves-input-wrapper {
+  border-radius: 0.2em;
+  vertical-align: bottom; }
+  .waves-input-wrapper .waves-button-input {
+    position: relative;
+    top: 0;
+    left: 0;
+    z-index: 1; }
+
+.waves-block {
+  display: block; }
+    
+
+  .text-info {
+    color: #03a9f3 !important; }
+
+@media only screen and (max-width: 600px) {
+  .card {
+   border: none;
+  }
+}
+
+.cred ,.cdarkgreen, .cgreen, .cdarkgreen, .cdarkorange{
+  text-align: center;
+  font-weight: 900;
+  font-size: 18px;
+}
+.cred {
+  color:red
+}
+.cdarkorange {
+  color: darkorange;
+}
+.cgreen {
+  color: green
+}
+.cdarkgreen {
+  color: darkgreen
+}
+.cnone {
+  display: none;
+}

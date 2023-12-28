@@ -1,0 +1,166 @@
+<div [hidden]="edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Cuenta Bancaria</h2>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+        </div>
+        <input [(ngModel)]="searchField"  name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+          placeholder="Buscar">
+        <div class="input-group-append">
+          <button class="btn btn-success" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
+              aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form>
+    <div class="form-row">
+
+      <div class="form-group col-12 col-sm-6" *ngFor="let Account of Accounts;let i = index">
+        <div class="card">
+          <a (click)="editRecord(Account)">
+            <div class="card-body">
+
+              <h4 class="card-title">{{Account.Cuenta}}-{{Account.Nombre}}</h4>
+              Estado :
+              <span *ngIf="Account.Estado == '0'" class="text-success"> Cerrado</span>
+              <span *ngIf="Account.Estado == '1'" class="text-primary"> Abierto</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!--
+  Form de Edición
+-->
+
+<div [hidden]="!edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Cuenta Bancaria</h2>
+
+  <form>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label>Emisor</label>
+        <input [(ngModel)]="Account.Emisor" name="Emisor" type="text" placeholder="Emisor" class="form-control">
+      </div>
+
+      <div class="form-group col-md-6">
+        <label># Cuenta</label>
+        <input [(ngModel)]="Account.Cuenta" name="Cuenta" type="text" placeholder="Cuenta" class="form-control">
+      </div>
+
+      <div class="form-group col-md-6">
+        <label># IBAN</label>
+        <input [(ngModel)]="Account.IBAN" name="IBAN" type="text" placeholder="IBAN" class="form-control">
+      </div>
+
+      <div class="form-group col-md-6">
+        <label>Nombre</label>
+        <input [(ngModel)]="Account.Nombre" name="Nombre" type="text" placeholder="Nombre" class="form-control">
+      </div>
+
+      <div class="form-group col-md-3">
+        <label>Moneda</label>
+        <select [(ngModel)]="Account.Moneda" name="Moneda" type="text" class="form-control">
+          <option value='0'>Colones</option>
+          <option value='1'>Dólares</option>
+        </select>
+      </div>
+
+      <div class="form-group col-md-6">
+        <label>Cuenta Contable</label>
+        <div class="input-group">
+
+          <div class="input-group-append">
+            <button type="button" (click)="openAccountPanel()" class="form-control btn btn-primary"><i
+                class="fa fa-search"></i></button>
+          </div>
+          <input [(ngModel)]="Account.Detalle_Cuenta" disabled name="Detalle_Cuenta" id="Detalle_Cuenta" type="input"
+            class="form-control" placeholder="Cuenta Contable">
+        </div>
+      </div>
+
+      <div class="form-group col-md-3">
+        <label>Estado</label>
+        <select [(ngModel)]="Account.Estado" name="Estado" type="text" class="form-control">
+          <option value='1'>Activo</option>
+          <option value='0'>Inactivo</option>
+        </select>
+      </div>
+
+      <div class="form-group col-md-4">
+        <label>Saldo</label>
+        <input disabled [(ngModel)]="Account.Saldo" name="Saldo" type="text" placeholder="Saldo" class="form-control"
+          currencyMask [options]="{ prefix: ' ', thousands: ',', decimal: '.', allowZero: true }">
+      </div>
+
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-6 col-md-8">
+
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="grabar()" type="button" class="btn btn-success" title="Cancela edicion">Grabar</button>
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="cancel()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+</div>
+
+
+
+<!--
+  Form de Cuentas Hijas
+-->
+<div [hidden]="!PantallaCuentasHijas" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Seleccionar Cuenta</h2>
+      <input [(ngModel)]="searchFieldHijas" (blur)="searchHijas()" (keydown)="keytabHijas($event)" type="text"
+        class="form-control" placeholder="Buscar">
+    </div>
+    <div class="card-body modal-grid">
+      <div class="form-row">
+        <div class="form-group col-12 col-sm-6" *ngFor="let Cuenta of Hijas;let i = index">
+          <a (click)="SeleccionarCuenta(Cuenta)">
+            <div class="card">
+              <div class="card-body">
+                <h5>{{Cuenta.Cuenta}} - {{Cuenta.Descripcion}}</h5>
+                Estado :
+                <span *ngIf="Cuenta.Estado == '1'" class="text-success"> Activo</span>
+                <span *ngIf="Cuenta.Estado == '0'" class="text-warning"> Inactivo</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8 col-md-10">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="closePantallaHijas()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+

@@ -1,0 +1,211 @@
+<div [hidden]="edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Usuarios</h2>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+        </div>
+        <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+          placeholder="Buscar">
+        <div class="input-group-append">
+          <button class="btn btn-success" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
+              aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form>
+    <div class="form-row">
+
+      <div class="form-group col-12 col-sm-12" *ngFor="let Usuario of Users;let i = index">
+        <div class="card">
+          <a (click)="editRecord(Usuario)">
+            <div class="card-body">
+
+              <h4 class="card-title">{{Usuario.Nombre}}</h4>
+              Tipo :
+              <span *ngIf="Usuario.Tipo_Usuario == '0'" class="text-primary"> Administrador</span>
+              <span *ngIf="Usuario.Tipo_Usuario == '1'" class="text-success"> Usuario</span>
+              Estado :
+              <span *ngIf="Usuario.Estado == '1'" class="text-success"> Activo</span>
+              <span *ngIf="Usuario.Estado == '0'" class="text-danger"> Inactivo</span>
+              <h6>Id:{{Usuario.Id_Usuario}}</h6>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="container-fluid">
+    <ul class="pagination">
+      <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"
+            aria-hidden="true"></i></a></li>
+    </ul>
+  </div>
+</div>
+<!--
+  Form de Edición
+-->
+
+<div [hidden]="!edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Usuario</h2>
+
+  <form>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label>Nombre</label>
+        <input [(ngModel)]="Usuario.Nombre" name="Nombre" type="text" placeholder="Nombre" class="form-control">
+      </div>
+      <div class="form-group col-md-6">
+        <label>Usario</label>
+        <input [(ngModel)]="Usuario.Correo" name="Correo" type="text" placeholder="Correo" class="form-control">
+      </div>
+      <div [hidden]="Master=='0'" class="form-group col-md-4">
+        <label>Clave</label>
+        <input [(ngModel)]="Usuario.Clave" name="Clave" type="text" placeholder="Clave" class="form-control">
+      </div>
+      <div [hidden]="Master=='0'" class="form-group col-md-4">
+        <label>Salonero</label>
+        <input [(ngModel)]="Usuario.Salonero" name="Salonero" type="text" placeholder="Salonero" class="form-control">
+      </div>
+      <div class="form-group col-md-4">
+        <label>Tipo de Usuario</label>
+        <select [(ngModel)]="Usuario.Tipo_Usuario" name="Tipo_Usuario" type="text" class="form-control">
+          <option value='1'>Administrador</option>
+          <option value='0'>Usuario</option>
+        </select>
+      </div>
+
+      <div class="form-group col-md-2">
+        <label>Estado</label>
+        <select [(ngModel)]="Usuario.Estado" name="Estado" type="text" class="form-control">
+          <option value='1'>Activo</option>
+          <option value='0'>Inactivo</option>
+        </select>
+      </div>
+      <div class="form-group col-md-2">
+        <label>Ventas</label>
+        <select [(ngModel)]="Usuario.Ventas" name="Ventas" type="text" class="form-control">
+          <option value='1'>Con Acceso</option>
+          <option value='0'>Sin Acceso</option>
+        </select>
+      </div>
+      <div class="form-group col-md-2">
+        <label>Punto Venta</label>
+        <select [(ngModel)]="Usuario.Pov" name="Pov" type="text" class="form-control">
+          <option value='1'>Con Acceso</option>
+          <option value='0'>Sin Acceso</option>
+        </select>
+      </div>
+      <div class="form-group col-md-2">
+        <label>Compras</label>
+        <select [(ngModel)]="Usuario.Compras" name="Compras" type="text" class="form-control">
+          <option value='1'>Con Acceso</option>
+          <option value='0'>Sin Acceso</option>
+        </select>
+      </div>
+      <div class="form-group col-md-2">
+        <label>Inventario</label>
+        <select [(ngModel)]="Usuario.Inventario" name="Inventario" type="text" class="form-control">
+          <option value='1'>Con Acceso</option>
+          <option value='0'>Sin Acceso</option>
+        </select>
+      </div>
+      <div class="form-group col-md-2">
+        <label>CXC</label>
+        <select [(ngModel)]="Usuario.CXC" name="CXC" type="text" class="form-control">
+          <option value='1'>Con Acceso</option>
+          <option value='0'>Sin Acceso</option>
+        </select>
+      </div>
+      <div class="form-group col-md-2">
+        <label>CXP</label>
+        <select [(ngModel)]="Usuario.CXP" name="CXP" type="text" class="form-control">
+          <option value='1'>Con Acceso</option>
+          <option value='0'>Sin Acceso</option>
+        </select>
+      </div>
+      <div class="form-group col-md-2">
+        <label>Contabilidad</label>
+        <select [(ngModel)]="Usuario.CG" name="CG" type="text" class="form-control">
+          <option value='1'>Con Acceso</option>
+          <option value='0'>Sin Acceso</option>
+        </select>
+      </div>
+      <div class="form-group col-md-2">
+        <label>Bancos</label>
+        <select [(ngModel)]="Usuario.BA" name="BA" type="text" class="form-control">
+          <option value='1'>Con Acceso</option>
+          <option value='0'>Sin Acceso</option>
+        </select>
+      </div>
+      <div class="form-group col-md-2">
+        <label>Restaurante</label>
+        <select [(ngModel)]="Usuario.Restaurante" name="Restaurante" type="text" class="form-control">
+          <option value='1'>Con Acceso</option>
+          <option value='0'>Sin Acceso</option>
+        </select>
+      </div>
+      <div class="form-group col-md-2">
+        <label>Seguridad</label>
+        <select [(ngModel)]="Usuario.Seguridad" name="Seguridad" type="text" class="form-control">
+          <option value='1'>Con Acceso</option>
+          <option value='0'>Sin Acceso</option>
+        </select>
+      </div>
+      <div class="form-group col-md-2">
+        <label>Transporte</label>
+        <select [(ngModel)]="Usuario.Transporte" name="Transporte" type="text" class="form-control">
+          <option value='1'>Con Acceso</option>
+          <option value='0'>Sin Acceso</option>
+        </select>
+      </div>
+      <div class="form-group col-md-2">
+        <label>Hospedaje</label>
+        <select [(ngModel)]="Usuario.Hospedaje" name="Hospedaje" type="text" class="form-control">
+          <option value='1'>Con Acceso</option>
+          <option value='0'>Sin Acceso</option>
+        </select>
+      </div>
+      <div class="form-group col-md-2">
+        <label>Turismo</label>
+        <select [(ngModel)]="Usuario.Turismo" name="Turismo" type="text" class="form-control">
+          <option value='1'>Con Acceso</option>
+          <option value='0'>Sin Acceso</option>
+        </select>
+      </div>
+      <div class="form-group col-md-2">
+        <label>Académico</label>
+        <select [(ngModel)]="Usuario.Academico" name="Academico" type="text" class="form-control">
+          <option value='1'>Con Acceso</option>
+          <option value='0'>Sin Acceso</option>
+        </select>
+      </div>
+
+
+
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-6 col-md-8">
+
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="grabar()" type="button" class="btn btn-success" title="Cancela edicion">Grabar</button>
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="cancel()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+</div>

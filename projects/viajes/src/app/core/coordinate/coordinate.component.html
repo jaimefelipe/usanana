@@ -1,0 +1,300 @@
+<div [hidden]="edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Coordinación de Trasporte</h2>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+        </div>
+        <input [(ngModel)]="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+          placeholder="Buscar">
+        <div class="input-group-append">
+          <button class="btn btn-success" type="button" (click)="coordinar()"> COORDINAR <i class="fa fa-plus-circle"
+              aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form>
+    <div class="form-row">
+
+      <div class="form-group col-12 col-sm-6" *ngFor="let Date of Dates;let i = index">
+        <div class="card">
+          <a (click)="editRecord(Date)">
+            <div class="card-body">
+              <h4 class="card-title">{{Date.Fecha_Servicio}} - Pasajeros:{{Date.Pasajeros}}</h4>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="container-fluid">
+    <ul class="pagination">
+      <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"
+            aria-hidden="true"></i></a></li>
+    </ul>
+  </div>
+</div>
+
+
+<!--
+  Form de Edición
+-->
+
+<div [hidden]="!edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Servicios Coordinados</h2>
+  <form>
+    <div class="form-row">
+
+      <div class="form-group col-md-12">
+        <label>Fecha Servicio</label>
+        <input disabled [(ngModel)]="Date.Fecha_Servicio" name="Fecha_Servicio" type="text" placeholder="Fecha_Servicio" class="form-control">
+      </div>
+
+      <div class="form-group col-md-6">
+        <div class="form-group col-12 " *ngFor="let Vehicle of Vehicles;let i = index">
+          <div class="card">
+            <a (click)="ShowVehicleServices(Vehicle)">
+              <div class="card-body">
+                <h4 class="card-title">Placa: {{Vehicle.Placa}}</h4>
+               Ruta: {{Vehicle.Nombre_Ruta}}, Pasajeros: {{Vehicle.Pasajeros}}
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="form-group col-md-6">
+        <div class="form-group col-12 " *ngFor="let Service of ServicesByDate;let i = index">
+          <div class="card">
+            <a (click)="SelelectService(Service,1)">
+              <div class="card-body">
+                <h4 class="card-title">Servicio: {{Service.Id_Servicio}} Sin Cordinar</h4>
+               {{Service.Nombre_Ruta}}, Pasajeros: {{Service.Pasajeros}}
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-7">
+
+          </div>
+          <div class="form-group col-3">
+            <button (click)="hojaRuta()" type="button" class="btn btn-primary" title="Cancela edicion">Hojas de ruta</button>
+          </div>
+          <div class="form-group col-2">
+            <button (click)="cancel()" type="button" class="btn btn-danger" title="Cancela edicion">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+
+
+<div [hidden]="!ServiceByVehiclePanel" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Servicios Por Vehículo </h2>
+      Placa : {{Vehiculo.Placa}}, Ruta: {{Vehiculo.Nombre_Ruta}}
+    </div>
+    <div class="card-body modal-grid">
+      <div class="form-row">
+        <div class="form-group col-12 col-sm-6" *ngFor="let Service of ServicesByVehicle;let i = index">
+          <a (click)="SelelectService(Service,2)">
+            <div class="card">
+              <div class="card-body">
+                <h5>Servicio #:{{Service.Id_Servicio}}</h5>
+                Itinerario #: {{Service.Id_Itinerario}} Cliente: {{Service.Cliente}},
+                Pasajeros: {{Service.Pasajeros}}
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8 col-md-10">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="closeServiceByVehiclePanel()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div [hidden]="!ServicePanel" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Edición de Servicio </h2>
+      Servicio #:{{Service.Id_Servicio}}, Itinerario #:{{Service.Id_Itinerario}}
+      <select [(ngModel)]="Service.Estado" name="Estado" type="text" class="form-control">
+        <option value='4'>Coordinado</option>
+        <option value='5'>No Se Presento</option>
+        <option value='6'>En Ruta</option>
+        <option value='7'>Finalizado</option>
+      </select>
+    </div>
+    <div class="card-body modal-grid">
+      <div class="form-row">
+
+        <div class="form-group col-md-2">
+          <label>Fecha Servicio</label>
+          <div class="input-group">
+            <input disabled class="form-control" placeholder="Fecha" name="Fecha" [(ngModel)]="Service.Fecha_Servicio">
+          </div>
+        </div>
+
+        <div class="form-group col-md-3">
+          <label>Tipo de ruta</label>
+          <select disabled [(ngModel)]="Service.Tipo_Ruta" name="Tipo_Ruta" type="text" class="form-control">
+            <option value='1'>Privado</option>
+            <option value='2'>Shuttle</option>
+          </select>
+        </div>
+
+        <div class="form-group col-md-7">
+          <label>Proveedor</label>
+          <div class="input-group">
+            <input [(ngModel)]="Service.Proveedor" disabled name="Proveedor" id="Nombre_Proveedor"
+              type="input" class="form-control" placeholder="Nombre Proveedor">
+          </div>
+        </div>
+
+        <div class="form-group col-md-12">
+          <label>Ruta</label>
+          <div class="input-group">
+            <input [(ngModel)]="Service.Nombre_Ruta" disabled name="Nombre_Ruta" id="Nombre_Ruta" type="input"
+              class="form-control" placeholder="Nombre Ruta">
+          </div>
+        </div>
+
+        <div class="form-group col-md-3">
+          <label># Adultos > 18 años</label>
+          <input [(ngModel)]="Service.Adultos" disabled name="Adultos" id="Adultos" type="input"
+          class="form-control" placeholder="Adultos">
+        </div>
+
+        <div class="form-group col-md-3">
+          <label># Adolecentes > 12 años</label>
+          <input [(ngModel)]="Service.Mayores_Doce" disabled name="Mayores_Doce" id="Mayores_Doce" type="input"
+          class="form-control" placeholder="Mayores_Doce">
+
+        </div>
+        <div class="form-group col-md-3">
+          <label># Niños < 12 años</label>
+          <input [(ngModel)]="Service.Menores_Doce" disabled name="Menores_Doce" id="Menores_Doce" type="input"
+          class="form-control" placeholder="Menores_Doce">
+
+        </div>
+        <div class="form-group col-md-3">
+          <label># Total Pasajeros</label>
+          <div>{{Service.Pasajeros}}</div>
+        </div>
+
+        <div class="form-group col-md-3">
+          <label>Tafifa : </label> {{Service.Tarifa}}
+        </div>
+        <div class="form-group col-md-3">
+          <label>Comisión : </label>
+        </div>
+        <div class="form-group col-md-3">
+          <label>Descuento : </label> {{Service.Descuento}}
+        </div>
+        <div class="form-group col-md-3">
+          <label>Total : </label> {{Service.Total}}
+        </div>
+
+        <div class="form-group col-md-2">
+          <label>Horario</label>
+          <input [(ngModel)]="Service.Horario" disabled name="Menores_Doce" id="Menores_Doce" type="input"
+          class="form-control" placeholder="Menores_Doce">
+        </div>
+
+        <div class="form-group col-md-3">
+          <label>Lugar Pickup</label>
+          <input disabled [(ngModel)]="Service.Nombre_PickUp" name="Nombre_PickUp" id="Nombre_PickUp" type="input"
+          class="form-control" placeholder="Nombre_PickUp">
+        </div>
+
+        <div class="form-group col-md-7">
+          <label>Notas del Pick Up</label>
+          <input disabled [(ngModel)]="Service.Notas_PickUP" name="Notas_PickUP" id="Notas_PickUP" type="text"
+            class="form-control" placeholder="Notas">
+        </div>
+
+        <div class="form-group col-md-3">
+          <label>Lugar Drop Off</label>
+          <div class="input-group mb-3">
+            <input disabled [(ngModel)]="Service.Nombre_DropOff" name="Nombre_DropOff"
+              type="text" class="form-control" placeholder="Lugar Drop Off">
+          </div>
+        </div>
+
+        <div class="form-group col-md-9">
+          <label>Notas del Drop Off</label>
+          <input disabled [(ngModel)]="Service.Notas_DropOff" name="Notas_DropOff" id="Notas_DropOff" type="text"
+            class="form-control" placeholder="Notas del Drop Off">
+        </div>
+
+        <div class="form-group col-md-6">
+          <label>Vehículo Actual</label>
+          <input disabled [(ngModel)]="Vehiculo.Placa" name="Placa" id="Placa" type="text"
+            class="form-control" placeholder="Placa">
+        </div>
+
+
+        <div class="form-group col-md-6">
+          <label>Vehículo Nuevo</label>
+          <select [(ngModel)]="Service.Id_Vehiculo" name="Categoria" type="text" class="form-control">
+            <option value='{{Vehicle.Id_Vehiculo}}' *ngFor="let Vehicle of AllVehicles;let i = index">
+             Placa:{{Vehicle.Placa}} - Ruta: {{Vehicle.Nombre_Ruta}}, Disponible: {{Vehicle.Capacidad - Vehicle.Pasajeros}} </option>
+          </select>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-2 ">
+          </div>
+          <div class="form-group col-3">
+            <button (click)="changeStatus()" type="button" class="btn btn-info  "
+              title="Desmontar Servicio">Cambiar Estado</button>
+          </div>
+          <div class="form-group col-3">
+            <button (click)="changeVehicle()" type="button" class="btn btn-primary"
+              title="Desmontar Servicio">Cambiar Vehículo</button>
+          </div>
+          <div class="form-group col-2">
+            <button (click)="UnMountService()" type="button" class="btn btn-success"
+              title="Desmontar Servicio">Desmontar</button>
+          </div>
+          <div class="form-group col-2">
+            <button (click)="closeServicePanel()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

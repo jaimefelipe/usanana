@@ -1,0 +1,36 @@
+<div class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Cocina - Comandas</h2>
+  <form>
+    <div class="form-row">
+
+      <div class="form-group col-3" *ngFor="let Comanda of Comandas;let i = index">
+        <div class="card">
+            <div class="card-body h-50">
+              <h4 class="card-title text-primary">{{Comanda.Nombre}}</h4>
+              <!-- 
+              <h5 class="card-title">{{Comanda.Cantidad}} {{Comanda.Descripcion}}</h5>
+              -->
+              <h5 class="card-title text-danger">{{Comanda.Notas}}</h5>
+              <h5 class="card-title">{{Comanda.Zona}}-{{Comanda.Mesa}}</h5>
+              <!--{{Comanda.Componente}}-->
+              <ul>
+                
+              <li  *ngFor="let parte of Comanda.Componentes;let x = index">
+                {{parte.Cantidad}} {{parte.Descripcion}} {{parte.Notas}}
+              </li>
+              <!-- 
+              <li  *ngFor="let parte of Comanda.Componentes;let x = index">
+                  {{parte.Componente}} {{parte.Sub_Componente}} <span *ngIf="parte.Adicional"> * Adicional</span>
+              </li>
+              -->
+            </ul>
+              {{Comanda.Hora | slice:0:8}}
+              <button (click)="End(Comanda)" type="button" class="btn btn-success" title="Cancela edicion">Terminar Comanda</button>
+            </div>
+
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

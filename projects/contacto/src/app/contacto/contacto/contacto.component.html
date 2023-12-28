@@ -1,0 +1,614 @@
+<div [hidden]="edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  
+  <h2>Contactos</h2>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+        </div>
+        <input [(ngModel)]="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+          placeholder="Buscar">
+        <div class="input-group-append">
+          <button class="btn btn-success" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
+              aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form>
+    <div class="form-row">
+
+      <div class="form-group col-12 col-sm-6" *ngFor="let Persona of Personas;let i = index">
+        <div class="card">
+          <a (click)="editRecord(Persona)">
+            <div class="card-body">
+              <h4 class="card-title">{{paginacion.FirstRow +  i}} - {{Persona.Nombre}}</h4>
+              ID : {{Persona.Identificacion}}, Correo: {{Persona.Correo}} <br>
+              Tel: {{Persona.Telefono}} | 
+              <span *ngIf="Persona.Prospecto == '1'" class="text-primary"> Prospecto</span>
+              <span *ngIf="Persona.Cliente== '1'" class="text-primary"> Cliente</span>
+              <span *ngIf="Persona.Proveedor== '1'" class="text-primary"> Proveedor</span>
+              <span *ngIf="Persona.Emisor== '1'" class="text-primary"> Emisor</span>
+              <span *ngIf="Persona.Empleado== '1'" class="text-primary"> Empleado</span>
+              <span *ngIf="Persona.Alumno== '1'" class="text-primary"> Alumno</span>
+              <span *ngIf="Persona.Profesor== '1'" class="text-primary"> Profesor</span>
+              
+              <span *ngIf="Persona.Estado== '0'" class="text-success"> Inactivo</span>
+              <span *ngIf="Persona.Estado== '1'" class="text-success"> Activo</span>
+              | Id:{{Persona.Id_Persona}} 
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="container-fluid">
+    <ul class="pagination">
+      <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"
+            aria-hidden="true"></i></a></li>
+    </ul>
+  </div>
+</div> 
+<!--
+  Form de Edición
+-->
+<div [hidden]="!edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Contacto</h2> 
+  <div class="tab">
+    <button [ngClass]='GeneralClass' (click)="activarGeneral()" >General</button>
+    <button [ngClass]='RollClass' (click)="activarRoll()" >Roll</button>
+    <button [ngClass]='DireccionClass' (click)="activarDireccion()">Dirección</button>
+    <button [ngClass]='ContactoClass' (click)="activarContacto()">Contactos</button>
+    <button [ngClass]='VentaClass' (click)="activarVenta()">Venta</button>
+    <button [ngClass]='NotasClass' (click)="activarNotas()">Notas</button>
+    <button [hidden]="!Academico" [ngClass]='CarreraClass' (click)="activarCarrera()">Carreras</button>
+  </div>
+
+  <form [hidden]="!GeneralActivo">
+
+    <div >
+      <div class="form-row">
+        <div class="form-group col-md-12">
+          <label>Nombre</label>
+          <input [(ngModel)]="Persona.Nombre" name="Nombre" type="text" placeholder="Nombre" class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+          <label for="name">Tipo de Identificacion</label>
+          <select [(ngModel)]="Persona.Tipo_Identificacion" name="Tipo_Identificacion" class="form-control">
+            <option value='01'>Cedula Fisica</option>
+            <option value='02'>Cedula Juridica</option>
+            <option value='03'>Dimex</option>
+            <option value='04'>NITE</option>
+          </select>
+        </div>
+        <div class="form-group col-md-6">
+          <label>Identificacion</label>
+          <input [(ngModel)]="Persona.Identificacion" name="Identificacion" type="text" placeholder="Identificación"
+            class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+          <label>Teléfono</label>
+          <input [(ngModel)]="Persona.Telefono" name="Telefono" type="text" placeholder="Teléfono"
+            class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+          <label>Correo</label>
+          <input [(ngModel)]="Persona.Correo" name="Correo" type="text" placeholder="Correo" class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+          <label>Pagina Web</label>
+          <input [(ngModel)]="Persona.Pagina_Web" name="Pagina_Web" type="text" placeholder="Pagina_Web" class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+          <label>Facebook</label>
+          <input [(ngModel)]="Persona.Facebook" name="Facebook" type="text" placeholder="Facebook" class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+          <label>Linkedin</label>
+          <input [(ngModel)]="Persona.Linkedin" name="Linkedin" type="text" placeholder="Linkedin" class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+          <label for="name">Estado</label>
+          <select [(ngModel)]="Persona.Estado" name="Estado" class="form-control">
+            <option value='1'>Activo</option>
+            <option value='2'>Inactivo</option>
+            <option value='3'>Suspendido</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </form>
+
+    <!-- Datos de Roll -->
+    <form [hidden]="!RollActivo">
+
+      <div >
+        <div class="form-row">
+          
+          <div class="form-group col-md-6">
+            <label for="name">Prospecto</label>
+            <select [(ngModel)]="Persona.Prospecto" name="Prospecto" class="form-control">
+              <option value='0'>No es Prospecto</option>
+              <option value='1'>Si es Prospecto</option>
+            </select>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="name">Cliente</label>
+            <select [(ngModel)]="Persona.Cliente" name="Cliente" class="form-control">
+              <option value='0'>No es cliente</option>
+              <option value='1'>Si es cliente</option>
+            </select>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="name">Proveedor</label>
+            <select [(ngModel)]="Persona.Proveedor" name="Proveedor" class="form-control">
+              <option value='0'>No es proveedor</option>
+              <option value='1'>Si es proveedor</option>
+            </select>
+          </div>
+          <div [hidden]="!Academico"  class="form-group col-md-6">
+            <label for="name">Alumno</label>
+            <select [(ngModel)]="Persona.Alumno" name="Alumno" class="form-control">
+              <option value='0'>No es Alumno</option>
+              <option value='1'>Si es Alumno</option>
+            </select>
+          </div>
+          <div [hidden]="!Academico"  class="form-group col-md-6">
+            <label for="name">Profesor</label>
+            <select [(ngModel)]="Persona.Profesor" name="Profesor" class="form-control">
+              <option value='0'>No es Profesor</option>
+              <option value='1'>Si es Profesor</option>
+            </select>
+          </div>
+          <div  class="form-group col-md-6">
+            <label for="name">Empleado</label>
+            <select [(ngModel)]="Persona.Empleado" name="Empleado" class="form-control">
+              <option value='0'>No es Empleado</option>
+              <option value='1'>Si es Empleado</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      </form>
+    <!-- Fin datos del roll-->
+
+  <!--
+      Datos Dirección
+    -->
+    <form [hidden]="!DireccionActivo">
+    <div>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="name">Provincia</label>
+          <select [(ngModel)]="Persona.Provincia" (change)="provinceChange()" name="Provincia" class="form-control">
+            <option value={{Province.Provincia}} *ngFor="let Province of Provinces;let i = index">
+              {{Province.Provincia_Nombre}}</option>
+          </select>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="name">Cantón </label>
+          <select [(ngModel)]="Persona.Canton" (change)="cantonChange()" name="Canton" class="form-control">
+            <option value={{Canton.Canton}} *ngFor="let Canton of Cantons;let i = index">{{Canton.Canton_Nombre}}
+            </option>
+          </select>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="name">Distrito </label>
+          <select [(ngModel)]="Persona.Distrito" name="Distrito" class="form-control">
+            <option value={{District.Distrito}} *ngFor="let District of Districts;let i = index">
+              {{District.Distrito_Nombre}}</option>
+          </select>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="name">Barrio</label>
+          <input [(ngModel)]="Persona.Barrio" name="Barrio" type="text" class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+          <label for="name">Dirección</label>
+          <input [(ngModel)]="Persona.Otras_Senas" name="Otras_Senas" type="text" class="form-control">
+        </div>
+
+      </div>
+    </div>
+  </form>
+    <!-- End of Datos de Dirección-->
+  <!--
+      Datos de Contactos
+    -->
+    <form [hidden]="!ContactosActivo">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+            </div>
+            <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+              placeholder="Buscar">
+            <div class="input-group-append">
+              <button [disabled]="Persona.Id_Persona == ''" class="btn btn-success" type="button" (click)="abrirPantallaCarreraContacto('')"><i class="fa fa-plus-circle"
+                  aria-hidden="true"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <form>
+        <div class="form-row">
+          <div class="form-group col-12 col-sm-6" *ngFor="let Carrera of Carreras;let i = index">
+            <a (click)="abrirPantallaCarreraContacto(Carrera)">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">{{Carrera.Carrera}}</h4>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </form>
+    </form>
+
+<!-- End of Datos de contactos-->
+
+ <!--
+      Datos de Notas
+    -->
+    <form [hidden]="!NotasActivo">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+            </div>
+            <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+              placeholder="Buscar">
+            <div class="input-group-append">
+              <button [disabled]="Persona.Id_Persona == ''" class="btn btn-success" type="button" (click)="abrirPantallaNotas('')"><i class="fa fa-plus-circle"
+                  aria-hidden="true"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <form>
+        <div class="form-row">
+          <div class="form-group col-12 col-sm-6" *ngFor="let nota of Notas;let i = index">
+            <a (click)="abrirPantallaNotas(nota)">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">{{nota.Nota}}</h4>{{nota.Creado_El}} - {{nota.Creado_Por}}
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </form>
+    </form>
+
+<!-- End of Datos de Notas-->
+
+    <!--
+      Datos de Venta
+    -->
+  <form [hidden]="!VentaActivo">
+
+    <div >
+      <div class="form-row">
+        <div class="form-group col-md-3">
+          <label for="name">Contrato #</label>
+          <input [(ngModel)]="Persona.Otro_Documento" name="Otro_Documento" placeholder="Número de Contrato" type="text" class="form-control">
+        </div>
+        <div class="form-group col-md-3">
+          <label for="name">Fecha de Ingreso</label>
+          <div class="input-group">
+            <input class="form-control" placeholder="Fecha de Ingreso" name="Fecha_Ingreso" [(ngModel)]="Fecha" ngbDatepicker
+              #d1="ngbDatepicker">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary fa fa-calendar" (click)="d1.toggle()" type="button"></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-3">
+          <label for="name">Moneda </label>
+          <select [(ngModel)]="Persona.Moneda" name="Moneda" class="form-control">
+            <option value='CRC'>Colones</option>
+            <option value='USD'>Dólares</option>
+          </select>
+        </div>
+        <div class="form-group col-md-3">
+          <label for="name">Condición de Venta </label>
+          <select [(ngModel)]="Persona.Condicion_Venta" name="Condicion_Venta" class="form-control">
+            <option value='01'>Contado</option>
+            <option value='02'>Crédito</option>
+            <option value='03'>Consignacion</option>
+          </select>
+        </div>
+        <div class="form-group col-md-3">
+          <label for="name">Plazo de Cédito </label>
+          <input [(ngModel)]="Persona.Plazo_Credito" placeholder="Plazo del cédito" name="Plazo_Credito" type="text" class="form-control">
+        </div>
+        <div class="form-group col-md-3">
+          <label for="name">Metodo de Págo</label>
+          <select [(ngModel)]="Persona.Metodo_Pago"  name="Metodo_Pago" class="form-control">
+            <option value='01'>Efectivo</option>
+            <option value='02'>Tarjeta de Credito</option>
+            <option value='06'>Sinpe Móvil</option>
+            <option value='03'>Cheque</option>
+            <option value='04'>Transferencia/Deposito Bancario</option>
+            <option value='05'>Recaudo Tercero</option>
+          </select>
+        </div>
+        <div class="form-group col-md-3">
+          <label for="name">Precio</label>
+          <input [(ngModel)]="Persona.Precio" name="Precio" placeholder="Precio" type="text" class="form-control">
+        </div>
+        
+        <div class="form-group col-md-3">
+          <label for="name">Ultima Factura </label>
+          <input disabled [(ngModel)]="Persona.Ultima_Factura" placeholder="Ultima_Factura" name="Ultima_Factura" type="text" class="form-control">
+        </div>
+
+
+        <div class="form-group col-md-3">
+          <label for="name">Declaracion</label>
+          <select [(ngModel)]="Persona.Declaracion" name="Declaracion" class="form-control">
+            <option value='0'>No</option>
+            <option value='1'>Si</option>
+          </select>
+        </div>
+
+        <div class="form-group col-md-3">
+          <label for="name">Contabilidad</label>
+          <select [(ngModel)]="Persona.Contabilidad" name="Contabilidad" class="form-control">
+            <option value='0'>No</option>
+            <option value='1'>Si</option>
+          </select>
+        </div>
+
+        <div class="form-group col-md-3">
+          <label for="name">Factura Electronica</label>
+          <select [(ngModel)]="Persona.FacturaElectronica" name="FacturaElectronica" class="form-control">
+            <option value='0'>No</option>
+            <option value='1'>Si</option>
+          </select>
+        </div>
+
+        <div class="form-group col-md-3">
+          <label for="name">Punto de Venta</label>
+          <select [(ngModel)]="Persona.PuntoVenta" name="PuntoVenta" class="form-control">
+            <option value='0'>No</option>
+            <option value='1'>Si</option>
+          </select>
+        </div>
+
+        <div class="form-group col-md-3">
+          <label for="name">Restaurante</label>
+          <select [(ngModel)]="Persona.Restaurante" name="Restaurante" class="form-control">
+            <option value='0'>No</option>
+            <option value='1'>Si</option>
+          </select>
+        </div>
+
+        <div class="form-group col-md-3">
+          <label for="name">Asesoria</label>
+          <select [(ngModel)]="Persona.Asesoria" name="Asesoria" class="form-control">
+            <option value='0'>No</option>
+            <option value='1'>Si</option>
+          </select>
+        </div>
+
+        
+
+      </div>
+
+    </div>
+    <!-- End of Datos de Venta-->
+
+
+  </form>
+
+  <form [hidden]="!CarreraActivo">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+          </div>
+          <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+            placeholder="Buscar">
+          <div class="input-group-append">
+            <button [disabled]="Persona.Id_Persona == ''" class="btn btn-success" type="button" (click)="abrirPantallaCarreraContacto('')"><i class="fa fa-plus-circle"
+                aria-hidden="true"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <form>
+      <div class="form-row">
+        <div class="form-group col-12 col-sm-6" *ngFor="let Carrera of Carreras;let i = index">
+          <a (click)="abrirPantallaCarreraContacto(Carrera)">
+            <div class="card">
+              <div class="card-body">
+                <h4 class="card-title">{{Carrera.Carrera}}</h4>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </form>
+  </form>
+
+<!-- End of Datos de contactos-->
+
+  <div class="form-row">
+    <div class="form-group col-md-12">
+      <div class="form-row">
+        <div class="form-group col-6 col-md-8">
+
+        </div>
+        <div class="form-group col-3 col-md-2">
+          <button (click)="grabar()" type="button" class="btn btn-success" title="Cancela edicion">Grabar</button>
+        </div>
+        <div class="form-group col-3 col-md-2">
+          <button (click)="cancel()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Pantalla Carrera del Cliente -->
+
+<div [hidden]="!PantallaCarreraContacto" class="modal-main">
+
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Carrera {{Persona.Nombre}}</h2>
+    </div>
+    <div class="card-body modal-grid">
+      <div class="form-row">
+        <div class="form-group col-md-12">
+          <label>Carrera</label>
+          <div class="input-group">
+
+            <div class="input-group-append">
+              <button type="button" (click)="abrirPantallaCarreraActiva()"
+                class="form-control btn btn-primary"><i class="fa fa-search"></i></button>
+            </div>
+            <input [(ngModel)]="CarreraEstudiante.Carrera" disabled name="Carrera" id="Carrera" type="input"
+              class="form-control" placeholder="Carrera">
+          </div>
+        </div>
+        <div class="form-group col-md-4">
+          <label>Fecha Inicio</label>
+          <div class="input-group">
+            <input class="form-control" placeholder="Fecha Ingreso" name="Fecha_Ingreso1" [(ngModel)]="Fecha_Ingreso" ngbDatepicker #d2="ngbDatepicker">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary fa fa-calendar" (click)="d2.toggle()" type="button"></button>
+            </div>
+          </div>
+        </div>
+        <div class="form-group col-md-4">
+          <label for="name">Estado</label>
+          <select [(ngModel)]="CarreraEstudiante.Estado" name="EstadoCarrera" class="form-control">
+            <option value='1'>Activo</option>
+            <option value='2'>Inactivo</option>
+            <option value='3'>Graduado</option>
+          </select>
+        </div>
+        <div [hidden]="CarreraEstudiante.Estado != '3'" class="form-group col-md-4">
+          <label>Fecha Graduación</label>
+          <div class="input-group">
+            <input  [disabled]="CarreraEstudiante.Estado != '3'" class="form-control" placeholder="Fecha Graduación" name="Fecha_Graduacion" [(ngModel)]="Fecha_Graduacion" ngbDatepicker #d3="ngbDatepicker">
+            <div class="input-group-append">
+              <button [disabled]="CarreraEstudiante.Estado != '3'" class="btn btn-outline-secondary fa fa-calendar" (click)="d3.toggle()" type="button"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8 col-md-8">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="grabarCarrera()" type="button" class="btn btn-primary" title="Grabar"> Grabar</button>
+          </div>
+          <div class="form-group col-2">
+            <button (click)="cerrarPantallaCarreraContacto()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Pantalla Carreras Activas-->
+<div [hidden]="!PantallaCarrerasActivas" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Carrera</h2>
+      <input [(ngModel)]="searchFieldCarrera" (blur)="searchCarrera()" (keydown)="keytabCarrera($event)" type="text"
+        class="form-control" placeholder="Buscar">
+    </div>
+    <div class="card-body modal-grid">
+      <div class="form-row">
+        <div class="form-group col-12 col-sm-6" *ngFor="let Carrera of CarrerasActivas;let i = index">
+          <a (click)="SeleccionarCarrera(Carrera)">
+            <div class="card">
+              <div class="card-body">
+                <h4 class="card-title">{{Carrera.Carrera}} </h4>
+                <span *ngIf="Carrera.Nivel == '1'" class="text-success"> Cursos Libres</span>
+                <span *ngIf="Carrera.Nivel == '2'" class="text-success"> Técnico</span>
+                <span *ngIf="Carrera.Nivel == '3'" class="text-success"> Diploma</span>
+                <span *ngIf="Carrera.Nivel == '4'" class="text-success"> Certificación</span>
+                <span *ngIf="Carrera.Nivel == '5'" class="text-success"> Especialización</span>
+                <span *ngIf="Carrera.Nivel == '6'" class="text-success"> Bachillerato</span>
+                <span *ngIf="Carrera.Nivel == '7'" class="text-success"> Licenciatura</span>
+                <span *ngIf="Carrera.Nivel == '8'" class="text-success"> Maestría</span>
+                <span *ngIf="Carrera.Nivel == '9'" class="text-success"> Doctorado</span>
+
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8 col-md-10">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="cerrarPantallaCarreraActiva()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Pantall Notas -->
+<div [hidden]="!PantallaNotas" class="modal-main">
+
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Nota {{Persona.Nombre}}</h2>
+    </div>
+    <div class="card-body modal-grid">
+      <div class="form-row">
+        <div class="form-group col-md-12">
+          <label>Nota</label>
+          <textarea [(ngModel)]="Nota.Nota" id="Nota" name = "Nota" class="form-control" rows="8" (input)="onValueChange($event)"></textarea>
+
+        </div>
+        
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-12">
+        <div class="form-row">
+          <div class="form-group col-4 col-sm-8">
+          </div>
+          <div class="form-group  col-4 col-sm-2">
+            <button (click)="GrabarNota()" type="button" class="btn btn-primary" title="Grabar"> Grabar</button>
+          </div>
+          <div class="form-group  col-4 col-sm-2">
+            <button (click)="cerrarPantallaNotas()"  type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

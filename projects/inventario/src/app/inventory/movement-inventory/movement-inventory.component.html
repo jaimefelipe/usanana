@@ -1,0 +1,321 @@
+<div [hidden]="edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Movimientos de Inventario</h2>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+        </div>
+        <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+          placeholder="Buscar">
+        <div class="input-group-append">
+          <button class="btn btn-success" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
+              aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form>
+    <div class="form-row">
+      <div class="form-group col-12 col-sm-6" *ngFor="let Movement of Movements;let i = index">
+        <div class="card">
+          <a (click)="editRecord(Movement)">
+            <div class="card-body">
+              <h4 class="card-title"># {{Movement.Id_Movimiento}} {{Movement.Registro_Origen}} - {{Movement.Creado_El}}
+                <span *ngIf="Movement.Tipo_Movimiento == '01'" class="text-primary"> Venta</span>
+                <span *ngIf="Movement.Tipo_Movimiento == '02'" class="text-success"> Compra</span>
+                <span *ngIf="Movement.Tipo_Movimiento == '03'" class="text-info"> Nota Débito (-) </span>
+                <span *ngIf="Movement.Tipo_Movimiento == '04'" class="text-danger"> Nota Crédito (+) </span>
+              </h4>
+              <p><b>{{Movement.Nombre }}</b></p>
+              Origen : {{Movement.Sistema_Origen}} - {{Movement.Id_Factura}}
+
+              Estado :
+              <span *ngIf="Movement.Estado == '0'" class="text-primary"> Registrado</span>
+              <span *ngIf="Movement.Estado == '1'" class="text-success"> Aplicado</span>
+              <span *ngIf="Movement.Respuesta_MH == 'rechazado'"> {{Movement.Error_MH}}</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="container-fluid">
+    <ul class="pagination">
+      <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"
+            aria-hidden="true"></i></a></li>
+    </ul>
+  </div>
+</div>
+
+<!--
+  Form de Edición
+-->
+
+<div [hidden]="!edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Movimiento de Inventario</h2>
+
+  <form>
+    <div class="form-row">
+      <!-- Inicio de Primera división -->
+      <div class="input-group col-12 col-md-3 pb-2 pt-1">
+        <select [(ngModel)]="Movement.Tipo_Movimiento" name="Tipo_Documento" type="text"
+          [disabled]="Movement.Estado !=0" class="form-control">
+          <option value='01'>Venta</option>
+          <option value='02'>Compra</option>
+          <option value='03'>Nota de débito (-) </option>
+          <option value='04'>Nota de crédito (+)</option>
+        </select>
+        <div class="input-group-append">
+          <button type="button" data-toggle="collapse" href="#GeneralData" class="form-control btn btn-primary"><i
+              class="fa fa-bars"></i></button>
+        </div>
+      </div>
+      <div class="col-12 col-md-9">
+        <div class="form-row collapse show p-1" id="GeneralData">
+          <div class="form-group col-6 col-md-3">
+            <select [(ngModel)]="Movement.Moneda" name="Moneda" [disabled]="Movement.Estado !=0" class="form-control">
+              <option value='CRC'>Colones</option>
+              <option value='USD'>Dolares</option>
+            </select>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="input-group mb-1">
+              <div class="input-group-prepend">
+                <div class="input-group-text">T.C.</div>
+              </div>
+              <input [(ngModel)]="Movement.Tipo_Cambio" name="Tipo_Cambio" disabled="true" type="text"
+                class="form-control" placeholder="Tipo Cambio">
+            </div>
+          </div>
+
+          <div class="col-6 col-md-3">
+            <div class="input-group mb-1">
+              <div class="input-group-prepend">
+                <div class="input-group-text">#</div>
+              </div>
+              <input [(ngModel)]="Movement.Registro_Origen" name="Consecutivo" disabled="true" type="text"
+                class="form-control" placeholder="Registro_Origen">
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="input-group mb-1">
+              <div class="input-group-prepend">
+                <div class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i></div>
+              </div>
+              <input [(ngModel)]="Movement.Creado_El" disabled="true" class="form-control" placeholder="Fecha"
+                name="Fecha">
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div> <!-- Fin de Primera división -->
+
+    <div class="form-row ">
+      <!-- Inicio de Segunda división -->
+      <div class="form-group col-md-12">
+        <label>Detalle</label>
+        <input [disabled]="Movement.Estado !=0" [(ngModel)]="Movement.Nombre" name="Nombre" type="input"
+          class="form-control" placeholder="Detalle del Movimiento">
+      </div>
+
+    </div> <!-- Fin de Segunda división -->
+
+    <!-- Inicio de Inclusión de Productos -->
+    <div [hidden]="Movement.Estado !=0" class="form-row bg-info">
+      <div class="form-group col-12 col-md-3">
+        <label>Artículo</label>
+
+        <div class="input-group">
+          <input [disabled]="Movement.Estado !=0" [(ngModel)]="Detalle.Codigo_Referencia" name="Codigo_Referencia"
+          id="Codigo_Referencia" type="input" class="form-control" placeholder="Código"
+          (blur)="processProduct('Descripcion')" (keydown)="keytab1($event,'Descripcion')">
+          <div class="input-group-append">
+            <button type="button" (click)="obtenerProducto('',1)" class="form-control btn btn-primary"><i
+                class="fa fa-search"></i></button>
+          </div>
+        </div>
+
+      </div>
+      <div class="form-group col-12 col-md-3">
+        <label>Descripcion</label>
+        <input [disabled]="Movement.Estado !=0" [(ngModel)]="Detalle.Descripcion" name="Descripcion" id="Descripcion"
+          type="input" class="form-control" placeholder="Descripción" (blur)="processProduct('Cantidad')"
+          (keydown)="keytab1($event,'Cantidad')">
+      </div>
+      <div class="form-group col-12 col-md-3">
+        <label>Cantidad</label>
+        <input [disabled]="Movement.Estado !=0" [(ngModel)]="Detalle.Cantidad" name="Cantidad" id="Cantidad"
+          type="input" class="form-control" placeholder="Cantidad" (blur)="processProduct('Precio')"
+          (keydown)="keytab1($event,'Precio')">
+      </div>
+      <div class="form-group col-12 col-md-3">
+        <label>Precio</label>
+        <input [disabled]="Movement.Estado !=0" [(ngModel)]="Detalle.Precio" name="Precio" id="Precio" type="input"
+          class="form-control" placeholder="Precio" (blur)="processProduct('Codigo_Referencia')"
+          (keydown)="keytab1($event,'Codigo_Referencia')">
+      </div>
+    </div>
+    <!-- Fin de Inclusión de Productos -->
+
+    <!-- Inicio Lista de Detalles -->
+    <div class="form-row d-none d-md-block">
+      <div class="form-row">
+        <div class="form-group col-md-2 m-1">
+          Código
+        </div>
+        <div class="form-group col-12 col-md-3 m-1">
+          Descripción
+        </div>
+        <div class="form-group col-12 col-md-1 m-1">
+          Cantidad
+        </div>
+        <div class="form-group col-12 col-md-2 m-1">
+          Precio
+        </div>
+        <div class="form-group col-12 col-md-2 m-1">
+          Total
+        </div>
+        <div class="form-group col-12 col-md-1 m-1">
+          Acción
+        </div>
+      </div>
+    </div>
+    <div class="form-row table table-striped table-hover table-dark table-bordered ">
+      <div class="form-group col-12">
+        <div class="form-row" *ngFor="let Detail of Details;let indice = index">
+          <div class="form-group col-12 col-md-2 m-1">
+            {{Detail.Codigo_Referencia}}
+          </div>
+          <div class="form-group col-12 col-md-3 m-1">
+            {{Detail.Descripcion | slice:0:40}}
+          </div>
+          <div class="form-group col-12 col-md-1 m-1">
+            {{Detail.Cantidad | currency:' '}}
+          </div>
+          <div class="form-group col-12 col-md-2 m-1">
+            {{Detail.Precio | currency:' '}}
+          </div>
+          <div class="form-group col-12 col-md-2 m-1">
+            {{Detail.Total | currency:' '}}
+          </div>
+          <div class="form-group col-12 col-md-1 m-1">
+            <span style="display: inline-block;">
+              <button [disabled]="Movement.Estado !=0" type="button" class="btn btn-danger btn-sm"
+                style="min-width: 0px;margin-right: 5px;padding: 0rem 0.31rem;" (click)="remove_Detalle(indice)"><i
+                  class="fa fa-trash" aria-hidden="true" title="Borrar Linea"></i></button>
+            </span>
+            <button [disabled]="Movement.Estado !=0" type="button" class="btn btn-primary btn-sm"
+              style="min-width: 0px;margin-right: 5px;padding: 0rem 0.31rem;" (click)="edit_Detalle(indice)"><i
+                class="fa fa-edit" aria-hidden="true" title="Editar Linea"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Fin Lista de Detalles -->
+    <!-- Inicio de Totales -->
+    <div class="form-row">
+
+      <div class="form-group col-12 col-md-4">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text fw">Sub Total</span>
+          </div>
+          <label class="form-control currency">{{Movement.Sub_Total | currency:' '}}</label>
+        </div>
+      </div>
+      <div class="form-group col-12 col-md-4">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text fw">IVA</span>
+          </div>
+          <label class="form-control currency">{{Movement.IVA| currency:' '}}</label>
+        </div>
+      </div>
+      <div class="form-group col-12 col-md-4">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text fw">Total</span>
+          </div>
+          <label class="form-control currency">{{Movement.Total| currency:' '}}</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Find de Totales -->
+
+    <div class="form-group col-md-12">
+      <div class="form-row">
+        <div class="form-group col-3 col-md-2">
+          <button *ngIf="Movement.Estado !=0" (click)="imprimirFactura()" type="button" class="btn btn-info"
+            title="Cancela edicion">Comprobante</button>
+        </div>
+
+        <div class="form-group col-3 col-md-2">
+          <button [disabled]="Movement.Estado !=0" (click)="grabarMovimiento()" type="button" class="btn btn-success"
+            title="Cancela edicion">Grabar</button>
+        </div>
+        <div class="form-group col-3 col-md-2">
+          <button (click)="cancel()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+  </form><!-- End of form -->
+</div>
+
+<div [hidden]="!PantallaProductos" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Seleccionar Artículo</h2>
+      <input [(ngModel)]="searchFieldProduct" (blur)="searchProduct()" (keydown)="keytabProduct($event)" type="text"
+        class="form-control" placeholder="Buscar">
+    </div>
+    <div class="card-body modal-grid">
+      <div class="form-row">
+        <div class="form-group col-12 col-sm-6" *ngFor="let Product of registros;let i = index">
+          <a (click)="Seleccionar(Product)">
+            <div class="card">
+              <div class="card-body">
+                {{Product.SKU}}
+                <h4 class="card-title">{{Product.Descripcion}} </h4>
+                <p><b>{{Product.Nombre }}</b></p>
+                Precio : {{Product.Precio|currency: ' '}} Moneda: {{Product.Moneda}}
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8 col-md-10">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="closeModal()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div [hidden]="!PantallaLoading" class="modal-main">
+  <div class="modal-content  card">
+    <h1>
+      Procesando.....
+    </h1>
+  </div>
+</div>

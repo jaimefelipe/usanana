@@ -1,0 +1,34 @@
+<div>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label for="name">Provincia</label>
+        <select [(ngModel)]="Persona.Provincia" (change)="ProvinciaChange()" name="Provincia" class="form-control">
+          <option value={{Province.Provincia}} *ngFor="let Province of Provinces;let i = index">
+            {{Province.Provincia_Nombre}}</option>
+        </select>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="name">Cantón </label>
+        <select [(ngModel)]="Persona.Canton" (change)="CantonChange()" name="Canton" class="form-control">
+          <option value={{Canton.Canton}} *ngFor="let Canton of Cantons;let i = index">{{Canton.Canton_Nombre}}
+          </option>
+        </select>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="name">Distrito </label>
+        <select [(ngModel)]="Persona.Distrito" name="Distrito" class="form-control">
+          <option value={{District.Distrito}} *ngFor="let District of Districts;let i = index">
+            {{District.Distrito_Nombre}}</option>
+        </select>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="name">Barrio</label>
+        <input [(ngModel)]="Persona.Barrio" name="Barrio" type="text" class="form-control">
+      </div>
+      <div class="form-group col-md-6">
+        <label for="name">Dirección</label>
+        <input [(ngModel)]="Persona.Direccion" name="Direccion" type="text" class="form-control">
+      </div>
+
+    </div>
+  </div>

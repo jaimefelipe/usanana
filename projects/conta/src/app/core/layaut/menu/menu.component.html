@@ -1,0 +1,68 @@
+<!-- [hidden]="!logedIn" -->
+<nav  role="navigation">
+  <div id="menuToggle">
+    <!--
+    A fake / hidden checkbox is used as click reciever,
+    so you can use the :checked selector on it.
+    -->
+    <input  id="MenuShow" (click)="click()" [checked]="showMenu"  type="checkbox" />
+
+    <!--
+    Some spans to act as a hamburger.
+
+    They are acting like a real hamburger,
+    not that McDonalds stuff.
+    -->
+    <span></span>
+    <span></span>
+    <span></span>
+
+    <!--
+    Too bad the menu has to be inside of the button
+    but hey, it's pure CSS magic.
+    -->
+      <ul  [hidden]="!showMenu" id="menu">
+        <a (click)="hideMenu()" [routerLink]="['/']"><li><i class="fa fa-home"></i> Inicio {{ambiente}} 1.1.5</li></a>
+        <div [hidden]="!logedIn">
+          <li [hidden]="!AppConta" (click)="clickContaMenu()" ><a><i class="fa fa-book"></i>  Contabilidad<i [ngClass]='ContaClass' class="fa fa-cog"></i>  </a></li>
+          <ul [hidden]="!ContaMenu" >
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/cgecatalogotree']"><li><i class="fa fa-file"></i> Catálogo Contable</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/cgecentrocosto']"><li><i class="fa fa-file"></i> Centro Costo</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/cgeperiodo']"><li><i class="fa fa-file"></i> Periodo Contable</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/cgeasiento']"><li><i class="fa fa-file"></i> Asiento Diario</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/cgereport']"><li><i class="fa fa-file"></i> Reportes Y Procesos</li></a>
+          </ul>
+          <li [hidden]="!AppCxC" (click)="clickCxCMenu()" ><a><i class="fa fa-cc"></i>  Cuentas X Cobrar <i [ngClass]='CxCClass' class="fa fa-cog"></i>  </a></li>
+          <ul [hidden]="!CxCMenu" >
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/cxcClasificacion']"><li><i class="fa fa-shopping-bag"></i> Clasificación</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/cuentacxc']"><li><i class="fa fa-credit-card"></i> Cuentas x Cobrar</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/documentocxc']"><li><i class="fa fa-file-o"></i> Documentos</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/movimientocxc']"><li><i class="fa fa-align-justify"></i> Movimientos</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/reportecxc']"><li><i class="fa fa-file"></i> Reporte CXC</li></a>
+          </ul>
+          <li [hidden]="!AppCxP" (click)="clickCxPMenu()" ><a><i class="fa fa-cc"></i>  Cuentas X Pagar <i [ngClass]='CxPClass' class="fa fa-cog"></i>  </a></li>
+          <ul [hidden]="!CxPMenu" >
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/cxpClasificacion']"><li><i class="fa fa-shopping-bag"></i> Clasificación</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/cuentacxp']"><li><i class="fa fa-credit-card"></i> Cuentas x Pagar</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/documentocxp']"><li><i class="fa fa-file-o"></i> Documentos</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/movimientocxp']"><li><i class="fa fa-align-justify"></i> Movimientos</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/reportecxp']"><li><i class="fa fa-file"></i> Reporte CXC</li></a>
+          </ul>
+
+          <li [hidden]="!AppBk" (click)="clickBkMenu()" ><a><i class="fa fa-university"></i>  Bancos <i [ngClass]='CxPClass' class="fa fa-cog"></i>  </a></li>
+          <ul [hidden]="!BkMenu" >
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/cuentasbk']"><li><i class="fa fa-shopping-bag"></i> Cuentas</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/movimientobk']"><li><i class="fa fa-align-justify"></i> Movimientos</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/reporteba']"><li><i class="fa fa-file"></i> Reportes</li></a>
+          </ul>
+
+        </div>
+
+        <a href="https://api.whatsapp.com/send?phone=50687786649" target="_blank"><li><i class="fa fa-phone"></i> Soporte</li></a>
+        <a href="/main" target="_self"><li><i class="fa fa-home"></i> Menú Principal</li></a>
+        <a (click)="hideMenu()" [hidden]="logedIn" [routerLink]="['/login']"><li><i class="fa fa-sign-in"></i> Entrar</li></a>
+        <a (click)="hideMenu()" [hidden]="!logedIn" (click)="logOut()" href="#"><li><i class="fa fa-sign-out"></i> Salir</li></a>
+        <a (click)="hideMenu()" [hidden]="!logedIn">{{Company}} | {{User}}</a>
+      </ul>
+  </div>
+</nav>

@@ -1,0 +1,522 @@
+<!-- Pantalla de Procesando -->
+<div [hidden]="!PantallaLoading" class="modal-main">
+
+  <div class="modal-content  card">
+    <h1>
+      Procesando.....
+    </h1>
+  </div>
+</div>
+
+<!-- Pantalla de Login del Salonero -->
+<div [hidden]="!PantallaLogin" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>{{NombreEmpresa}}</h2>
+  <h2>Pedidos - Selección de Saloner(o/a)</h2>
+
+  <br>
+  <hr>
+  <br>
+  
+  <form>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <h1>Selección de Usuario</h1>
+      </div>
+      <div class="form-group col-md-6">
+        <label><h2>Código</h2></label>
+        <input style="font-size:30px;font-weight:bold;" [(ngModel)]="CodigoSalonero" name="Salonero" type="text" placeholder="Codigo" class="form-control">
+      </div>
+    </div>
+    <div class="form-group col-md-12">
+      <div class="form-row">
+
+        <div class="form-group col-md-6">
+        </div>
+        
+        <div class="form-group col-md-6">
+          <div class="form-row">
+            <div class="form-group col-4">
+              <button (click)="Concat(7)" type="button" class="btn btn-primary wFull" title="Entrar"><h2>7</h2></button>
+            </div>
+            <div class="form-group col-4">
+              <button (click)="Concat(8)" type="button" class="btn btn-primary wFull" title="8"><h2>8</h2></button>
+            </div>
+            <div class="form-group col-4">
+              <button (click)="Concat(9)" type="button" class="btn btn-primary wFull" title="9"><h2>9</h2></button>
+            </div>
+            <div class="form-group col-4">
+              <button (click)="Concat(4)" type="button" class="btn btn-primary wFull" title="4"><h2>4</h2></button>
+            </div>
+            <div class="form-group col-4">
+              <button (click)="Concat(5)" type="button" class="btn btn-primary wFull" title="5"><h2>5</h2></button>
+            </div>
+            <div class="form-group col-4">
+              <button (click)="Concat(6)" type="button" class="btn btn-primary wFull" title="6"><h2>6</h2></button>
+            </div>
+            <div class="form-group col-4">
+              <button (click)="Concat(1)" type="button" class="btn btn-primary wFull" title="1"><h2>1</h2></button>
+            </div>
+            <div class="form-group col-4">
+              <button (click)="Concat(2)" type="button" class="btn btn-primary wFull" title="2"><h2>2</h2></button>
+            </div>
+            <div class="form-group col-4">
+              <button (click)="Concat(3)" type="button" class="btn btn-primary wFull" title="3"><h2>3</h2></button>
+            </div>
+            <div class="form-group col-4">
+              <button (click)="Concat(0)" type="button" class="btn btn-primary wFull" title="0"><h2>0</h2></button>
+            </div>
+            <div class="form-group col-4">
+              <button (click)="borrar()" type="button" class="btn btn-danger wFull" title="borrar">Borrar</button>
+            </div>
+            <div class="form-group col-4">
+              <button (click)="seleccionSalonero()" type="button" class="btn btn-success wFull" title="Entrar">Entrar</button>
+            </div>
+        </div>
+
+         
+        </div>
+        
+      </div>
+    </div>
+  </form>
+</div>
+<!-- Pantalla Con las Ordenes Abiertas -->
+<div [hidden]="!PantallaPedidosAbiertos">
+  <div class="container pb-5">
+    <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+    
+    <form>
+      <div class="form-row">
+        <div  class="form-group col-sm-6">
+          <h2>{{NombreSalonero}} - Lista de Cuentas Abiertas</h2>
+        </div>
+        <div  class="form-group col-sm-3">
+          <a (click)="newAccount()">
+            <div class="card bg-success text-white">
+              <div class="card-body h-25">
+                <h4 class="card-title">Crear Cuenta + </h4>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div [hidden]="!MultiUsuairo  " class="form-group col-sm-3">
+          <a (click)="closeUser()">
+            <div class="card bg-primary text-white">
+              <div class="card-body h-25">
+                <h4 class="card-title">Cerrar </h4>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="form-group col-12 col-sm-6" *ngFor="let Order of Pedidos;let i = index">
+          <div class="card">
+            <a (click)="loadSubCuenta(Order)">
+              <div class="card-body">
+
+                <h4 class="card-title">{{Order.Zona}} </h4>
+                <h4 class="card-title">{{Order.Mesa}}- {{Order.Cliente}}</h4>
+                {{Order.Creado_Por}}
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
+<!-- Pantalla de Zonas -->
+<div [hidden]="!PantallaZona" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Pedidos - Zonas</h2>
+  <form>
+    <div class="form-row">
+
+      <div class="form-group col-12 col-sm-6" *ngFor="let Zona of Zones;let i = index">
+        <div class="card">
+          <a (click)="loadPlaces(Zona)">
+            <div class="card-body h-50">
+              <h4 class="card-title">{{Zona.Nombre}}</h4>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div [hidden]="!PantallaPlace" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Pedidos - Mesas / Lugares</h2>
+  <form>
+    <div class="form-row">
+
+      <div class="form-group col-12 col-sm-6" *ngFor="let Place of Places;let i = index">
+        <div class="card">
+          <a (click)="loadPlaceStatus(Place)">
+            <div class="card-body h-50">
+              <h4 class="card-title">{{Place.Nombre}}</h4>
+              <span *ngIf="Place.Estado == '1'" class="text-primary"> LIBRE</span>
+              <span *ngIf="Place.Estado == '2'" class="text-success"> OCUPADA</span>
+            </div>
+          </a>
+        </div>
+      </div>
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-10">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="cancel(1)" type="button" class="btn btn-danger" title="Cancela edicion">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+
+
+
+<div [hidden]="!PantallaSubCuentas" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Pedidos - Sub Cuentas</h2>
+  <span class="text-success">
+    <h3>{{Pedido.Zone_Name}} : {{Pedido.Place_Name}}
+    </h3>
+  </span>
+  <form>
+    <div class="form-row">
+      <div class="form-group col-12 col-sm-6" *ngFor="let Cuenta of Sub_Cuentas;let i = index">
+        <div class="card">
+          <a (click)="loadSubCuenta(Cuenta)">
+            <div class="card-body h-50">
+              <h4 class="card-title">{{Cuenta.Nombre}}</h4>
+            </div>
+          </a>
+        </div>
+      </div>
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-10">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="cancel(2)" type="button" class="btn btn-danger" title="Cancela edicion">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+
+<div [hidden]="!PantallaEstado" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Pedidos - Estado</h2>
+  <span class="text-success">
+    <h3>{{Pedido.Zone_Name}} : {{Pedido.Place_Name}}
+      , Estado :
+      <span *ngIf="Pedido.Estado == '0'" class="text-primary"> Disponible</span>
+      <span *ngIf="Pedido.Estado == '1'" class="text-secondary"> Ocupada</span>
+      <input [(ngModel)]="Pedido.Nombre" name="Nombre" type="text" placeholder="Nombre" class="form-control">
+    </h3>
+  </span>
+  <form>
+    <div class="form-row">
+      <!--
+      <div *ngIf="Pedido.Tipo_Cuenta == '0'" class="form-group col-12 col-sm-6">
+        <a (click)="seleccionarTipoCuenta(1)">
+          <div class="card">
+            <div class="card-body h-50">
+              <h4 class="card-title">CUENTA GRUPAL</h4>
+            </div>
+          </div>
+        </a>
+      </div>
+      <div *ngIf="Pedido.Tipo_Cuenta == '0'" class="form-group col-12 col-sm-6">
+        <a (click)="seleccionarTipoCuenta(2)">
+          <div class="card">
+            <div class="card-body h-50">
+              <h4 class="card-title">CUENTA INDIVIDUAL</h4>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <div *ngIf="Pedido.Estado == '1'" class="form-group col-12 col-sm-6">
+        <a (click)="cerrarCuenta()">
+          <div class="card bg-info text-white">
+            <div class="card-body h-50">
+              <h4 class="card-title">CERRAR CUENTA</h4>
+            </div>
+          </div>
+        </a>
+      </div>
+      <div *ngIf="Pedido.Estado != '1'" class="form-group col-12 col-sm-6">
+
+      </div>
+      -->
+      <div class="form-group col-12 col-sm-6">
+        <a (click)="SubCuenta()">
+          <div class="card bg-info text-white">
+            <div class="card-body h-50">
+              <h4 class="card-title">Sub Cuenta + </h4>
+            </div>
+          </div>
+        </a>
+      </div>
+      <div  class="form-group col-12 col-sm-6">
+        <a (click)="showCagegories()">
+          <div class="card bg-primary text-white">
+            <div class="card-body h-50">
+              <h4 class="card-title">AGREGAR ARTICULOS + </h4>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <div class="form-group col-12 col-sm-12" *ngFor="let product of OrderProducts;let i = index">
+        <div class="card">
+            <div class="card-body">
+              <div class="form-row">
+                <div class="form-group col-6">
+                  <h4 class="card-title">{{product.Cantidad}} {{product.Descripcion}} </h4>
+                  <span class="text-primary"> {{product.Notas}} </span>
+                  ₡{{product.Precio * product.Cantidad | currency:' '}}
+                  {{product.Componente}}
+                </div>
+                <div class="form-group col-2">
+                  <button (click)="SumArticle(product)" type="button" class="btn btn-lg btn-success" title="Cancela edicion">  + </button>
+                </div>
+                <div class="form-group col-2">
+                  <button (click)="minusArticle(product)" type="button" class="btn btn-lg btn-danger" title="Cancela edicion">  -  </button>
+                </div>
+                <div class="form-group col-2">
+                  <button (click)="editNote(i)" type="button" class="btn btn-lg btn-primary" title="Cancela edicion"> <i class="fa fa-edit" aria-hidden="true"
+                    title="Editar Linea"></i> </button>
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-10">
+            TOTAL ₡ {{OrderTotal | currency:' '}}
+          </div>
+          <div class="form-group col-2">
+            <button (click)="cancel(2)" type="button" class="btn btn-danger" title="Cancela edicion">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+
+
+
+<div [hidden]="!PantallaCategorias" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Pedidos - Categorias</h2>
+  <span class="text-success">
+    <h3>{{Pedido.Zone_Name}} : {{Pedido.Place_Name}}
+    </h3>
+  </span>
+  <form>
+    <div class="form-row">
+      <div class="form-group col-12 col-sm-6" *ngFor="let Categoria of Categories;let i = index">
+        <div class="card">
+          <a (click)="loadArticles(Categoria)">
+            <div class="card-body h-50">
+              <h4 class="card-title">{{Categoria.Nombre}}</h4>
+            </div>
+          </a>
+        </div>
+      </div>
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-10">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="cancel(3)" type="button" class="btn btn-danger" title="Cancela edicion">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div [hidden]="!PantallaProductos" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Pedidos - Productos</h2>
+  <span class="text-success">
+    <h3>{{Pedido.Zone_Name}} : {{Pedido.Place_Name}}
+    </h3>
+  </span>
+  <form>
+    <div class="form-row">
+      <div class="form-group col-12 col-sm-6" *ngFor="let Producto of Products;let i = index">
+        <div class="card">
+          <a (click)="addArticle(Producto)">
+            <div class="card-body h-50">
+              <h4 class="card-title">{{Producto.Descripcion}}</h4>
+            </div>
+          </a>
+        </div>
+      </div>
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-10">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="cancel(4)" type="button" class="btn btn-danger" title="Cancela edicion">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div [hidden]="!PantallaNotas" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Editar Linea</h2>
+    </div>
+    <div class="card-body modal-grid">
+      <div class="form-row">
+
+        <div class="form-group col-12">
+          <textarea class="form-control" [(ngModel)]="Nota" name="Nota"></textarea>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="agregarNota()" type="button" class="btn btn-success"
+              title="Cancela edicion">Agregar</button>
+          </div>
+          <div class="form-group col-2">
+            <button (click)="closeModal()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Pantalla para Seleccionar Opcionales-->
+<div [hidden]="!PantallaOpciones" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Opciones del Menú</h2>
+    </div>
+    <div class="card-body modal-grid">
+      <div class="form-row">
+
+        <div class="form-group col-12" *ngFor="let Grupo of Componentes;let i = index">
+          <div class="form-row">
+
+            <div class="form-group col-6 col-sm-3" *ngFor="let Componente of Grupo;let j = index">
+              <div class="card">
+                <a (click)="SeleccionarComponente(Componente,i,j)">
+                  <div class="card-body h-50">
+                    <h4 class="card-title">{{Componente.Nombre}} </h4>
+                    <span *ngIf="Componente.Selected == '1'" class="text-primary"> Seleccionado</span>
+                    <select *ngIf="Componente.Display == '1'" [(ngModel)]="Componente.Id_Producto_Sub_Componente"  name="Id_Producto_Sub_Componente" class="form-control">
+                      <option value={{Sub_Componete.Id_Producto_Sub_Componente}} *ngFor="let Sub_Componete of Componente.Sub_Compoente;let i = index">{{Sub_Componete.Nombre}}
+                      </option>
+                    </select>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="agregarComponete()" type="button" class="btn btn-success"
+              title="Cancela edicion">Agregar</button>
+          </div>
+          <div class="form-group col-2">
+            <button (click)="closePantallaOpciones()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Pantalla para Seleccionar Adicionales-->
+<div [hidden]="!PantallaAdicionales" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Adicionales del Menú</h2>
+    </div>
+    <div class="card-body modal-grid">
+      <div class="form-row">
+
+        <div class="form-group col-12" *ngFor="let Grupo of Adicionales;let i = index">
+          <div class="form-row">
+
+            <div class="form-group col-6 col-sm-3" *ngFor="let Componente of Grupo;let j = index">
+              <div class="card">
+                <a  *ngIf="Componente.Selected == '1'" (click)="quitarSeleccionarAdicional(Componente,i,j)">
+                  <span class="text-primary"><h6 class="p-2"> Seleccionado</h6></span>
+                </a>
+                <a (click)="SeleccionarAdicional(Componente,i,j)">
+                  <div class="card-body h-50">
+                    <h4 class="card-title">{{Componente.Nombre}}</h4>
+                    <select *ngIf="Componente.Display == '1'" [(ngModel)]="Componente.Id_Producto_Sub_Componente"  name="Id_Producto_Sub_Componente" class="form-control">
+                      <option value={{Sub_Componete.Id_Producto_Sub_Componente}} *ngFor="let Sub_Componete of Componente.Sub_Compoente;let i = index">{{Sub_Componete.Nombre}}
+                      </option>
+                    </select>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="agregarAdicional()" type="button" class="btn btn-success"
+              title="Cancela edicion">Agregar</button>
+          </div>
+          <div class="form-group col-2">
+            <button (click)="closePantallaAdicionales()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

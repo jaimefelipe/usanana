@@ -1,0 +1,93 @@
+
+<div [hidden]="edit" class="container pb-5">
+    <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+    <h2>Prospectos</h2>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+          </div>
+          <input [(ngModel)]="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+            placeholder="Buscar">
+          <div class="input-group-append">
+            <button class="btn btn-success" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
+                aria-hidden="true"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <form>
+      <div class="form-row">
+  
+        <div class="form-group col-12 col-sm-6" *ngFor="let Persona of Clientes;let i = index">
+          <div class="card">
+            <a (click)="editRecord(Persona)">
+              <div class="card-body">
+                <h4 class="card-title">{{paginacion.FirstRow +  i}} - {{Persona.Nombre}}</h4>
+                ID : {{Persona.Identificacion}}, Correo: {{Persona.Correo}} <br>
+                Tel: {{Persona.Telefono}} | 
+                <span *ngIf="Persona.Prospecto == '1'" class="text-primary"> Prospecto</span>
+                <span *ngIf="Persona.Cliente== '1'" class="text-primary"> Cliente</span>
+                <span *ngIf="Persona.Proveedor== '1'" class="text-primary"> Proveedor</span>
+                <span *ngIf="Persona.Emisor== '1'" class="text-primary"> Emisor</span>
+                <span *ngIf="Persona.Empleado== '1'" class="text-primary"> Empleado</span>
+                <span *ngIf="Persona.Alumno== '1'" class="text-primary"> Alumno</span>
+                <span *ngIf="Persona.Profesor== '1'" class="text-primary"> Profesor</span>
+                
+                <span *ngIf="Persona.Estado== '0'" class="text-success"> Inactivo</span>
+                <span *ngIf="Persona.Estado== '1'" class="text-success"> Activo</span>
+                | Id:{{Persona.Id_Persona}} 
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </form>
+  
+    <div class="container-fluid">
+      <ul class="pagination">
+        <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"
+              aria-hidden="true"></i></a></li>
+        <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"
+              aria-hidden="true"></i></a></li>
+        <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"
+              aria-hidden="true"></i></a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div [hidden]="!edit" class="container pb-5">
+    <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+    <h2>Prospecto</h2> 
+    <div class="tab">
+      <button [ngClass]='GeneralClass' (click)="activarGeneral()" >General</button>
+      <button [ngClass]='DireccionClass' (click)="activarDireccion()">Dirección</button>
+      <button [ngClass]='NotasClass' (click)="activarNotas()">Notas</button>
+      <button [ngClass]='TareaClass' (click)="activarTarea()">Tareas</button>
+    </div>
+    <span [hidden]="!edit">
+      <app-general [hidden]="!GeneralActivo" [Persona]="Persona" (close)="cancel()"></app-general>
+      <app-notas [hidden]="!NotasActivo" [Persona]="Persona"></app-notas>
+      <app-tareas-cliente [hidden]="!TareaActivo" [Persona]="Persona"></app-tareas-cliente>
+    </span>
+
+    <div class="form-row">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-6 col-md-8">
+  
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="grabar()" type="button" class="btn btn-success" title="Cancela edicion">Grabar</button>
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="cancel()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+</div>
+
+

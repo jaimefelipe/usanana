@@ -1,0 +1,165 @@
+/*
+ * Made by Erik Terwan
+ * 24th of November 2015
+ * MIT License
+ *
+ *
+ * If you are thinking of using this in
+ * production code, beware of the browser
+ * prefixes.
+ */
+
+ #menuToggle
+ {
+   display: block;
+   position: fixed;
+   top: 5px;
+   right: 5px;
+   z-index: 99;
+   -webkit-user-select: none;
+   user-select: none;
+ }
+ #menuToggle a
+ {
+   text-decoration: none;
+   color: #232323;
+   transition: color 0.3s ease;
+ }
+
+ #menuToggle a:hover
+ {
+   color: #fc6724;
+ }
+
+
+ #menuToggle input
+ {
+   display: block;
+   width: 50px;
+   height: 50px;
+   position: fixed;
+   top: 3px;
+   right: 3px;
+
+   cursor: pointer;
+
+   opacity: 0; /* hide this */
+   z-index: 2; /* and place it over the hamburger */
+
+   -webkit-touch-callout: none;
+ }
+
+ /*
+  * Just a quick hamburger
+  */
+ #menuToggle span
+ {
+   display: block;
+   top:5px;
+   width: 30px;
+   height: 5px;
+   margin-bottom: 2px;
+   padding-right: 2px;
+   position: relative;
+
+   background: #fc6724;
+   border-radius: 3px;
+
+   z-index: 1;
+
+   transform-origin: 4px 0px;
+
+   transition: transform 0.5s cubic-bezier(0.77,0.2,0.05,1.0),
+               background 0.5s cubic-bezier(0.77,0.2,0.05,1.0),
+               opacity 0.55s ease;
+ }
+
+ #menuToggle span:first-child
+ {
+   transform-origin: 0% 0%;
+ }
+
+ #menuToggle span:nth-last-child(2)
+ {
+   transform-origin: 0% 100%;
+ }
+
+ /*
+  * Transform all the slices of hamburger
+  * into a crossmark.
+  */
+
+ #menuToggle input:checked ~ span
+ {
+   opacity: 1;
+   transform: rotate(45deg) translate(-2px, -1px);
+   background: #fc6724;
+ }
+
+ /*
+  * But let's hide the middle one.
+  #menuToggle input:checked ~ span:nth-last-child(3)
+
+  */
+  #menuToggle input:checked ~ span:nth-last-child(3)
+
+  {
+   opacity: 0;
+   /*transform: rotate(0deg) scale(0.2, 0.2);*/
+
+   transform:rotate(0deg) ;
+ }
+
+ /*
+  * Ohyeah and the last one should go the other direction
+   #menuToggle input:checked ~ span:nth-last-child(2)
+  */
+ #menuToggle input:checked ~ span:nth-last-child(2)
+
+ {
+   /*transform: rotate(-45deg) translate(0, -3px);*/
+   transform: rotate(-45deg) translate(-1px, 1px);
+ }
+
+ /*
+  * Make this absolute positioned
+  * at the top left of the screen
+  */
+li{
+  list-style-type: none;
+}
+ #menu
+ {
+   position: absolute;
+   width: 300px;
+   height: 100vh;
+   margin: -26px 0 0 -260px;
+   padding-top: 5px;
+  overflow: auto;
+   background: #ededed;
+   list-style-type: none;
+   -webkit-font-smoothing: antialiased;
+   /* to stop flickering of text in safari */
+
+   /*
+   transform-origin: 0% 0%;
+   transform: translate(102%, 0);
+
+   transition: transform 0.5s cubic-bezier(0.77,0.2,0.05,1.0);
+    */
+   border: 1px solid lightgray;
+ }
+
+ #menu li
+ {
+   padding: 10px 0;
+   font-size: 18px;
+ }
+
+ /*
+  * And let's slide it in from the left
+  */
+ #menuToggle input:checked ~ ul
+ {
+   transform: none;
+ }

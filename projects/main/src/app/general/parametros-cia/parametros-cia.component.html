@@ -1,0 +1,112 @@
+<div [hidden]="edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Parámetros Por Compañia</h2>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+        </div>
+        <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+          placeholder="Buscar">
+        <div class="input-group-append">
+          <button class="btn btn-success" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
+              aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form>
+    <div class="form-row">
+
+      <div class="form-group col-12 col-sm-6" *ngFor="let Parameter of Parameters;let i = index">
+        <div class="card">
+          <a (click)="editRecord(Parameter)">
+            <div class="card-body">
+              {{Parameter.Id_Empresa}} - {{Parameter.Nombre}}
+              <h4 class="card-title">{{Parameter.Parametro}}</h4>
+              Valor: {{Parameter.Valor}}
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="container-fluid">
+    <ul class="pagination">
+      <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"
+            aria-hidden="true"></i></a></li>
+    </ul>
+  </div>
+</div>
+
+<!--
+  Form de Edición
+-->
+
+<div [hidden]="!edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Parámetro de una Compañia</h2>
+
+  <form>
+    <div class="form-row">
+
+      <div class="form-group col-md-6">
+        <label>Compañia</label>
+        <select [(ngModel)]="Parameter.Id_Empresa" name="Id_Empresa" type="text" class="form-control">
+          <option value='{{Company.Id_Empresa}}' *ngFor="let Company of Companies;let i = index">
+            {{Company.Nombre}}</option>
+        </select>
+      </div>
+
+      <div class="form-group col-md-6">
+        <label>Parametro</label>
+        <select [(ngModel)]="Parameter.Parametro" name="Parametro" type="text" class="form-control">
+          <!-- Parametros del Sistema de Inventarios -->
+          <option value='Inv_Interfaz_Inventario'>Inv - Interfaz_Inventario</option>
+          <option value='Inv_Calculo_Precio_Compra'>Inv - Cálculo Precio en Compra</option>
+          <!-- Parametros del Sistema de Compras -->
+          <option value='Com_Interfaz_Inventario'>Com - Interfaz Inventario</option>
+          <!-- Parametros del Sistema de Ventas -->
+          <option value='Ven_Tiquete_Caja'>PV - Imprimir Tiquete Caja</option>
+          <option value='Ven_Iva_Incluido'>PV - Iva Incluido</option>
+          <option value='Ven_Serv_Incluido'>PV - Servicio Incluido en Tiquete</option>
+          <!-- Parametros del Sistema de Bar -->
+          <option value='Bar_Multi_Usuario'>Bar - Multi-Usuario en Pedido</option>
+          <option value='Bar_Cobro_Servicio'>Bar - Cobro Servicio</option>
+          <option value='Bar_Invoice_Printer'>Bar - Impresora Facturacion</option>
+          <option value='Bar_kitchen_Printer'>Bar - Impresora Cocina</option>
+          <!-- Parametros del Sistema de Contabilidad -->
+          <option value='Cge_Interfaz_Contabilidad'>Interfaz Contabilidad</option>
+          <option value='Cge_Cuenta_Pagar_Iva'>CG - Cuenta Pagar Iva</option>
+          <option value='Cge_Cuenta_Efectivo'>CG - Cuenta Efectivo</option>
+          <option value='Cge_Cuenta_Cobrar_Defecto'>CG - Cuenta Cobrar x Defecto</option>
+          <option value='Cge_Cuenta_Pagar_Defecto'>CG - Cuenta Pagar x Defecto</option>
+        </select>
+      </div>
+      <div class="form-group col-md-6">
+        <label>Valor del Parametro</label>
+        <input [(ngModel)]="Parameter.Valor" name="valor" type="text" class="form-control" placeholder="Valor del Parámetro" >
+      </div>
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-6 col-md-8">
+
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="grabar()" type="button" class="btn btn-success" title="Cancela edicion">Grabar</button>
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="cancel()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+</div>

@@ -1,0 +1,323 @@
+<div [hidden]="edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Asientos de diario</h2>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+        </div>
+        <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+          placeholder="Buscar">
+        <div class="input-group-append">
+          <button class="btn btn-success" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
+              aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form>
+    <div class="form-row">
+      <div class="form-group col-12 col-sm-6" *ngFor="let Asiento of Asientos;let i = index">
+        <div class="card">
+          <a (click)="editRecord(Asiento)">
+            <div class="card-body">
+              Fecha: <b>{{Asiento.Fecha  | date:'d/M/YYY'}}</b> <!-- | date:'d/M/YYY' -->
+             Periodo: <b> {{Asiento.Mes}}-{{Asiento.Anio}}-{{Asiento.Secuencia}}</b>, Documento: <b>{{Asiento.Documento }}</b><br>
+              Sistema
+              <span *ngIf="Asiento.Sistema_Origen == 'CGE'" class="text-primary"> Contabilidad</span>
+              <span *ngIf="Asiento.Sistema_Origen == 'VEN'" class="text-success"> Ventas</span>
+              <span *ngIf="Asiento.Sistema_Origen == 'COM'" class="text-info"> Compras</span>
+              <span *ngIf="Asiento.Sistema_Origen == 'CXC'" class="text-info"> Cuentas Cobrar</span>
+              <span *ngIf="Asiento.Sistema_Origen == 'CXP'" class="text-info"> Cuentas Pagar</span>
+              <span *ngIf="Asiento.Sistema_Origen == 'INV'" class="text-success"> Inventario</span><br>
+              Descripción: <b>{{Asiento.Descripcion | slice:0:100}}</b><br>
+              Estado :
+              <span *ngIf="Asiento.Estado == '0'" class="text-primary"> Registrado</span>
+              <span *ngIf="Asiento.Estado == '1'" class="text-warning"> Mayorizado</span>
+              <span *ngIf="Asiento.Diferencia != '0.00000'" class="text-danger"> Descuadrado</span>
+
+              <h6>Id:{{Asiento.Id_Asiento_Contable_Encabezado}}</h6>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="container-fluid">
+    <ul class="pagination">
+      <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"
+            aria-hidden="true"></i></a></li>
+    </ul>
+  </div>
+</div>
+
+<!--
+  Form de Edición
+-->
+
+<div [hidden]="!edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Asiento</h2>
+
+  <form>
+    <div class="form-row">
+      <!-- Inicio de Primera división -->
+      <div class="input-group col-md-3">
+        <select [(ngModel)]="Asiento.Sistema_Origen" name="Sistema_Origen" type="text" [disabled]="Asiento.Estado !='0'"
+          class="form-control">
+          <option value='CGE'>Contabilidad</option>
+          <option value='VEN'>Ventas</option>
+          <option value='COM'>Compras</option>
+          <option value='CXC'>Cuentas Cobrar</option>
+          <option value='CXP'>Cuentas Pagar</option>
+          <option value='INV'>Inventario</option>
+        </select>
+      </div>
+      <div class="form-group col-md-2">
+        <select [(ngModel)]="Asiento.Id_Periodo" name="id_Periodo" [disabled]="Asiento.Estado !='0'" class="form-control">
+          <option value={{Periodo.Id_Periodo_Contable}} *ngFor="let Periodo of Periodos;let i = index">
+            {{Periodo.Mes}} - {{Periodo.Anio}}-{{Periodo.Secuencia}} </option>
+        </select>
+      </div>
+      <div class="form-group col-md-3">
+        <div class="input-group">
+          <input class="form-control" [(ngModel)]="Fecha" name="Fecha" placeholder="Fecha" ngbDatepicker
+            #d1="ngbDatepicker">
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary fa fa-calendar" (click)="d1.toggle()" type="button"></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-md-2">
+        <input [(ngModel)]="Asiento.Documento" name="Documento" type="text" placeholder="Documento  "
+          class="form-control">
+      </div>
+      <div class="form-group col-md-2">
+        <input [(ngModel)]="Asiento.Tipo_Cambio" name="Tipo_Cambio" type="text" placeholder="Tipo_Cambio  "
+          class="form-control">
+      </div>
+      <div class="form-group col-12">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text fw">Detalle</span>
+          </div>
+          <input [(ngModel)]="Asiento.Descripcion" name="Descripcion" type="text" placeholder="Descripcion  "
+          class="form-control">
+        </div>
+      </div>
+
+    </div>
+    <!-- Fin de Primera división -->
+
+    <div  class="form-row bg-info">
+      <div class="form-group col-12 col-md-2">
+        <label>Artículo</label>
+
+        <div class="input-group">
+          <input [disabled]="Asiento.Estado !='0'" [(ngModel)]="Detalle.Cuenta"
+          name="Cuenta" id="Cuenta" type="input" class="form-control" placeholder="Cuenta"
+          (blur)="processAccount('Detalle_Cuenta')" (keydown)="keytab1($event,'Detalle_Cuenta')">
+          <div class="input-group-append">
+            <button type="button" (click)="obtenerCuenta('')" class="form-control btn btn-primary"><i
+                class="fa fa-search"></i></button>
+          </div>
+        </div>
+      </div>
+      <div class="form-group col-12 col-md-4">
+        <label>Descripcion</label>
+        <input [disabled]="Asiento.Estado !='0'" [(ngModel)]="Detalle.Detalle_Cuenta" name="Detalle_Cuenta"
+          id="Detalle_Cuenta" type="input" class="form-control" placeholder="Detalle"
+          (keydown)="keytab1($event,'Documento')">
+      </div>
+      <div class="form-group col-12 col-md-2">
+        <label>Documento</label>
+        <input [disabled]="Asiento.Estado !='0'" [(ngModel)]="Detalle.Documento" name="Documento"
+          id="Documento" type="input" class="form-control" placeholder="Documento" (blur)="processAccount('Debe')"
+          (keydown)="keytab1($event,'Debe')">
+      </div>
+
+      <div class="form-group col-12 col-md-2">
+        <label>Debe</label>
+        <input [disabled]="Asiento.Estado !='0'" [(ngModel)]="Detalle.Debe"  name="Debe" id="Debe"
+          type="input" class="form-control" placeholder="Debe" (blur)="processAccount('Haber')"
+          (keydown)="keytab1($event,'Haber')" style="text-align:right;">
+      </div>
+      <div class="form-group col-12 col-md-2">
+        <label>Haber</label>
+        <input [disabled]="Asiento.Estado !='0'" [(ngModel)]="Detalle.Haber" name="Haber" id="Haber"
+          type="input" class="form-control" placeholder="Haber" (blur)="processAccount('Cuenta')"
+          (keydown)="keytab1($event,'Cuenta')" style="text-align:right;">
+      </div>
+    </div>
+
+    <!-- Fin de Inclusión de Productos -->
+
+    <!-- Inicio Lista de Detalles -->
+    <div class="form-row d-none d-md-block">
+      <div class="form-row">
+        <div class="form-group col-md-2 m-1">
+          Cuenta
+        </div>
+        <div class="form-group col-12 col-md-3 m-1">
+          Detalle
+        </div>
+        <div class="form-group col-12 col-md-1 m-1">
+          Documento
+        </div>
+        <div class="form-group col-12 col-md-2 m-1">
+          Debe
+        </div>
+        <div class="form-group col-12 col-md-2 m-1">
+          Haber
+        </div>
+        <div class="form-group col-12 col-md-1 m-1">
+          Acción
+        </div>
+      </div>
+    </div>
+    <div class="form-row table table-striped table-hover table-dark table-bordered ">
+      <div class="form-group col-12">
+        <div class="form-row" *ngFor="let Detail of Detalles;let indice = index">
+          <div class="form-group col-12 col-md-2 m-1">
+            {{Detail.Cuenta}}
+          </div>
+          <div class="form-group col-12 col-md-3 m-1">
+            {{Detail.Detalle_Cuenta | slice:0:40}}
+          </div>
+          <div class="form-group col-12 col-md-1 m-1">
+            {{Detail.Documento }}
+          </div>
+          <div class="form-group col-12 col-md-2 m-1" style="text-align:right;">
+            {{Detail.Debe | currency:' '}}
+          </div>
+          <div class="form-group col-12 col-md-2 m-1" style="text-align:right;">
+            {{Detail.Haber | currency:' '}}
+          </div>
+          <div class="form-group col-12 col-md-1 m-1">
+            <span style="display: inline-block;">
+              <button [disabled]="Asiento.Estado !='0'" type="button" class="btn btn-danger btn-sm"
+                style="min-width: 0px;margin-right: 5px;padding: 0rem 0.31rem;"
+                (click)="removerDetalle(indice)"><i class="fa fa-trash" aria-hidden="true"
+                  title="Borrar Linea"></i></button>
+            </span>
+            <button [disabled]="Asiento.Estado !='0'" type="button" class="btn btn-primary btn-sm"
+              style="min-width: 0px;margin-right: 5px;padding: 0rem 0.31rem;"
+              (click)="editarDetalle(indice)"><i class="fa fa-edit" aria-hidden="true"
+                title="Editar Linea"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Fin Lista de Detalles -->
+
+    <!-- Inicio de Totales -->
+    <div class="form-row">
+
+      <div class="form-group col-12 col-md-4">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text fw">Débitos</span>
+          </div>
+          <label class="form-control currency" style="text-align:right;">{{Asiento.Debitos | currency:' '}}</label>
+        </div>
+      </div>
+      <div class="form-group col-12 col-md-4">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text fw">Créditos</span>
+          </div>
+          <label class="form-control currency" style="text-align:right;">{{Asiento.Creditos| currency:' '}}</label>
+        </div>
+      </div>
+      <div class="form-group col-12 col-md-4">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text fw">Diferencia</span>
+          </div>
+          <label class="form-control currency" style="text-align:right;"> {{Asiento.Diferencia| currency:' '}}</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Find de Totales -->
+
+    <div class="form-group col-md-12">
+      <div class="form-row">
+        <div class="form-group col-3 col-md-6">
+
+        </div>
+        <div class="form-group col-3 col-md-2">
+          <button (click)="imprimirAsiento()" type="button"
+            class="btn btn-primary  " title="Cancela edicion">Imprimir</button>
+        </div>
+        <div class="form-group col-3 col-md-2">
+          <button [disabled]="Asiento.Estado !='0'" (click)="aplicarAsiento()" type="button"
+            class="btn btn-success" title="Cancela edicion">Grabar</button>
+        </div>
+        <div class="form-group col-3 col-md-2">
+          <button (click)="cancel()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+  </form><!-- End of form -->
+</div>
+
+
+<!--
+  Form de Cuentas Hijas
+-->
+<div [hidden]="!PantallaCuentasHijas" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Seleccionar Cuenta</h2>
+      <input [(ngModel)]="searchFieldHijas" (blur)="searchHijas()" (keydown)="keytabHijas($event)" type="text"
+        class="form-control" placeholder="Buscar">
+    </div>
+    <div class="card-body modal-grid">
+      <div class="form-row">
+        <div class="form-group col-12 col-sm-6" *ngFor="let Cuenta of Hijas;let i = index">
+          <a (click)="SeleccionarCuenta(Cuenta)">
+            <div class="card">
+              <div class="card-body">
+                <h5>{{Cuenta.Cuenta}} - {{Cuenta.Descripcion}}</h5>
+                Estado :
+                <span *ngIf="Cuenta.Estado == '1'" class="text-success"> Activo</span>
+                <span *ngIf="Cuenta.Estado == '0'" class="text-warning"> Inactivo</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8 col-md-10">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="closePantallaHijas()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div [hidden]="!PantallaLoading" class="modal-main">
+
+  <div class="modal-content  card">
+    <h1>
+      Procesando.....
+    </h1>
+  </div>
+</div>

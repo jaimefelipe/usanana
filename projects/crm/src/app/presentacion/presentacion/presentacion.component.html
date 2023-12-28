@@ -1,0 +1,46 @@
+<div class="container pb-5">
+    <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+    <h2>Presentacion de declaraciones IVA</h2>
+  <form>
+    <div class="form-row">
+        <div class="form-group col-4" >
+            <h4 class="text-center">Bloque A</h4>
+            <div class="form-group col-12 col-sm-12" *ngFor="let BA of BloqueA;let i = index">
+                <div class="card">
+                     <a (dblclick)="terminado(BA)">
+                        <div class="card-body">
+                            {{BA.Nombre}}
+                        </div>
+                    </a>
+                </div>
+            </div>
+            
+        </div>
+        <div class="form-group col-4" >
+            <h4 class="text-center">Bloque B</h4>
+            <div class="form-group col-12 col-sm-12" *ngFor="let BB of BloqueB;let i = index">
+                <div class="card">
+                    <a (dblclick)="terminado(BB)">
+                        <div class="card-body">
+                            {{BB.Nombre}}
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-4" >
+            <h4 class="text-center">Presentado</h4>
+            <div class="form-group col-12 col-sm-12" *ngFor="let PR of Presentado;let i = index">
+                <div class="card">
+                    <a (dblclick)="Pendiente(PR)">
+                        <div class="card-body">
+                            {{PR.Nombre}}
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+  </form>
+  </div>

@@ -1,0 +1,54 @@
+<div class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Reporte Facturas Compra</h2>
+
+
+  <div class="card-body">
+    <div class="form-row">
+
+      <div class="form-group col-md-12">
+        <label>Seleccionar El Reporte a Generar</label>
+        <select (change)="cambiarFechaMes()"  [(ngModel)]="reporte" name="reporte" type="text" class="form-control">
+          <option value='1'>Reporte de Compras PDF</option>
+          <option value='3'>Reporte de Compras Excell</option>
+          <option value='2'>Proceso Facturación XML Masiva</option>
+        </select>
+      </div>
+
+      <div *ngIf="MostrarFecha" class="form-group col-md-3">
+        <label>Fecha Inicio</label>
+        <div class="input-group">
+
+          <input class="form-control" placeholder="Inicio" name="Inicio" [(ngModel)]="FechaInicio" ngbDatepicker
+            #d1="ngbDatepicker">
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary fa fa-calendar" (click)="d1.toggle()" type="button"></button>
+          </div>
+
+        </div>
+      </div>
+
+      <div *ngIf="MostrarFecha" class="form-group col-md-3">
+        <label>Fecha Fin</label>
+        <div class="input-group">
+          <input class="form-control" placeholder="Fin" name="Fin" [(ngModel)]="FechaFin" ngbDatepicker
+            #d2="ngbDatepicker">
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary fa fa-calendar" (click)="d2.toggle()" type="button"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-10">
+
+      </div>
+      <div class="col-md-2">
+        <button (click)="Reporte()" type="button" class="btn btn-primary">Procesar</button>
+      </div>
+    </div>
+
+
+  </div>
+
+</div>

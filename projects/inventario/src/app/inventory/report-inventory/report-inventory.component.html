@@ -1,0 +1,55 @@
+<div class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Reportes Sistema de Inventario</h2>
+
+
+  <div class="card-body">
+    <div class="form-row">
+
+      <div class="form-group col-md-12">
+        <label>Seleccionar El Reporte a Generar</label>
+        <select [(ngModel)]="reporte" name="reporte" type="text" class="form-control">
+          <option value='1'>PDF - Existencias y Costos por Producto</option>
+          <option value='4'>Excell - Existencias y Costos por Producto</option>
+          <option value='2'>Mínimos y Máximos</option>
+          <option value='3'>PDF - Movimientos </option>
+          <option value='5'>Excell - Movimientos</option>
+          <option value='6'>Etiquetas Código Barras</option>
+        </select>
+      </div>
+
+      <div class="form-group col-md-6">
+        <label>Fecha Inicio</label>
+        <div class="input-group">
+          <input class="form-control" placeholder="Inicio" name="Inicio" [(ngModel)]="FechaInicio" ngbDatepicker
+            #d1="ngbDatepicker">
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary fa fa-calendar" (click)="d1.toggle()" type="button"></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-md-6">
+        <label>Fecha Fin</label>
+        <div class="input-group">
+          <input class="form-control" placeholder="Fin" name="Fin" [(ngModel)]="FechaFin" ngbDatepicker
+            #d2="ngbDatepicker">
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary fa fa-calendar" (click)="d2.toggle()" type="button"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-9">
+
+      </div>
+      <div class="col-md-3">
+        <button (click)="Reporte()" type="button" class="btn btn-primary">Generar Reporte</button>
+      </div>
+    </div>
+
+
+  </div>
+
+</div>

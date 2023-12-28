@@ -1,0 +1,100 @@
+<div [hidden]="edit" class="container pb-5">
+  <a [routerLink]="['/']" ><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Licencias Toxo</h2>
+
+  <div class="container-fluid">
+    <div class="row">
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+              </div>
+              <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control" placeholder="Buscar" >
+        </div>
+    </div>
+  </div>
+  <form >
+    <div class="form-row">
+
+      <div class="form-group col-12 col-sm-6" *ngFor="let Licencia of Licencias;let i = index">
+        <div class="card">
+          <div class="card-body">
+            <a (click)="editRecord(Licencia)">
+              <h4 class="card-title">{{Licencia.Id_Empresa}} | {{Licencia.Empresa}}</h4>
+              <p>Producto : {{Licencia.Descripcion}}</p>
+              <p>Categoría : {{Licencia.Nombre}}</p>
+              <p>Vencimiento : {{Licencia.Fecha_Vencimiento}}</p>
+              <p>Documentos : {{Licencia.Cantidad_Disponible}}</p>
+              <h4>
+              <span *ngIf="Licencia.Producto_Estado == '1'" class="text-success"> Activo</span>
+              <span *ngIf="Licencia.Producto_Estado == '0'" class="text-warning"> Inactivo</span>
+              <span *ngIf="Licencia.Producto_Estado == ''" class="text-danger"> No Definido</span>
+              </h4>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="container-fluid">
+    <ul class="pagination">
+      <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward" aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward" aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward" aria-hidden="true"></i></a></li>
+  </ul>
+  </div>
+
+</div>
+
+
+<div [hidden]="!edit" class="container pb-5">
+  <a [routerLink]="['/']" ><img src="/assets/toxologo.png" width="85px"></a>
+  <h2> Editar Licencia</h2>
+  <form>
+    <div class="form-row">
+    </div>
+
+    <div class="form-group col-md-12">
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label>Producto</label>
+          <input [(ngModel)]="Licencia.Descripcion" name="Descripcion"  type="text" class="form-control" disabled >
+        </div>
+        <div class="form-group col-md-6">
+          <label>Producto</label>
+          <input [(ngModel)]="Licencia.Nombre"   name="Nombre"  type="text" class="form-control" disabled >
+        </div>
+        <div class="form-group col-md-3">
+          <label>Fecha de Vencimiento</label>
+          <div class="input-group">
+            <input class="form-control" placeholder="FechaVencimiento" name="FechaVencimiento" [(ngModel)]="FechaVencimiento" ngbDatepicker #d1="ngbDatepicker">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary fa fa-calendar" (click)="d1.toggle()" type="button"></button>
+            </div>
+          </div>
+        </div> 
+
+        <div class="form-group col-md-6">
+          <label>Número de Documentos</label>
+          <input [(ngModel)]="Licencia.Cantidad_Disponible" name="Cantidad_Disponible" type="text" placeholder="Cantidad de Documentos" class="form-control" >
+        </div>
+        <div class="form-group col-md-6">
+          <label>Estado</label>
+          <select [(ngModel)]="Licencia.Empresa_Estado" name="Empresa_Estado" type="text" class="form-control">
+            <option value='1'>Activo</option>
+            <option value='0'>Inactivo</option>
+          </select>
+        </div>
+        <div class="form-group col-md-6">
+        </div>
+
+        <div class="form-group col-3 col-md-2">
+          <button (click)="grabar()" type="button" class="btn btn-success" title="Cancela edicion" >Grabar</button>
+        </div>
+        <div class="form-group col-3 col-md-2">
+          <button (click)="cancel()" type="button" class="btn btn-danger" title="Cancela edicion" >Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

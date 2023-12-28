@@ -1,0 +1,75 @@
+<!-- [hidden]="!logedIn" -->
+<nav  role="navigation">
+  <div id="menuToggle">
+    <!--
+    A fake / hidden checkbox is used as click reciever,
+    so you can use the :checked selector on it.
+    -->
+    <input  id="MenuShow" (click)="click()" [checked]="showMenu"  type="checkbox" />
+
+    <!--
+    Some spans to act as a hamburger.
+
+    They are acting like a real hamburger,
+    not that McDonalds stuff.
+    -->
+    <span></span>
+    <span></span>
+    <span></span>
+
+    <!--
+    Too bad the menu has to be inside of the button
+    but hey, it's pure CSS magic.
+    -->
+      <ul  [hidden]="!showMenu" id="menu">
+        <a (click)="hideMenu()" [routerLink]="['/']"><li><i class="fa fa-home"></i> Inicio {{ambiente}} 2.3.13</li></a>
+        <div [hidden]="!logedIn">
+
+          <li [hidden]="!AppTurismo" (click)="clickConfigMenu()" ><a><i class="fa fa-cog"></i> Configuración <i [ngClass]='configClass' class="fa fa-cog"></i>  </a></li>
+          <ul [hidden]="!ConfigMenu">
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/people']"><li><i class="fa fa-id-card-o"></i> Contactos </li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/lugar']"><li><i class="fa fa-globe"></i> lugar</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/coordina']"><li><i class="fa fa-cog"></i> Coordinación</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/paquete']"><li><i class="fa fa-cog"></i> Paquetes</li></a>
+          </ul>
+
+          <li [hidden]="!AppHospedaje" (click)="clickHospedajeMenu()" ><a><i class="fa fa-bed"></i>  Hospedaje <i [ngClass]='hospedajeClass' class="fa fa-cog"></i>  </a></li>
+          <ul [hidden]="!HospedajeMenu" >
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/hotel']"><li><i class="fa fa-bed"></i> Alojamiento</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/tipohabitacion']"><li><i class="fa fa-hospital-o"></i> Tipo Habitación</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/tarifahotel']"><li><i class="fa fa-usd"></i> Tarifa Alojamiento</li></a>
+          </ul>
+
+
+          <li [hidden]="!AppTransporte" (click)="clickTransporteMenu()" ><a><i class="fa fa-car"></i>  Transportes <i [ngClass]='transporteClass' class="fa fa-cog"></i>  </a></li>
+          <ul [hidden]="!TransporteMenu" >
+            <a (click)="hideMenu()" [routerLink]="['/routes']"><li><i class="fa fa-bus"></i>  Rutas</li></a>
+            <a (click)="hideMenu()" [routerLink]="['/routesrate']"><li><i class="fa fa-usd"></i>  Tarifas</li></a>
+            <a (click)="hideMenu()" [routerLink]="['/routeschedule']"><li><i class="fa fa-clock-o"></i>  Horarios</li></a>
+            <a (click)="hideMenu()" [routerLink]="['/vehiclecat']"><li><i class="fa fa-window-restore"></i>  Categorias Vehículo</li></a>
+            <a (click)="hideMenu()" [routerLink]="['/vehicletype']"><li><i class="fa fa-window-restore"></i>  Tipo de Vehículo</li></a>
+            <a (click)="hideMenu()" [routerLink]="['/vehicle']"><li><i class="fa fa-bus"></i>  Vehículos</li></a>
+          </ul>
+
+          <li [hidden]="!AppTurismo" (click)="clickTourMenu()" ><a><i class="fa fa-globe"></i>  Tours <i [ngClass]='tourClass' class="fa fa-cog"></i>  </a></li>
+          <ul [hidden]="!TourMenu">
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/tour']"><li><i class="fa fa-globe"></i> Tour</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/tourrate']"><li><i class="fa fa-usd"></i>  Tarifas Tour</li></a>
+          </ul>
+
+          <li [hidden]="!AppTurismo" (click)="clickItinerarioMenu()" ><a><i class="fa fa-hospital-o"></i>  Servicios <i [ngClass]='itinerarioClass' class="fa fa-cog"></i>  </a></li>
+          <ul [hidden]="!ItinerarioMenu">
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/itinerarios']"><li><i class="fa fa-credit-card"></i> Itinerarios</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/transitinerarios']"><li><i class="fa fa-credit-card"></i> Itinerarios Transporte</li></a>
+          </ul>
+
+        </div>
+
+
+        <a href="https://api.whatsapp.com/send?phone=50687786649" target="_blank"><li><i class="fa fa-phone"></i> Soporte</li></a>
+        <a href="/main" target="_self"><li><i class="fa fa-home"></i> Menú Principal</li></a>
+        <a (click)="hideMenu()" [hidden]="!logedIn" (click)="logOut()" href="#"><li><i class="fa fa-sign-out"></i> Salir</li></a>
+        <a (click)="hideMenu()" [hidden]="!logedIn">{{Company}} | {{User}}</a>
+      </ul>
+  </div>
+</nav>

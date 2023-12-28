@@ -1,0 +1,442 @@
+<div [hidden]="edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <div class="input-group mb-3">
+    <div class="input-group-prepend">
+      <h2>Artículos &nbsp;</h2>
+    </div>
+    &nbsp;
+    <select class="input-group-append" (change)="loadProducts()" [(ngModel)]="Tipo_Codigo" name="Tipo_Codigo1" type="text" class="form-control">
+      <option value='1'>Artículo para la Venta</option>
+      <option value='2'>Artículo de Uso Interno</option>
+      <option value='3'>Servicios para la Venta</option>
+      <option value='4'>Compra de Servicios</option>
+    </select>
+  </div>
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+        </div>
+        <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+          placeholder="Buscar">
+        <div class="input-group-append">
+          <button class="btn btn-success" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
+              aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form>
+    <div class="form-row">
+
+      <div class="form-group col-12 col-sm-6" *ngFor="let Product of Articulos;let i = index">
+        <div class="card">
+          <a (click)="editRecord(Product)">
+            <div class="card-body">
+              {{Product.Categoria}} - {{Product.SubCategoria}}
+              <h4 class="card-title">{{Product.Descripcion}}</h4>
+              Código : {{Product.SKU}} Precio: {{Product.Precio | currency:' '}} + IVA {{ (Product.Precio * 1 ) + (Product.Precio * Product.Impuesto / 100) | currency:' '}} Estado
+              <span *ngIf="Product.Estado == '1'" class="text-success"> Activo</span>
+              <span *ngIf="Product.Estado == '0'" class="text-warning"> Inactivo</span>
+              {{Product.Id_Producto}}
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="container-fluid">
+    <ul class="pagination">
+      <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"
+            aria-hidden="true"></i></a></li>
+    </ul>
+  </div>
+</div>
+
+
+<!--
+  Form de Edición
+-->
+
+<div [hidden]="!edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Artículo</h2>
+
+  <form>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label>Tipo</label>
+        <select [(ngModel)]="Articulo.Tipo_Codigo" name="Tipo_Codigo" type="text" class="form-control">
+          <option value='1'>Artículo para la Venta</option>
+          <option value='2'>Artículo de Uso Interno</option>
+          <option value='3'>Servicios para la Venta</option>
+          <option value='4'>Compra de Servicios</option>
+        </select>
+      </div>
+      <div class="form-group col-md-6">
+        <label>Código Cabys</label>
+        <input [(ngModel)]="Articulo.Codigo" name="Codigo" type="text" placeholder="Código" class="form-control">
+      </div>
+      <div class="form-group col-md-5">
+        <label>Código SKU - Código de Barras</label>
+        <input [(ngModel)]="Articulo.SKU" name="SKU" type="text" placeholder="SKU" class="form-control">
+      </div>
+      <div class="form-group col-md-1">
+        <label>Generar</label>
+        <button (click)="generaCadenaAleatoria()" type="button" class="btn btn-success" title="Generar">Generar</button>
+      </div>
+      
+      <div [hidden]="!interfazInventario" class="form-group col-md-6">
+        <label>Código Proveedor</label>
+        <input [(ngModel)]="Articulo.Codigo_Proveedor" name="Codigo_Proveedor" type="text" placeholder="Código Proveedor" class="form-control">
+      </div>
+      <div class="form-group col-md-10">
+        <label>Nombre</label>
+        <input [(ngModel)]="Articulo.Descripcion" name="Descripcion" type="text" placeholder="Nombre"
+          class="form-control">
+      </div>
+      <div class="form-group col-md-2">
+        <label>Orden</label>
+        <input [(ngModel)]="Articulo.Orden" name="Orden" type="text" placeholder="Orden"
+          class="form-control">
+      </div>
+      <div class="form-group col-md-6">
+        <label for="name">Cargar Fotografia</label>
+        <div class="custom-file">
+          <label class="custom-file-label" for="customFile">{{Articulo.Foto}}</label>
+          <input (change)="loadImage($event)" type="file" class="custom-file-input" id="customFile">
+        </div>
+      </div>
+      
+      <div class="form-group col-md-4">
+        <label for="name">Fotografia</label>
+        <input disabled="disabled" [(ngModel)]="Articulo.Foto" name="Foto" type="text" class="form-control">
+      </div>
+      <div class="form-group col-md-2">
+        <img [src]="Articulo.FotoSrc" width="95px">
+      </div>
+      <div class="form-group col-md-3">
+        <label>Categoría</label>
+        <select [(ngModel)]="Articulo.Categoria" (change)="LeerSubCategorias()" name="Categoria" type="text" class="form-control">
+          <option value='{{Categoria.Id_Categoria}}' *ngFor="let Categoria of Categories;let i = index">
+            {{Categoria.Nombre}}</option>
+        </select>
+      </div>
+      <div class="form-group col-md-3">
+        <label>Sub Categoría</label>
+        <select [(ngModel)]="Articulo.Id_Sub_Categoria" name="SubCategoria" type="text" class="form-control">
+          <option value='{{Categoria.Id_Sub_Categoria}}' *ngFor="let Categoria of SubCategorias;let i = index">
+            {{Categoria.Nombre}}</option>
+        </select>
+      </div>
+      <div class="form-group col-md-3">
+        <label>Unidad de Medida</label>
+        <select [(ngModel)]="Articulo.Unidad_Medida" name="Unidad_Medida" type="text" class="form-control">
+          <option value='Unid'>Unidad</option>
+          <option value='Sp'>Servicio Profesional</option>
+          <option value='Spe'>Servicio personales</option>
+          <option value='Al'>Alquiler de uso habitacional</option>
+          <option value='Alc'>Alquiler de uso comercial</option>
+          <option value='Cm'>Comisiones</option>
+          <option value='Os'>Otro tipo de servicio</option>
+          <option value='St'>Servicios técnicos</option>
+          <option value='L'>Litro</option>
+          <option value='m'>Metro</option>
+          <option value='kg'>Kilo</option>
+          <option value='gl'>Galón</option>
+          <option value='cm'>Comisiones</option>
+          <option value='h'>Hora</option>
+
+        </select>
+      </div>
+      <div class="form-group col-md-3">
+        <label>Tipo Impuesto</label>
+        <select (change)="cambiarTarifa()" [(ngModel)]="Articulo.Tipo_Impuesto" name="Tipo_Impuesto"
+          class="form-control">
+          <option value='01'>0% Excento</option>
+          <option value='02'>1% (Canasta Básica, Maquinaria Para CB, Inumos Agropecuarios)</option>
+          <option value='03'>2% (Medicamentos, Seguros, Educación, Estado)</option>
+          <option value='04'>4% (Salud Privada, Boletos Aereos)</option>
+          <option value='05'>0% Transitorio</option>
+          <option value='06'>4% Transitorio</option>
+          <option value='07'>8% Transitorio</option>
+          <option value='08'>13% (venta de bienes y prestación de servicios)</option>
+        </select>
+      </div>
+      <div class="form-group col-md-3">
+        <label>Tasa Impuesto</label>
+        <input [(ngModel)]="Articulo.Impuesto" disabled class="form-control" name="Impuesto" id="Impuesto" type="text"
+          placeholder="Tasa">
+      </div>
+      <div class="form-group col-md-3">
+        <label>Moneda</label>
+        <select [(ngModel)]="Articulo.Moneda" name="Moneda" type="text" class="form-control">
+          <option value='CRC'>Colones</option>
+          <option value='USD'>Dólares</option>
+        </select>
+      </div>
+      <div class="form-group col-md-3">
+        <label>Precio</label>
+        <input (change)="CalculoPrecio()"  [(ngModel)]="Articulo.Precio" class="form-control" name="Precio" id="Precio" type="text"
+          placeholder="Precio">
+      </div>
+      <div class="form-group col-md-3">
+
+        <div [hidden]="!Restaurante" class="form-check form-check-inline">
+          <label  class="form-check-label" for="inlineCheckbox1" >Precio + IVA </label> 
+          <label  class="form-check-label" for="inlineCheckbox1"> + 10%  </label>
+          <input  class="form-check-input" type="checkbox" id="inlineCheckbox1" [checked]="PrecioServicioIncluido"  (change)="CalculoPrecio3()" >
+        </div> 
+        <label [hidden]="Restaurante">Precio + IVA </label>
+        <input (change)="CalculoPrecio2()"  [(ngModel)]="Articulo.PrecioIva"  class="form-control" name="PrecioIva" id="PrecioIva" type="text"
+          placeholder="Precio">
+      </div>
+      <div [hidden]="!interfazInventario" class="form-group col-md-3">
+        <label>Mínimos</label>
+        <input [(ngModel)]="Articulo.Minimo" name="Minimo" type="text" placeholder="Minimo" class="form-control">
+      </div>
+      <div [hidden]="!interfazInventario" class="form-group col-md-3">
+        <label>Máximos</label>
+        <input [(ngModel)]="Articulo.Maximo" name="Maximo" type="text" placeholder="Maximo" class="form-control">
+      </div>
+      <div [hidden]="!interfazInventario" class="form-group col-md-3">
+        <label>Existencia</label>
+        <input [(ngModel)]="Articulo.Existencia" [disabled]="!Admin" name="Existencia" type="text" placeholder="Existencia"
+          class="form-control">
+      </div>
+      <div [hidden]="!interfazInventario" class="form-group col-md-3">
+        <label>Costo Ultima Factura</label>
+        <input [(ngModel)]="Articulo.Ultimo_Costo" disabled class="form-control" name="Ultimo_Costo" id="Ultimo_Costo"
+          type="text" placeholder="Ultimo_Costo">
+      </div>
+      <div [hidden]="!interfazInventario" class="form-group col-md-3">
+        <label>Costo Promedio</label>
+        <input [(ngModel)]="Articulo.Costo_Promedio" disabled class="form-control" name="Costo_Promedio"
+          id="Costo_Promedio" type="text" placeholder="Costo_Promedio">
+      </div>
+      <div [hidden]="!interfazInventario" class="form-group col-md-6">
+        <label>Producto para conversión</label>
+        <div class="input-group">
+
+          <div class="input-group-append">
+            <button type="button" (click)="abrirPantallaProductoRelacionada(1)" class="form-control btn btn-primary"><i
+                class="fa fa-search"></i></button>
+          </div>
+          <input [(ngModel)]="Articulo.Producto_Relacionado_Nombre" disabled name="Producto_Relacionado_Nombre" id="Producto_Relacionado_Nombre" type="input"
+            class="form-control" placeholder="Producto Para Conversión">
+        </div>
+      </div>
+      <div [hidden]="!interfazInventario" class="form-group col-md-3">
+        <label>Cantidad Relacionada</label>
+        <input [(ngModel)]="Articulo.Cantidad_Relacionada"  class="form-control" name="Cantidad_Relacionada"
+          id="Cantidad_Relacionada" type="text" placeholder="Cantidad Relacionada">
+      </div>
+
+      <div class="form-group col-md-3">
+        <label>Estado</label>
+        <select [(ngModel)]="Articulo.Estado" name="Estado" type="text" class="form-control">
+          <option value='1'>Activo</option>
+          <option value='0'>Inactivo</option>
+        </select>
+      </div>
+
+      <!-- Componentes del producto -->
+      <div [hidden]="nuevo" class="form-row col-md-12">
+
+        <div class="form-group col-2 col-sm-1">
+          <button type="button" data-toggle="collapse" href="#GeneralData" class="form-control btn btn-primary"><i
+              class="fa fa-bars"></i></button>
+        </div>
+        <div class="form-group col-1 col-sm-1">
+          <button class="btn btn-success" type="button" (click)="AgregarCompoente('')"><i class="fa fa-plus-circle"
+            aria-hidden="true"></i></button>
+        </div>
+        <div class="form-group col-8 col-sm-8">
+          <h3>Componentes</h3>
+        </div>
+      </div>
+      <div class="collapse show form-row col-md-12" id="GeneralData">
+        <div class="form-group col-12 col-sm-6" *ngFor="let Componete of Componentes;let i = index">
+          <div class="card">
+            <a (click)="EditComponete(Componete)">
+              <div class="card-body">
+
+                <h4 class="card-title">{{Componete.Nombre}}</h4>
+                Precio : {{Componete.Precio}} Grupo: {{Componete.Grupo}}
+                <span *ngIf="Componete.Adicional == '1'" class="text-primary"> Adicional</span>
+
+                <span *ngIf="Componete.Opcional == '1'" class="text-success"> Opcional</span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-6 col-md-8">
+
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="grabar()" type="button" class="btn btn-success" title="Cancela edicion">Grabar</button>
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="cancel()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+
+    </div> <!-- End of form-row-->
+  </form><!-- End of form -->
+</div>
+
+<div [hidden]="!PantallaComponente" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Componente del Artículo</h2>
+    </div>
+    <div class="card-body modal-grid">
+      <div class="form-row">
+
+        <div class="form-group col-md-12">
+          <label>Nombre</label>
+          <input [(ngModel)]="Componente.Nombre" name="Descripcion" type="text" placeholder="Nombre"
+            class="form-control">
+        </div>
+
+        <div [hidden]="!interfazInventario" class="form-group col-md-8">
+          <label>Producto para conversión</label>
+          <div class="input-group">
+
+            <div class="input-group-append">
+              <button type="button" (click)="abrirPantallaProductoRelacionada(2)" class="form-control btn btn-primary"><i
+                  class="fa fa-search"></i></button>
+            </div>
+            <input [(ngModel)]="Componente.Producto_Relacionado_Nombre" disabled name="Producto_Relacionado_Nombre" id="Producto_Relacionado_Nombre" type="input"
+              class="form-control" placeholder="Producto Para Conversión">
+          </div>
+        </div>
+        <div [hidden]="!interfazInventario" class="form-group col-md-4">
+          <label>Cantidad Relacionada</label>
+          <input [(ngModel)]="Componente.Cantidad_Relacionada"  class="form-control" name="Cantidad_Relacionada"
+            id="Cantidad_Relacionada" type="text" placeholder="Cantidad Relacionada">
+        </div>
+
+        <div class="form-group col-md-4">
+          <label>Precio</label>
+          <input [(ngModel)]="Componente.Precio" class="form-control" name="Precio" id="Precio" type="text"
+            placeholder="Precio">
+        </div>
+        <div class="form-group col-md-4">
+          <label>Adicional</label>
+          <select [(ngModel)]="Componente.Adicional" name="Estado" type="text" class="form-control">
+            <option value='1'>Si</option>
+            <option value='0'>No</option>
+          </select>
+        </div>
+        <div class="form-group col-md-4">
+          <label>Opcional</label>
+          <select [(ngModel)]="Componente.Opcional" name="Estado" type="text" class="form-control">
+            <option value='1'>Si</option>
+            <option value='0'>No</option>
+          </select>
+        </div>
+        <div class="form-group col-md-4">
+          <label>Grupo</label>
+          <select [(ngModel)]="Componente.Grupo" name="Estado" type="text" class="form-control">
+            <option value='1'>1</option>
+            <option value='2'>2</option>
+            <option value='3'>3</option>
+            <option value='4'>4</option>
+            <option value='5'>5</option>
+            <option value='6'>6</option>
+            <option value='7'>7</option>
+            <option value='8'>8</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-12">
+          <label>Partes</label>
+          <input [(ngModel)]="Componente.Parte" (keydown)="addParte($event)" class="form-control" name="Parte" id="Parte" type="text"
+            placeholder="Parte">
+        </div>
+        <div class="form-group col-12 col-sm-6" *ngFor="let SubComponente of Sub_Componentes;let i = index">
+          <div class="card">
+
+              <div class="card-body">
+                <button (click)="deletePart(SubComponente,i)" type="button" class="btn btn-danger m-2"
+              title="Cancela edicion">Borrar</button>
+              <button (click)="editPart(SubComponente,i)" type="button" class="btn btn-primary m-2"
+              title="Cancela edicion">Editar</button>
+                {{SubComponente.Nombre}}
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="agregarComponente()" type="button" class="btn btn-success"
+              title="Cancela edicion">Grabar</button>
+          </div>
+          <div class="form-group col-2">
+            <button (click)="closePantallaComponente()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div [hidden]="!PantallaProductoRelacionado" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Seleccionar Cuenta</h2>
+      <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+          placeholder="Buscar">
+    </div>
+    <div class="card-body modal-grid">
+      <div class="form-row">
+        <div class="form-group col-12 col-sm-6" *ngFor="let Articulo of Articulos;let i = index">
+          <a (click)="seleccionarProducto(Articulo)">
+            <div class="card">
+              <div class="card-body">
+                {{Articulo.Categoria}} - {{Articulo.SubCategoria}}
+              <h4 class="card-title">{{Articulo.Descripcion}}</h4>
+              <span *ngIf="Articulo.Estado == '1'" class="text-success"> Activo</span>
+              <span *ngIf="Articulo.Estado == '0'" class="text-warning"> Inactivo</span>
+              {{Articulo.Id_Producto}}
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8 col-md-10">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="cerrarPantallaProductoRelacionda()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,509 @@
+<div [hidden]="edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Cajas - Ventas</h2>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+        </div>
+        <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+          placeholder="Buscar">
+        <div class="input-group-append">
+          <button class="btn btn-success" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
+              aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form>
+    <div class="form-row">
+
+      <div class="form-group col-12 col-sm-6" *ngFor="let Caja of Cajas;let i = index">
+        <div class="card">
+          <a (click)="editRecord(Caja)">
+            <div class="card-body">
+
+              <h4 class="card-title">Sucursal: {{Caja.Nombre}}</h4>
+              <h4 class="card-title">Caja # {{Caja.Numero_Caja}}</h4>
+              {{Caja.Id_Caja}} Consecutivo {{Caja.Consecutivo}} -
+              Estado :
+              <span *ngIf="Caja.Estado == '1'" class="text-success"> Abierta</span>
+              <span *ngIf="Caja.Estado == '0'" class="text-danger"> Cerrada</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="container-fluid">
+    <ul class="pagination">
+      <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"
+            aria-hidden="true"></i></a></li>
+    </ul>
+  </div>
+</div>
+
+<!--
+  Form de Edición
+-->
+
+<div [hidden]="!edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Caja</h2>
+
+  <form>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label>Sucursal</label>
+        <select [(ngModel)]="Caja.Id_Sucursal" name="Id_Sucursal" class="form-control">
+          <option value={{Sucursal.Id_Sucursal}} *ngFor="let Sucursal of Sucursales;let i = index">{{Sucursal.Nombre}}
+          </option>
+        </select>
+      </div>
+      <div class="form-group col-md-6">
+        <label>Número de Caja</label>
+        <input [(ngModel)]="Caja.Numero_Caja" name="Numero_Caja" type="text" placeholder="Numero_Caja"
+          class="form-control">
+      </div>
+      <div class="form-group col-md-6">
+        <label>Consecutivo</label>
+        <input [(ngModel)]="Caja.Consecutivo" disabled name="Consecutivo" type="text" placeholder="Consecutivo"
+          class="form-control">
+      </div>
+      <div class="form-group col-md-6">
+        <label>Saldo Apertura</label>
+        <input [disabled]="Caja.Estado !='0'" [(ngModel)]="Caja.Saldo_Apertura " name="Saldo_Apertura" type="text"
+          placeholder="Saldo_Apertura" class="form-control"
+          currencyMask [options]="{ prefix: ' ', thousands: ',', decimal: '.', allowZero: true }" >
+      </div>
+      <div class="form-group col-md-6">
+        <label>Saldo Actual</label>
+        <input disabled [(ngModel)]="Caja.Saldo_Actual" name="Saldo_Actual" type="text" placeholder="Saldo_Actual"
+          class="form-control"
+          currencyMask [options]="{ prefix: ' ', thousands: ',', decimal: '.', allowZero: true }" >
+      </div>
+      <div class="form-group col-md-6">
+        <label>Cajero</label>
+        <input [(ngModel)]="Caja.Nombre_Usuario" disabled name="Nombre_Usuario" type="text" placeholder="Cajero"
+          class="form-control">
+      </div>
+      <div class="form-group col-md-6">
+        <label>Estado</label>
+        <select [(ngModel)]="Caja.Estado" disabled name="Estado" type="text" class="form-control">
+          <option value='1'>Abierta</option>
+          <option value='0'>Cerrada</option>
+        </select>
+      </div>
+      <div class="form-group col-md-12">
+        <div class="form-row">
+
+          <div *ngIf="Caja.Estado == '0'" class="form-group col-3 col-md-2">
+            <button (click)="abrirCaja()" type="button" class="btn btn-primary" title="Cancela edicion">Abrir
+              Caja</button>
+          </div>
+          <div *ngIf="Caja.Estado == '1'" class="form-group col-3 col-md-2">
+            <button (click)="cerrarCaja()" type="button" class="btn btn-primary" title="Cancela edicion">Cerrar
+              Caja</button>
+          </div>
+          <div class="form-group col-6 col-md-6">
+
+          </div>
+
+          <div *ngIf="Caja.Estado == '0'" class="form-group col-3 col-md-2">
+            <button (click)="grabar()" type="button" class="btn btn-success" title="Cancela edicion">Grabar</button>
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="cancel()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+</div>
+
+
+<div [hidden]="!PantallaArqueo" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Cierre de Caja - Arqueo de Caja</h2>
+    </div>
+    <div class="card-body modal-grid">
+      <div class="form-row">
+
+
+        <div class="form-group col-md-3 ">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <div class="input-group-text">₡50.000</div>
+            </div>
+            <input [(ngModel)]="Arqueo.Cincuentamil" name="cincuentamil" type="number" placeholder="50.000"
+            class="form-control">
+            <div class="input-group-prepend">
+              <div class="input-group-text">{{Arqueo.Cincuentamil * 50000}}
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="form-group col-md-3 ">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <div class="input-group-text">₡20.000</div>
+            </div>
+            <input [(ngModel)]="Arqueo.Veintemil" name="Veintemil" type="number" placeholder="20.000"
+            class="form-control">
+            <div class="input-group-prepend">
+              <div class="input-group-text">{{Arqueo.Veintemil * 20000 | currency: ' '}}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-3 ">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <div class="input-group-text">₡10.000</div>
+            </div>
+            <input [(ngModel)]="Arqueo.Diezmil" name="Diezmil" type="number" placeholder="10.000"
+            class="form-control">
+            <div class="input-group-prepend">
+              <div class="input-group-text">{{Arqueo.Diezmil * 10000 | currency: ' '}}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-3 ">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <div class="input-group-text">₡5.000</div>
+            </div>
+            <input [(ngModel)]="Arqueo.Cincomil" name="Cincomil" type="number" placeholder="5.000"
+            class="form-control">
+            <div class="input-group-prepend">
+              <div class="input-group-text">{{Arqueo.Cincomil * 5000 | currency: ' '}}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-3 ">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <div class="input-group-text">₡2.000</div>
+            </div>
+            <input [(ngModel)]="Arqueo.Dosmil" name="Dosmil" type="number" placeholder="2.000"
+            class="form-control">
+            <div class="input-group-prepend">
+              <div class="input-group-text">{{Arqueo.Dosmil * 2000 | currency: ' '}}</div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="form-group col-md-3 ">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <div class="input-group-text">₡1.000</div>
+            </div>
+            <input [(ngModel)]="Arqueo.Mil" name="Mil" type="number" placeholder="1.000"
+            class="form-control">
+            <div class="input-group-prepend">
+              <div class="input-group-text">{{Arqueo.Mil * 1000 | currency: ' '}}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-3 ">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <div class="input-group-text">₡500</div>
+            </div>
+            <input [(ngModel)]="Arqueo.Quinientos" name="Quinientos" type="number" placeholder="500"
+            class="form-control">
+            <div class="input-group-prepend">
+              <div class="input-group-text">{{Arqueo.Quinientos * 500 | currency: ' '}}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-3 ">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <div class="input-group-text">₡100</div>
+            </div>
+            <input [(ngModel)]="Arqueo.Cien" name="Cien" type="number" placeholder="100"
+            class="form-control">
+            <div class="input-group-prepend">
+              <div class="input-group-text">{{Arqueo.Cien * 100 | currency: ' '}}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-3 ">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <div class="input-group-text">₡50</div>
+            </div>
+            <input [(ngModel)]="Arqueo.Cincuenta" name="Cincuenta" type="number" placeholder="50"
+            class="form-control">
+            <div class="input-group-prepend">
+              <div class="input-group-text">{{Arqueo.Cincuenta * 50 | currency: ' '}}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-3 ">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <div class="input-group-text">₡25</div>
+            </div>
+            <input [(ngModel)]="Arqueo.Veinticinco" name="Veinticinco" type="number" placeholder="25"
+            class="form-control">
+            <div class="input-group-prepend">
+              <div class="input-group-text">{{Arqueo.Veinticinco * 25 | currency: ' '}}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-3 ">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <div class="input-group-text">₡10</div>
+            </div>
+            <input [(ngModel)]="Arqueo.Diez" name="Diez" type="number" placeholder="10"
+            class="form-control">
+            <div class="input-group-prepend">
+              <div class="input-group-text">{{Arqueo.Diez * 10 | currency: ' '}}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-3 ">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <div class="input-group-text">₡5</div>
+            </div>
+            <input [(ngModel)]="Arqueo.Cinco" name="Cinco" type="number" placeholder="5"
+            class="form-control">
+            <div class="input-group-prepend">
+              <div class="input-group-text">{{Arqueo.Cinco * 5 | currency: ' '}}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-12 ">
+          <label>
+            <p class="text-primary">
+                TOTAL COLONES :
+                ₡
+                {{
+                  (Arqueo.Cincuentamil * 50000) +
+                  (Arqueo.Veintemil * 20000) +
+                  (Arqueo.Diezmil * 10000) +
+                  (Arqueo.Cincomil * 5000) +
+                  (Arqueo.Dosmil * 2000) +
+                  (Arqueo.Mil * 1000) +
+                  (Arqueo.Quinientos * 500) +
+                  (Arqueo.Cien * 100) +
+                  (Arqueo.Cincuenta * 50) +
+                  (Arqueo.Veinticinco * 25) +
+                  (Arqueo.Diez * 10) +
+                  (Arqueo.Cinco * 5)
+                  | currency:  ' '
+                }}
+              </p>
+          </label>
+        </div>
+
+        <div class="form-group col-md-3 ">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <div class="input-group-text">$100</div>
+            </div>
+            <input [(ngModel)]="Arqueo.CienDolares" name="CienDolares" type="number" placeholder="100"
+            class="form-control">
+            <div class="input-group-prepend">
+              <div class="input-group-text">{{Arqueo.CienDolares * 100 | currency}}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-3 ">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <div class="input-group-text">$50</div>
+            </div>
+            <input [(ngModel)]="Arqueo.CincuentaDolares" name="CincuentaDolares" type="number" placeholder="50"
+            class="form-control">
+            <div class="input-group-prepend">
+              <div class="input-group-text">{{Arqueo.CincuentaDolares * 50 | currency}}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-3 ">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <div class="input-group-text">$20</div>
+            </div>
+            <input [(ngModel)]="Arqueo.VeinteDolares" name="VeinteDolares" type="number" placeholder="20"
+            class="form-control">
+            <div class="input-group-prepend">
+              <div class="input-group-text">{{Arqueo.VeinteDolares * 20 | currency}}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-3 ">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <div class="input-group-text">$10</div>
+            </div>
+            <input [(ngModel)]="Arqueo.DiezDolares" name="DiezDolares" type="number" placeholder="10"
+            class="form-control">
+            <div class="input-group-prepend">
+              <div class="input-group-text">{{Arqueo.DiezDolares * 10 | currency}}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-3 ">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <div class="input-group-text">$5</div>
+            </div>
+            <input [(ngModel)]="Arqueo.CincoDolares" name="CincoDolares" type="number" placeholder="5"
+            class="form-control">
+            <div class="input-group-prepend">
+              <div class="input-group-text">{{Arqueo.CincoDolares * 5 | currency}}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-3 ">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <div class="input-group-text">$2</div>
+            </div>
+            <input [(ngModel)]="Arqueo.DosDolares" name="DosDolares" type="number" placeholder="2"
+            class="form-control">
+            <div class="input-group-prepend">
+              <div class="input-group-text">{{Arqueo.DosDolares * 2 | currency}}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-3 ">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <div class="input-group-text">$1</div>
+            </div>
+            <input [(ngModel)]="Arqueo.UnDolar" name="UnDolar" type="number" placeholder="1"
+            class="form-control">
+            <div class="input-group-prepend">
+              <div class="input-group-text">{{Arqueo.UnDolar * 1 | currency}}</div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="form-group col-md-12 ">
+          <label>
+            <p class="text-primary">
+                TOTAL DOLARES :
+                $
+                {{
+                  (Arqueo.CienDolares * 100) +
+                  (Arqueo.CincuentaDolares * 50) +
+                  (Arqueo.VeinteDolares * 20) +
+                  (Arqueo.DiezDolares * 10) +
+                  (Arqueo.CincoDolares * 5) +
+                  (Arqueo.DosDolares * 2) +
+                  (Arqueo.UnDolar * 1)
+                  | currency:  ' '
+                }}
+              </p>
+          </label>
+        </div>
+
+        <div class="form-group col-md-3 ">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <div class="input-group-text">Varios</div>
+            </div>
+            <input [(ngModel)]="Arqueo.Varios" name="Varios" type="text" placeholder=""
+            currencyMask [options]="{ prefix: ' ', thousands: ',', decimal: '.', allowZero: true }"
+            class="form-control">
+          </div>
+        </div>
+
+        <div class="form-group col-md-3 ">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <div class="input-group-text">Sinpe</div>
+            </div>
+            <input [(ngModel)]="Arqueo.Sinpe" name="Sinpe" type="text" placeholder=""
+            currencyMask [options]="{ prefix: ' ', thousands: ',', decimal: '.', allowZero: true }"
+            class="form-control">
+          </div>
+        </div>
+
+        <div class="form-group col-md-3 ">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <div class="input-group-text">Depósito</div>
+            </div>
+            <input [(ngModel)]="Arqueo.Deposito" name="Deposito" type="text" placeholder=""
+            currencyMask [options]="{ prefix: ' ', thousands: ',', decimal: '.', allowZero: true }"
+            class="form-control">
+          </div>
+        </div>
+
+        <div class="form-group col-md-3 ">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <div class="input-group-text">Datafono Colones</div>
+            </div>
+            <input [(ngModel)]="Arqueo.DatafonoColones" name="DatafonoColones" type="text" placeholder=""
+            currencyMask [options]="{ prefix: ' ', thousands: ',', decimal: '.', allowZero: true }"
+            class="form-control">
+          </div>
+        </div>
+
+        <div class="form-group col-md-3 ">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <div class="input-group-text">Datafono Dólares</div>
+            </div>
+            <input [(ngModel)]="Arqueo.DatafonoDolares" name="DatafonoDolares" type="text" placeholder=""
+            currencyMask [options]="{ prefix: ' ', thousands: ',', decimal: '.', allowZero: true }"
+            class="form-control">
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="GenerarCierre()" type="button" class="btn btn-success"
+              title="Cancela edicion">Agregar</button>
+          </div>
+          <div class="form-group col-2">
+            <button (click)="closePantallaArqueo()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

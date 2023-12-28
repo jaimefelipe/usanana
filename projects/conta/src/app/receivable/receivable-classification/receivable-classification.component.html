@@ -1,0 +1,146 @@
+<div [hidden]="edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Clasificación Cuentas por Cobrar</h2>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+        </div>
+        <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+          placeholder="Buscar">
+        <div class="input-group-append">
+          <button class="btn btn-success" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
+              aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form>
+    <div class="form-row">
+      <div class="form-group col-12 col-sm-6" *ngFor="let Clasificacion of Categories;let i = index">
+        <div class="card">
+          <a (click)="editRecord(Clasificacion)">
+            <div class="card-body">
+
+              <h4 class="card-title">{{Clasificacion.Nombre}}</h4>
+              Estado :
+              <span *ngIf="Clasificacion.Estado == '1'" class="text-success"> Activo</span>
+              <span *ngIf="Clasificacion.Estado == '0'" class="text-warning"> Inactivo</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+  <div class="container-fluid">
+    <ul class="pagination">
+      <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"
+            aria-hidden="true"></i></a></li>
+    </ul>
+  </div>
+</div>
+
+<!--
+  Form de Edición
+-->
+
+<div [hidden]="!edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Clasificación de Cuentas Por Cobrar</h2>
+
+  <form>
+    <div class="form-row">
+      <div class="form-group col-md-12">
+        <label>Nombre</label>
+        <input [(ngModel)]="Clasificacion.Nombre" name="Nombre" type="text" placeholder="Nombre" class="form-control">
+      </div>
+      <div class="form-group col-md-6">
+        <label>Plazo</label>
+        <input [(ngModel)]="Clasificacion.Plazo" name="Plazo" type="text" placeholder="Plazo" class="form-control">
+      </div>
+      <div class="form-group col-md-6">
+        <label>Estado</label>
+        <select [(ngModel)]="Clasificacion.Estado" name="Estado" type="text" class="form-control">
+          <option value='1'>Activo</option>
+          <option value='0'>Inactivo</option>
+        </select>
+      </div>
+
+      <div class="form-group col-md-6">
+        <label>Cuenta Contable</label>
+        <div class="input-group">
+
+          <div class="input-group-append">
+            <button  type="button"  (click)="openCuentasPanel()" class="form-control btn btn-primary"><i
+                class="fa fa-search"></i></button>
+          </div>
+          <input [(ngModel)]="Clasificacion.Detalle_Cuenta" disabled name="NombrePadre" id="NombrePadre" type="input"
+            class="form-control" placeholder="Cuenta Contable">
+        </div>
+      </div>
+
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-6 col-md-8">
+
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="grabar()" type="button" class="btn btn-success" title="Cancela edicion">Grabar</button>
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="cancel()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+</div>
+
+
+<!--
+  Form de Cuentas Hijas
+-->
+<div [hidden]="!PantallaCuentasHijas" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Seleccionar Cuenta</h2>
+      <input [(ngModel)]="searchFieldHijas" (blur)="searchHijas()" (keydown)="keytabHijas($event)" type="text"
+        class="form-control" placeholder="Buscar">
+    </div>
+    <div class="card-body modal-grid">
+      <div class="form-row">
+        <div class="form-group col-12 col-sm-6" *ngFor="let Cuenta of Hijas;let i = index">
+          <a (click)="SeleccionarCuenta(Cuenta)">
+            <div class="card">
+              <div class="card-body">
+                <h5>{{Cuenta.Cuenta}} - {{Cuenta.Descripcion}}</h5>
+                Estado :
+                <span *ngIf="Cuenta.Estado == '1'" class="text-success"> Activo</span>
+                <span *ngIf="Cuenta.Estado == '0'" class="text-warning"> Inactivo</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8 col-md-10">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="closePantallaHijas()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

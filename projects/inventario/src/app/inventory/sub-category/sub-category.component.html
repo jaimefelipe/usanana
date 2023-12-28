@@ -1,0 +1,172 @@
+<div [hidden]="edit" class="container pb-5">
+    <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+    <h2>Sub Categorías de Productos</h2>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+          </div>
+          <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+            placeholder="Buscar">
+          <div class="input-group-append">
+            <button class="btn btn-success" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
+                aria-hidden="true"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <form>
+      <div class="form-row">
+  
+        <div class="form-group col-12 col-sm-6" *ngFor="let Sub_Category of Categories;let i = index">
+          <div class="card">
+            <a (click)="editRecord(Sub_Category)">
+              <div class="card-body">
+  
+                <h4 class="card-title">{{Sub_Category.Nombre}} - {{Sub_Category.Categoria}}</h4>
+                Tipo :
+                <span *ngIf="Sub_Category.Id_Tipo == '1'" class="text-primary"> Inventario</span>
+                <span *ngIf="Sub_Category.Id_Tipo == '2'" class="text-success"> Servicios</span>
+                <span *ngIf="Sub_Category.Id_Tipo == '3'" class="text-info"> Uso Interno</span>
+                <span *ngIf="Sub_Category.Id_Tipo == '4'" class="text-secondary"> Gastos</span>
+                Estado :
+                <span *ngIf="Sub_Category.Estado == '1'" class="text-success"> Activo</span>
+                <span *ngIf="Sub_Category.Estado == '0'" class="text-warning"> Inactivo</span>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </form>
+  
+    <div class="container-fluid">
+      <ul class="pagination">
+        <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"
+              aria-hidden="true"></i></a></li>
+        <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"
+              aria-hidden="true"></i></a></li>
+        <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"
+              aria-hidden="true"></i></a></li>
+      </ul>
+    </div>
+  </div>
+  
+  <!--
+    Form de Edición
+  -->
+  
+  <div [hidden]="!edit" class="container pb-5">
+    <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+    <h2>Sub Categorías de Productos</h2>
+  
+    <form>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label>Categoría</label>
+          <select [(ngModel)]="Sub_Category.Id_Categoria" name="Id_Categoria" type="text" class="form-control">
+            <option value='{{Categoria.Id_Categoria}}' *ngFor="let Categoria of Categorias;let i = index">
+              {{Categoria.Nombre}}</option>
+          </select>
+        </div>
+        <div class="form-group col-md-6">
+          <label>Nombre</label>
+          <input [(ngModel)]="Sub_Category.Nombre" name="Nombre" type="text" placeholder="Nombre" class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+          <label>Código Actividad Hacienda</label>
+          <input [(ngModel)]="Sub_Category.Codigo_Actividad" name="Codigo_Actividad" type="text" placeholder="Actividad"
+            class="form-control">
+        </div>
+        <div [hidden]="!interfazInventario" class="form-group col-md-6">
+          <label>Porcentaje de Utilidad</label>
+          <input [(ngModel)]="Sub_Category.Utilidad" name="Utilidad" type="text" placeholder="Utilidad"
+            class="form-control">
+        </div>
+  
+        <div [hidden]="!interfazContable" class="form-group col-md-6">
+          <label>Cuenta Contable Compras</label>
+          <div class="input-group">
+  
+            <div class="input-group-append">
+              <button type="button" (click)="openAccountPanel(1)" class="form-control btn btn-primary"><i
+                  class="fa fa-search"></i></button>
+            </div>
+            <input [(ngModel)]="Sub_Category.Cuenta_Contable_Compras" disabled name="Id_Cuenta_Contable_Compras" id="Id_Cuenta_Contable" type="input"
+              class="form-control" placeholder="Cuenta Contable">
+          </div>
+        </div>
+        <div [hidden]="!interfazContable" class="form-group col-md-6">
+          <label>Cuenta Contable Ventas</label>
+          <div class="input-group">
+  
+            <div class="input-group-append">
+              <button type="button" (click)="openAccountPanel(2)" class="form-control btn btn-primary"><i
+                  class="fa fa-search"></i></button>
+            </div>
+            <input [(ngModel)]="Sub_Category.Cuenta_Contable_Ventas" disabled name="Id_Cuenta_Contable_Ventas" id="Id_Cuenta_Contable" type="input"
+              class="form-control" placeholder="Cuenta Contable">
+          </div>
+        </div>
+
+  
+        <div class="form-group col-md-6">
+          <label>Estado</label>
+          <select [(ngModel)]="Sub_Category.Estado" name="Estado" type="text" class="form-control">
+            <option value='1'>Activo</option>
+            <option value='0'>Inactivo</option>
+          </select>
+        </div>
+        <div class="form-group col-md-12">
+          <div class="form-row">
+            <div class="form-group col-6 col-md-8">
+  
+            </div>
+            <div class="form-group col-3 col-md-2">
+              <button (click)="grabar()" type="button" class="btn btn-success" title="Cancela edicion">Grabar</button>
+            </div>
+            <div class="form-group col-3 col-md-2">
+              <button (click)="cancel()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  
+  
+  <div [hidden]="!AccountPanel" class="modal-main">
+    <div class="modal-content  card">
+      <div class="card-header">
+        <h2>Seleccionar Cuenta</h2>
+        <input [(ngModel)]="searchFieldAccount" (blur)="searchAccount()" (keydown)="keytabAccount($event)" type="text"
+          class="form-control" placeholder="Buscar">
+      </div>
+      <div class="card-body modal-grid">
+        <div class="form-row">
+          <div class="form-group col-12 col-sm-6" *ngFor="let Account of Accounts;let i = index">
+            <a (click)="selectAccount(Account)">
+              <div class="card">
+                <div class="card-body">
+                  <h5>{{Account.Cuenta}} - {{Account.Descripcion }}</h5>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer ">
+        <div class="form-group col-md-12">
+          <div class="form-row">
+            <div class="form-group col-8 col-md-10">
+            </div>
+            <div class="form-group col-2">
+              <button (click)="closeAccountPanel()" type="button" class="btn btn-danger"
+                title="Cancela edicion">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

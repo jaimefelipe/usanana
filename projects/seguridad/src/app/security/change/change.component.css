@@ -1,0 +1,20 @@
+.cred ,.cdarkgreen, .cgreen, .cdarkgreen, .cdarkorange{
+  text-align: center;
+  font-weight: 900;
+  font-size: 18px;
+}
+.cred {
+  color:red
+}
+.cdarkorange {
+  color: darkorange;
+}
+.cgreen {
+  color: green
+}
+.cdarkgreen {
+  color: darkgreen
+}
+.cnone {
+  display: none;
+}

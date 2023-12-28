@@ -1,0 +1,212 @@
+<div [hidden]="edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Tarifa por ruta</h2>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+        </div>
+        <input [(ngModel)]="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+          placeholder="Buscar">
+        <div class="input-group-append">
+          <button class="btn btn-success" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
+              aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form>
+    <div class="form-row">
+
+      <div class="form-group col-12 col-sm-6" *ngFor="let Rate of Rates;let i = index">
+        <div class="card">
+          <a (click)="editRecord(Rate)">
+            <div class="card-body">
+              <h4 class="card-title">{{Rate.Nombre}}</h4>
+              Tipo:<span *ngIf="Rate.Tipo_Ruta == 1">Privado</span>
+              <span *ngIf="Rate.Tipo_Ruta == 2">Shuttle</span>
+              {{Rate.Nombre_Proveedor}}
+              <div>
+                ID:{{Rate.Id_Tarifa}}, Desde: {{Rate.Inicio}} Hasta: {{Rate.Fin}}
+                <h5>Tarifa:
+                  <span *ngIf="Rate.Moneda == 1">CRC</span>
+                  <span *ngIf="Rate.Moneda == 2">USD</span>
+                  {{Rate.Tarifa}}
+                </h5>
+
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+  <!--
+  Form de Edición
+-->
+
+<div [hidden]="!edit" class="container pb-5">
+
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Tarifa</h2>
+
+  <form>
+    <div class="form-row">
+
+      <div class="form-group col-md-9">
+        <label>Ruta</label>
+        <div class="input-group">
+
+          <div class="input-group-append">
+            <button type="button" (click)="openPantallaRuta()" class="form-control btn btn-primary"><i
+                class="fa fa-search"></i></button>
+          </div>
+          <input [(ngModel)]="Rate.Nombre_Ruta" disabled name="Nombre_Ruta" id="Nombre_Ruta" type="input"
+            class="form-control" placeholder="Nombre Ruta">
+        </div>
+      </div>
+      <div class="form-group col-md-3">
+        <label>Tipo de ruta</label>
+        <select  [(ngModel)]="Rate.Tipo_Ruta" name="Tipo_Ruta" type="text" class="form-control">
+          <option value='1'>Privado</option>
+          <option value='2'>Shuttle</option>
+        </select>
+      </div>
+      <div class="form-group col-md-12">
+        <label>Proveedor</label>
+        <div class="input-group">
+
+          <div class="input-group-append">
+            <button type="button" (click)="openProviderPanel()" class="form-control btn btn-primary"><i
+                class="fa fa-search"></i></button>
+          </div>
+          <input [(ngModel)]="Rate.Nombre_Proveedor" disabled name="Nombre_Proveedor" id="Nombre_Proveedor"
+            type="input" class="form-control" placeholder="Nombre Proveedor">
+        </div>
+      </div>
+      <div class="form-group col-md-4">
+        <label>Fecha Inicio</label>
+        <div class="input-group">
+          <input  class="form-control" placeholder="Inicio" name="Inicio" [(ngModel)]="Rate.Fecha_Inicio" ngbDatepicker
+            #d1="ngbDatepicker">
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary fa fa-calendar" (click)="d1.toggle()" type="button"></button>
+          </div>
+        </div>
+      </div>
+      <div class="form-group col-md-4">
+        <label>Fecha Fin</label>
+        <div class="input-group">
+          <input  class="form-control" placeholder="Fecha" name="Fecha" [(ngModel)]="Rate.Fecha_Fin" ngbDatepicker
+            #d2="ngbDatepicker">
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary fa fa-calendar" (click)="d2.toggle()" type="button"></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-md-3">
+        <label>Moneda</label>
+        <select [(ngModel)]="Rate.Moneda" name="TypeIdentification" class="form-control">
+        <option value='1'>Colones</option>
+        <option value='2'>Dolares</option>
+      </select>
+    </div>
+
+      <div class="form-group col-12 col-md-4">
+        <label>Tarifa Rack</label>
+        <input [(ngModel)]="Rate.Tarifa" name="Tarifa" id="Tarifa" type="input" class="form-control" placeholder="Tarifa" >
+      </div>
+
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-6 col-md-8">
+
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="grabar()" type="button" class="btn btn-success" title="Cancela edicion">Grabar</button>
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="cancel()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+
+<div [hidden]="!PantallaRutas" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Seleccionar Ruta</h2>
+      <input [(ngModel)]="searchFieldRutas" (blur)="searchRoutes()" (keydown)="keytabRoutes($event)" type="text"
+        class="form-control" placeholder="Buscar">
+    </div>
+    <div class="card-body modal-grid">
+      <div class="form-row">
+        <div class="form-group col-8 col-sm-6" *ngFor="let Route of Routes;let i = index">
+          <a (click)="SeleccionarRuta(Route)">
+            <div class="card">
+              <div class="card-body">
+                <h5>{{Route.Nombre}}</h5>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8 col-md-10">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="closePantallaRutas()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div [hidden]="!ProviderPanel" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Seleccionar Proveedor</h2>
+      <input [(ngModel)]="searchFieldProvider" (blur)="searchProviders()" (keydown)="keytabProviders($event)" type="text"
+        class="form-control" placeholder="Buscar">
+    </div>
+    <div class="card-body modal-grid">
+      <div class="form-row">
+        <div class="form-group col-12 col-sm-6" *ngFor="let Provider of Provideres;let i = index">
+          <a (click)="selectProvider(Provider)">
+            <div class="card">
+              <div class="card-body">
+                <h5>{{Provider.Nombre}}</h5>
+
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8 col-md-10">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="closeProviderPanel()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

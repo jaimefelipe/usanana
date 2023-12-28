@@ -1,0 +1,114 @@
+<div [hidden]="edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Cargos a Facturación</h2>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+        </div>
+        <input [(ngModel)]="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+          placeholder="Buscar">
+        <div class="input-group-append">
+          <button class="btn btn-success" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
+              aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form>
+    <div class="form-row">
+
+      <div class="form-group col-12 col-sm-6" *ngFor="let Caja of Charges;let i = index">
+        <div class="card">
+          <a (click)="editRecord(Caja)">
+            <div class="card-body">
+
+              <h4 class="card-title">{{Caja.Nombre}}</h4>
+              <h4 class="card-title">{{Caja.Porcentaje}}</h4>
+              Estado :
+              <span *ngIf="Caja.Estado == '1'" class="text-success"> Activo</span>
+              <span *ngIf="Caja.Estado == '0'" class="text-danger"> Inactivo</span>
+              {{Caja.Id_Factura_Cargos}}
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="container-fluid">
+    <ul class="pagination">
+      <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"
+            aria-hidden="true"></i></a></li>
+    </ul>
+  </div>
+</div>
+
+
+<!-- Form de Edición -->
+<div [hidden]="!edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Cargo a Facturación</h2>
+  <form>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label>Nombre del Cargo</label>
+        <input [(ngModel)]="Charge.Nombre" name="Nombre" type="text" placeholder="Nombre del Cargo"
+          class="form-control">
+      </div>
+      <div class="form-group col-md-6">
+        <label>Categoría</label>
+        <select [(ngModel)]="Charge.Id_Categoria" name="Categoria" type="text" class="form-control">
+          <option value='{{Categoria.Id_Categoria}}' *ngFor="let Categoria of Categories;let i = index">
+            {{Categoria.Nombre}}</option>
+        </select>
+      </div>
+
+      <div class="form-group col-md-6">
+        <label>Código Cabys</label>
+        <input [(ngModel)]="Charge.Codigo" name="Codigo" type="text" placeholder="Código Cabys" class="form-control">
+      </div>
+
+      <div class="form-group col-md-6">
+        <label>Gravado Con el IVA</label>
+        <select [(ngModel)]="Charge.Iva" name="Iva" class="form-control">
+          <option value=0 >Sin Gravar</option>
+          <option value=1 >Gravado</option>
+        </select>
+      </div>
+
+      <div class="form-group col-md-6">
+        <label>Porcentaje sobre Factura</label>
+        <input [(ngModel)]="Charge.Porcentaje" name="Porcentaje" type="text" placeholder="Porcentaje Sobre Factura"
+          class="form-control">
+      </div>
+      <div class="form-group col-md-6">
+        <label>Estado</label>
+        <select [(ngModel)]="Charge.Estado" name="Estado" class="form-control">
+          <option value=0 >Inactivo</option>
+          <option value=1 >Activo</option>
+        </select>
+      </div>
+
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-6 col-md-8">
+          </div>
+
+          <div class="form-group col-3 col-md-2">
+            <button (click)="grabar()" type="button" class="btn btn-success" title="Cancela edicion">Grabar</button>
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="cancel()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<!-- Fin de Edición -->

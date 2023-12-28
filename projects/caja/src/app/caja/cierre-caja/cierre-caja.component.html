@@ -1,0 +1,172 @@
+<div class="container pb-5">
+    <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+    <h2>Cierre de Caja</h2>
+    
+    <div class="form-row">
+        <div class="form-group col-md-3">
+            <label>Fecha Inicio</label>
+            <div class="input-group">
+                <input class="form-control" (ngModelChange)="InicioChange($event)" placeholder="Inicio" name="Inicio" [(ngModel)]="FechaInicio" ngbDatepicker
+                #d1="ngbDatepicker">
+                <div class="input-group-append">
+                <button class="btn btn-outline-secondary fa fa-calendar" (click)="d1.toggle()" type="button"></button>
+                </div>
+            </div>
+        </div>
+    
+    
+        <div  class="form-group col-md-3">
+            <label>Fecha Fin</label>
+            <div class="input-group">
+                <input class="form-control" (ngModelChange)="FinChange($event)" placeholder="Fin" name="Fin" [(ngModel)]="FechaFin" ngbDatepicker
+                #d2="ngbDatepicker">
+                <div class="input-group-append">
+                <button class="btn btn-outline-secondary fa fa-calendar" (click)="d2.toggle()" type="button"></button>
+                </div>
+            </div>
+        </div>
+    
+        <div class="form-group col-md-3">
+            <label>Caja</label>
+            <select (change)="loadCierres(FechaInicio,FechaFin)" [(ngModel)]="Id_Caja" name="Id_Categoria" type="text" class="form-control">
+                <option value="99">Todas</option>
+                <option value='{{Caja.Id_Caja}}' *ngFor="let Caja of Cajas;let i = index">
+                {{Caja.Numero_Caja}}</option>
+            </select>
+        </div>
+    
+        <div class="form-group col-md-2">
+            <label>Cierre </label>
+            <select [(ngModel)]="Id_Caja_Diaria" name="Id_Caja_Diaria" type="text" class="form-control">
+                <option value="99">Todos</option>
+                <option value='{{Caja.Id_Caja_Diaria}}' *ngFor="let Caja of Cierres;let i = index">
+                {{Caja.Id_Caja_Diaria}}</option>
+            </select>
+        </div>
+        <div class="form-group col-md-1">
+            <label>Cargar </label>
+            <button (click)="cargarDatos()" type="button" class="btn btn-danger" title="Cancela edicion">Cargar</button>
+        </div>
+    </div>
+  
+    <div class="tab">
+        <button [ngClass]='TotalesClass' (click)="activarTotales()" >Cobros</button>
+        <button [ngClass]='ProductosClass' (click)="activarProductos()" >Productos</button>
+        <button [ngClass]='EntradasClass' (click)="activarEntradas()">Entradas</button>
+        <button [ngClass]='SalidasClass' (click)="activarSalidas()">Salidas</button>
+    </div>
+
+    <form [hidden]="!TotalesActivo">
+        <div class="form-row">
+
+            <div class="form-group col-md-6" >
+                Cobros según forma de cobro
+                <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Forma de Cobro</th>
+                        <th scope="col">Monto</th>
+                      </tr>
+                    </thead>
+                    <tbody *ngFor="let Total of Totales;let i = index">
+                      <tr>
+                        <th>{{Total.id}}</th>
+                        <td>{{Total.Tipo}}</td>
+                        <td class="text-right">{{Total.Monto}}</td>
+                      </tr>
+                      
+                    </tbody>
+                  </table>
+            </div>
+        </div>
+    </form>
+
+    <form [hidden]="!ProductosActivo">
+        <div class="form-row">
+
+            <div class="form-group col-md-6" >
+                Productos Vendidos
+                <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Producto</th>
+                        <th scope="col">Cantidad</th>
+                        <th scope="col">Monto</th>
+                      </tr>
+                    </thead>
+                    <tbody *ngFor="let Producto of Productos;let i = index">
+                      <tr>
+                        <th>{{Producto.id}}</th>
+                        <td>{{Producto.Producto}}</td>
+                        <td class="text-right">{{Producto.Cantidad}}</td>
+                        <td class="text-right">{{Producto.Monto}}</td>
+                      </tr>
+                      
+                    </tbody>
+                  </table>
+            </div>
+        </div>
+    </form>
+
+    <form [hidden]="!EntradasActivo">
+        <div class="form-row">
+
+            <div class="form-group col-md-6" >
+                Entradas de Efectivo
+                <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Comprobante</th>
+                        <th scope="col">Descripcion</th>
+                        <th scope="col">Hora</th>
+                        <th scope="col">Monto</th>
+                      </tr>
+                    </thead>
+                    <tbody *ngFor="let Entrada of Entradas;let i = index">
+                      <tr>
+                        <th>{{Entrada.id}}</th>
+                        <td>{{Entrada.Comprobante}}</td>
+                        <td>{{Entrada.Descripcion}}</td>
+                        <td class="text-right">{{Entrada.Hora}}</td>
+                        <td class="text-right">{{Entrada.Monto}}</td>
+                      </tr>
+                      
+                    </tbody>
+                  </table>
+            </div>
+        </div>
+    </form>
+
+    <form [hidden]="!SalidasActivo">
+        <div class="form-row">
+
+            <div class="form-group col-md-6" >
+                Salidas de Efectivo
+                <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Comprobante</th>
+                        <th scope="col">Descripcion</th>
+                        <th scope="col">Hora</th>
+                        <th scope="col">Monto</th>
+                      </tr>
+                    </thead>
+                    <tbody *ngFor="let Salida of Salidas;let i = index">
+                      <tr>
+                        <th>{{Salida.id}}</th>
+                        <td>{{Salida.Comprobante}}</td>
+                        <td>{{Salida.Descripcion}}</td>
+                        <td class="text-right">{{Salida.Hora}}</td>
+                        <td class="text-right">{{Salida.Monto}}</td>
+                      </tr>
+                      
+                    </tbody>
+                  </table>
+            </div>
+        </div>
+    </form>
+</div>

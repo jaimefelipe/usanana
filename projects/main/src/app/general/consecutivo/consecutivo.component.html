@@ -1,0 +1,75 @@
+<div [hidden]="edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Consecutivos de Cajas </h2>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+        </div>
+        <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab1($event)" type="text" class="form-control" placeholder="Buscar">
+      </div>
+    </div>
+  </div>
+  <form>
+    <div class="form-row">
+      <div class="form-group col-12 col-sm-6" *ngFor="let Consecutivo of Consecutivos;let i = index">
+        <div class="card">
+          <div class="card-body">
+            <a (click)="editRecord(Consecutivo)">
+              <h4 class="card-title"># {{Consecutivo.Id_Empresa}} - {{Consecutivo.Nombre}} </h4>
+              <p><b>{{Consecutivo.Id_Sucursal }}</b> - {{Consecutivo.Numero_Caja }} </p>
+              <p><b>Consecutivo:{{Consecutivo.Consecutivo }}</b></p>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="container-fluid">
+    <ul class="pagination">
+      <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"
+            aria-hidden="true"></i></a></li>
+    </ul>
+  </div>
+</div>
+
+<div [hidden]="!edit" class="container pb-5">
+  <a [routerLink]="['/']" ><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Categorías de Productos</h2>
+
+  <form>
+    <div class="form-row">
+
+
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-6 col-md-6">
+              Empresa:{{Consecutivo.Id_Empresa}}, {{Consecutivo.Nombre}}
+          </div>
+
+          <div class="form-group col-6 col-md-6">
+            Sucursal:{{Consecutivo.Id_Sucursal}}, Caja {{Consecutivo.Numero_Caja}} # {{Consecutivo.Id_Caja}}
+          </div>
+          <div class="form-group col-md-12">
+            <label>Consecutivo:</label>
+            <input [(ngModel)]="Consecutivo.Consecutivo" name="Consecutivo" type="text" placeholder="Consecutivo" class="form-control" >
+          </div>
+
+          <div class="form-group col-3 col-md-2">
+            <button (click)="grabar()" type="button" class="btn btn-success" title="Cancela edicion" >Grabar</button>
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="cancel()" type="button" class="btn btn-danger" title="Cancela edicion" >Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+</div>

@@ -1,0 +1,97 @@
+<div [hidden]="edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Facturas Herroneas </h2>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+        </div>
+        <input [(ngModel)]="searchField"  name="searchField" (blur)="search()" (keydown)="keytab1($event)" type="text" class="form-control" placeholder="Buscar">
+        <div class="input-group-append">
+          <button class="btn btn-success" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
+              aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form>
+    <div class="form-row">
+      <div class="form-group col-12 col-sm-6" *ngFor="let Product of Invoices;let i = index">
+        <div class="card">
+          <div class="card-body">
+            <a (click)="editRecord(Product)">
+              <h4 class="card-title"># {{Product.Consecutivo}} - {{Product.Creado_El}} </h4>
+              <p><b>{{Product.Id_Empresa }}</b> - {{Product.Empresa }} </p>
+              <p><b>{{Product.Nombre }}</b></p>
+              <p>{{Product.Error_MH }}</p>
+              Tipo :
+              <span *ngIf="Product.Tipo_Documento == '01'" class="text-primary"> Factura</span>
+              <span *ngIf="Product.Tipo_Documento == '04'" class="text-success"> Tiquete electrónico</span>
+              <span *ngIf="Product.Tipo_Documento == '02'" class="text-info"> Nota de débito</span>
+              <span *ngIf="Product.Tipo_Documento == '03'" class="text-success"> Nota de crédito</span>
+              Estado :
+              <span *ngIf="Product.Respuesta_MH == 'Registrado'" class="text-primary"> Registrado</span>
+              <span *ngIf="Product.Respuesta_MH == 'procesando'" class="text-success"> Procesando</span>
+              <span *ngIf="Product.Respuesta_MH == 'aceptado'" class="text-primary"> Aceptado</span>
+              <span *ngIf="Product.Respuesta_MH == 'rechazado'" class="text-error"> Rechazado</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="container-fluid">
+    <ul class="pagination">
+      <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"
+            aria-hidden="true"></i></a></li>
+    </ul>
+  </div>
+</div>
+
+<div [hidden]="!edit" class="container pb-5">
+  <a [routerLink]="['/']" ><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Categorías de Productos</h2>
+
+  <form>
+    <div class="form-row">
+
+      <div class="form-group col-md-6">
+        <label>Estado:</label>
+        {{Factura.Respuesta_MH}}
+      </div>
+      <div class="form-group col-md-6">
+        <label>Consecutivo:</label>
+        {{Factura.Consecutivo}}
+      </div>
+      <div class="form-group col-md-12">
+        <label>Error:</label>
+        {{Factura.Error_MH}}
+      </div>
+      <div class="form-group col-md-6">
+        <label>Nuevo Consecutivo</label>
+        <input [(ngModel)]="Factura.Consecutivo" name="consecutivo" type="text" placeholder="Nuevo Consecutivo" class="form-control" >
+      </div>
+
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-6 col-md-8">
+
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="grabar()" type="button" class="btn btn-success" title="Cancela edicion" >Grabar</button>
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="cancel()" type="button" class="btn btn-danger" title="Cancela edicion" >Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+</div>

@@ -1,0 +1,383 @@
+<div [hidden]="edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Matrícula</h2>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+        </div>
+        <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+          placeholder="Buscar">
+        <div class="input-group-append">
+          <button class="btn btn-success" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
+              aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form>
+    <div class="form-row">
+
+      <div class="form-group col-12 col-sm-6" *ngFor="let Matricula of Matriculas;let i = index">
+        <div class="card">
+          <a (click)="editRecord(Matricula)">
+            <div class="card-body">
+
+              <h4 class="card-title">{{Matricula.Bloque}}-{{Matricula.Anio}},{{Matricula.Nombre}}</h4>
+
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="container-fluid">
+    <ul class="pagination">
+      <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"
+            aria-hidden="true"></i></a></li>
+    </ul>
+  </div>
+</div>
+
+
+<!--
+  Form de Edición
+-->
+
+<div [hidden]="!edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Matrícula</h2>
+  <form>
+    <div class="form-row">
+
+      <div [hidden]="Matricula.Id_Matricula !=''" class="form-group col-md-6">
+        <label>Periódo Académico</label>
+        <select  [(ngModel)]="Matricula.Id_Periodo" name="Id_Periodo" type="text" class="form-control">
+          <option value='{{Periodo.Id_Periodo_Academico}}' *ngFor="let Periodo of Periodos;let i = index">
+            {{Periodo.Bloque}}-{{Periodo.Anio}}</option>
+        </select>
+      </div>
+
+      <div [hidden]="Matricula.Id_Matricula ==''"  class="form-group col-md-6">
+        <label>Periódo</label>
+        <div class="input-group">
+          <input [(ngModel)]="Matricula.Periodo" disabled name="Periodo" id="Periodo" type="input" class="form-control" placeholder="Periodo">
+        </div>
+      </div>
+
+      <div class="form-group col-md-6">
+        <label>Alumno</label>
+        <div class="input-group">
+          <div class="input-group-append">
+            <button type="button" (click)="abrirPantallaAlumnos()" class="form-control btn btn-primary"><i class="fa fa-search"></i></button>
+          </div>
+          <input [(ngModel)]="Matricula.Nombre" disabled name="Nombre" id="Nombre" type="input" class="form-control" placeholder="Nombre">
+        </div>
+      </div>
+
+      <div class="container-fluid">
+        <div class="row">
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+            </div>
+            <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+              placeholder="Buscar">
+            <div class="input-group-append">
+              <button [disabled]="Matricula.Id_Matricula == ''" class="btn btn-success" type="button" (click)="abrirPantallaCursos('')"><i class="fa fa-plus-circle"
+                  aria-hidden="true"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="form-group col-12 col-sm-6" *ngFor="let Detalle of MatriculaDetalle;let i = index">
+            <a (click)="seleccionarDetalle(Detalle)">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">{{Detalle.Curso}}</h4>
+                  <span *ngIf="Detalle.Modalidad == 'P'" class="text-success"> Presencial</span>
+                  <span *ngIf="Detalle.Modalidad == 'V'" class="text-primary"> Virtual</span>
+                  <span *ngIf="Detalle.Modalidad == 'T'" class="text-primary"> Tutoria</span>
+                  <span *ngIf="Detalle.Modalidad == 'S'" class="text-primary"> Suficiencia</span>
+
+                  <span *ngIf="Detalle.Dia == 'L'" class="text-primary"> Lunes</span>
+                  <span *ngIf="Detalle.Dia == 'K'" class="text-primary"> Martes</span>
+                  <span *ngIf="Detalle.Dia == 'M'" class="text-primary"> Miércoles</span>
+                  <span *ngIf="Detalle.Dia == 'J'" class="text-primary"> Jueves</span>
+                  <span *ngIf="Detalle.Dia == 'V'" class="text-primary"> Viernes</span>
+                  <span *ngIf="Detalle.Dia == 'S'" class="text-primary"> Sábado</span>
+                  <span *ngIf="Detalle.Dia == 'D'" class="text-primary"> Domigo</span>
+                  <span *ngIf="Detalle.Dia == 'A'" class="text-primary"> Alterno</span>
+
+                  {{Detalle.Hora}}
+                  Promedio:
+                  {{Detalle.Promedio}}
+                  Estado:
+                  <span *ngIf="Detalle.Estado == '1'" class="text-primary"> Cursando</span>
+                  <span *ngIf="Detalle.Estado == '2'" class="text-success"> Aprobado</span>
+                  <span *ngIf="Detalle.Estado == '3'" class="text-danger"> Reprobado</span>
+                  <span *ngIf="Detalle.Estado == '4'" class="text-info"> Convalidado</span>
+                  <span *ngIf="Detalle.Estado == '5'" class="text-danger"> Retirado</span>
+                  <span *ngIf="Detalle.Estado == '6'" class="text-secondary"> Prematrícula</span>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-6 col-md-6">
+
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="GenerarBooleta()" type="button" class="btn btn-primary" title="Cancela edicion">Boleta</button>
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button [disabled]="Matricula.Id_Matricula != ''" (click)="grabar()" type="button" class="btn btn-success" title="Cancela edicion">Grabar</button>
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="cancel()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+</div>
+
+<!-- Pantalla de busqueda de alumnos -->
+
+<div [hidden]="!PantallaAlumnos" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Alumnos</h2>
+    </div>
+
+    <div class="card-body modal-grid">
+      <div class="form-row">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+              </div>
+              <input [(ngModel)]="searchFieldAlumnos" name="searchFieldAlumnos" (blur)="searchAlumnos()" (keydown)="keytabAlumnos($event)" type="text" class="form-control"
+                placeholder="Buscar">
+            </div>
+          </div>
+        </div>
+        <form>
+          <div class="form-row">
+            <div class="form-group col-12 col-sm-6" *ngFor="let Alumno of Alumnos;let i = index">
+              <div class="card">
+                <a (click)="seleccionarAlumno(Alumno)">
+                  <div class="card-body">
+
+                    <h4 class="card-title">{{Alumno.Nombre}}</h4>
+
+
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </form>
+
+
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-10">
+            <div class="container-fluid">
+              <ul class="pagination">
+                <li class="page-item"><a (click)="ChangePage1(0)" class="page-link"><i class="fa fa-fast-backward"
+                      aria-hidden="true"></i></a></li>
+                <li class="page-item"><a (click)="ChangePage1(1)" class="page-link"><i class="fa fa-step-backward"
+                      aria-hidden="true"></i></a></li>
+                <li class="page-item"><a (click)="ChangePage1(2)" class="page-link"><i class="fa fa-step-forward"
+                      aria-hidden="true"></i></a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="form-group col-2">
+            <button (click)="cerrarPantallaAlumnos()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Pantalla de consulta de cursos -->
+<div [hidden]="!PantallaCursos" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Cursos Disponibles</h2>
+    </div>
+
+
+    <div class="card-body modal-grid">
+      <div class="form-row">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+              </div>
+              <input [(ngModel)]="searchFieldCursosDisponibles" name="searchFieldCursosDisponibles" (blur)="searchCursosDiponibles()" (keydown)="keytabCursosDisponibles($event)" type="text" class="form-control"
+                placeholder="Buscar">
+            </div>
+          </div>
+        </div>
+        <form>
+          <div class="form-row">
+            <div class="form-group col-12 col-sm-6" *ngFor="let Curso of CursosDisponibles;let i = index">
+              <div class="card">
+                <a (click)="seleccionarCurso(Curso)">
+                  <div class="card-body">
+                    <h4 class="card-title">{{Curso.Codigo}} - {{Curso.Curso}} {{Curso.Bloque}}</h4>
+                    <span *ngIf="Curso.Modalidad == 'P'" class="text-success"> Presencial</span>
+                    <span *ngIf="Curso.Modalidad == 'V'" class="text-primary"> Virtual</span>
+                    <span *ngIf="Curso.Modalidad == 'T'" class="text-primary"> Tutoria</span>
+                    <span *ngIf="Curso.Modalidad == 'S'" class="text-primary"> Suficiencia</span>
+
+                    <span *ngIf="Curso.Dia == 'L'" class="text-primary"> Lunes</span>
+                    <span *ngIf="Curso.Dia == 'K'" class="text-primary"> Martes</span>
+                    <span *ngIf="Curso.Dia == 'M'" class="text-primary"> Miércoles</span>
+                    <span *ngIf="Curso.Dia == 'J'" class="text-primary"> Jueves</span>
+                    <span *ngIf="Curso.Dia == 'V'" class="text-primary"> Viernes</span>
+                    <span *ngIf="Curso.Dia == 'S'" class="text-primary"> Sábado</span>
+                    <span *ngIf="Curso.Dia == 'D'" class="text-primary"> Domigo</span>
+                    <span *ngIf="Curso.Dia == 'A'" class="text-primary"> Alterno</span>
+
+                    {{Curso.Hora}} {{Curso.Hora}} {{Curso.Profesor}}
+
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </form>
+
+
+      </div>
+    </div>
+
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-10">
+            <div class="container-fluid">
+              <ul class="pagination">
+                <li class="page-item"><a (click)="ChangePage2(0)" class="page-link"><i class="fa fa-fast-backward"
+                      aria-hidden="true"></i></a></li>
+                <li class="page-item"><a (click)="ChangePage2(1)" class="page-link"><i class="fa fa-step-backward"
+                      aria-hidden="true"></i></a></li>
+                <li class="page-item"><a (click)="ChangePage2(2)" class="page-link"><i class="fa fa-step-forward"
+                      aria-hidden="true"></i></a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="form-group col-2">
+            <button (click)="cerrarPantallaCursos()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div [hidden]="!PantallaDetalle" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Detalle de Matrícula</h2>
+    </div>
+
+
+  <div class="card-body">
+    <div class="form-row">
+      <div class="form-group col-md-12">
+        <label>Curso</label>
+        <input disabled [(ngModel)]="Detalle.Nombre" name="CursoNombre" type="text" placeholder="CursoNombre" class="form-control">
+      </div>
+      <div class="form-group col-md-3">
+        <label>Rúbrica 1</label>
+        <input disabled [(ngModel)]="Detalle.Rubrica_1" name="Rubrica_1" type="text" placeholder="Rubrica 1" class="form-control">
+      </div>
+      <div class="form-group col-md-3">
+        <label>Rúbrica 2</label>
+        <input disabled [(ngModel)]="Detalle.Rubrica_2" name="Rubrica_2" type="text" placeholder="Rubrica 2" class="form-control">
+      </div>
+      <div class="form-group col-md-3">
+        <label>Rúbrica 3</label>
+        <input disabled [(ngModel)]="Detalle.Rubrica_3" name="Rubrica_3" type="text" placeholder="Rubrica 3" class="form-control">
+      </div>
+      <div class="form-group col-md-3">
+        <label>Rúbrica 4</label>
+        <input disabled [(ngModel)]="Detalle.Rubrica_4" name="Rubrica_4" type="text" placeholder="Rubrica 4" class="form-control">
+      </div>
+      <div class="form-group col-md-3">
+        <label>Rúbrica 5</label>
+        <input disabled  [(ngModel)]="Detalle.Rubrica_5" name="Rubrica_5" type="text" placeholder="Rubrica 5" class="form-control">
+      </div>
+      <div class="form-group col-md-3">
+        <label>Promedio</label>
+        <input disabled  [(ngModel)]="Detalle.Promedio" name="Promedio" type="text" placeholder="Promedio" class="form-control">
+      </div>
+
+      <div class="form-group col-md-3">
+        <label>Estado</label>
+        <select [(ngModel)]="Detalle.Estado" name="DetalleEstado" type="text" class="form-control">
+            <option value='1'>Cursando</option>
+            <option value='2'>Aprobado</option>
+            <option value='3'>Reprobado</option>
+            <option value='4'>Convalidado</option>
+            <option value='5'>Retirado</option>
+            <option value='6'>Prematrícula</option>
+          </select>
+      </div>
+
+      <div class="form-group col-md-12">
+        <label>Notas</label>
+        <input [(ngModel)]="Detalle.Notas" name="Notas" type="text" placeholder="Notas" class="form-control">
+      </div>
+    </div>
+  </div>
+
+  <div class="card-footer ">
+    <div class="form-group col-md-12">
+      <div class="form-row">
+        <div class="form-group col-8">
+
+        </div>
+        <div class="form-group col-2">
+          <button (click)="grabarDetalle()" type="button" class="btn btn-success"
+            title="Cancela edicion">Grabar</button>
+        </div>
+        <div class="form-group col-2">
+          <button (click)="cerrarPantallaDetalles()" type="button" class="btn btn-danger"
+            title="Cancela edicion">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>

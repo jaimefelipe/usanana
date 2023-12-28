@@ -1,0 +1,107 @@
+<div class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Reportes Cuentas por Cobrar</h2>
+  <div class="card-body">
+    <div class="form-row">
+
+      <div class="form-group col-md-12">
+        <label>Seleccionar El Reporte a Generar</label>
+        <select (change)="cambiarReporte()" [(ngModel)]="reporte" name="reporte" type="text" class="form-control">
+          <option value='1'>Resumen de Cuentas por Cobrar</option>
+          <option value='2'>Detalle de Cuentas por Cobrar</option>
+          <option value='3'>Estado de Cuenta</option>
+        </select>
+      </div>
+
+      <div *ngIf="cobrar" class="form-group col-md-5">
+        <label>Cuenta por cobrar</label>
+        <div class="input-group">
+
+          <div class="input-group-append">
+            <button type="button" (click)="openAccountPanel()"
+              class="form-control btn btn-primary"><i class="fa fa-search"></i></button>
+          </div>
+          <input disabled [(ngModel)]="Nombre_Cuenta" name="Nombre_Cuenta" id="Nombre_Cuenta" type="input"
+            class="form-control" placeholder="Cuenta">
+        </div>
+      </div>
+
+      <!--
+      <div class="form-group col-md-6">
+        <label>Fecha Inicio</label>
+        <div class="input-group">
+          <input class="form-control" placeholder="Inicio" name="Inicio" [(ngModel)]="FechaInicio" ngbDatepicker
+            #d1="ngbDatepicker">
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary fa fa-calendar" (click)="d1.toggle()" type="button"></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-md-6">
+        <label>Fecha Fin</label>
+        <div class="input-group">
+          <input class="form-control" placeholder="Fin" name="Fin" [(ngModel)]="FechaFin" ngbDatepicker
+            #d2="ngbDatepicker">
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary fa fa-calendar" (click)="d2.toggle()" type="button"></button>
+          </div>
+        </div>
+      </div>
+      -->
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-9">
+
+      </div>
+      <div class="col-md-3">
+        <button (click)="Reporte()" type="button" class="btn btn-primary">Generar Reporte</button>
+      </div>
+    </div>
+
+
+  </div>
+
+</div>
+
+<div [hidden]="!PantallaCuentas" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Seleccionar Cuenta</h2>
+      <input [(ngModel)]="searchFieldAccounts" (blur)="searchAccounts()" (keydown)="keytabAccounts($event)" type="text"
+        class="form-control" placeholder="Buscar">
+    </div>
+    <div class="card-body modal-grid">
+      <div class="form-row">
+        <div class="form-group col-12 col-sm-6" *ngFor="let Account of Accounts;let i = index">
+          <a (click)="Seleccionar(Account)">
+            <div class="card">
+              <div class="card-body">
+                <h5>{{Account.Nombre}}</h5>
+                Moneda
+                <span *ngIf="Account.Moneda == 1" class="text-success">Colones</span>
+                <span *ngIf="Account.Moneda == 0" class="text-primary">Dolares</span>
+                Estado :
+                <span *ngIf="Account.Estado == '1'" class="text-success"> Activo</span>
+                <span *ngIf="Account.Estado == '0'" class="text-warning"> Inactivo</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8 col-md-10">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="closeModal()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

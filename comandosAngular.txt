@@ -1,0 +1,94 @@
+comandos angular
+
+
+
+ ng serve  --base-href /conta/
+
+ 1. Crear un espacio de trabajo
+ ng new Toxo --create-application=false 
+ 2. Entrar al espacio de trabajo
+ cd workspace-name
+ 3. Crear la Aplicación
+ ng generate application application-name --no-standalone
+ 4. Crear modulos
+ ng g m rutas --routing
+
+
+ "baseHref": "/conta/",
+ dentro de architect/build/options
+
+Generar una libreria
+ng generate library core
+ng build my-lib
+cd dist/my-lib
+npm publish
+https://medium.com/@mad.subasinghe/sharing-libraries-between-multiple-angular-6-projects-e4ea21d6ed7d
+
+npm install '/Users/jaimebrenes/Desktop/jbrenes/Toxo/Toxo/dist/core'
+
+
+
+
+ Instalación de Dependencias
+ npm install bootstrap --save
+ npm install jquery --save
+ npm install popper.js --save
+ ng add @ng-bootstrap/ng-bootstrap
+ npm install sweetalert2
+
+ng build --prod --project="main"
+ng build --prod --build-optimizer --project="main"
+
+ng build --prod --build-optimizer --base-href="admin"
+ng build --prod --build-optimizer --base-href /bar/
+
+
+instalar el controlador de la fecha
+ng add @angular/localize
+ng add @ng-bootstrap/ng-bootstrap --project bar;
+
+
+//SQLITE
+npm install sqlite3
+npm install --save-dev @types/sqlite3
+
+//Calendario
+ng add @ng-bootstrap/ng-bootstrap --project viajes;
+
+
+
+// Generar APK
+ng build --prod --build-optimizer --base-href /
+Copiar el contenido en la app de cordova
+agregar <script src="cordova.js"></script> al index.html
+cordova build android
+
+
+// GIT
+git status
+git add .
+git commit -m "Comment"
+git push
+
+
+//impresora
+
+"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" --kiosk-printing
+
+// Clonar objetos
+let NuevoProducto = JSON.parse(JSON.stringify(Orden)) ;
+
+
+//modulos
+npm install popper.js --save
+npm install jqwidgets-ng 
+npm i @ng-bootstrap/ng-bootstrap
+npm i ng2-currency-mask
+npm install sweetalert2
+npm install bootstrap
+npm install jquery
+npm i ngx-xml2json --legacy-peer-deps
+npm i jqwidgets-ng
+
+npm fund
+ npm audit fix

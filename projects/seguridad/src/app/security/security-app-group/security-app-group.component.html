@@ -1,0 +1,194 @@
+<div [hidden]="edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>App x Grupos</h2>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+        </div>
+        <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+          placeholder="Buscar">
+        <div class="input-group-append">
+          <button class="btn btn-success" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
+              aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form>
+    <div class="form-row">
+
+      <div class="form-group col-12 col-sm-6" *ngFor="let Grupo of AppGrupos;let i = index">
+        <div class="card">
+          <a (click)="editRecord(Grupo)">
+            <div class="card-body">
+              <h4 class="card-title">{{Grupo.Nombre}}</h4>
+              <h4 class="card-title">{{Grupo.Titulo}}</h4>
+              Tipo :
+              <span *ngIf="Grupo.Principal == '1'" class="text-primary"> Menu</span>
+              <span *ngIf="Grupo.Principal == '0'" class="text-success"> Aplicación</span>
+              Estado :
+              <span *ngIf="Grupo.Estado == '1'" class="text-success"> Activo</span>
+              <span *ngIf="Grupo.Estado == '0'" class="text-warning"> Inactivo</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="container-fluid">
+    <ul class="pagination">
+      <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"
+            aria-hidden="true"></i></a></li>
+    </ul>
+  </div>
+</div>
+
+<!--
+  Form de Edición
+-->
+
+<div [hidden]="!edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>App x Grupo</h2>
+
+  <form>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label>Grupo</label>
+        <div class="input-group">
+
+          <div class="input-group-append">
+            <button  type="button"  (click)="openGrupoPanel()" class="form-control btn btn-primary"><i
+                class="fa fa-search"></i></button>
+          </div>
+          <input [(ngModel)]="AppGrupo.Nombre" disabled name="Nombre" id="Nombre" type="input"
+            class="form-control" placeholder="Grupo">
+        </div>
+      </div>
+
+      <div class="form-group col-md-6">
+        <label>Aplicación</label>
+        <div class="input-group">
+
+          <div class="input-group-append">
+            <button  type="button"  (click)="openAppPanel()" class="form-control btn btn-primary"><i
+                class="fa fa-search"></i></button>
+          </div>
+          <input [(ngModel)]="AppGrupo.Titulo" disabled name="Titulo" id="Titulo" type="input"
+            class="form-control" placeholder="Aplicación">
+        </div>
+      </div>
+
+      <div class="form-group col-md-6">
+        <label>Estado</label>
+        <select [(ngModel)]="AppGrupo.Estado" name="Estado" type="text" class="form-control">
+          <option value='1'>Activo</option>
+          <option value='0'>Inactivo</option>
+        </select>
+      </div>
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-6 col-md-8">
+
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="grabar()" type="button" class="btn btn-success" title="Cancela edicion">Grabar</button>
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="cancel()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+</div>
+
+
+<div [hidden]="!PantallaGrupos" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Seleccionar Grupo</h2>
+      <input [(ngModel)]="searchFieldGrupos" (blur)="searchGrupos()" (keydown)="keytabGrupos($event)" type="text"
+        class="form-control" placeholder="Buscar">
+    </div>
+    <div class="card-body modal-grid">
+      <div class="form-row">
+        <div class="form-group col-12 col-sm-6" *ngFor="let grupo of Grupos;let i = index">
+          <a (click)="SeleccionarGrupo(grupo)">
+            <div class="card">
+              <div class="card-body">
+                <h5>{{grupo.Nombre}}</h5>
+                Estado :
+                <span *ngIf="grupo.Estado == '1'" class="text-success"> Activo</span>
+                <span *ngIf="grupo.Estado == '0'" class="text-warning"> Inactivo</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8 col-md-10">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="closePantallaGrupo()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div [hidden]="!PantallaApp" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Seleccionar Aplicación</h2>
+      <input [(ngModel)]="searchFieldApp" (blur)="searchApps()" (keydown)="keytabApp($event)" type="text"
+        class="form-control" placeholder="Buscar">
+    </div>
+    <div class="card-body modal-grid">
+      <div class="form-row">
+        <div class="form-group col-12 col-sm-6" *ngFor="let app of Apps;let i = index">
+          <a (click)="SeleccionarApp(app)">
+            <div class="card">
+              <div class="card-body">
+                <h5>{{app.Titulo}}</h5>
+                Tipo :
+                <span *ngIf="app.Principal == '1'" class="text-primary"> Menu</span>
+                <span *ngIf="app.Principal == '0'" class="text-success"> Aplicación</span>
+                Estado :
+                <span *ngIf="app.Estado == '1'" class="text-success"> Activo</span>
+                <span *ngIf="app.Estado == '0'" class="text-warning"> Inactivo</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8 col-md-10">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="closePantallaApp()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

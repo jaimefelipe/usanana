@@ -1,0 +1,174 @@
+<div [hidden]="edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Contactos</h2>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+        </div>
+        <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+          placeholder="Buscar">
+        <div class="input-group-append">
+          <button class="btn btn-success" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
+              aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form>
+    <div class="form-row">
+
+      <div class="form-group col-12 col-sm-6" *ngFor="let Persona of Personas;let i = index">
+        <div class="card">
+          <a (click)="editRecord(Persona)">
+            <div class="card-body">
+              <h4 class="card-title">{{Persona.Nombre}}</h4>
+              ID : {{Persona.Identificacion}}, Correo: {{Persona.Correo}} <br>
+              Tel: {{Persona.Telefono}} | {{Persona.Id_Persona}}
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="container-fluid">
+    <ul class="pagination">
+      <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"
+            aria-hidden="true"></i></a></li>
+    </ul>
+  </div>
+</div>
+<!--
+  Form de Edición
+-->
+<div [hidden]="!edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Contacto</h2>
+  <form>
+    <div class="form-row">
+      <div class="form-group col-2 col-sm-1">
+        <button type="button" data-toggle="collapse" href="#GeneralData" class="form-control btn btn-primary"><i
+            class="fa fa-bars"></i></button>
+      </div>
+      <div class="form-group col-10 col-sm-11">
+        <h3>Datos Personales</h3>
+      </div>
+    </div>
+    <div class="collapse show" id="GeneralData">
+      <div class="form-row">
+        <div class="form-group col-md-12">
+          <label>Nombre</label>
+          <input [(ngModel)]="Persona.Nombre" name="Nombre" type="text" placeholder="Nombre" class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+          <label for="name">Tipo de Identificacion</label>
+          <select [(ngModel)]="Persona.Tipo_Identificacion" name="Tipo_Identificacion" class="form-control">
+            <option value='01'>Cedula Fisica</option>
+            <option value='02'>Cedula Juridica</option>
+            <option value='03'>Dimex</option>
+            <option value='04'>NITE</option>
+          </select>
+        </div>
+        <div class="form-group col-md-6">
+          <label>Identificacion</label>
+          <input [(ngModel)]="Persona.Identificacion" name="Identificacion" type="text" placeholder="Identificación"
+            class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+          <label>Teléfono</label>
+          <input [(ngModel)]="Persona.Telefono" name="Telefono" type="text" placeholder="Teléfono"
+            class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+          <label>Correo</label>
+          <input [(ngModel)]="Persona.Correo" name="Correo" type="text" placeholder="Correo" class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+          <label for="name">Cliente</label>
+          <select [(ngModel)]="Persona.Cliente" name="Cliente" class="form-control">
+            <option value='0'>No es cliente</option>
+            <option value='1'>Si es cliente</option>
+          </select>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="name">Proveedor</label>
+          <select [(ngModel)]="Persona.Proveedor" name="Proveedor" class="form-control">
+            <option value='0'>No es proveedor</option>
+            <option value='1'>Si es proveedor</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!--
+      Datos Dirección
+    -->
+    <div class="form-row">
+      <div class="form-group col-2 col-sm-1">
+        <button type="button" data-toggle="collapse" href="#DireccionData" class="form-control btn btn-success"><i
+            class="fa fa-bars"></i></button>
+      </div>
+      <div class="form-group col-10 col-sm-11">
+        <h3>Dirección</h3>
+      </div>
+    </div>
+    <div class="collapse" id="DireccionData">
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="name">Provincia</label>
+          <select [(ngModel)]="Persona.Provincia" (change)="provinceChange()" name="Provincia" class="form-control">
+            <option value={{Province.Provincia}} *ngFor="let Province of Provinces;let i = index">
+              {{Province.Provincia_Nombre}}</option>
+          </select>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="name">Cantón </label>
+          <select [(ngModel)]="Persona.Canton" (change)="cantonChange()" name="Canton" class="form-control">
+            <option value={{Canton.Canton}} *ngFor="let Canton of Cantons;let i = index">{{Canton.Canton_Nombre}}
+            </option>
+          </select>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="name">Distrito </label>
+          <select [(ngModel)]="Persona.Distrito" name="Distrito" class="form-control">
+            <option value={{District.Distrito}} *ngFor="let District of Districts;let i = index">
+              {{District.Distrito_Nombre}}</option>
+          </select>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="name">Barrio</label>
+          <input [(ngModel)]="Persona.Barrio" name="Barrio" type="text" class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+          <label for="name">Dirección</label>
+          <input [(ngModel)]="Persona.Otras_Senas" name="Otras_Senas" type="text" class="form-control">
+        </div>
+
+      </div>
+    </div>
+    <!-- End of Datos de Dirección-->
+
+    <div class="form-row">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-6 col-md-8">
+
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="grabar()" type="button" class="btn btn-success" title="Cancela edicion">Grabar</button>
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="cancel()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+</div>

@@ -1,0 +1,124 @@
+<div >
+    <div class="form-row">
+      <div class="form-group col-md-3">
+        <label for="name">Contrato #</label>
+        <input [(ngModel)]="Persona.Otro_Documento" name="Otro_Documento" placeholder="Número de Contrato" type="text" class="form-control">
+      </div>
+      <div class="form-group col-md-3">
+        <label for="name">Fecha de Ingreso</label>
+        <div class="input-group">
+          <input class="form-control" placeholder="Fecha de Ingreso" name="Fecha_Ingreso" [(ngModel)]="Persona.Fecha_Ingreso" ngbDatepicker
+            #d1="ngbDatepicker">
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary fa fa-calendar" (click)="d1.toggle()" type="button"></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-md-3">
+        <label for="name">Moneda </label>{{Persona.Moneda}}
+        <select [(ngModel)]="Persona.Moneda" name="Moneda" class="form-control">
+          <option value='CRC'>Colones</option>
+          <option value='USD'>Dólares</option>
+        </select>
+      </div>
+      <div class="form-group col-md-3">
+        <label for="name">Condición de Venta </label>
+        <select [(ngModel)]="Persona.Condicion_Venta" name="Condicion_Venta" class="form-control">
+          <option value='01'>Contado</option>
+          <option value='02'>Crédito</option>
+          <option value='03'>Consignacion</option>
+        </select>
+      </div>
+      <div class="form-group col-md-3">
+        <label for="name">Plazo de Cédito </label>
+        <input [(ngModel)]="Persona.Plazo_Credito" placeholder="Plazo del cédito" name="Plazo_Credito" type="text" class="form-control">
+      </div>
+      <div class="form-group col-md-3">
+        <label for="name">Metodo de Págo</label>
+        <select [(ngModel)]="Persona.Metodo_Pago"  name="Metodo_Pago" class="form-control">
+          <option value='01'>Efectivo</option>
+          <option value='02'>Tarjeta de Credito</option>
+          <option value='06'>Sinpe Móvil</option>
+          <option value='03'>Cheque</option>
+          <option value='04'>Transferencia/Deposito Bancario</option>
+          <option value='05'>Recaudo Tercero</option>
+        </select>
+      </div>
+      <div class="form-group col-md-3">
+        <label for="name">Precio</label>
+        <input [(ngModel)]="Persona.Precio" name="Precio" placeholder="Precio" type="text" class="form-control">
+      </div>
+      
+      <div class="form-group col-md-3">
+        <label for="name">Ultima Factura </label>
+        <input disabled [(ngModel)]="Persona.Ultima_Factura" placeholder="Ultima_Factura" name="Ultima_Factura" type="text" class="form-control">
+      </div>
+
+
+      <div class="form-group col-md-3">
+        <label for="name">Declaracion</label>
+        <select [(ngModel)]="Persona.Declaracion" name="Declaracion" class="form-control">
+          <option value='0'>No</option>
+          <option value='1'>Si</option>
+        </select>
+      </div>
+
+      <div class="form-group col-md-3">
+        <label for="name">Bloque A</label>
+        <select [(ngModel)]="Persona.PresentacionA"  [disabled]="Persona.Declaracion == '0'" name="PresentacionA" class="form-control">
+          <option value='0'>No</option>
+          <option value='1'>Si</option>
+        </select>
+      </div>
+
+      <div class="form-group col-md-3">
+        <label for="name">Bloque B</label>
+        <select [(ngModel)]="Persona.PresentacionB"  [disabled]="Persona.Declaracion == '0' || Persona.PresentacionA =='1'" name="PresentacionB" class="form-control">
+          <option value='0'>No</option>
+          <option value='1'>Si</option>
+        </select>
+      </div>
+
+      <div class="form-group col-md-3">
+        <label for="name">Contabilidad</label>
+        <select [(ngModel)]="Persona.Contabilidad" name="Contabilidad" class="form-control">
+          <option value='0'>No</option>
+          <option value='1'>Si</option>
+        </select>
+      </div>
+
+      <div class="form-group col-md-3">
+        <label for="name">Factura Electronica</label>
+        <select [(ngModel)]="Persona.FacturaElectronica" name="FacturaElectronica" class="form-control">
+          <option value='0'>No</option>
+          <option value='1'>Si</option>
+        </select>
+      </div>
+
+      <div class="form-group col-md-3">
+        <label for="name">Punto de Venta</label>
+        <select [(ngModel)]="Persona.PuntoVenta" name="PuntoVenta" class="form-control">
+          <option value='0'>No</option>
+          <option value='1'>Si</option>
+        </select>
+      </div>
+
+      <div class="form-group col-md-3">
+        <label for="name">Restaurante</label>
+        <select [(ngModel)]="Persona.Restaurante" name="Restaurante" class="form-control">
+          <option value='0'>No</option>
+          <option value='1'>Si</option>
+        </select>
+      </div>
+
+      <div class="form-group col-md-3">
+        <label for="name">Asesoria</label>
+        <select [(ngModel)]="Persona.Asesoria" name="Asesoria" class="form-control">
+          <option value='0'>No</option>
+          <option value='1'>Si</option>
+        </select>
+      </div>
+
+    
+    </div>

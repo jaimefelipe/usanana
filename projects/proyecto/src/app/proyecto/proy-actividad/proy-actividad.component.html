@@ -1,0 +1,88 @@
+<form>
+    <div class="form-row row">
+        <div class="form-group col-md-3">
+            <label>Tipo</label>
+            <select disabled="disabled" [(ngModel)]="Proyecto.Tipo" name="Tipo" type="text" class="form-control">
+              <option value='1'>Portafolio</option>
+              <option value='2'>Programa</option>
+              <option value='3'>Proyecto</option>
+              <option value='4'>Fase</option>
+              <option value='5'>Entregable</option>
+              <option value='6'>Tarea</option>
+              <option value='7'>Actividad</option>
+            </select>
+
+        </div>
+        <div class="form-group col-md-3">
+            <label>Codigo</label>
+            <input disabled="disabled" [(ngModel)]="Proyecto.Codigo" name="Codigo" type="text" placeholder="Codigo" class="form-control">
+        </div>
+        
+        <div class="form-group col-md-12">
+            <label>Nombre</label>
+              <input [(ngModel)]="Proyecto.Nombre" name="Nombre" type="text" placeholder="Nombre" class="form-control">
+        </div>
+        <div class="form-group col-md-12">
+            <label>Descripcion</label>
+            <textarea class="form-control" [(ngModel)]="Proyecto.Descripcion" name="Descripcion"></textarea>
+        </div>
+        <div *ngIf="Proyecto.Nivel != '7'" class="form-group col-md-12">
+          <label>Objetivo</label>
+          <textarea class="form-control" [(ngModel)]="Proyecto.Objetivo" name="Objetivo"></textarea>
+        </div>
+        <div *ngIf="Proyecto.Nivel != '7'" class="form-group col-md-6">
+          <label>Alcance</label>
+          <textarea class="form-control" [(ngModel)]="Proyecto.Alcance" name="Objetivo"></textarea>
+        </div>
+        <div *ngIf="Proyecto.Nivel != '7'" class="form-group col-md-6">
+          <label>Restricciones</label>
+          <textarea class="form-control" [(ngModel)]="Proyecto.Restricciones" name="Restricciones"></textarea>
+        </div>
+
+        <div *ngIf="Proyecto.Nivel == '7'" class="form-group col-md-3">
+          <label>Fecha Inicio</label>
+          <div class="input-group">
+            <input class="form-control" placeholder="Inicio" name="Inicio" [(ngModel)]="Proyecto.Inicio" ngbDatepicker
+              #d1="ngbDatepicker">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary fa fa-calendar" (click)="d1.toggle()" type="button"></button>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="Proyecto.Nivel == '7'" class="form-group col-md-6">
+          <label>Fin</label>
+          <textarea class="form-control" [(ngModel)]="Proyecto.Fin" name="Fin"></textarea>
+        </div>
+
+        <div class="form-group col-md-12 mt-3">
+            <div class="form-row row">
+                <div class="form-group col-3 col-md-2">
+                  <div class="btn-group" role="group" >
+                    <span *ngIf="Proyecto.Nivel == '1'" class="text-primary"> <button (click)="nuevoPadre()" type="button" class="btn btn-warning" title="Cancela edicion">Portafolio</button> </span>
+                    <span *ngIf="Proyecto.Nivel == '1'" class="text-primary"> <button (click)="nuevoHijo()" type="button" class="btn btn-primary" title="Cancela edicion">Programa</button> </span>
+                    <span *ngIf="Proyecto.Nivel == '2'" class="text-primary"> <button (click)="nuevoHijo()" type="button" class="btn btn-primary" title="Cancela edicion">Proyecto</button> </span>
+                    <span *ngIf="Proyecto.Nivel == '3'" class="text-primary"> <button (click)="nuevoHijo()" type="button" class="btn btn-primary" title="Cancela edicion">Fase</button> </span>
+                    <span *ngIf="Proyecto.Nivel == '4'" class="text-primary"> <button (click)="nuevoHijo()" type="button" class="btn btn-primary" title="Cancela edicion">Entregable</button> </span>
+                    <span *ngIf="Proyecto.Nivel == '5'" class="text-primary"> <button (click)="nuevoHijo()" type="button" class="btn btn-primary" title="Cancela edicion">Tarea</button> </span>
+                    <span *ngIf="Proyecto.Nivel == '6'" class="text-primary"> <button (click)="nuevoHijo()" type="button" class="btn btn-primary" title="Cancela edicion">Actividad</button> </span>
+                    </div>
+                </div>
+
+                <div class="form-group col-6 col-md-8">
+
+                </div>
+
+                <div class="form-group col-3 col-md-2">
+                  <div class="btn-group" role="group" >
+                    <span *ngIf="Proyecto.Nivel != '0'" class="text-primary"> 
+                    <button (click)="grabar()" type="button" class="btn btn-success" title="Grabar Informacion">Grabar</button>
+                    </span>
+                  </div>
+                </div>
+
+              </div>
+        </div>
+
+    </div>
+</form>

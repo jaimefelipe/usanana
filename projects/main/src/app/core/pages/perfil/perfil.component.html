@@ -1,0 +1,327 @@
+<div [hidden]="AppScreen" class="container pb-5 pt-5">
+  <h2>Perfil del Usuario</h2>
+  <form >
+    <!--
+      Datos Generales
+    -->
+    <div class="form-row">
+      <div class="form-group col-2 col-sm-1">
+        <button type="button" data-toggle="collapse" href="#GeneralData" class="form-control btn btn-primary"><i
+            class="fa fa-bars"></i></button>
+      </div>
+      <div class="form-group col-10 col-sm-11">
+        <h3>Datos Personales</h3>
+      </div>
+    </div>
+    <div class="collapse show" id="GeneralData">
+      <div class="form-row">
+        <div class="form-group col-md-12">
+          <label for="name">Nombre</label>
+          <input [(ngModel)]="Empresa.Nombre" name="Nombre" type="text" class="form-control">
+        </div>
+        <div class="form-group col-md-12">
+          <label for="name">Razón Social</label>
+          <input [(ngModel)]="Empresa.Razon_Social" name="Razon_Social" type="text" class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+          <label for="name">Tipo de Identificacion</label>
+          <select [(ngModel)]="Empresa.Tipo_Identificacion" name="Tipo_Identificacion" class="form-control">
+            <option value='01'>Cedula Fisica</option>
+            <option value='02'>Cedula Juridica</option>
+            <option value='03'>Dimex</option>
+            <option value='04'>NITE</option>
+          </select>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="name"># Identificacion</label>
+          <input [(ngModel)]="Empresa.Numero_Identificacion" name="Numero_Identificacion" type="text"
+            class="form-control">
+        </div>
+
+        <div class="form-group col-md-6">
+          <label for="name">Teléfono</label>
+          <input [(ngModel)]="Empresa.Telefono" name="Telefono" type="text" class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+          <label for="name">Correo</label>
+          <input [(ngModel)]="Empresa.Correo" name="Correo" type="text" class="form-control">
+        </div>
+
+        <div class="form-group col-md-12">
+          <h3>Tipo de Cuenta</h3>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="body">Tipo de Cuenta</label>
+          <select [(ngModel)]="userData.Tipo_Cuenta" name="Tipo_Cuenta" id="Tipo_Cuenta" type="text" class="form-control">
+            <option value=0>Personal</option>
+            <option value=1>Empresarial</option>
+          </select>
+
+        </div>
+        <div class="form-group col-md-6">
+          <label for="body">Tipo de Usuario</label>
+          <select disabled [(ngModel)]="userData.Tipo_Usuario" name = "Tipo_Usuario" id="Tipo_Usuario" type="text" class="form-control">
+            <option value=0>Administrador</option>
+            <option value=1>Usuario</option>
+          </select>
+        </div>
+        <div class="form-group col-md-6">
+          <button (click)='udateUserData(1)' class="btn btn-primary" type="button">Actualizar Datos</button>
+        </div>
+      </div>
+    </div><!-- End of Tipo de cuenta-->
+
+
+    <!--
+      Datos Dirección
+    -->
+    <div class="form-row">
+      <div class="form-group col-2 col-sm-1">
+        <button type="button" data-toggle="collapse" href="#DireccionData" class="form-control btn btn-success"><i
+            class="fa fa-bars"></i></button>
+      </div>
+      <div class="form-group col-10 col-sm-11">
+        <h3>Dirección</h3>
+      </div>
+    </div>
+    <div class="collapse" id="DireccionData">
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="name">Provincia</label>
+          <select [(ngModel)]="Empresa.Provincia" (change)="provinceChange()" name="Provincia" class="form-control">
+            <option value={{Province.Provincia}} *ngFor="let Province of Provinces;let i = index">
+              {{Province.Provincia_Nombre}}</option>
+          </select>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="name">Cantón </label>
+          <select [(ngModel)]="Empresa.Canton" (change)="cantonChange()" name="Canton" class="form-control">
+            <option value={{Canton.Canton}} *ngFor="let Canton of Cantons;let i = index">{{Canton.Canton_Nombre}}
+            </option>
+          </select>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="name">Distrito </label>
+          <select [(ngModel)]="Empresa.Distrito" name="Distrito" class="form-control">
+            <option value={{District.Distrito}} *ngFor="let District of Districts;let i = index">
+              {{District.Distrito_Nombre}}</option>
+          </select>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="name">Barrio</label>
+          <input [(ngModel)]="Empresa.Barrio" name="Barrio" type="text" class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+          <label for="name">Dirección</label>
+          <input [(ngModel)]="Empresa.Otras_Senas" name="Otras_Senas" type="text" class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+            <label for="body">Notas</label>
+            <textarea class="form-control" [(ngModel)]="Empresa.Notas" name="Notas"></textarea>
+        </div>
+        <div class="form-group col-md-6">
+          <button (click)='udateUserData(2)' class="btn btn-primary" type="button">Actualizar Dirección</button>
+        </div>
+      </div>
+    </div>
+    <!-- End of Datos de Dirección-->
+    <!--
+      Datos Facturación
+    -->
+    <div class="form-row">
+      <div class="form-group col-2 col-sm-1">
+        <button type="button" data-toggle="collapse" href="#Facturacion" class="form-control btn btn-success"><i
+            class="fa fa-bars"></i></button>
+      </div>
+      <div class="form-group col-10 col-sm-11">
+        <h3>Pago de Licencias</h3>
+      </div>
+    </div>
+    <div class="collapse" id="Facturacion">
+      <div class="form-row">
+        <div class="form-group col-12 col-sm-12">
+          Su método de pago por defecto es <b>{{PaymentMethod}}</b>
+        </div>
+        <!--
+        <div class="form-group col-6 col-sm-3">
+          <button type="button" (click)="colapseCC()" data-toggle="collapse" href="#CreditCard"
+            class="form-control btn btn-warning">
+            <i class="fa fa-credit-card"></i> - Credit Card</button>
+        </div>
+        -->
+        <div class="form-group col-6 col-sm-3">
+          <button type="button" (click)="colapsePaypal()" data-toggle="collapse" href="#PayPal"
+            class="form-control btn btn-secondary">
+            <i class="fa fa-cc-paypal"></i> - PayPal</button>
+        </div>
+        <div class="form-group col-6 col-sm-3">
+          <button type="button" (click)="colapseMobile()" data-toggle="collapse" href="#SinpeMovil"
+            class="form-control btn btn-success">
+            <i class="fa fa-mobile"></i> - Sinpe Movil</button>
+        </div>
+        <div class="form-group col-6 col-sm-3">
+          <button type="button" (click)="colapseTransferencia()" data-toggle="collapse" href="#Deposito"
+            class="form-control btn btn-primary">
+            <i class="fa fa-bank"></i> - Depósito</button>
+        </div>
+        <!--
+        <div class="collapse" id="CreditCard">
+          <div class="form-row">
+            <div class="form-group col-md-12">
+              Los Datos de su Tarjeta de crédito serán utilizados para realizar un cargo automático de su facturación
+              todos los meses, al vencimiento de su factura.
+            </div>
+            <div class="form-group col-md-6">
+              <label for="body">Número de Tarjeta</label>
+              <input formControlName="tarjeta" id="tarjeta" type="text" class="form-control">
+            </div>
+            <div class="form-group col-md-3">
+              <label for="body">Fecha Vencimiento</label>
+              <input formControlName="fecha" id="fecha" type="text" class="form-control">
+            </div>
+            <div class="form-group col-md-3">
+              <label for="body">Código de Verificación</label>
+              <input formControlName="ccv" id="ccv" type="text" class="form-control">
+
+            </div>
+          </div>
+        </div>
+        -->
+        <div class="collapse show" id="SinpeMovil">
+          <div class="form-row">
+            <div class="form-group col-md-12">
+              Usted debe realizar una transferencia por medio de Sinpe Móvil al numero <b>+506 87786649</b> en los
+              primeros 5
+              días de cada més y Reportar el número y fecha de la transferencia en la sección de facturación.
+            </div>
+          </div>
+        </div>
+        <div class="collapse" id="PayPal">
+          <div class="form-row">
+            <div class="form-group col-md-12">
+              Usted debe realizar una transferencia por medio de Paypal al correo <b>cobros&#64;toxo.training</b> en los
+              primeros 5
+              días de cada més y Reportar el número y fecha de la transferencia en la sección de facturación.
+            </div>
+          </div>
+        </div>
+        <div class="collapse" id="Deposito">
+          <div class="form-row">
+            <div class="form-group col-md-12">
+              Usted debe realizar una transferencia a la Cuenta <b>IBAM</b> Número
+              <b>CR07010200009455920460</b> en los primeros 5
+              días de cada més y Reportar el número y fecha de la transferencia en la sección de facturación.
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-6">
+          <button (click)='udateUserData(3)' class="btn btn-primary" type="submit">Actualizar Metodo Págo</button>
+        </div>
+      </div>
+    </div><!-- End of Facturación -->
+
+    <!--
+      Datos Aplicación
+    -->
+    <div class="form-row">
+      <div class="form-group col-2 col-sm-1">
+        <button type="button" data-toggle="collapse" href="#Aplicaciones" class="form-control btn btn-info"><i
+            class="fa fa-bars"></i></button>
+      </div>
+      <div class="form-group col-10 col-sm-11">
+        <h3>Comprar Licencias</h3>
+      </div>
+    </div>
+    <div class="collapse" id="Aplicaciones">
+      <div class="form-row">
+        <div class="form-group col-12 col-sm-6" *ngFor="let product of Products;let i = index">
+          <div class="card">
+            <div class="card-body">
+
+              <div class="custom-control custom-switch">
+                 <input type="checkbox" [(ngModel)]="product.Seleccionado" name="Seleccionado{{i}}"  class="form-control custom-control-input" id="Seleccionado{{i}}" (change)="onProductSelected($event,product,i)">
+                 <label class="custom-control-label" for="Seleccionado{{i}}">
+                  <h5 class="card-title">{{product.Descripcion}}</h5>
+                </label>
+              </div>
+
+              <select id="tipoCuenta{{i}}" type="text" class="form-control" (change)="categoryChange($event,i)">
+                <option *ngFor="let categoria of ProductosCategoria[i]" value={{categoria.Id_Sub_Categoria}}
+                  selected="{{categoria.Selected}}">
+                  {{categoria.Nombre}} ({{categoria.Precio | currency : ' ' }} ) {{categoria.Parametro1}} Documentos
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="form-group col-md-12">
+          <button (click)='udateUserData(4)' class="btn btn-primary" type="submit">Actualizar Licencias</button>
+        </div>
+      </div>
+    </div> <!-- End of Facturación -->
+    <!--
+      Datos Factura Electrónica
+    -->
+    <div class="form-row">
+      <div class="form-group col-2 col-sm-1">
+        <button type="button" data-toggle="collapse" href="#HaciendaData" class="form-control btn btn-info"><i
+            class="fa fa-bars"></i></button>
+      </div>
+      <div class="form-group col-10 col-sm-11">
+        <h3>Factura Electrónica</h3>
+      </div>
+    </div>
+    <div class="collapse" id="HaciendaData">
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="name">Correo de Facturación</label>
+          <input [(ngModel)]="Empresa.Correo_Hacienda" name="Correo_Hacienda" type="text" class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+          <label for="name">Código de Actividad</label>
+          <input [(ngModel)]="Empresa.Codigo_Actividad" name="Codigo_Actividad" type="text" class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+          <label for="name">Regimen</label>
+          <select [(ngModel)]="Empresa.Regimen" name="Regimen" class="form-control">
+            <option value='1'>Regimen Tradicional</option>
+            <option value='2'>Regimen Simplificado</option>
+            <option value='3'>No Inscrito</option>
+            <option value='4'>Contingencia</option>
+          </select>
+        </div>
+        <div class="form-group col-md-6">
+          <label>Modo Hacienda</label>
+          <select [(ngModel)]="Empresa.Api" name="Api" class="form-control">
+            <option value='01'>Produccion</option>
+            <option value='02'>Desarrollo</option>
+          </select>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="name">Usuario Hacienda</label>
+          <input [(ngModel)]="Empresa.Usuario_IDP" name="Usuario_IDP" type="text" class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+          <label for="name">Password Hacienda</label>
+          <input [(ngModel)]="Empresa.Clave_IDP" name="Clave_IDP" type="text" class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+          <label for="name">Cargar Archivo P12</label>
+          <div class="custom-file">
+            <label class="custom-file-label" for="customFile">{{Empresa.Ruta_P12}}</label>
+            <input (change)="loadImage($event)" type="file" class="custom-file-input" id="customFile">
+          </div>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="name">Pin P12</label>
+          <input [(ngModel)]="Empresa.Pin_P12" name="Pin_P12" type="text" class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+          <button (click)='udateUserData(5)' class="btn btn-primary" type="submit">Actualizar Hacienda</button>
+        </div>
+      </div>
+    </div><!-- End of Datos de Hacienda-->
+
+  </form>
+</div>

@@ -1,0 +1,362 @@
+<div [hidden]="edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Documentos por Cobrar</h2>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+        </div>
+        <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+          placeholder="Buscar">
+        <div class="input-group-append">
+          <button class="btn btn-success" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
+              aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form>
+    <div class="form-row">
+      <div class="form-group col-12 col-sm-6" *ngFor="let Document of Documents;let i = index">
+        <div class="card">
+          <a (click)="editRecord(Document)">
+            <div class="card-body">
+              <h4 class="card-title"># {{Document.Documento}} : {{Document.Fecha | date:'d/M/YYY'}} </h4>
+              <h5>{{Document.Cuenta}}</h5>
+              <h6>Monto: {{Document.Monto | currency:' '}}
+                <span *ngIf="Document.Moneda == 1">Colones</span>
+                <span *ngIf="Document.Moneda == 0">Dolares</span>
+                Saldo:{{Document.Saldo | currency:' '}}</h6>
+              Estado :
+              <span *ngIf="Document.Estado == '1'" class="text-success"> Registrado</span>
+              <span *ngIf="Document.Estado == '2'" class="text-primary"> Aplicado</span>
+              <span *ngIf="Document.Estado == '3'" class="text-danger"> Anulado</span>
+              <span *ngIf="Document.Estado == '4'" class="text-primary"> Pago Parcial</span>
+              <span *ngIf="Document.Estado == '5'" class="text-primary"> Cancelado</span>
+              Id:{{Document.Id_Documento}}
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="container-fluid">
+    <ul class="pagination">
+      <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"
+            aria-hidden="true"></i></a></li>
+    </ul>
+  </div>
+</div>
+
+<!--
+  Form de Edición
+-->
+
+<div [hidden]="!edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Documento por Cobrar</h2>
+
+  <form>
+    <div class="form-row">
+      <div class="form-group col-md-3">
+        <label>Tipo</label>
+        <select [disabled]="Documento.Estado !='1'" [(ngModel)]="Documento.Id_Tipo_Documento" name="Id_Tipo" type="text"
+          class="form-control">
+          <option value='1'>Factura</option>
+          <option value='2'>Nota de Débito</option>
+          <option value='3'>Nota de Crédito</option>
+        </select>
+      </div>
+      <div class="form-group col-md-5">
+        <label>Cuenta por cobrar</label>
+        <div class="input-group">
+
+          <div class="input-group-append">
+            <button [disabled]="Documento.Estado !='1'" type="button" (click)="openAccountPanel()"
+              class="form-control btn btn-primary"><i class="fa fa-search"></i></button>
+          </div>
+          <input [(ngModel)]="Documento.Nombre_Cuenta" disabled name="Nombre_Cuenta" id="Nombre_Cuenta" type="input"
+            class="form-control" placeholder="Cuenta">
+        </div>
+      </div>
+      <div class="form-group col-md-2">
+        <label>Saldo</label>
+        <input disabled [(ngModel)]="Documento.Saldo" name="Saldo" type="text" placeholder="Saldo" class="form-control"
+          currencyMask [options]="{ prefix: ' ', thousands: ',', decimal: '.', allowZero: true }">
+      </div>
+      <div class="form-group col-md-2">
+        <label>Tipo Cambio</label>
+        <input disabled [(ngModel)]="Documento.Tipo_Cambio" name="Tipo_Cambio" type="text" placeholder="Tipo_Cambio" class="form-control"
+          currencyMask [options]="{ prefix: ' ', thousands: ',', decimal: '.', allowZero: true }">
+      </div>
+      <div class="form-group col-md-3">
+        <label>Fecha</label>
+        <div class="input-group">
+          <input (dateSelect)="calcularVencimiento()" [disabled]="Documento.Estado !='1'" class="form-control" placeholder="Fecha" name="Fecha"
+            [(ngModel)]="Documento.Fecha" ngbDatepicker #d1="ngbDatepicker">
+          <div class="input-group-append">
+            <button [disabled]="Documento.Estado !='1'" class="btn btn-outline-secondary fa fa-calendar"
+              (click)="d1.toggle()" type="button"></button>
+          </div>
+        </div>
+      </div>
+      <div class="form-group col-md-3">
+        <label>Plazo</label>
+        <input (change)="calcularVencimiento()" [disabled]="Documento.Estado !='1'" [(ngModel)]="Documento.Plazo" name="Plazo" type="text"
+          placeholder="Plazo" class="form-control">
+      </div>
+      <div class="form-group col-md-3">
+        <label>Fe. Vencimiento</label>
+        <input [disabled]="true" [(ngModel)]="Documento.Fecha_v" name="Fecha_Vencimiento" type="text"
+          placeholder="Fecha_Vencimiento" class="form-control">
+      </div>
+      <div class="form-group col-md-3">
+        <label>Documento</label>
+        <input [disabled]="Documento.Estado !='1'" [(ngModel)]="Documento.Documento" name="Documento" type="text"
+          placeholder="Documento" class="form-control">
+      </div>
+      <div class="form-group col-md-3">
+        <label>Moneda</label>
+        <select [disabled]="Documento.Estado !='1'" [(ngModel)]="Documento.Moneda" name="Moneda" class="form-control">
+          <option value='1'>Colones</option>
+          <option value='0'>Dolares</option>
+        </select>
+      </div>
+      <div class="form-group col-md-3">
+        <label>Monto</label>
+        <input [disabled]="Documento.Estado !='1'" name="Monto" type="text" placeholder="Monto" class="form-control"
+          [(ngModel)]="Documento.Monto" currencyMask
+          [options]="{ prefix: ' ', thousands: ',', decimal: '.', allowZero: true }">
+      </div>
+      <div class="form-group col-md-9">
+        <label>Detalle </label>
+        <input [disabled]="Documento.Estado !='1'" [(ngModel)]="Documento.Nombre" name="Detalle" type="text"
+          placeholder="Detalle" class="form-control">
+      </div>
+      <div class="form-group col-md-3">
+        <label>Estado </label>
+        <select disabled [(ngModel)]="Documento.Estado" name="Estado" class="form-control">
+          <option value='1'>Regitrado</option>
+          <option value='2'>Aplicado</option>
+          <option value='3'>Anulado</option>
+          <option value='4'>Pagado Parcial</option>
+          <option value='5'>Cancelado</option>
+        </select>
+      </div>
+
+      <!-- Fin de Primera división -->
+
+      <div class="form-row col-md-12 bg-info">
+        <div class="form-group col-12 col-md-3">
+          <label>Cuenta</label>
+
+          <div class="input-group">
+            <input [disabled]="Documento.Estado !='1'" [(ngModel)]="Detalle.Cuenta" name="Cuenta" id="Cuenta"
+              type="input" class="form-control" placeholder="Cuenta" (blur)="processAccount('Detalle_Cuenta')"
+              (keydown)="keytab1($event,'Detalle_Cuenta')">
+            <div class="input-group-append">
+              <button type="button" (click)="obtenerCuenta('')" class="form-control btn btn-primary"><i
+                  class="fa fa-search"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="form-group col-12 col-md-6">
+          <label>Descripción</label>
+          <input [disabled]="Documento.Estado !='1'" [(ngModel)]="Detalle.Detalle" name="Detalle_Cuenta"
+            id="Detalle_Cuenta" type="input" class="form-control" placeholder="Detalle"
+            (keydown)="keytab1($event,'Debe')">
+        </div>
+
+        <div class="form-group col-12 col-md-3">
+          <label>Monto</label>
+          <input [disabled]="Documento.Estado !='1'" [(ngModel)]="Detalle.Monto" name="Debe" id="Debe" type="input"
+            class="form-control" placeholder="Debe" (blur)="processAccount('Cuenta')"
+            (keydown)="keytab1($event,'Cuenta')" style="text-align:right;">
+        </div>
+      </div>
+
+      <!-- Fin de Inclusión de Productos -->
+
+      <!-- Inicio Lista de Detalles -->
+    <div class="form-row col-md-12 d-none d-md-block">
+      <div class="form-row">
+        <div class="form-group col-md-2 m-1">
+          Cuenta
+        </div>
+        <div class="form-group col-12 col-md-6 m-1">
+          Descripción
+        </div>
+        <div class="form-group col-12 col-md-2 m-1">
+          Monto
+        </div>
+        <div class="form-group col-12 col-md-1 m-1">
+          Acción
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row table table-striped table-hover table-dark table-bordered ">
+      <div class="form-group col-12">
+        <div class="form-row" *ngFor="let Detail of Detalles;let indice = index">
+          <div class="form-group col-12 col-md-2 m-1">
+            {{Detail.Cuenta}}
+          </div>
+          <div class="form-group col-12 col-md-5 m-1">
+            {{Detail.Detalle }}
+          </div>
+          <div class="form-group col-12 col-md-3   m-1" style="text-align:right;">
+            {{Detail.Monto | currency:' '}}
+          </div>
+          <div class="form-group col-12 col-md-1 m-1">
+            <span style="display: inline-block;">
+              <button [disabled]="Documento.Estado !='1'" type="button" class="btn btn-danger btn-sm"
+                style="min-width: 0px;margin-right: 5px;padding: 0rem 0.31rem;"
+                (click)="removerDetalle(indice)"><i class="fa fa-trash" aria-hidden="true"
+                  title="Borrar Linea"></i></button>
+            </span>
+            <button [disabled]="Documento.Estado !='1'" type="button" class="btn btn-primary btn-sm"
+              style="min-width: 0px;margin-right: 5px;padding: 0rem 0.31rem;"
+              (click)="editarDetalle(indice)"><i class="fa fa-edit" aria-hidden="true"
+                title="Editar Linea"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Fin Lista de Detalles -->
+
+      <div class="form-group col-md-12">
+        <div class="form-row">
+
+
+          <div class="form-group col-6 col-md-3">
+            <div class="input-group">
+              <div class="input-group-append">
+                <button disabled type="button"  class="form-control btn btn-primary">Detalles</button>
+              </div>
+
+              <input disabled [(ngModel)]="Documento.Total_Detalles" name="Total_Detalles" type="text" placeholder="Total Detalles"
+              class="form-control" currencyMask
+              [options]="{ prefix: ' ', thousands: ',', decimal: '.', allowZero: true }">
+
+            </div>
+          </div>
+          <div class="form-group col-6 col-md-3">
+
+            <div class="input-group">
+              <div class="input-group-append">
+                <button disabled type="button"  class="form-control btn btn-primary">T. Cambio:</button>
+              </div>
+              <input disabled [(ngModel)]="Documento.Monto_Otra_Moneda" name="Monto_Otra_Moneda" type="text"
+              placeholder="Monto Otra Moneda" class="form-control" currencyMask
+              [options]="{ prefix: ' ', thousands: ',', decimal: '.', allowZero: true }">
+            </div>
+
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="imprimir()" type="button" class="btn btn-primary"
+              title="Cancela edicion">Imprimir</button>
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button [disabled]="Documento.Estado !='1'" (click)="grabar()" type="button" class="btn btn-success"
+              title="Cancela edicion">Grabar</button>
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="cancel()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+
+<div [hidden]="!PantallaCuentas" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Seleccionar Cuenta</h2>
+      <input [(ngModel)]="searchFieldAccounts" (blur)="searchAccounts()" (keydown)="keytabAccounts($event)" type="text"
+        class="form-control" placeholder="Buscar">
+    </div>
+    <div class="card-body modal-grid">
+      <div class="form-row">
+        <div class="form-group col-12 col-sm-6" *ngFor="let Account of Accounts;let i = index">
+          <a (click)="Seleccionar(Account)">
+            <div class="card">
+              <div class="card-body">
+                <h5>{{Account.Nombre}}</h5>
+                Moneda
+                <span *ngIf="Account.Moneda == 1" class="text-success">Colones</span>
+                <span *ngIf="Account.Moneda == 0" class="text-primary">Dolares</span>
+                Estado :
+                <span *ngIf="Account.Estado == '1'" class="text-success"> Activo</span>
+                <span *ngIf="Account.Estado == '0'" class="text-warning"> Inactivo</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8 col-md-10">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="closeModal()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--
+  Form de Cuentas Hijas
+-->
+<div [hidden]="!PantallaCuentasHijas" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Seleccionar Cuenta</h2>
+      <input [(ngModel)]="searchFieldHijas" (blur)="searchHijas()" (keydown)="keytabHijas($event)" type="text"
+        class="form-control" placeholder="Buscar">
+    </div>
+    <div class="card-body modal-grid">
+      <div class="form-row">
+        <div class="form-group col-12 col-sm-6" *ngFor="let Cuenta of Hijas;let i = index">
+          <a (click)="SeleccionarCuenta(Cuenta)">
+            <div class="card">
+              <div class="card-body">
+                <h5>{{Cuenta.Cuenta}} - {{Cuenta.Descripcion}}</h5>
+                Estado :
+                <span *ngIf="Cuenta.Estado == '1'" class="text-success"> Activo</span>
+                <span *ngIf="Cuenta.Estado == '0'" class="text-warning"> Inactivo</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8 col-md-10">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="closePantallaHijas()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

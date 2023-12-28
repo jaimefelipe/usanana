@@ -1,0 +1,19 @@
+<div class="container">
+  <a [routerLink]="['/']"><img src="../../../../assets/toxologo.png" width="85px"></a>
+  <img class="mt-2 mb-5" src="/assets/images/productos.jpeg" width="100%" height="auto">
+
+  <div [hidden]="DetailPage" class="mb-5">
+    <h2>Productos y Servicios</h2>
+
+    <div class="row" >
+      <div class="col-sm" *ngFor="let product of Products">
+        <!--<a [routerLink]="['/producto',{prod:product.Url}]">-->
+        <a [routerLink]="['/producto',product.Url]">
+          <h3>{{product.Descripcion}}</h3>
+          <img class="mt-2 mb-5" src="{{product.Foto}}"  height="200px">
+          <div [innerHTML]="product.Description"></div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

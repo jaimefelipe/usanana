@@ -1,0 +1,80 @@
+<!-- [hidden]="!logedIn" -->
+<nav  role="navigation">
+  <div id="menuToggle">
+    <!--
+    A fake / hidden checkbox is used as click reciever,
+    so you can use the :checked selector on it.
+    -->
+    <input  id="MenuShow" (click)="click()" [checked]="showMenu"  type="checkbox" />
+
+    <!--
+    Some spans to act as a hamburger.
+
+    They are acting like a real hamburger,
+    not that McDonalds stuff.
+    -->
+    <span></span>
+    <span></span>
+    <span></span>
+
+    <!--
+    Too bad the menu has to be inside of the button
+    but hey, it's pure CSS magic.
+    -->
+      <ul  [hidden]="!showMenu" id="menu">
+        <a (click)="hideMenu()" [routerLink]="['/']"><li><i class="fa fa-home"></i> Inicio {{ambiente}} 2.5.15</li></a>
+        <div [hidden]="!logedIn">
+
+          <li [hidden]="!AppVentas" (click)="clickPersonaMenu()" ><a><i class="fa fa-hospital-o"></i>  Contactos <i [ngClass]='personaClass' class="fa fa-cog"></i>  </a></li>
+          <ul [hidden]="!PersonaMenu" >
+            <a (click)="hideMenu()" [hidden]="!AppVentas" [routerLink]="['/people']"><li><i class="fa fa-id-card-o"></i> Contactos </li></a>
+            <a (click)="hideMenu()" [hidden]="!AppVentas" [routerLink]="['/prodcliente']"><li><i class="fa fa-credit-card"></i> Producto x Cliente </li></a>
+          </ul>
+
+          <li [hidden]="!AppInventario" (click)="clickInventarioMenu()" ><a><i class="fa fa-hospital-o"></i>  Inventario <i [ngClass]='inventarioClass' class="fa fa-cog"></i>  </a></li>
+          <ul [hidden]="!inventarioMenu" >
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/categorias']"><li><i class="fa fa-shopping-bag"></i> Categorías</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/subcategorias']"><li><i class="fa fa-shopping-bag"></i> Sub Categorías</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/articulos']"><li><i class="fa fa-shopping-basket"></i> Artículos</li></a>
+            <a (click)="hideMenu()" [hidden]="!AppInventario" [routerLink]="['/movinventario']"><li><i class="fa fa-align-justify"></i> Movimientos</li></a>
+            <a (click)="hideMenu()" [hidden]="!AppInventario" [routerLink]="['/invmovdetail']"><li><i class="fa fa-align-justify"></i> Detalle Movimientos</li></a>
+            <a (click)="hideMenu()" [hidden]="!AppInventario" [routerLink]="['/repinventario']"><li><i class="fa fa-file"></i> Reportes</li></a>
+          </ul>
+
+          <li [hidden]="!AppVentas" (click)="clickVentasMenu()" ><a><i class="fa fa-credit-card"></i>  Ventas <i [ngClass]='ventasClass' class="fa fa-cog"></i>  </a></li>
+          <ul [hidden]="!ventasMenu">
+            <a (click)="hideMenu()" [hidden]="!AppVentas" [routerLink]="['/cajaventas']"><li><i class="fa fa-credit-card"></i> Cajas</li></a>
+            <a (click)="hideMenu()" [hidden]="!AppVentas" [routerLink]="['/cajamovimiento']"><li><i class="fa fa-align-justify"></i> Movimiento de Cajas</li></a>
+            
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/existencias']"><li><i class="fa fa-shopping-basket"></i> Existencias</li></a>
+            
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/ventas']"><li><i class="fa fa-credit-card"></i> Facturas</li></a>
+            <a (click)="hideMenu()" [hidden]="!AppVentas" [routerLink]="['/cargoventa']"><li><i class="fa fa-credit-card"></i>Cargos Factura</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/reporteventas']"><li><i class="fa fa-file"></i> Reportes & Procesos</li></a>
+            <a (click)="hideMenu()" [routerLink]="['/facturaerror']"><li><i class="fa fa-credit-card"></i> Facturas Erroneas</li></a>
+          </ul>
+          <li [hidden]="!AppCompras" (click)="clickComprasMenu()" ><a><i class="fa fa-shopping-cart"></i>  Compras <i [ngClass]='comprasClass' class="fa fa-cog"></i>  </a></li>
+          <ul [hidden]="!comprasMenu" >
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/purchaseInvoice']"><li><i class="fa fa-credit-card"></i> Facturas</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/reportPurchase']"><li><i class="fa fa-file"></i> Reporte Compras</li></a>
+          </ul>
+
+          <li [hidden]="!AppCxC" (click)="clickCxCMenu()" ><a><i class="fa fa-cc"></i>  Cuentas X Cobrar <i [ngClass]='CxCClass' class="fa fa-cog"></i>  </a></li>
+          <ul [hidden]="!CxCMenu" >
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/cxcClasificacion']"><li><i class="fa fa-shopping-bag"></i> Clasificación</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/cuentacxc']"><li><i class="fa fa-credit-card"></i> Cuentas x Cobrar</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/documentocxc']"><li><i class="fa fa-file-o"></i> Documentos</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/movimientocxc']"><li><i class="fa fa-align-justify"></i> Movimientos</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/reportecxc']"><li><i class="fa fa-file"></i> Reporte CXC</li></a>
+          </ul>
+
+        </div>
+
+        <a href="https://api.whatsapp.com/send?phone=50687786649" target="_blank"><li><i class="fa fa-phone"></i> Soporte</li></a>
+        <a href="/main" target="_self"><li><i class="fa fa-home"></i> Menú Principal</li></a>
+        <a (click)="hideMenu()" [hidden]="logedIn" [routerLink]="['/login']"><li><i class="fa fa-sign-in"></i> Entrar</li></a>
+        <a (click)="hideMenu()" [hidden]="!logedIn" (click)="logOut()" href="#"><li><i class="fa fa-sign-out"></i> Salir</li></a>
+        <a (click)="hideMenu()" [hidden]="!logedIn">{{Company}} | {{User}}</a>
+      </ul>
+  </div>
+</nav>

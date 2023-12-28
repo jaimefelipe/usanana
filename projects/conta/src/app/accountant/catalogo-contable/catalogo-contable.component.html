@@ -1,0 +1,292 @@
+<div [hidden]="edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Catálogo Contable --
+  <button (click)="addAccount('')" class="btn btn-success ml-3  " type="button" ><i class="fa fa-plus-circle"
+    aria-hidden="true"></i></button>
+  </h2>
+
+  <form>
+    <div class="form-row">
+        <div class="form-group col-12" *ngFor="let Cuenta of Cuentas">
+          <div class="card">
+                <div class="card-body form-row ">
+                  <div class="form-group col-md-8 m-0">
+                    <h4 class="card-title">{{Cuenta.Cuenta}}, {{Cuenta.Descripcion}}</h4>
+                  </div>
+                  <div class="form-group col-md-4 m-0 text-right">
+                    <button (click)="showChilds(Cuenta)" *ngIf="Cuenta.Mayor =='1' && !Cuenta.Hijos"  class="btn btn-secondary " type="button" ><i class="fa fa-arrow-right"
+                      aria-hidden="true"></i></button>
+                    <button (click)="showChilds(Cuenta)" *ngIf="Cuenta.Mayor =='1' && Cuenta.Hijos"  class="btn btn-secondary " type="button" ><i class="fa fa-arrow-left"
+                        aria-hidden="true"></i></button>
+                    <button (click)="showAccount(Cuenta)" class="btn btn-primary ml-3  " type="button" ><i class="fa fa-edit"
+                          aria-hidden="true"></i></button>
+                    <button (click)="addAccount(Cuenta)" class="btn btn-success ml-3  " type="button" ><i class="fa fa-plus-circle"
+                          aria-hidden="true"></i></button>
+                  </div>
+                </div>
+            <div *ngIf="Cuenta.Hijos">
+              <div  class="form-group col-12" *ngFor="let PrimerNivel of Cuenta.Data">
+                <div class="card">
+                  <div class="card-body form-row ">
+                    <div class="form-group col-md-8 m-0">
+                      <h4 class="card-title">{{PrimerNivel.Cuenta}}, {{PrimerNivel.Descripcion}}</h4>
+                    </div>
+                    <div class="form-group col-md-4 m-0 text-right">
+                      <button (click)="showChilds(PrimerNivel)" *ngIf="PrimerNivel.Mayor =='1' && !PrimerNivel.Hijos"  class="btn btn-secondary " type="button" ><i class="fa fa-arrow-right"
+                        aria-hidden="true"></i></button>
+                      <button (click)="showChilds(PrimerNivel)" *ngIf="PrimerNivel.Mayor =='1' && PrimerNivel.Hijos"  class="btn btn-secondary " type="button" ><i class="fa fa-arrow-left"
+                          aria-hidden="true"></i></button>
+                      <button (click)="showAccount(PrimerNivel)" class="btn btn-primary ml-3  " type="button" ><i class="fa fa-edit"
+                            aria-hidden="true"></i></button>
+                      <button (click)="addAccount(PrimerNivel)" class="btn btn-success ml-3  " type="button" ><i class="fa fa-plus-circle"
+                            aria-hidden="true"></i></button>
+                    </div>
+                  </div>
+                  <div *ngIf="PrimerNivel.Hijos">
+                    <div  class="form-group col-12" *ngFor="let SegundoNivel of PrimerNivel.Data">
+                      <div class="card">
+                        <div class="card-body form-row ">
+                          <div class="form-group col-md-8 m-0">
+                            <h4 class="card-title">{{SegundoNivel.Cuenta}}, {{SegundoNivel.Descripcion}}</h4>
+                          </div>
+                          <div class="form-group col-md-4 m-0 text-right">
+                            <button (click)="showChilds(SegundoNivel)" *ngIf="SegundoNivel.Mayor =='1' && !SegundoNivel.Hijos"  class="btn btn-secondary " type="button" ><i class="fa fa-arrow-right"
+                              aria-hidden="true"></i></button>
+                            <button (click)="showChilds(SegundoNivel)" *ngIf="SegundoNivel.Mayor =='1' && SegundoNivel.Hijos"  class="btn btn-secondary " type="button" ><i class="fa fa-arrow-left"
+                                aria-hidden="true"></i></button>
+                            <button (click)="showAccount(SegundoNivel)" class="btn btn-primary ml-3  " type="button" ><i class="fa fa-edit"
+                                  aria-hidden="true"></i></button>
+                            <button (click)="addAccount(SegundoNivel)" class="btn btn-success ml-3  " type="button" ><i class="fa fa-plus-circle"
+                                  aria-hidden="true"></i></button>
+                          </div>
+                        </div>
+                        <div *ngIf="SegundoNivel.Hijos">
+                          <div  class="form-group col-12" *ngFor="let TercerNivel of SegundoNivel.Data">
+                            <div class="card">
+                              <div class="card-body form-row ">
+                                <div class="form-group col-md-8 m-0">
+                                  <h4 class="card-title">{{TercerNivel.Cuenta}}, {{TercerNivel.Descripcion}}</h4>
+                                </div>
+                                <div class="form-group col-md-4 m-0 text-right">
+                                  <button (click)="showChilds(TercerNivel)" *ngIf="TercerNivel.Mayor =='1' && !TercerNivel.Hijos"  class="btn btn-secondary " type="button" ><i class="fa fa-arrow-right"
+                                    aria-hidden="true"></i></button>
+                                  <button (click)="showChilds(TercerNivel)" *ngIf="TercerNivel.Mayor =='1' && TercerNivel.Hijos"  class="btn btn-secondary " type="button" ><i class="fa fa-arrow-left"
+                                      aria-hidden="true"></i></button>
+                                  <button (click)="showAccount(TercerNivel)" class="btn btn-primary ml-3  " type="button" ><i class="fa fa-edit"
+                                        aria-hidden="true"></i></button>
+                                  <button (click)="addAccount(TercerNivel)" class="btn btn-success ml-3  " type="button" ><i class="fa fa-plus-circle"
+                                        aria-hidden="true"></i></button>
+                                </div>
+                              </div>
+                              <div *ngIf="TercerNivel.Hijos">
+                                <div  class="form-group col-12" *ngFor="let CuartoNivel of TercerNivel.Data">
+                                  <div class="card">
+                                    <div class="card-body form-row ">
+                                      <div class="form-group col-md-8 m-0">
+                                        <h4 class="card-title">{{CuartoNivel.Cuenta}}, {{CuartoNivel.Descripcion}}</h4>
+                                      </div>
+                                      <div class="form-group col-md-4 m-0 text-right">
+                                        <button (click)="showChilds(CuartoNivel)" *ngIf="CuartoNivel.Mayor && !CuartoNivel.Hijos"  class="btn btn-secondary " type="button" ><i class="fa fa-arrow-right"
+                                          aria-hidden="true"></i></button>
+                                        <button (click)="showChilds(CuartoNivel)" *ngIf="CuartoNivel.Mayor && CuartoNivel.Hijos"  class="btn btn-secondary " type="button" ><i class="fa fa-arrow-left"
+                                            aria-hidden="true"></i></button>
+                                        <button (click)="showAccount(CuartoNivel)" class="btn btn-primary ml-3  " type="button" ><i class="fa fa-edit"
+                                              aria-hidden="true"></i></button>
+                                        <button (click)="addAccount(CuartoNivel)" class="btn btn-success ml-3  " type="button" ><i class="fa fa-plus-circle"
+                                              aria-hidden="true"></i></button>
+                                      </div>
+                                    </div>
+                                    <div *ngIf="CuartoNivel.Hijos">
+                                      <div  class="form-group col-12" *ngFor="let QuintoNivel of CuartoNivel.Data">
+                                        <div class="card">
+                                          <div class="card-body form-row ">
+                                            <div class="form-group col-md-8 m-0">
+                                              <h4 class="card-title">{{QuintoNivel.Cuenta}}, {{QuintoNivel.Descripcion}}</h4>
+                                            </div>
+                                            <div class="form-group col-md-4 m-0 text-right">
+                                              <button (click)="showChilds(QuintoNivel)" *ngIf="QuintoNivel.Mayor && !QuintoNivel.Hijos"  class="btn btn-secondary " type="button" ><i class="fa fa-arrow-right"
+                                                aria-hidden="true"></i></button>
+                                              <button (click)="showChilds(QuintoNivel)" *ngIf="QuintoNivel.Mayor && QuintoNivel.Hijos"  class="btn btn-secondary " type="button" ><i class="fa fa-arrow-left"
+                                                  aria-hidden="true"></i></button>
+                                              <button (click)="showAccount(QuintoNivel)" class="btn btn-primary ml-3  " type="button" ><i class="fa fa-edit"
+                                                    aria-hidden="true"></i></button>
+                                              <button (click)="addAccount(QuintoNivel)" class="btn btn-success ml-3  " type="button" ><i class="fa fa-plus-circle"
+                                                    aria-hidden="true"></i></button>
+                                            </div>
+                                          </div>
+                                          <div *ngIf="QuintoNivel.Hijos">
+                                            <div  class="form-group col-12" *ngFor="let SextoNivel of QuintoNivel.Data">
+                                                aqui van los hijos
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+    </div>
+  </form>
+
+
+</div>
+
+<!--
+  Form de Edición
+-->
+
+<div [hidden]="!edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Cuenta Contable</h2>
+
+  <form>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label>Código</label>
+        <input [(ngModel)]="Cuenta.Cuenta" name="Cuenta" type="text" placeholder="Cuenta Contable" class="form-control">
+      </div>
+      <div class="form-group col-md-6">
+        <label>Cuenta Padre</label>
+        <div class="input-group">
+
+          <div class="input-group-append">
+            <button  type="button"  (click)="openCuentasPanel()" class="form-control btn btn-primary"><i
+                class="fa fa-search"></i></button>
+          </div>
+          <input [(ngModel)]="Cuenta.NombrePadre" disabled name="NombrePadre" id="NombrePadre" type="input"
+            class="form-control" placeholder="Cuenta Padre">
+        </div>
+      </div>
+      <div class="form-group col-md-9">
+        <label>Nombre de la Cuenta</label>
+        <input [(ngModel)]="Cuenta.Descripcion" name="Descripcion" type="text" placeholder="Nombre" class="form-control">
+      </div>
+      <div class="form-group col-md-3">
+        <label>Moneda</label>
+        <select [(ngModel)]="Cuenta.Moneda" name="Moneda" type="text" class="form-control">
+          <option value='0'>Colones</option>
+          <option value='1'>Dólares</option>
+        </select>
+      </div>
+      <div class="form-group col-md-4">
+        <label>Tipo de Saldo</label>
+        <select [(ngModel)]="Cuenta.Deudora" name="Deudora" type="text" class="form-control">
+          <option value='0'>Saldo Deudor</option>
+          <option value='1'>Saldo Acreedor</option>
+        </select>
+      </div>
+      <div class="form-group col-md-4">
+        <label>Cuenta Mayor</label>
+        <select [(ngModel)]="Cuenta.Mayor" name="Mayor" type="text" class="form-control">
+          <option value='1'>Cuenta Mayor</option>
+          <option value='0'>Permite Movimientos</option>
+        </select>
+      </div>
+      <div class="form-group col-md-4">
+        <label>Cuenta Balance</label>
+        <select [(ngModel)]="Cuenta.Balance" name="Balance" type="text" class="form-control">
+          <option value='1'>Activos</option>
+          <option value='2'>Pasivos</option>
+          <option value='3'>Patrimonio</option>
+          <option value='4'>Ingresos</option>
+          <option value='5'>Gastos</option>
+          <option value='6'>Cuentas de Orden</option>
+        </select>
+      </div>
+      <div class="form-group col-md-4">
+        <label>Centro de Costos</label>
+        <select [(ngModel)]="Cuenta.Centro_Costo" name="Centro_Costo" type="text" class="form-control">
+          <option value='0'>No usa centro de costo</option>
+          <option value='1'>Usa Centro de Costo</option>
+        </select>
+      </div>
+      <div class="form-group col-md-4">
+        <label>D - 151</label>
+        <select [(ngModel)]="Cuenta.D151" name="D151" type="text" class="form-control">
+          <option value='0'>No aplica D-151</option>
+          <option value='1'>Si aplica D-151</option>
+        </select>
+      </div>
+
+      <div class="form-group col-md-4">
+        <label>Estado</label>
+        <select [(ngModel)]="Cuenta.Estado" name="Estado" type="text" class="form-control">
+          <option value='1'>Activo</option>
+          <option value='0'>Inactivo</option>
+        </select>
+      </div>
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-6 col-md-8">
+
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="grabar()" type="button" class="btn btn-success" title="Cancela edicion">Grabar</button>
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="cancel()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+</div>
+
+<!--
+  Form de Cuentas Padres
+-->
+<div [hidden]="!PantallaCuentasPadres" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Seleccionar Cuenta</h2>
+      <input [(ngModel)]="searchFieldPadres" (blur)="searchPadres()" (keydown)="keytabPadres($event)" type="text"
+        class="form-control" placeholder="Buscar">
+    </div>
+    <div class="card-body modal-grid">
+      <div class="form-row">
+        <div class="form-group col-12 col-sm-6" *ngFor="let Padre of Padres;let i = index">
+          <a (click)="SeleccionarPadre(Padre)">
+            <div class="card">
+              <div class="card-body">
+                <h5>{{Padre.Cuenta}} - {{Padre.Descripcion}}</h5>
+                Estado :
+                <span *ngIf="Padre.Estado == '1'" class="text-success"> Activo</span>
+                <span *ngIf="Padre.Estado == '0'" class="text-warning"> Inactivo</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8 col-md-8">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="cuentaPrincipal()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Principal</button>
+          </div>
+          <div class="form-group col-2">
+            <button (click)="closePantallaPadres()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

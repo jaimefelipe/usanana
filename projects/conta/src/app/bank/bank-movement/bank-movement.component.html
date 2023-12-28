@@ -1,0 +1,182 @@
+<div [hidden]="edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Movimiento Bancario</h2>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+        </div>
+        <input [(ngModel)]="searchField"  name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+          placeholder="Buscar">
+        <div class="input-group-append">
+          <button class="btn btn-success" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
+              aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form>
+    <div class="form-row">
+
+      <div class="form-group col-12 col-sm-6" *ngFor="let Movement of Movements;let i = index">
+        <div class="card">
+          <a (click)="editRecord(Movement)">
+            <div class="card-body">
+
+              <h4 class="card-title">{{Movement.Id_Cuenta}}-{{Movement.Fecha}}</h4>
+              Transacción :
+              <span *ngIf="Movement.Tipo_Movimiento == '1'" class="text-success">+ Depósito Bancario</span>
+              <span *ngIf="Movement.Tipo_Movimiento == '2'" class="text-primary">+ Depósito Transferencia</span>
+              <span *ngIf="Movement.Tipo_Movimiento == '3'" class="text-primary">+ Depósito Sinpe</span>
+              <span *ngIf="Movement.Tipo_Movimiento == '4'" class="text-primary">+ Nota de Débito</span>
+              <span *ngIf="Movement.Tipo_Movimiento == '5'" class="text-primary">- Retiro Bancario</span>
+              <span *ngIf="Movement.Tipo_Movimiento == '6'" class="text-primary">- Retiro Transferencia</span>
+              <span *ngIf="Movement.Tipo_Movimiento == '7'" class="text-primary">- Retiro Sinpe</span>
+              <span *ngIf="Movement.Tipo_Movimiento == '8'" class="text-primary">- Nota Crédito</span>
+              Monto: {{Movement.Monto | currency:' '}}
+              Estado :
+              <span *ngIf="Movement.Estado == '0'" class="text-success"> Cerrado</span>
+              <span *ngIf="Movement.Estado == '1'" class="text-primary"> Abierto</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!--
+  Form de Edición
+-->
+
+<div [hidden]="!edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Movimiento Bancaria</h2>
+
+  <form>
+    <div class="form-row">
+
+      <div class="form-group col-md-3">
+        <label>Tipo</label>
+        <select [disabled]="Movement.Estado !='1'" [(ngModel)]="Movement.Tipo_Movimiento" name="Tipo_Movimiento"
+          type="text" class="form-control">
+          <option value='1'>+ Depósito Bancario</option>
+          <option value='2'>+ Depósito Transferencia</option>
+          <option value='3'>+ Depósito Sinpe</option>
+          <option value='4'>+ Nota de Débito </option>
+          <option value='5'>- Retiro Bancario </option>
+          <option value='6'>- Retiro Transferencia </option>
+          <option value='7'>- Retiro Sinpe </option>
+          <option value='8'>- Nota de Crédito </option>
+        </select>
+      </div>
+      <div class="form-group col-md-9">
+        <label>Cuenta Bancaria</label>
+        <div class="input-group">
+
+          <div class="input-group-append">
+            <button [disabled]="Movement.Estado !='1'" type="button" (click)="openCuentaPanel()"
+              class="form-control btn btn-primary"><i class="fa fa-search"></i></button>
+          </div>
+          <input [(ngModel)]="Movement.Nombre_Cuenta" disabled name="Nombre_Cuenta" id="Nombre_Cuenta" type="input"
+            class="form-control" placeholder="Cuenta">
+        </div>
+      </div>
+      <div class="form-group col-md-3">
+        <label>Fecha</label>
+        <div class="input-group">
+          <input [disabled]="Movement.Estado !='1'" class="form-control" placeholder="Fecha" name="Fecha"
+            [(ngModel)]="Movement.FechaMov" ngbDatepicker #d1="ngbDatepicker">
+          <div class="input-group-append">
+            <button [disabled]="Movement.Estado !='1'" class="btn btn-outline-secondary fa fa-calendar"
+              (click)="d1.toggle()" type="button"></button>
+          </div>
+        </div>
+      </div>
+      <div class="form-group col-md-3">
+        <label>Documento</label>
+        <input [disabled]="Movement.Estado !='1'" [(ngModel)]="Movement.Documento" name="Documento" type="text"
+          placeholder="Documento" class="form-control">
+      </div>
+
+      <div class="form-group col-md-3">
+        <label>Monto</label>
+        <input [disabled]="Movement.Estado !='1'" name="Monto" type="text" placeholder="Monto" class="form-control"
+          [(ngModel)]="Movement.Monto" currencyMask
+          [options]="{ prefix: ' ', thousands: ',', decimal: '.', allowZero: true }">
+      </div>
+      <div class="form-group col-md-9">
+        <label>Descripcion </label>
+        <input [disabled]="Movement.Estado !='1'" [(ngModel)]="Movement.Descripcion" name="Descripcion" type="text"
+          placeholder="Descripcion" class="form-control">
+      </div>
+      <div class="form-group col-md-3">
+        <label>Estado </label>
+        <select disabled [(ngModel)]="Movement.Estado" name="Estado" class="form-control">
+          <option value='1'>Regitrado</option>
+          <option value='2'>Aplicado</option>
+        </select>
+      </div>
+
+
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-6 col-md-8">
+
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="grabar()" type="button" class="btn btn-success" title="Cancela edicion">Grabar</button>
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="cancel()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+</div>
+
+
+<!--
+  Busqueda de cuentas
+-->
+<div [hidden]="!PantallaCuentas" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Seleccionar Cuenta</h2>
+      <input [(ngModel)]="searchFieldCuentas" (blur)="searchCuentas()" (keydown)="keytabCuentas($event)"
+        type="text" class="form-control" placeholder="Buscar">
+    </div>
+    <div class="card-body modal-grid">
+      <div class="form-row">
+        <div class="form-group col-12 col-sm-6" *ngFor="let Account of Cuentas;let i = index">
+          <a (click)="Seleccionar(Account)">
+            <div class="card">
+              <div class="card-body">
+                <h4 class="card-title">{{Account.Cuenta}}-{{Account.Nombre}}</h4>
+                Estado :
+              <span *ngIf="Account.Estado == '0'" class="text-success"> Cerrado</span>
+              <span *ngIf="Account.Estado == '1'" class="text-primary"> Abierto</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8 col-md-10">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="closeModal()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

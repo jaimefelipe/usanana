@@ -1,0 +1,146 @@
+<div [hidden]="edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Consulta de Pedidos</h2>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+        </div>
+        <input [(ngModel)]="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+          placeholder="Buscar">
+
+      </div>
+    </div>
+  </div>
+  <form>
+    <div class="form-row">
+
+      <div class="form-group col-12 col-sm-12" *ngFor="let Pedido of Pedidos;let i = index">
+        <div class="card">
+          <a (click)="editRecord(Pedido)">
+            <div class="card-body">
+
+              <h4 class="card-title">{{Pedido.Zona}}-{{Pedido.Mesa}},{{Pedido.Nombre}}</h4>
+              {{Pedido.Creado_El}},Monto: {{Pedido.Total | currency:' '}},Cierre:{{Pedido.Id_Caja_Diaria}},Pedido:{{Pedido.Id_Pedido}},Factura:{{Pedido.Id_Factura}}
+              Metodo pago :
+              <span *ngIf="Pedido.Metodo_Pago == '99'" class="text-success"> Otro - Efectivo</span>
+              <span *ngIf="Pedido.Metodo_Pago == '01'" class="text-success"> Efectivo</span>
+              <span *ngIf="Pedido.Metodo_Pago == '02'" class="text-success"> Tarjeta de Credito</span>
+              <span *ngIf="Pedido.Metodo_Pago == '06'" class="text-success"> Sinpe Movil</span>
+              <span *ngIf="Pedido.Metodo_Pago == '03'" class="text-success"> Cheque</span>
+              <span *ngIf="Pedido.Metodo_Pago == '04'" class="text-success"> Trasnferencia/Deposito Bancario</span>
+              <span *ngIf="Pedido.Metodo_Pago == '05'" class="text-success"> Recaudo Tercero</span>
+
+              Estado : 
+              <span *ngIf="Pedido.Estado == '3'" class="text-success"> Facturado</span>
+              <span *ngIf="Pedido.Estado == '1'" class="text-warning"> Activa</span>
+              {{Pedido.Id_Factura}}
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="container-fluid">
+    <ul class="pagination">
+      <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"
+            aria-hidden="true"></i></a></li>
+    </ul>
+  </div>
+</div>
+
+
+<div [hidden]="!edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Orden Facturada</h2>
+
+  <form>
+    <div class="form-row">
+      <div class="form-group col-md-3">
+        <label>Pedido</label>
+        <input [(ngModel)]="Pedido.Id_Pedido" disabled="disabled" name="Id_Pedido" type="text" placeholder="Id_Pedido" class="form-control">
+      </div>
+      <div class="form-group col-md-3">
+        <label>Zona</label>
+        <input [(ngModel)]="Pedido.Zona" disabled="disabled" name="Zona" type="text" placeholder="Zona" class="form-control">
+      </div>
+      <div class="form-group col-md-3">
+        <label>Mesa</label>
+        <input [(ngModel)]="Pedido.Mesa" disabled="disabled" name="Mesa" type="text" placeholder="Mesa" class="form-control">
+      </div>
+
+      <div class="form-group col-md-3">
+        <label>Fecha</label>
+        <input [(ngModel)]="Pedido.Creado_El" disabled="disabled" name="Creado_El" type="text" placeholder="Creado_El" class="form-control">
+      </div>
+      <div class="form-group col-md-2">
+        <label>Mesero</label>
+        <input [(ngModel)]="Pedido.Creado_Por" disabled="disabled" name="Creado_Por" type="text" placeholder="Creado_Por" class="form-control">
+      </div>
+      <div class="form-group col-md-3">
+        <label>Metodo Pago</label>
+        <select [(ngModel)]="Pedido.Metodo_Pago " disabled="disabled" name="Metodo_Pago"
+            id="Metodo_Pago" class="form-control">
+            <option value='99'>Otro - Efectivo </option>
+            <option value='01'>Efectivo</option>
+            <option value='02'>Tarjeta de Credito</option>
+            <option value='06'>Sinpe Móvil</option>
+            <option value='03'>Cheque</option>
+            <option value='04'>Transferencia/Deposito Bancario</option>
+            <option value='05'>Recaudo Tercero</option>
+          </select>
+      </div>
+
+      <div class="form-group col-md-4">
+        <label>Cliente</label>
+        <input [(ngModel)]="Pedido.Nombre" disabled="disabled" name="Nombre" type="text" placeholder="Nombre" class="form-control">
+      </div>
+      <div class="form-group col-md-3">
+        <label>Total</label>
+        <input [(ngModel)]="Pedido.Total" disabled="disabled" name="Total" type="text" placeholder="Total" class="form-control">
+      </div>
+
+      <div class="form-row table table-striped table-hover table-dark table-bordered ">
+        <div class="form-group col-12">
+          <div class="form-row" *ngFor="let Detalle of Detalles;let indice = index">
+
+            <div class="form-group col-12 col-md-4 ">
+              {{Detalle.Cantidad}}
+            </div>
+            <div class="form-group col-12 col-md-4 ">
+              {{Detalle.Descripcion}}
+            </div>
+            <div class="form-group col-12 col-md-4 ">
+              {{Detalle.Total}}
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-6 col-md-6">
+
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="refacturar()" type="button" class="btn btn-success" title="Cancela edicion">Re-Facturar</button>
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="reimprimir()" type="button" class="btn btn-success" title="Cancela edicion">Reimprimir</button>
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="cancel()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+</div>

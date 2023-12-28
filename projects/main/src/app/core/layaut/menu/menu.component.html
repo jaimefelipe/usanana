@@ -1,0 +1,72 @@
+<!-- [hidden]="!logedIn" -->
+<nav  role="navigation">
+    <div id="menuToggle">
+      <!--
+      A fake / hidden checkbox is used as click reciever,
+      so you can use the :checked selector on it.
+      -->
+      <input  id="MenuShow" (click)="click()" [checked]="showMenu"  type="checkbox" />
+  
+      <!--
+      Some spans to act as a hamburger.
+  
+      They are acting like a real hamburger,
+      not that McDonalds stuff.
+      -->
+      <span></span>
+      <span></span>
+      <span></span>
+  
+      <!--
+      Too bad the menu has to be inside of the button
+      but hey, it's pure CSS magic.
+      -->
+        <ul  [hidden]="!showMenu" id="menu">
+          <a (click)="hideMenu()" [routerLink]="['/']"><li><i class="fa fa-home"></i> Inicio {{ambiente}} 3.3.2</li></a>
+          <div [hidden]="!logedIn">
+            <li [hidden]="!AppConfiguracion" (click)="clickPerfilMenu()" ><a><i class="fa fa-cog"></i> Configuración <i [ngClass]='configClass' class="fa fa-cog"></i>  </a></li>
+            <ul [hidden]="!perfilMenu" >
+              <a (click)="hideMenu()" [routerLink]="['/perfil']"><li><i class="fa fa-cog"></i>  Perfil</li></a>
+              <a (click)="hideMenu()" [routerLink]="['/contactos']"><li><i class="fa fa-address-card-o"></i>  Contactos</li></a>
+              <a (click)="hideMenu()" [routerLink]="['/facturas']"><li><i class="fa fa-credit-card"></i>  Facturas</li></a>
+              <a [hidden]="!Master" (click)="hideMenu()" [routerLink]="['/paramxcia']"><li><i class="fa fa-credit-card"></i> Parametros x Cia</li></a>
+              <a [hidden]="!Master" (click)="hideMenu()" [routerLink]="['/facturaerror']"><li><i class="fa fa-credit-card"></i> Facturas Erroneas</li></a>
+              <a [hidden]="!Master" (click)="hideMenu()" [routerLink]="['/consecutivos']"><li><i class="fa fa-cog"></i> Consecutivos Cajas</li></a>
+              <a [hidden]="!Master" (click)="hideMenu()" [routerLink]="['/licencias']"><li><i class="fa fa-credit-card"></i> Licencias</li></a>
+            </ul>
+  
+            <li [hidden]="!AppSistemas" (click)="clickSistemasMenu()" ><a><i class="fa fa-cog"></i> Sistemas <i [ngClass]='sistemasClass' class="fa fa-cog"></i>  </a></li>
+            <ul [hidden]="!sistemasMenu" >
+              <a [hidden]="!AppVentas" (click)="hideMenu(1)" href="/factura"><li><i class="fa fa-credit-card"></i>  Facura Electrónica</li></a>
+              <a [hidden]="!AppPOV" (click)="hideMenu(2)" href="/pov" ><li><i class="fa fa-hospital-o"></i> Punto de Venta</li></a>
+              <a [hidden]="!AppRestaurante" (click)="hideMenu(3)" href="/bar"><li><i class="fa fa-cutlery"></i> Bar & Restaurante</li></a>
+              <a [hidden]="!AppTransportes" (click)="hideMenu(4)" href="/transporte"><li><i class="fa fa-bus"></i> Transporte</li></a>
+              <a [hidden]="!AppTurismo" (click)="hideMenu(5)" href="/viajes"><li><i class="fa fa-university"></i> Viajes</li></a>
+              <a [hidden]="!AppCG" (click)="hideMenu(6)" href="/conta"><li><i class="fa fa-book"></i> Contabilidad</li></a>
+              <a [hidden]="!AppAcademico" (click)="hideMenu(6)" href="/academico"><li><i class="fa fa-book"></i> Académico</li></a>
+  
+            </ul>
+  
+            <li [hidden]="!AppSeguridad" (click)="clickSeguridadMenu()" ><a><i class="fa fa-lock"></i>  Seguridad <i [ngClass]='configClass' class="fa fa-cog"></i>  </a></li>
+            <ul [hidden]="!seguridadMenu" >
+              <a (click)="hideMenu()" [routerLink]="['/usuario']"><li><i class="fa fa-user"></i>  Usuarios</li></a>
+              <a (click)="hideMenu()" [routerLink]="['/seggrupo']"><li><i class="fa fa-users"></i>  Grupos</li></a>
+              <a (click)="hideMenu()" [routerLink]="['/segappgrupo']"><li><i class="fa fa-window-restore"></i>  App por Grupo</li></a>
+              <a (click)="hideMenu()" [routerLink]="['/segusergrupo']"><li><i class="fa fa-user-plus"></i>  Usuario por Grupo</li></a>
+              <a (click)="hideMenu()" [routerLink]="['/usuarioempresa']"><li><i class="fa fa-user-plus"></i>  Usuario por Empresa</li></a>
+            </ul>
+  
+          </div>
+          <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/marcas']"><li><i class="fa fa-clock-o"></i> Marcas</li></a>
+  
+          <a href="https://api.whatsapp.com/send?phone=50687786649" target="_blank"><li><i class="fa fa-phone"></i> Soporte</li></a>
+         <!-- <a [hidden]="!logedIn" [routerLink]="['/apps']"><li><i class="fa fa-sitemap"></i> Aplicaciones</li></a>-->
+  
+          <a (click)="hideMenu()" [hidden]="logedIn" [routerLink]="['/login']"><li><i class="fa fa-sign-in"></i> Entrar</li></a>
+          <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/cambiar']"><li><i class="fa fa-key"></i> Cambiar Clave</li></a>
+          <a (click)="hideMenu()" [hidden]="!logedIn" (click)="logOut()" href="#"><li><i class="fa fa-sign-out"></i> Salir</li></a>
+          <a (click)="hideMenu()" [hidden]="!logedIn">{{Company}} | {{User}}</a>
+        </ul>
+    </div>
+  </nav>
+  

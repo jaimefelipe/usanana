@@ -1,0 +1,89 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" [routerLink]="['/']">Inicio <span class="sr-only">(current)</span></a>
+      </li>
+      
+      <li [hidden]="!logedIn" class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Configuración
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a [hidden]="!AppVentas" [routerLink]="['/people']" class="dropdown-item"><li><i class="fa fa-credit-card"></i> Contactos </li></a>
+          
+          <div class="dropdown-divider"></div>
+          
+          <a [hidden]="!logedIn" [routerLink]="['/restaurantzone']" class="dropdown-item"><li><i class="fa fa-map-signs"></i> Zonas</li></a>
+          <a [hidden]="!logedIn" [routerLink]="['/restaurantplace']" class="dropdown-item"><li><i class="fa fa-map-marker"></i> Mesa/Lugar</li></a>
+
+        </div>
+      </li>
+      <li [hidden]="!logedIn" class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Inventario
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a  [hidden]="!logedIn" [routerLink]="['/categorias']" class="dropdown-item"><li><i class="fa fa-shopping-bag"></i> Categorías</li></a>
+          <a [hidden]="!logedIn" [routerLink]="['/subcategorias']" class="dropdown-item"><li><i class="fa fa-shopping-bag"></i> Sub Categorías</li></a>
+          <a [hidden]="!logedIn" [routerLink]="['/articulos']" class="dropdown-item"><li><i class="fa fa-shopping-basket"></i> Artículos</li></a>
+          <div class="dropdown-divider"></div>
+          <a [hidden]="!AppInventario" [routerLink]="['/movinventario']" class="dropdown-item"><li><i class="fa fa-align-justify"></i> Movimientos</li></a>
+          <a [hidden]="!AppInventario" [routerLink]="['/invmovdetail']" class="dropdown-item"><li><i class="fa fa-align-justify"></i> Detalle Movimientos</li></a>
+          <div class="dropdown-divider"></div>
+          <a [hidden]="!AppInventario" [routerLink]="['/repinventario']" class="dropdown-item"><li><i class="fa fa-file"></i> Reportes</li></a>
+
+        </div>
+      </li>
+
+      <li [hidden]="!logedIn" class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Cajas
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a  [hidden]="!logedIn" [routerLink]="['/cajaventas']" class="dropdown-item"><li><i class="fa fa-credit-card"></i> Cajas</li></a>
+          <a  [hidden]="!logedIn" [routerLink]="['/cajamovimiento']" class="dropdown-item"><li><i class="fa fa-align-justify"></i> Movimiento de Cajas</li></a>
+          <div class="dropdown-divider"></div>
+          <a  [hidden]="!logedIn" [routerLink]="['/cierrecaja']" class="dropdown-item"><li><i class="fa fa-align-justify"></i> Cierre Caja</li></a>
+        </div>
+      </li>
+
+      <li [hidden]="!logedIn" class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Restaurante
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a [hidden]="!logedIn" [routerLink]="['/plano']" class="dropdown-item"><li><i class="fa fa-pencil"></i> Pedidos</li></a>
+          <a [hidden]="!logedIn" [routerLink]="['/restaurantkitchen']" class="dropdown-item"><li><i class="fa fa-television"></i> Cocina</li></a>
+          <div class="dropdown-divider"></div>
+          <a [hidden]="!logedIn" [routerLink]="['/reporteVenta']" class="dropdown-item"><li><i class="fa fa-file"></i> Reportes</li></a>
+          <a [hidden]="!logedIn" [routerLink]="['/consultapedido']" class="dropdown-item"><li><i class="fa fa-file"></i> Consulta Pedidos</li></a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+           Ayuda
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a [hidden]="!logedIn" [routerLink]="['/marcas']" class="dropdown-item"><li><i class="fa fa-clock-o"></i> Marcas</li></a>
+          <div class="dropdown-divider"></div>
+          <a href="https://api.whatsapp.com/send?phone=50687786649" target="_blank" class="dropdown-item"><li><i class="fa fa-phone"></i> Soporte</li></a>
+          <a [hidden]="EsAPP" href="/main" target="_self" class="dropdown-item"><li><i class="fa fa-home"></i> Menú Principal</li></a>
+          <a [hidden]="logedIn" [routerLink]="['/login']" class="dropdown-item"><li><i class="fa fa-sign-in"></i> Entrar</li></a>
+          <a [hidden]="!logedIn" [routerLink]="['/cambiar']" class="dropdown-item"><li><i class="fa fa-key"></i> Cambiar Clave</li></a>
+          <div class="dropdown-divider"></div>
+          <a [hidden]="!logedIn" (click)="logOut()" href="#" class="dropdown-item"><li><i class="fa fa-sign-out"></i> Salir</li></a>
+          
+        </div>
+      </li>
+      
+    </ul>
+
+  </div>
+</nav>

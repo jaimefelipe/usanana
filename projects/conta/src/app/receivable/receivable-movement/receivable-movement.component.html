@@ -1,0 +1,282 @@
+<div [hidden]="edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Movimientos de Cuentas por Cobrar</h2>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+        </div>
+        <input [(ngModel)]="searchField"  name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+          placeholder="Buscar">
+        <div class="input-group-append">
+          <button class="btn btn-success" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
+              aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form>
+    <div class="form-row">
+      <div class="form-group col-12 col-sm-6" *ngFor="let Movement of Movements;let i = index">
+        <div class="card">
+          <a (click)="editRecord(Movement)">
+            <div class="card-body">
+              <h4 class="card-title"># {{Movement.Docu}} {{Movement.Fecha | date:'d/M/YYY'}} </h4>
+              <h5>Transacción:
+                <span *ngIf="Movement.Id_Transaccion == 1" class="text-primary">Registro de Documento + </span>
+                <span *ngIf="Movement.Id_Transaccion == 2" class="text-success">Págo de Documento - </span>
+                <span *ngIf="Movement.Id_Transaccion == 3" class="text-info">Nota de Débito + </span>
+                <span *ngIf="Movement.Id_Transaccion == 4" class="text-danger">Nota de Crédito - </span>
+              </h5>
+              <h6>Cuenta:{{Movement.Cuenta}}</h6>
+              Monto: {{Movement.Monto | currency: ' '}}
+              Moneda:
+              <span *ngIf="Movement.Moneda == 1" class="text-primary">Colones</span>
+              <span *ngIf="Movement.Moneda == 0" class="text-success">Dolares</span>
+              Estado :
+              <span *ngIf="Movement.Estado == '1'" class="text-primary"> Registrado</span>
+              <span *ngIf="Movement.Estado == '2'" class="text-success"> Aplicado</span>
+              <span *ngIf="Movement.Estado == '3'" class="text-success"> Anulado</span>
+              <span *ngIf="Movement.Estado == '4'" class="text-success"> Pago Parcial</span>
+              <span *ngIf="Movement.Estado == '5'" class="text-success"> Cancelado</span>
+              id: {{Movement.Id_Movimiento}}
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="container-fluid">
+    <ul class="pagination">
+      <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"
+            aria-hidden="true"></i></a></li>
+    </ul>
+  </div>
+</div>
+
+<!--
+  Form de Edición
+-->
+
+<div [hidden]="!edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Movimiento de CXC</h2>
+  <form>
+    <div class="form-row">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+
+          <div class="form-group col-md-3">
+            <label>Tipo</label>
+            <select [disabled]="Movement.Estado !='1'" [(ngModel)]="Movement.Id_Transaccion" name="Id_Transaccion"
+              type="text" class="form-control">
+              <option *ngIf="Movement.Estado !='1'" value='1'>Registro Documento</option>
+              <option value='2'>Pago Documento</option>
+              <option value='3'>Nota de Débito + </option>
+              <option value='4'>Nota de Crédito - </option>
+            </select>
+          </div>
+
+          <div class="form-group col-md-9">
+            <label>Documento por cobrar</label>
+            <div class="input-group">
+
+              <div class="input-group-append">
+                <button [disabled]="Movement.Estado !='1'" type="button" (click)="openDocumentPanel()"
+                  class="form-control btn btn-primary"><i class="fa fa-search"></i></button>
+              </div>
+              <input [(ngModel)]="Movement.Nombre_Cuenta" disabled name="Nombre_Cuenta" id="Nombre_Cuenta" type="input"
+                class="form-control" placeholder="Documento">
+            </div>
+          </div>
+          <div class="form-group col-md-3">
+            <label>Fecha</label>
+            <div class="input-group">
+              <input [disabled]="Movement.Estado !='1'" class="form-control" placeholder="Fecha" name="Fecha"
+                [(ngModel)]="Movement.Fecha" ngbDatepicker #d1="ngbDatepicker">
+              <div class="input-group-append">
+                <button [disabled]="Movement.Estado !='1'" class="btn btn-outline-secondary fa fa-calendar"
+                  (click)="d1.toggle()" type="button"></button>
+              </div>
+            </div>
+          </div>
+          <div class="form-group col-md-3">
+            <label>Documento</label>
+            <input [disabled]="Movement.Estado !='1'" [(ngModel)]="Movement.Documento" name="Documento" type="text"
+              placeholder="Documento" class="form-control">
+          </div>
+          <div class="form-group col-md-3">
+            <label>Moneda</label>
+            <select [disabled]="Movement.Estado !='1'" [(ngModel)]="Movement.Moneda" name="Moneda" class="form-control">
+              <option value='1'>Colones</option>
+              <option value='0'>Dolares</option>
+            </select>
+          </div>
+          <div class="form-group col-md-3">
+            <label>Monto</label>
+            <input [disabled]="Movement.Estado !='1'" name="Monto" type="text" placeholder="Monto" class="form-control"
+              [(ngModel)]="Movement.Monto" currencyMask
+              [options]="{ prefix: ' ', thousands: ',', decimal: '.', allowZero: true }">
+          </div>
+          <div class="form-group col-md-9">
+            <label>Detalle </label>
+            <input [disabled]="Movement.Estado !='1'" [(ngModel)]="Movement.Nombre" name="Detalle" type="text"
+              placeholder="Detalle" class="form-control">
+          </div>
+          <div class="form-group col-md-3">
+            <label>Estado </label>
+            <select disabled [(ngModel)]="Movement.Estado" name="Estado" class="form-control">
+              <option value='1'>Regitrado</option>
+              <option value='2'>Aplicado</option>
+            </select>
+          </div>
+
+          <div class="form-group col-md-5">
+            <label>Forma de Pago </label>
+            <select [(ngModel)]="Movement.Cuenta_Bancaria" name="id_Periodo" [disabled]="Movement.Estado !='1'" class="form-control">
+              <option value="01">Efectivo</option>
+              <option value="02">Tarjeta</option>
+              <option value="04">Transferencia</option>
+              <option value="05">Simpe</option>
+              <option value={{Account.Id_Cuenta}} *ngFor="let Account of bankAccountans;let i = index">
+                {{Account.Cuenta}} - {{Account.Nombre}} </option>
+            </select>
+          </div>
+
+          <div class="form-group col-12 col-md-5">
+            <label>Cuenta</label>
+
+            <div class="input-group">
+              <input [disabled]="Movement.Estado !='1'" [(ngModel)]="Movement.Nombre_Cuenta_Contable" name="Cuenta" id="Cuenta"
+                type="input" class="form-control" placeholder="Cuenta">
+              <div class="input-group-append">
+                <button type="button" (click)="openCuentasPanel()" class="form-control btn btn-primary"><i
+                    class="fa fa-search"></i></button>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="form-group col-md-2">
+            <label>Tipo de Cambio</label>
+            <input disabled [(ngModel)]="Movement.Tipo_Cambio" name="Tipo_Cambio" type="text"
+              placeholder="Tipo_Cambio" class="form-control" currencyMask [options]="{ prefix: ' ', thousands: ',', decimal: '.', allowZero: true }">
+          </div>
+
+
+          <div class="form-group col-md-12">
+            <div class="form-row">
+              <div class="form-group col-6 col-md-8">
+
+              </div>
+
+              <div class="form-group col-3 col-md-2">
+                <button [disabled]="Movement.Estado !='1'" (click)="grabar()" type="button" class="btn btn-success"
+                  title="Cancela edicion">Grabar</button>
+              </div>
+              <div class="form-group col-3 col-md-2">
+                <button (click)="cancel()" type="button" class="btn btn-danger"
+                  title="Cancela edicion">Cancelar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+
+<div [hidden]="!PantallaDocumentos" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Seleccionar Documento</h2>
+      <input [(ngModel)]="searchFieldDocuments" (blur)="searchDocuments()" (keydown)="keytabDocuments($event)"
+        type="text" class="form-control" placeholder="Buscar">
+    </div>
+    <div class="card-body modal-grid">
+      <div class="form-row">
+        <div class="form-group col-12 col-sm-6" *ngFor="let Document of Documents;let i = index">
+          <a (click)="Seleccionar(Document)">
+            <div class="card">
+              <div class="card-body">
+                <h5>Documento: {{Document.Documento}}, Fecha: {{Document.Fecha}}</h5>
+                Cuenta: <h6>{{Document.Cuenta}}</h6>
+                Detalle: <h6>{{Document.Nombre}}</h6>
+                Moneda
+                <span *ngIf="Document.Moneda == 1" class="text-success">Colones</span>
+                <span *ngIf="Document.Moneda == 0" class="text-primary">Dolares</span>
+                Monto : {{Document.Monto | currency: ' '}} Saldo: {{Document.Saldo | currency: ' '}}
+                Estado :
+                <span *ngIf="Document.Estado == '1'" class="text-success"> Registrado</span>
+                <span *ngIf="Document.Estado == '2'" class="text-primary"> Aplicado</span>
+                <span *ngIf="Document.Estado == '3'" class="text-danger"> Anulado</span>
+                <span *ngIf="Document.Estado == '4'" class="text-primary"> Pago Parcial</span>
+                <span *ngIf="Document.Estado == '5'" class="text-primary"> Cancelado</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8 col-md-10">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="closeModal()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div [hidden]="!PantallaCuentasHijas" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Seleccionar Cuenta</h2>
+      <input [(ngModel)]="searchFieldHijas" (blur)="searchHijas()" (keydown)="keytabHijas($event)" type="text"
+        class="form-control" placeholder="Buscar">
+    </div>
+    <div class="card-body modal-grid">
+      <div class="form-row">
+        <div class="form-group col-12 col-sm-6" *ngFor="let Cuenta of Hijas;let i = index">
+          <a (click)="SeleccionarCuenta(Cuenta)">
+            <div class="card">
+              <div class="card-body">
+                <h5>{{Cuenta.Cuenta}} - {{Cuenta.Descripcion}}</h5>
+                Estado :
+                <span *ngIf="Cuenta.Estado == '1'" class="text-success"> Activo</span>
+                <span *ngIf="Cuenta.Estado == '0'" class="text-warning"> Inactivo</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8 col-md-10">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="closePantallaHijas()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

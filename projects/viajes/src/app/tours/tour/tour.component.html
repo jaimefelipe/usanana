@@ -1,0 +1,157 @@
+<div [hidden]="edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Tours</h2>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+        </div>
+        <input [(ngModel)]="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+          placeholder="Buscar">
+        <div class="input-group-append">
+          <button class="btn btn-success" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
+              aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form>
+    <div class="form-row">
+
+      <div class="form-group col-12 col-sm-6" *ngFor="let Tour of Tours;let i = index">
+        <div class="card">
+          <a (click)="editRecord(Tour)">
+            <div class="card-body">
+
+              <h4 class="card-title">{{Tour.Tour}}</h4>
+              {{Tour.Sitio}} - {{Tour.Id_Tour}}
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="container-fluid">
+    <ul class="pagination">
+      <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"
+            aria-hidden="true"></i></a></li>
+    </ul>
+  </div>
+</div>
+
+<!--
+  Form de Edición
+-->
+
+<div [hidden]="!edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Tour</h2>
+  <form>
+    <div class="form-row">
+      <div class="form-group col-md-12">
+        <label>Nombre Tour</label>
+        <input [(ngModel)]="Tour.Nombre" name="Nombre" type="text" placeholder="Nombre" class="form-control">
+      </div>
+
+      <div class="form-group col-md-6">
+        <label>Sitio </label>
+        <div class="input-group">
+
+          <div class="input-group-append">
+            <button type="button" (click)="openPlacePanel()" class="form-control btn btn-primary"><i
+                class="fa fa-search"></i></button>
+          </div>
+          <input [(ngModel)]="Tour.Nombre_Sitio" disabled name="Nombre_Sitio" id="Nombre_Sitio  "
+            type="input" class="form-control" placeholder="Lugar de Origen">
+        </div>
+      </div>
+
+      <div class="form-group col-md-6">
+        <label>Imagen</label>
+        <input [(ngModel)]="Tour.Foto" name="Foto" type="text" placeholder="Foto" class="form-control">
+      </div>
+
+      <div class="form-group col-md-6">
+        <label>Kewords</label>
+        <input [(ngModel)]="Tour.KeyWords" name="KeyWords" type="text" placeholder="KeyWords" class="form-control">
+      </div>
+
+      <div class="form-group col-md-6">
+        <label>Descripción</label>
+        <textarea rows="4" [(ngModel)]="Tour.Descripcion" class="form-control" name="Descripcion" id="Descripcion" type="text" placeholder="Descripcion"></textarea>
+      </div>
+
+      <div class="form-group col-md-6">
+        <label>Contenido</label>
+        <textarea rows="4" [(ngModel)]="Tour.Contenido" class="form-control" name="Contenido" id="Contenido" type="text" placeholder="Contenido"></textarea>
+      </div>
+
+      <div class="form-group col-md-6">
+        <label>Estado</label>
+        <select [(ngModel)]="Tour.Estado" name="Estado" type="text" class="form-control">
+          <option value='1'>Activo</option>
+          <option value='0'>Inactivo</option>
+        </select>
+      </div>
+
+
+
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-6 col-md-8">
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="grabar()" type="button" class="btn btn-success" title="Cancela edicion">Grabar</button>
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="cancel()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+</div>
+
+
+<div [hidden]="!PlacePanel" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Seleccionar Lugar</h2>
+      <input [(ngModel)]="searchFieldPlace" (blur)="searchPlaces()" (keydown)="keytabPlaces($event)" type="text"
+        class="form-control" placeholder="Buscar">
+    </div>
+    <div class="card-body modal-grid">
+      <div class="form-row">
+        <div class="form-group col-12 col-sm-6" *ngFor="let Place of Places;let i = index">
+          <a (click)="selectPlace(Place)">
+            <div class="card">
+              <div class="card-body">
+                <h5>{{Place.Nombre}}</h5>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8 col-md-10">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="closePlacePanel()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

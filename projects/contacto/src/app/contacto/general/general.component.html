@@ -1,0 +1,54 @@
+<form>
+
+    <div >
+        <div class="form-row">
+        <div class="form-group col-md-12">
+            <label>Nombre</label>
+            <input [(ngModel)]="Persona.Nombre" name="Nombre" type="text" placeholder="Nombre" class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+            <label for="name">Tipo de Identificacion</label>
+            <select [(ngModel)]="Persona.Tipo_Identificacion" name="Tipo_Identificacion" class="form-control">
+            <option value='01'>Cedula Fisica</option>
+            <option value='02'>Cedula Juridica</option>
+            <option value='03'>Dimex</option>
+            <option value='04'>NITE</option>
+            </select>
+        </div>
+        <div class="form-group col-md-6">
+            <label>Identificacion</label>
+            <input [(ngModel)]="Persona.Identificacion" name="Identificacion" type="text" placeholder="Identificación"
+            class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+            <label>Teléfono</label>
+            <input [(ngModel)]="Persona.Telefono" name="Telefono" type="text" placeholder="Teléfono"
+            class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+            <label>Correo</label>
+            <input [(ngModel)]="Persona.Correo" name="Correo" type="text" placeholder="Correo" class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+            <label>Pagina Web</label>
+            <input [(ngModel)]="Persona.Pagina_Web" name="Pagina_Web" type="text" placeholder="Pagina_Web" class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+            <label>Facebook</label>
+            <input [(ngModel)]="Persona.Facebook" name="Facebook" type="text" placeholder="Facebook" class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+            <label>Linkedin</label>
+            <input [(ngModel)]="Persona.Linkedin" name="Linkedin" type="text" placeholder="Linkedin" class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+            <label for="name">Estado</label>
+            <select [(ngModel)]="Persona.Estado" name="Estado" class="form-control">
+            <option value='1'>Activo</option>
+            <option value='2'>Inactivo</option>
+            <option value='3'>Suspendido</option>
+            </select>
+        </div>
+        </div>
+    </div>
+    </form>  

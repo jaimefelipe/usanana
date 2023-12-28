@@ -1,0 +1,37 @@
+<div class="login-register" >
+  <div class="login-box card">
+    <div class="card-body">
+      <form class="form-horizontal form-material" id="loginform">
+        <div class="toxo"><img width="40px" src="../../../assets/logo_orange.png"> Toxo</div>
+        <h3 class="box-title m-b-20">Cambiar Clave</h3>
+
+        <div class="form-group ">
+          <div class="col-xs-12">
+            <input [(ngModel)]="registro.clave0" name="claveo" class="form-control" required="" type="password" placeholder="Clave Actual" autocomplete="off">
+          </div>
+        </div>
+
+        <div class="form-group ">
+          <div class="col-xs-12">
+            <input (keydown)="stronKeyValidation($event)" [(ngModel)]="registro.clave1" name="clave1" class="form-control" required="" type="password" placeholder="Clave Nueva" autocomplete="off">
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-xs-12">
+            <input [(ngModel)]="registro.clave2" name="clave2" class="form-control" required="" type="password" placeholder="Confirmar Clave Nueva" autocomplete="off">
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-md-12 text-center">
+              <label [className]="pass.color" > {{pass.strength}} </label>
+          </div>
+        </div>
+        <div class="form-group text-center p-b-20">
+          <div class="col-xs-12">
+            <a (click)="cambiar()" class="btn btn-info btn-lg btn-block btn-rounded text-uppercase waves-effect waves-light">Cambiar Clave</a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

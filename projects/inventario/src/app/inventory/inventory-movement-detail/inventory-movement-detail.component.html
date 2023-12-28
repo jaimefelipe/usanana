@@ -1,0 +1,56 @@
+<div class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Detalle de Movimientos de Inventario</h2>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+        </div>
+        <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+          placeholder="Buscar">
+        <div class="input-group-append">
+          <button class="btn btn-success" type="button" ><i class="fa fa-plus-circle"
+              aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form>
+    <div class="form-row">
+      <div class="form-group col-12 col-sm-6" *ngFor="let Detail of Details;let i = index">
+        <div class="card">
+
+            <div class="card-body">
+              <h6 class="card-title">Referencia: {{Detail.Codigo_Referencia}} - {{Detail.Creado_El}}
+
+                <span *ngIf="Detail.Tipo_Movimiento == '01'" class="text-primary"> Venta</span>
+                <span *ngIf="Detail.Tipo_Movimiento == '02'" class="text-success"> Compra</span>
+                <span *ngIf="Detail.Tipo_Movimiento == '03'" class="text-info"> Nota Débito (-) </span>
+                <span *ngIf="Detail.Tipo_Movimiento == '04'" class="text-danger"> Nota Crédito (+) </span>
+              </h6>
+              {{Detail.Descripcion}}
+              Cantidad: {{Detail.Cantidad |currency: ' '}} Precio {{Detail.Precio | currency: ' '}}
+              Estado :
+              <span *ngIf="Detail.Estado == '0'" class="text-primary"> Registrado</span>
+              <span *ngIf="Detail.Estado == '1'" class="text-success"> Aplicado</span>
+              <h6>Id: {{Detail.Id_Movimiento_Detalle}} - {{Detail.Id_Movimiento}} = {{Detail.Registro_Origen}}</h6>
+
+            </div>
+
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="container-fluid">
+    <ul class="pagination">
+      <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"
+            aria-hidden="true"></i></a></li>
+    </ul>
+  </div>
+</div>

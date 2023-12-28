@@ -1,0 +1,28 @@
+<div class="container-fluid">
+    <div class="row">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+        </div>
+        <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+          placeholder="Buscar">
+        <div class="input-group-append">
+          <button [disabled]="Persona.Id_Persona == ''" class="btn btn-success" type="button" (click)="abrirPantallaCarreraContacto('')"><i class="fa fa-plus-circle"
+              aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form>
+    <div class="form-row">
+      <div class="form-group col-12 col-sm-6" *ngFor="let Carrera of Contactos;let i = index">
+        <a (click)="abrirPantallaCarreraContacto(Carrera)">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title">{{Carrera.Carrera}}</h4>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </form>

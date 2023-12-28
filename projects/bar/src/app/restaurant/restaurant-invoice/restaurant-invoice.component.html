@@ -1,0 +1,197 @@
+<div [hidden]="!PantallaPedido">
+  <app-pedido></app-pedido>
+  <div class="form-group col-md-12">
+    <div class="form-row">
+      <div class="form-group col-9 col-md-8">
+      </div>
+      <div class="form-group col-3 col-md-2">
+        <button (click)="CloseOrders()" type="button" class="btn btn-danger" title="Cancela edicion">Volver a Factura</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div [hidden]="PantallaPedido">
+  <div [hidden]="edit" class="container pb-5">
+    <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+    <h2>Ordenes <span *ngIf="EstadoOrdenes == 1" class="text-primary"> Por Facturar</span>
+      <span *ngIf="EstadoOrdenes == 2" class="text-primary"> Facturadas </span> --
+    <button (click)="loadOrders(1)" type="button" class="btn btn-success" title="Cancela edicion">Pendientes</button>
+    <!--
+    -- <button (click)="loadOrders(2)" type="button" class="btn btn-info" title="Cancela edicion">Facturadas</button>
+    -- <button (click)="newOrder()" type="button" class="btn btn-primary" title="Cancela edicion">Nuevo</button>-->
+  </h2>
+    <form>
+      <div class="form-row">
+
+        <div class="form-group col-12 col-sm-6" *ngFor="let Order of Orders;let i = index">
+          <div class="card">
+            <a (click)="editRecord(Order)">
+              <div class="card-body">
+
+                <h4 class="card-title">{{Order.Zona}} </h4>
+                <h4 class="card-title">{{Order.Mesa}}- {{Order.Cliente}}</h4>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div class="container-fluid">
+      <ul class="pagination">
+        <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"
+              aria-hidden="true"></i></a></li>
+        <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"
+              aria-hidden="true"></i></a></li>
+        <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"
+              aria-hidden="true"></i></a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+<!--
+  Form de Edición
+-->
+
+<div [hidden]="!edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2> Orden a Facturar</h2>
+
+  <form>
+    <div class="form-row">
+      <div class="form-group col-md-5">
+        <label>Zona</label>
+        <select  (change)="cambiarZona()" [(ngModel)]="Pedido.Id_Zona" name="Id_Zona" class="form-control">
+          <option value={{Zona.Id_Zona}} *ngFor="let Zona of Zonas;let i = index">
+            {{Zona.Nombre}} </option>
+        </select>
+      </div>
+      <div class="form-group col-md-5">
+        <label>Mesa</label>
+        <select [(ngModel)]="Pedido.Id_Mesa" name="Id_Mesa" class="form-control">
+          <option value={{Mesa.Id_Mesa}} *ngFor="let Mesa of Mesas;let i = index">
+            {{Mesa.Nombre}} </option>
+          </select>
+      </div>
+
+      <div class="form-group col-md-2">
+        <label>Cambio</label><br>
+        <button (click)="cambiarMesa()" type="button" id='FacturarButton' class="btn btn-success" title="Cancela edicion">Cambiar</button>
+      </div>
+
+
+      <div class="form-group col-md-8">
+        <label>Nombre</label>
+        <input [(ngModel)]="Pedido.Nombre" name="Nombre" type="text" placeholder="Nombre" class="form-control">
+      </div>
+      <div class="col-6 col-md-4">
+        <label>Medio de pago</label>
+        <select [(ngModel)]="Pedido.Metodo_Pago " name="Metodo_Pago"
+          id="Metodo_Pago" class="form-control">
+          <option value='01'>Efectivo</option>
+          <option value='06'>Sinpe Móvil</option>
+          <option value='02'>Tarjeta de Credito</option>
+          <option value='03'>Cheque</option>
+          <option value='04'>Transferencia/Deposito Bancario</option>
+          <option value='05'>Recaudo Tercero</option>
+        </select>
+      </div>
+
+      <div class="form-row table table-striped table-hover table-dark table-bordered table-responsive">
+        <div class="form-group col-12">
+          <div class="form-row" *ngFor="let Detail of OrderDetails;let indice = index">
+            <div class="form-group col-12 col-md-2 m-1">
+              {{Detail.Nombre}}
+            </div>
+            <div class="form-group col-12 col-md-2 m-1">
+              {{Detail.Descripcion}}
+            </div>
+            <div [hidden]="Facturada" class="form-group col-12 col-md-1 m-1 text-right">
+              {{Detail.Cantidad - Detail.Facturado}}
+            </div>
+            <div [hidden]="!Facturada" class="form-group col-12 col-md-1 m-1 text-right">
+              {{Detail.Cantidad}}
+            </div>
+            <div class="form-group col-12 col-md-2 m-1 text-right">
+              {{Detail.Precio | currency:' '}}
+            </div>
+            <div [hidden]="Facturada" class="form-group col-12 col-md-2 m-1 text-right">
+              {{Detail.Facturar * Detail.Precio | currency:' '}}
+            </div>
+            <div [hidden]="!Facturada" class="form-group col-12 col-md-2 m-1 text-right">
+              {{Detail.Cantidad * Detail.Precio | currency:' '}}
+            </div>
+            <div class="form-group col-12 col-md-1 m-1 text-right">
+              <input (change)="calcularTotal()" [(ngModel)]="Detail.Facturar" name="Facturar" type="text" placeholder="Facturar" class="form-control">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-6 col-md-6">
+            <h2>Total = {{Total}}</h2>
+          </div>
+          <div [hidden]="!Facturada" class="form-group col-3 col-md-2">
+            <button (click)="imprimirTiquete('')" type="button" id='FacturarButton' class="btn btn-success" title="Cancela edicion">Imprimir Tiquete</button>
+          </div>
+          <div [hidden]="Facturada" class="form-group col-3 col-md-2">
+            <button (click)="imprimirTiqueteCaja()" type="button" id='FacturarButton' class="btn btn-primary" title="Cancela edicion">Cuenta</button>
+          </div>
+          <div [hidden]="Facturada" class="form-group col-3 col-md-2">
+            <button (click)="facturar()" type="button" id='FacturarButton' class="btn btn-success" title="Cancela edicion">Facturar</button>
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="cancel()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+
+<div [hidden]="!PantallaEfectivo" class="modal-main">
+
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Cobro en Efectivo</h2>
+    </div>
+    <div class="card-body form-row">
+      <div class="form-group col-md-12">
+        <h2>Monto a cobrar:  {{Total| currency:' '}}</h2>
+
+      </div>
+      <div class="form-group col-md-12">
+        Paga Con :
+        <input style="font-size:30px;font-weight:bold;" [(ngModel)]="MontoCobrado" name="MontoCobrado" type="text" placeholder="MontoCobrado" class="form-control">
+      </div>
+
+      <div class="form-group col-md-12">
+       <h2>Vuelto: {{MontoCobrado - Total| currency:' '}}</h2>
+
+      </div>
+
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8 col-md-8">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="facturar1()" type="button" class="btn btn-primary"
+              title="Cancela edicion">Facturar</button>
+          </div>
+          <div class="form-group col-2">
+            <button (click)="cerrarPantallaEfectivo()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

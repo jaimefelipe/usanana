@@ -1,0 +1,119 @@
+
+.base-tree-container {
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+}
+.base-tree-container .tree-header {
+  display: flex;
+  margin-left: -10px;
+  padding: 2px 5px 0 28px;
+  height: 38px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+.base-tree-container .tree-header .tree-column {
+  color: #6e6e6e;
+  vertical-align: bottom;
+  font-size: 12px;
+  font-weight: 500;
+  align-items: center;
+}
+.base-tree-container .tree-wrapper {
+  flex: 1;
+  max-height: calc(80vh - 0.2rem);
+}
+.base-tree-container .tree-node-wrapper {
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
+  padding-left: 0.2rem;
+  display: flex;
+  flex-direction: row;
+}
+.base-tree-container .node-content-wrapper {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  flex: 1;
+  margin-right: 0.25rem;
+}
+.base-tree-container .tree-header {
+  width: 98% !important;
+}
+.base-tree-container .tree-column-wrapper, .base-tree-container .tree-header {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+.base-tree-container .tree-column-wrapper span, .base-tree-container .tree-header span {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.base-tree-container .tree-column-wrapper .tree-column, .base-tree-container .tree-header .tree-column {
+  flex-grow: 1;
+  display: flex;
+  padding-left: 5px;
+  padding-right: 5px;
+  align-items: center;
+}
+.base-tree-container .tree-column-wrapper .tree-column:first-child, .base-tree-container .tree-header .tree-column:first-child {
+  overflow: hidden;
+  margin-right: auto;
+  flex-shrink: 1;
+  min-width: 0;
+}
+.base-tree-container .tree-column-wrapper .tree-column:first-child span, .base-tree-container .tree-header .tree-column:first-child span {
+  white-space: initial;
+}
+.base-tree-container .tree-column-wrapper .tree-column:not(:first-child), .base-tree-container .tree-header .tree-column:not(:first-child) {
+  flex-grow: 0;
+  flex-shrink: 0;
+  width: 250px;
+}
+@media (max-width: 1439px) {
+  .base-tree-container .tree-column-wrapper .tree-column:not(:first-child), .base-tree-container .tree-header .tree-column:not(:first-child) {
+    width: 160px;
+ }
+}
+@media (max-width: 1299px) {
+  .base-tree-container .tree-column-wrapper .tree-column:not(:first-child), .base-tree-container .tree-header .tree-column:not(:first-child) {
+    width: 85px !important;
+ }
+}
+@media (max-width: 768px) {
+  .base-tree-container .tree-column-wrapper .tree-column:not(:first-child), .base-tree-container .tree-header .tree-column:not(:first-child) {
+    display: none !important;
+ }
+}
+
+.fw {
+  width: 100px;
+}
+
+/* The Modal (background) */
+.modal-main {
+  position: fixed; /* Stay in place */
+  z-index: 100; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 5% auto; /* 15% from the top and centered */
+  border: 1px solid #888;
+
+  width: 80%; /* Could be more or less, depending on screen size */
+}
+.modal-grid {
+  height: 50vh;
+  overflow: auto;
+}
