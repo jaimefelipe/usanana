@@ -1,6 +1,7 @@
 import { ProductService } from './product.service';
 import { CategoryService } from './../category/category.service';
 import { Component, OnInit } from '@angular/core';
+import { ParametrosCiaService } from '../../../../../main/src/app/general/parametros-cia/parametros-cia.service';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 
@@ -13,13 +14,15 @@ export class ProductComponent implements OnInit {
   constructor(
     private productService:ProductService,
     private categoryService:CategoryService,
-    private router : Router
+    private router : Router,
+    private parametrosCiaService:ParametrosCiaService
     ) { }
   fileData!: File;
   interfazContable = localStorage.getItem("InterfazContable");
   //interfazInventario = localStorage.getItem("interfazInventario");
   interfazInventario = false;
   PrecioServicioIncluido = false;
+  interfazCobroTc = false; 
   Admin = false;
   Restaurante = false;
   PantallaActiva = 1;
@@ -84,7 +87,9 @@ export class ProductComponent implements OnInit {
     Producto_Relacionado_Nombre:'',
     Cantidad_Relacionada:'',
     Foto:'',
-    FotoSrc:''
+    FotoSrc:'',
+    Cantidad_Documento:'',
+    Vencimiento_Documento:''
   }
 
   ngOnInit(): void {
@@ -107,6 +112,7 @@ export class ProductComponent implements OnInit {
 
     this.loadProducts();
     this.loadCategories();
+    this.leerInterfazCobroTc();
   }
   async loadProducts(search?){
     let data = await this.productService.loadProducts(this.paginacion,search,this.Tipo_Codigo);
@@ -115,6 +121,18 @@ export class ProductComponent implements OnInit {
     }else{
       this.Articulos = data['data'];
     }
+  }
+  async leerInterfazCobroTc(){
+    //leer el parametro de interfaz de cobro de tarjeta de credito.
+    let data = await this.parametrosCiaService.loadParameterCia(localStorage.getItem('Id_Empresa'),'Inv_Interfaz_CobroTC');
+    if(data['total'] == 1){
+      if(data['data'][0]['Valor'] == 1){
+        this.interfazCobroTc = true;
+      }else{
+        this.interfazCobroTc = false;
+      }
+    }
+    alert(this.interfazCobroTc)
   }
   CalculoPrecio(){
     let Tasa = 0;
@@ -225,7 +243,9 @@ export class ProductComponent implements OnInit {
         Producto_Relacionado_Nombre:'',
         Cantidad_Relacionada:'',
         Foto:'',
-        FotoSrc:''
+        FotoSrc:'',
+        Cantidad_Documento:'',
+        Vencimiento_Documento:''
       }
     }
   }

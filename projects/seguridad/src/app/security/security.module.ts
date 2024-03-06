@@ -13,6 +13,7 @@ import { SecurityAppGroupComponent } from './security-app-group/security-app-gro
 import { SecurityAppComponent } from './security-app/security-app.component';
 import { SecurityUserGroupComponent } from './security-user-group/security-user-group.component';
 import { UsuarioEmpresaComponent } from './usuario-empresa/usuario-empresa.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 
 @NgModule({
@@ -21,7 +22,8 @@ import { UsuarioEmpresaComponent } from './usuario-empresa/usuario-empresa.compo
     CommonModule,
     FormsModule,
     NgbModule,
-    SecurityRoutingModule
+    SecurityRoutingModule,
+    MatFormFieldModule
   ]
 })
 export class SecurityModule { }

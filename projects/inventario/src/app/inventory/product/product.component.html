@@ -238,6 +238,21 @@
         <input [(ngModel)]="Articulo.Cantidad_Relacionada"  class="form-control" name="Cantidad_Relacionada"
           id="Cantidad_Relacionada" type="text" placeholder="Cantidad Relacionada">
       </div>
+      
+      <div [hidden]="!interfazCobroTc"  class="form-group col-md-3">
+        <label>Cantidad Documentos</label>
+        <input [(ngModel)]="Articulo.Cantidad_Documento"  class="form-control" name="Cantidad_Documentos"
+          id="Cantidad_Documentos" type="text" placeholder="Cantidad Documentos">
+      </div>
+      
+      <div [hidden]="!interfazCobroTc" class="form-group col-md-3">
+        <label>Vencimiento Documentos</label>
+        <select [(ngModel)]="Articulo.Vencimiento_Documento" name="Vencimiento_Documento" type="text" class="form-control">
+          <option value='1'>Mes</option>
+          <option value='2'>Año</option>
+        </select>
+      </div>
+
 
       <div class="form-group col-md-3">
         <label>Estado</label>

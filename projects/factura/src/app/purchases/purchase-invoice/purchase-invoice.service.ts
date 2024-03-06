@@ -204,4 +204,62 @@ export class PurchaseInvoiceService {
     let sql = "Select Id_Factura from Com_Factura where Clave_Numerica = '"+Clave_Numerica+"' and Numero_Identificacion = '"+Cliente+"'";
     return await this.apiService.postRecord(sql);
   }
+  
+  xml2json(xml){
+    try {
+      const types = [null,
+        "Element",
+        "Attribute",
+        "Text",
+        "CDATA",
+        "EntityReference", // Deprecated
+        "Entity", // Deprecated
+        "ProcessingInstruction",
+        "Comment",
+        "Document",
+        "DocumentType",
+        "DocumentFragment",
+        "Notation" // Deprecated
+      ];
+  
+      var o = {
+        name: xml.nodeName,
+        type:  types[xml.nodeType],
+        text: '',
+        attributes : {},
+        children: []
+      };
+      
+      if (xml.nodeType == 3 ||
+          xml.nodeType == 4 ||
+          xml.nodeType == 8 ) {
+        o.text = xml.textContent;
+      } else {
+        if (xml.attributes) {
+          o.attributes = {};
+          for (const a of xml.attributes) {
+            o.attributes[a.name] = a.value;
+          }
+        }
+  
+        if (xml.childNodes.length) {
+          o.children = [];
+          for (const x of xml.childNodes) {
+            o.children.push(this.xml2json(x))
+          }
+        }
+      }
+      return (o);
+    } catch (e) {
+      alert('Error in xml2json. See console for details.');
+      console.log('Error in xml2json processing node:');
+      console.log(o);
+      console.log('Error:');
+      console.log(e);
+      return true;
+    }
+  }
+  
+
+
 }

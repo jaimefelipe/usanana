@@ -11,10 +11,11 @@ import { ReportInventoryComponent } from './report-inventory/report-inventory.co
 import { InventoryMovementDetailComponent } from './inventory-movement-detail/inventory-movement-detail.component';
 import { SubCategoryComponent } from './sub-category/sub-category.component';
 import { ExistenciasComponent } from './existencias/existencias.component';
+import { MovimientoArticuloComponent } from './movimiento-articulo/movimiento-articulo.component';
 
 
 @NgModule({
-  declarations: [CategoryComponent, ProductComponent, MovementInventoryComponent, ReportInventoryComponent, InventoryMovementDetailComponent, SubCategoryComponent, ExistenciasComponent],
+  declarations: [CategoryComponent, ProductComponent, MovementInventoryComponent, ReportInventoryComponent, InventoryMovementDetailComponent, SubCategoryComponent, ExistenciasComponent, MovimientoArticuloComponent],
   imports: [
     CommonModule,
     NgbModule,

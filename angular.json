@@ -1154,12 +1154,15 @@
               "projects/proyecto/src/assets"
             ],
             "styles": [
+              "node_modules/angular-calendar/css/angular-calendar.css",
               "./node_modules/jqwidgets-ng/jqwidgets/styles/jqx.base.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "projects/main/src/styles.css"
+              
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
+              "./node_modules/jqwidgets-ng/jqwidgets/jqxcore.js",
               "node_modules/bootstrap/dist/js/bootstrap.min.js"
             ]
 
@@ -1522,6 +1525,111 @@
             ],
             "styles": [
               "projects/viajes/src/styles.css"
+            ],
+            "scripts": []
+          }
+        }
+      }
+    },
+    "cobros": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "standalone": false
+        },
+        "@schematics/angular:directive": {
+          "standalone": false
+        },
+        "@schematics/angular:pipe": {
+          "standalone": false
+        }
+      },
+      "root": "projects/cobros",
+      "sourceRoot": "projects/cobros/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:application",
+          "options": {
+            "baseHref": "/cobros/",
+            "outputPath": "dist/cobros",
+            "index": "projects/cobros/src/index.html",
+            "browser": "projects/cobros/src/main.ts",
+            "polyfills": [
+              "zone.js"
+            ],
+            "tsConfig": "projects/cobros/tsconfig.app.json",
+            "assets": [
+              "projects/cobros/src/favicon.ico",
+              "projects/cobros/src/assets"
+            ],
+            "styles": [
+              "@angular/material/prebuilt-themes/indigo-pink.css",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "projects/main/src/styles.css"
+            ],
+            "scripts": [
+              "node_modules/jquery/dist/jquery.min.js",
+              "node_modules/bootstrap/dist/js/bootstrap.min.js"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "cobros:build:production"
+            },
+            "development": {
+              "buildTarget": "cobros:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "buildTarget": "cobros:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
+            "tsConfig": "projects/cobros/tsconfig.spec.json",
+            "assets": [
+              "projects/cobros/src/favicon.ico",
+              "projects/cobros/src/assets"
+            ],
+            "styles": [
+              "@angular/material/prebuilt-themes/indigo-pink.css",
+              "projects/cobros/src/styles.css"
             ],
             "scripts": []
           }

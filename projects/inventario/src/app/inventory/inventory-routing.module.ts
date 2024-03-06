@@ -7,6 +7,7 @@ import { ReportInventoryComponent } from './report-inventory/report-inventory.co
 import { InventoryMovementDetailComponent } from './inventory-movement-detail/inventory-movement-detail.component';
 import { SubCategoryComponent } from './sub-category/sub-category.component';
 import { ExistenciasComponent } from './existencias/existencias.component';
+import { MovimientoArticuloComponent } from './movimiento-articulo/movimiento-articulo.component';
 
 const routes: Routes = [
   {path : 'categorias', component : CategoryComponent},
@@ -15,7 +16,8 @@ const routes: Routes = [
   {path : 'movinventario', component : MovementInventoryComponent},
   {path : 'invmovdetail', component : InventoryMovementDetailComponent},
   {path : 'repinventario', component : ReportInventoryComponent},
-  {path : 'existencias', component : ExistenciasComponent}
+  {path : 'existencias', component : ExistenciasComponent},
+  {path : 'movarticulo', component : MovimientoArticuloComponent},
 
 ];
 

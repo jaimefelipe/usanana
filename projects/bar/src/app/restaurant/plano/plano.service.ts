@@ -88,6 +88,10 @@ export class PlanoService {
     await this.apiService.postRecord(sql);
 
   }
+  async actualizarCondicionVentaPedido(Id_Pedido,Condicion){
+    let sql = "Update Res_Pedido set Condicion_Venta = "+Condicion+" where Id_Pedido = "+Id_Pedido;
+    return await this.apiService.postRecord(sql);
+  }
   async actualizarComanda(Id_Pedido){
     let sql = "Update Res_Pedido_Detalle set Comandado = Cantidad where Id_Pedido = "+Id_Pedido;
     return await this.apiService.postRecord(sql);

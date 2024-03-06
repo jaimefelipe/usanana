@@ -1,0 +1,194 @@
+<div  class="calendar-container">
+    <header class="calendar-header">
+        
+        <p ><a (click)="SelectMes()">Mes</a></p>
+        <p ><a (click)="SelectSemana()">Semana</a></p>
+        <p class="calendar-current-date">{{currdate}}</p>
+        <div class="calendar-navigation">
+        
+            <span id="calendar-prev"
+                  class="material-symbols-rounded">
+
+                  <a (click)="anterior()"><</a>
+            </span>
+            <span id="calendar-next"
+                  class="material-symbols-rounded">
+                  <a (click)="siguiente()">></a>
+            </span>
+        </div>
+    </header>
+
+    <div [hidden]="!MesPanel" class="calendar-body">
+        <ul class="calendar-weekdays">
+            <li>Dom</li>
+            <li>Lun</li>
+            <li>Mar</li>
+            <li>Mie</li>
+            <li>Jue</li>
+            <li>Vie</li>
+            <li>Sab</li>
+        </ul>
+        <ul class="calendar-dates">
+            <li [ngClass]="Fecha.class" *ngFor="let Fecha of FechasAmostrar;let i = index">
+                {{Fecha.dia}}
+                <div class="eventRow" title="{{Evento.Nombre}}" *ngFor="let Evento of Fecha.eventos;let x = index">
+                    <a (click)="openEventoPanel(Evento)">
+                        {{Evento.Nombre | slice:0:10}}
+                    </a>
+                </div>
+            </li>
+        </ul>
+    </div>
+    
+    <div [hidden]="!SemanaPanel" class="">
+          
+      <table>
+        <thead>
+            <tr>
+                <th></th>
+                <th>Domingo {{FechasSemana[0]}}</th>
+                <th>Lunes {{FechasSemana[1]}}</th>
+                <th>Martes {{FechasSemana[2]}}</th>
+                <th>Miércoles {{FechasSemana[3]}}</th>
+                <th>Jueves {{FechasSemana[4]}}</th>
+                <th>Viernes {{FechasSemana[5]}}</th>
+                <th>Sábado {{FechasSemana[6]}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Aquí se generan las filas para las horas -->
+            <tr *ngFor="let horas of eventosSemana;let i = index">
+              <td  *ngFor="let dia of horas;let i = index">
+                <div class="eventRow" title="{{Evento.Nombre}}" *ngFor="let Evento of dia;let x = index">
+                  <a (click)="openEventoPanel(Evento)">
+                      {{Evento.Nombre | slice:0:10}}
+                  </a>
+                </div>
+              </td>
+            </tr>
+            
+
+          </tbody>
+      </table>
+
+    </div>
+
+  <div [hidden]="!EventoPanel" class="modal-main">
+    <div class="modal-content  card">
+      <div class="card-header">
+        <div class="form-row">
+            <div class="form-group col-9">
+                <h2>Editar Actividad</h2> 
+            </div>
+            <div class="form-group col-3">
+                <div class=" tab">
+                    <button [ngClass]='GeneralClass'  (click)="activarTabGeneral()" >General</button>
+                    <button [ngClass]='SeguimientoClass'  (click)="activarTabSeguimiento()" >Seguimientos</button>
+                 </div>
+            </div>
+        </div>
+      </div>
+
+      <div [hidden]="!GeneralTabActivo"  class="card-body modal-grid">
+        <div class="form-row">
+          
+            
+            <div class="form-group col-md-8">
+                <label>Nombre</label>
+                <input [(ngModel)]="Evento.Nombre" name="Nombre" type="text" placeholder="Nombre" class="form-control">
+            </div>
+            <div class="form-group col-md-4">
+                <label>Miembros</label>
+                <div class="input-group">
+
+                <input [(ngModel)]="Evento.Miembros" disabled name="Miembros" id="Miembros" type="input"
+                    class="form-control" placeholder="Miembros">
+
+                </div>
+            </div>
+
+            <div class="form-group col-md-12">
+                <label>Descripción</label>
+                <textarea class="form-control" [(ngModel)]="Evento.Descripcion" name="Descripcion"></textarea>
+            </div>
+            <div class="form-group col-md-3">
+                <label>Fecha Inicio</label>
+                <div class="input-group">
+                  <input class="form-control" placeholder="Inicio" name="Inicio" [(ngModel)]="FechaInicio" ngbDatepicker
+                    #d1="ngbDatepicker">
+                  <div class="input-group-append">
+                    <button class="btn btn-outline-secondary fa fa-calendar" (click)="d1.toggle()" type="button"></button>
+                  </div>
+                </div>
+              </div>
+      
+              <div  class="form-group col-md-2">
+                <label>Hora Inicio</label>
+                <input class="form-control" type="time" [(ngModel)]="Evento.HInicio" id="HInicio" name="HInicio" >
+              </div>
+      
+              <div  class="form-group col-md-3">
+                <label>Fecha Final</label>
+                <div class="input-group">
+                  <input class="form-control" placeholder="Fin" name="Fin" [(ngModel)]="FechaFin" ngbDatepicker
+                    #d2="ngbDatepicker">
+                  <div class="input-group-append">
+                    <button class="btn btn-outline-secondary fa fa-calendar" (click)="d2.toggle()" type="button"></button>
+                  </div>
+                </div>
+              </div>
+      
+              <div class="form-group col-md-2">
+                <label>Hora Final</label>
+                <input class="form-control" type="time" [(ngModel)]="Evento.HFin" id="HFin" name="HFin">
+              </div>
+      
+              <div  class="form-group col-md-2">
+                <label>Estado</label>
+                <select [(ngModel)]="Evento.Estado" name="Estado" type="text" class="form-control">
+                  <option value='1'>Pendiente</option>
+                  <option value='2'>En Proceso</option>
+                  <option value='3'>Ajustes</option>
+                  <option value='4'>Visto Bueno</option>
+                  <option value='5'>Aprobado</option>
+                  <option value='6'>Terminado</option>
+                </select>
+              </div>
+        </div>
+      </div>
+      
+    <div [hidden]="!SeguimientoTabActivo"  class="card-body modal-grid">
+        <div class="form-group col-md-12">
+            <label>Seguimiento</label>
+            <div class="input-group">
+              <input [(ngModel)]="Seguimiento"  name="Seguimiento" id="Seguimiento" type="input"
+                class="form-control" placeholder="Seguimiento">
+                <div class="input-group-append">
+                  <button type="button" (click)="agregarSeguimieto()" class="form-control btn btn-primary"><i
+                      class="fa fa-commenting"></i></button>
+                </div>
+            </div>
+          </div>
+          <div class="form-group col-md-12">
+            <div class="form-group col-12" *ngFor="let Seguimiento of Seguimientos;let i = index">
+              <span class="text-success">{{Seguimiento.Fecha}}</span> | <span class="text-primary"> {{Seguimiento.Nombre | uppercase }} </span> | {{Seguimiento.Nota }}
+            </div>
+        </div>
+    </div>
+    <div class="card-footer ">
+        <div class="form-group col-md-12">
+          <div class="form-row">
+            <div class="form-group col-8">
+            </div>
+            <div class="form-group col-2">
+              <button (click)="cerrarEventoPanel()" type="button" class="btn btn-success"
+                title="Cancela edicion">Grabar</button>
+            </div>
+            <div class="form-group col-2">
+              <button (click)="cerrarEventoPanel()" type="button" class="btn btn-danger"
+                title="Cancela edicion">Cerrar</button>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>

@@ -44,8 +44,9 @@ export class SignupComponent implements OnInit {
     if(user['total']>0){
       Swal.fire('Ya existe un usuario registrado con este correo');
       return false;
+    }else{
+      return await this.createUser();
     }
-    return await this.createUser()
   }
   async createUser(){
     let user = await this.signupService.createUser(this.registro);

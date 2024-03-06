@@ -15,7 +15,7 @@ export class ProductService {
     }
     let sqlConfig = {
       table: 'Inv_Producto left Join Inv_Categoria On Inv_Producto.Categoria = Inv_Categoria.Id_Categoria left join Inv_Sub_Categoria on Inv_Producto.Id_Sub_Categoria = Inv_Sub_Categoria.Id_Sub_Categoria',
-      fields: 'Id_Producto,Codigo,SKU,Descripcion,Precio,Impuesto,Inv_Producto.Estado,Inv_Categoria.Nombre as Categoria,Inv_Sub_Categoria.Nombre as SubCategoria,Ultimo_Costo, Existencia',
+      fields: 'Id_Producto,Codigo,SKU,Descripcion,Precio,Impuesto,Inv_Producto.Estado,Inv_Categoria.Nombre as Categoria,Inv_Sub_Categoria.Nombre as SubCategoria,Ultimo_Costo, Existencia,Cantidad_Documento,Vencimiento_Documento',
       orderField: '',
       searchField: search,
       paginacion: paginacion,
@@ -30,7 +30,7 @@ export class ProductService {
     }
     let sqlConfig = {
       table: 'Inv_Producto left Join Inv_Categoria On Inv_Producto.Categoria = Inv_Categoria.Id_Categoria inner join Inv_Sub_Categoria on Inv_Producto.Id_Sub_Categoria = Inv_Sub_Categoria.Id_Sub_Categoria',
-      fields: 'Id_Producto,Codigo,SKU,Descripcion,Precio,Impuesto,Inv_Producto.Estado,Inv_Categoria.Nombre as Categoria,Inv_Sub_Categoria.Nombre as SubCategoria,Inv_Categoria.Cocina,Ultimo_Costo,Foto',
+      fields: 'Id_Producto,Codigo,SKU,Descripcion,Precio,Impuesto,Inv_Producto.Estado,Inv_Categoria.Nombre as Categoria,Inv_Sub_Categoria.Nombre as SubCategoria,Inv_Categoria.Cocina,Ultimo_Costo,Foto,Cantidad_Documento,Vencimiento_Documento',
       orderField: 'Orden,Descripcion',
       searchField: search,
       orderDirection: " ASC ",
@@ -135,7 +135,7 @@ export class ProductService {
     if(Article.Id_Producto ==""){
       let sql = {
         table: 'Inv_Producto',
-        fields: 'Descripcion,Tipo_Codigo,Codigo,SKU,Unidad_Medida,Tipo_Impuesto,Impuesto,Precio,Categoria,Id_Categoria,Id_Sub_Categoria,Moneda,Minimo,Maximo,Codigo_Proveedor,Orden,Id_Producto_Relacionado,Cantidad_Relacionada,Estado,Existencia,Foto',
+        fields: 'Descripcion,Tipo_Codigo,Codigo,SKU,Unidad_Medida,Tipo_Impuesto,Impuesto,Precio,Categoria,Id_Categoria,Id_Sub_Categoria,Moneda,Minimo,Maximo,Codigo_Proveedor,Orden,Id_Producto_Relacionado,Cantidad_Relacionada,Estado,Existencia,Foto,Cantidad_Documento,Vencimiento_Documento',
         values: '\'' + Article.Descripcion
         + '\',\'' + Article.Tipo_Codigo
         + '\',\'' + Article.Codigo
@@ -157,6 +157,8 @@ export class ProductService {
         + '\',\'' + Article.Estado
         + '\',\'' + Article.Existencia
         + '\',\'' + Article.Foto
+        + '\',\'' + Article.Cantidad_Documento
+        + '\',\'' + Article.Vencimiento_Documento
         + '\''
       };
       return await this.apiService.insertRecord(sql);
@@ -183,6 +185,8 @@ export class ProductService {
         + '\',Estado=\''+ Article.Estado
         + '\',Existencia=\''+ Article.Existencia
         + '\',Foto=\''+ Article.Foto
+        + '\',Cantidad_Documento=\''+ Article.Cantidad_Documento
+        + '\',Vencimiento_Documento=\''+ Article.Vencimiento_Documento
         + '\'',
         where: 'Id_Producto=' + Article.Id_Producto
       };
@@ -192,7 +196,7 @@ export class ProductService {
   async loadArticle(Id_Producto){
     let sqlConfig = {
       table: 'Inv_Producto left Join Inv_Producto as Relacionado on Inv_Producto.Id_Producto_Relacionado = Relacionado.Id_Producto',
-      fields: 'Inv_Producto.Id_Producto,Inv_Producto.Descripcion,Inv_Producto.Tipo_Codigo,Inv_Producto.Codigo,Inv_Producto.SKU,Inv_Producto.Unidad_Medida,Inv_Producto.Tipo_Impuesto,Inv_Producto.Impuesto,Inv_Producto.Precio,Inv_Producto.Categoria,Inv_Producto.Id_Sub_Categoria,Inv_Producto.Moneda,Inv_Producto.Estado,Inv_Producto.Minimo,Inv_Producto.Maximo,Inv_Producto.Existencia,Inv_Producto.Ultimo_Costo,Inv_Producto.Costo_Promedio,Inv_Producto.Codigo_Proveedor,Inv_Producto.Orden,Inv_Producto.Id_Producto_Relacionado,Inv_Producto.Cantidad_Relacionada,Relacionado.Descripcion as Producto_Relacionado_Nombre,Inv_Producto.Foto',
+      fields: 'Inv_Producto.Id_Producto,Inv_Producto.Descripcion,Inv_Producto.Tipo_Codigo,Inv_Producto.Codigo,Inv_Producto.SKU,Inv_Producto.Unidad_Medida,Inv_Producto.Tipo_Impuesto,Inv_Producto.Impuesto,Inv_Producto.Precio,Inv_Producto.Categoria,Inv_Producto.Id_Sub_Categoria,Inv_Producto.Moneda,Inv_Producto.Estado,Inv_Producto.Minimo,Inv_Producto.Maximo,Inv_Producto.Existencia,Inv_Producto.Ultimo_Costo,Inv_Producto.Costo_Promedio,Inv_Producto.Codigo_Proveedor,Inv_Producto.Orden,Inv_Producto.Id_Producto_Relacionado,Inv_Producto.Cantidad_Relacionada,Relacionado.Descripcion as Producto_Relacionado_Nombre,Inv_Producto.Foto,Inv_Producto.Cantidad_Documento,Inv_Producto.Vencimiento_Documento',
       orderField: '',
       searchField: '',
       where: 'Inv_Producto.Id_Producto = ' + Id_Producto
@@ -275,4 +279,17 @@ export class ProductService {
   async loadFile(file){
     return await this.apiService.loadImg(file);
   }
+
+  async leerDocVencimientoProducto(Id_Producto){
+    let sqlConfig = {
+      table: 'Inv_Producto',
+      fields: 'Cantidad_Documento,Vencimiento_Documento',
+      orderField: '',
+      searchField: '',
+      where: 'Id_Producto = \'' + Id_Producto + '\''
+    }
+    return await this.apiService.executeSqlSyn(sqlConfig);
+  }
+
+
 }

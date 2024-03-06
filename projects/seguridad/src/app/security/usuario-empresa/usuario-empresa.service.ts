@@ -53,4 +53,16 @@ constructor(
     };
     return await this.apiService.insertRecord(sql);
   }
+
+  async cargarEmpresaDeUnUsuario(Id_Usuario) {
+    let sqlConfig = {
+      table: 'Seg_Usuario_Empresa',
+      fields: 'Id_Empresa',
+      Empresa: false,
+      where: 'Id_Usuario =' + Id_Usuario
+    }
+    return await this.apiService.executeSqlSyn(sqlConfig);
+  }
+
+
 }

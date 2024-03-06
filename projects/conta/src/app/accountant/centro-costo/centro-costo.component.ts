@@ -65,7 +65,7 @@ export class CentroCostoComponent implements OnInit {
    editRecord(Centro){
     this.edit = true;
     if(Centro){
-        this.loadCentro(Centro.Id_Centro_Contable);
+        this.loadCentro(Centro.Id_Centro_Costo);
     }else{
       this.Centro = {
         Id_Centro_Costo:'',

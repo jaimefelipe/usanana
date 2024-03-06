@@ -60,11 +60,17 @@ export class MarcasComponent implements OnInit {
     return true;
   }
   async LeerMarcas(){
+    const horaActual = new Date().getHours();
+    let esAntesDeLasCuatro = horaActual < 4;
+
     let data = await this.marcasService.leerMarcas(this.Marca.Id_Persona);
     if(data['total']==0){
-      this.Marca.Marca = 'Entrada';
+      if(esAntesDeLasCuatro){
+        this.Marca.Marca = 'Salida';
+      }else{
+        this.Marca.Marca = 'Entrada';
+      }
     }else{
-
       if(data['data'][0]['Marca'] == '1'){
         this.Marca.Marca = 'Salida';
       }else{

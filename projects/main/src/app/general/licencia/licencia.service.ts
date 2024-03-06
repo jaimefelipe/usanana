@@ -22,8 +22,35 @@ export class LicenciaService {
     }
     return await this.apiService.executeSqlSyn(sqlConfig);
   }
+  async getLicenciaCia(Id_Empresa){
+    let sqlConfig = {
+      table: 'Inv_Producto_Empresa',
+      fields: 'Id_Producto_Empresa',
+      where:'Id_Empresa =' + Id_Empresa,
+      Empresa:false
+    }
+    return await this.apiService.executeSqlSyn(sqlConfig);
+  }
+  async NuevaLicenciaCia(Licencia){
+    let sql = {
+      table: 'Inv_Producto_Empresa',
+      fields: 'Id_Empresa,Id_Producto,Estado,Fecha_Vencimiento,Cantidad_Disponible',
+      Empresa:false,
+      values: '\'' + Licencia.Id_Empresa
+      + '\',\'' + Licencia.Id_Producto
+      + '\',\'' + Licencia.Empresa_Estado
+      + '\',\'' + Licencia.Fecha_Vencimiento
+      + '\',\'' + Licencia.Cantidad_Disponible
+      + '\''
+    };
+    return await this.apiService.insertRecord(sql);
+  }
   async updateLicencia(licencia){
     let sql = "Update Inv_Producto_Empresa Set Fecha_Vencimiento = '"+ licencia.Fecha_Vencimiento+"', Cantidad_Disponible = '"+licencia.Cantidad_Disponible+"', Estado = '"+licencia.Empresa_Estado+"' where Id_Producto_Empresa = '"+licencia.Id_Producto_Empresa +"'";
+    return await this.apiService.postRecord(sql);
+  }
+  async updateLicenciaCia(licencia){
+    let sql = "Update Inv_Producto_Empresa Set Fecha_Vencimiento = '"+ licencia.Fecha_Vencimiento+"', Cantidad_Disponible = '"+licencia.Cantidad_Disponible+"', Estado = '"+licencia.Empresa_Estado+"' where Id_Empresa = '"+licencia.Id_Empresa +"'";
     return await this.apiService.postRecord(sql);
   }
 }

@@ -78,7 +78,7 @@ export class InvoiceComponent implements OnInit {
     Correo: "",
     Condicion_Venta: "01",
     Plazo_Credito: "0",
-    Metodo_Pago: "01",
+    Metodo_Pago: "98",
     Moneda: "CRC",
     Tipo_Cambio: "",
     IVA: 0,
@@ -131,7 +131,7 @@ export class InvoiceComponent implements OnInit {
     Tipo_Identificacion: "",
     Condicion_Venta: "",
     Plazo_Credito: "",
-    Metodo_Pago: "",
+    Metodo_Pago: "98",
     Estado: "",
     Moneda:''
   };
@@ -585,7 +585,7 @@ export class InvoiceComponent implements OnInit {
         Correo: "",
         Condicion_Venta: "01",
         Plazo_Credito: "0",
-        Metodo_Pago: "01",
+        Metodo_Pago: "98",
         Moneda: "CRC",
         Tipo_Cambio: "",
         IVA: 0,
@@ -626,7 +626,7 @@ export class InvoiceComponent implements OnInit {
         Tipo_Identificacion: "01",
         Condicion_Venta: "01",
         Plazo_Credito: "0",
-        Metodo_Pago: "01",
+        Metodo_Pago: "98",
         Estado: "",
         Moneda:''
       };
@@ -894,7 +894,7 @@ export class InvoiceComponent implements OnInit {
             }
           }
           this.Invoice.Condicion_Venta = '01';
-          this.Invoice.Metodo_Pago = '01';
+          this.Invoice.Metodo_Pago = '98';
           this.Invoice.Plazo_Credito = '0';
         }
       }else{
@@ -938,7 +938,7 @@ export class InvoiceComponent implements OnInit {
         this.Invoice.Plazo_Credito = "0";
       }
       if (this.Invoice.Metodo_Pago === "") {
-        this.Invoice.Metodo_Pago = "01";
+        this.Invoice.Metodo_Pago = "98";
       }
       if (this.Invoice.Codigo_Identificacion == "") {
         this.Invoice.Codigo_Identificacion = "01";
@@ -1155,7 +1155,7 @@ export class InvoiceComponent implements OnInit {
         this.Invoice.Plazo_Credito = "0";
       }
       if (this.Invoice.Metodo_Pago === "") {
-        this.Invoice.Metodo_Pago = "01";
+        this.Invoice.Metodo_Pago = "98";
       }
       if (this.Invoice.Codigo_Identificacion == "") {
         this.Invoice.Codigo_Identificacion = "01";

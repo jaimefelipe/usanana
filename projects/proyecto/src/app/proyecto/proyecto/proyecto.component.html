@@ -2,10 +2,17 @@
     <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
     <div class="row">
       <div class="col-4">
-        <app-proy-tree  (ItemSelection)="ItemSelection($event)" [AddItem]="AddItem"></app-proy-tree>
+        <app-proy-tree  (ItemSelection)="ItemSelection($event)" [AddItem]="AddItem" [UpdateItem]="UpdateItem"></app-proy-tree>
       </div>
       <div class="col-8">
-        <app-proy-actividad (NewItem)="NewItem($event)" [ItemSelected]="ItemSelected"></app-proy-actividad>
+        <div class=" tab">
+          <button [ngClass]='GeneralClass' (click)="activarGeneralTab()"   >General</button>
+          <button   >Tablero</button>
+          <button [ngClass]='CalendarioClass' (click)="activarCalendarioTab()" >Calendario</button>
+          <button >Gantt</button>
+       </div>
+        <app-proy-actividad [hidden]="!GeneralTabActivo" (NewItem)="NewItem($event)" (UpdateItem)="updateItem($event)" [ItemSelected]="ItemSelected"></app-proy-actividad>
+        <app-proy-scheduler [hidden]="!CalendarioTabActive"></app-proy-scheduler>
       </div>
 
     </div>

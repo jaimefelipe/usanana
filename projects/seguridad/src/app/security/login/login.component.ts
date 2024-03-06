@@ -3,6 +3,7 @@ import { Router } from "@angular/router";
 import { LoginService } from "./login.service";
 import { ParametrosCiaService } from '../../../../../main/src/app/general/parametros-cia/parametros-cia.service';
 
+
 import Swal from 'sweetalert2';
 
 declare var $: any;
@@ -22,7 +23,7 @@ export class LoginComponent implements OnInit {
   registro = {
     email:'',
     password:'',
-    empresa:''
+    empresa:'0'
   }
   multiCompany =  false;
   companies = [];
@@ -114,23 +115,17 @@ export class LoginComponent implements OnInit {
     this.companies = [];
     if(this.registro.email == "")
      return false;
-    /*
-     let exp = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,8}$/g;
-    if(!this.registro.email.match(exp)){
-        Swal.fire('El correo suministrado es invalido');
-        return false;
-        //document.getElementById('email').focus();
-    }*/
     let data =  await this.loginService.getUserCompany(this.registro.email);
     if(data['total'] == 0){
       Swal.fire('El Usuario no existe en el sistema');
       return false;
     }
-    if(data['total'] >1){
+    if(data['total'] > 1){
       this.multiCompany = true;
       this.companies = data['data'];
       this.registro.empresa = data['data'][0]['Id_Empresa'];
     }else{
+      this.multiCompany = false;
       this.registro.empresa = data['data'][0]['Id_Empresa']
     }
     return true;

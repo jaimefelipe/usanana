@@ -1,0 +1,54 @@
+<!-- [hidden]="!logedIn" -->
+<nav  role="navigation">
+  <div id="menuToggle">
+    <!--
+    A fake / hidden checkbox is used as click reciever,
+    so you can use the :checked selector on it.
+    -->
+    <input  id="MenuShow" (click)="click()" [checked]="showMenu"  type="checkbox" />
+
+    <!--
+    Some spans to act as a hamburger.
+
+    They are acting like a real hamburger,
+    not that McDonalds stuff.
+    -->
+    <span></span>
+    <span></span>
+    <span></span>
+
+    <!--
+    Too bad the menu has to be inside of the button
+    but hey, it's pure CSS magic.
+    -->
+      <ul  [hidden]="!showMenu" id="menu">
+        <a (click)="hideMenu()" [routerLink]="['/']"><li><i class="fa fa-home"></i> Inicio {{ambiente}}</li></a>
+        <div [hidden]="!logedIn">
+
+          <li [hidden]="!AppAcademico" (click)="clickAcademicoMenu()" ><a><i class="fa fa-hospital-o"></i>  Configuración <i [ngClass]='AcademicoClass' class="fa fa-cog"></i>  </a></li>
+          <ul [hidden]="!AcademicoMenu" >
+            <a (click)="hideMenu()" [hidden]="!AppVentas" [routerLink]="['/people']"><li><i class="fa fa-credit-card"></i> Contactos </li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/carrera']"><li><i class="fa fa-shopping-bag"></i> Carreras</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/curso']"><li><i class="fa fa-shopping-basket"></i> Cursos</li></a>
+            <a (click)="hideMenu()" [hidden]="!AppAcademico" [routerLink]="['/repinventario']"><li><i class="fa fa-file"></i> Reportes</li></a>
+          </ul>
+
+          <li (click)="clickRestaurantMenu()" ><a><i class="fa fa-file"></i>  Registro <i [ngClass]='restaurantClass' class="fa fa-cog"></i>  </a></li>
+          <ul [hidden]="!restaurantMenu">
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/periodo']"><li><i class="fa fa-credit-card"></i> Periodo Académico</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/grupo']"><li><i class="fa fa-align-justify"></i> Grupos</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/matricula']"><li><i class="fa fa-map-signs"></i> Matrícula</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/reporteVenta']"><li><i class="fa fa-file"></i> Reportes</li></a>
+          </ul>
+
+        </div>
+        <a href="https://api.whatsapp.com/send?phone=50687786649" target="_blank"><li><i class="fa fa-phone"></i> Soporte</li></a>
+        <a href="/main" target="_self"><li><i class="fa fa-home"></i> Menú Principal</li></a>
+
+        <a (click)="hideMenu()" [hidden]="logedIn" [routerLink]="['/login']"><li><i class="fa fa-sign-in"></i> Entrar</li></a>
+        <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/cambiar']"><li><i class="fa fa-key"></i> Cambiar Clave</li></a>
+        <a (click)="hideMenu()" [hidden]="!logedIn" (click)="logOut()" href="#"><li><i class="fa fa-sign-out"></i> Salir</li></a>
+        <a (click)="hideMenu()" [hidden]="!logedIn">{{Company}} | {{User}}</a>
+      </ul>
+  </div>
+</nav>

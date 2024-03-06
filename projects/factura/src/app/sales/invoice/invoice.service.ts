@@ -50,7 +50,7 @@ export class InvoiceService {
   async validClient(Numero_Identificacion){
     let sqlCedula = {
       table: 'Gen_Persona',
-      fields: 'Id_Persona,Nombre,Correo,Identificacion,Tipo_Identificacion,Condicion_Venta,Plazo_Credito,Metodo_Pago,Estado,Moneda',
+      fields: 'Id_Persona,Nombre,Correo,Telefono,Identificacion,Tipo_Identificacion,Condicion_Venta,Plazo_Credito,Metodo_Pago,Estado,Moneda',
       orderField: '',
       searchField: '',
       where: 'Identificacion like \'---' + Numero_Identificacion + '---\' or Nombre like \'---' + Numero_Identificacion + '---\''

@@ -187,7 +187,7 @@ export class SignupService {
       }
       let UsuarioEmpresa = await this.apiService.insertRecord(sqlUsuarioCia);
       if(UsuarioEmpresa['total']==1){
-
+        return this.Id_Usuario;
       }else{
         alert('Problema asociando usuario a empresa');
         return false;

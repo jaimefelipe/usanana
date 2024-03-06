@@ -1,0 +1,51 @@
+
+<div class="naranja m-0 text-center text-white">
+  <div><img class="mt-5" width="150px" src="./assets/Logo_codex_blanco.svg"></div>
+  <div class="pt-3 text-pequeno">Facturado Semana del {{inicioFormateado}} al {{finFormateado}}</div>
+  <div class="pt-3 text-grande"> ₡{{totalTransacciones | number:'1.0-0'}}</div>
+  <hr>
+  <div class="d-flex justify-content-between">
+    <div class="p-2">Comisión de la semana</div>
+    <div class="p-2">$###.##</div>
+  </div>
+</div>
+
+<div class="p-4 rounded-bottom-overlap">
+  <div class="form-group text-center col-12 d-flex justify-content-between">
+    <button (click)="atras()" type="button" class="btn ">
+      <-- 
+    </button>
+    <div class="text-grande bold">Transacciones</div>
+    <span></span>
+  </div>
+  <div class="form-group col-12 border-bottom p-2" *ngFor="let Transaccion of transacciones;let i = index">
+    <div class="d-flex justify-content-between">
+      <div>
+          {{Transaccion.Nombre}}
+      </div>
+      <div>
+        <span *ngIf="Transaccion.Estado == ''" >₡{{Transaccion.Monto | number:'1.0-0'}}</span>
+        <span *ngIf="Transaccion.Estado == '1'" class="text-primary"> ₡{{Transaccion.Monto | number:'1.0-0'}}</span>
+        <span *ngIf="Transaccion.Estado == '2'" class="text-success"> ₡{{Transaccion.Monto | number:'1.0-0'}}</span>
+        <span *ngIf="Transaccion.Estado == '3'" class="text-danger"> ₡{{Transaccion.Monto | number:'1.0-0'}}</span>
+      </div>
+    </div>
+    <div class="d-flex justify-content-between">
+      <div class="font-weight-bold">
+        {{Transaccion.Descripcion}}
+      </div>
+      <div>
+        {{Transaccion.Creado_El}}
+      </div>
+    </div>
+    
+  </div>
+
+
+
+
+</div>
+
+<div class="fixed-bottom text-center bg-dark">
+  <button class="btn verde" (click)="cerrarSesion()">Cerrar Sessión</button>
+</div>

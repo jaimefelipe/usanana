@@ -10,6 +10,7 @@ import { ProyTreeService } from './proy-tree.service';
 export class ProyTreeComponent implements OnInit {
     @ViewChild('myTree', { static: false }) myTree: jqxTreeComponent;
     @Input() AddItem: EventEmitter<string>; 
+    @Input() UpdateItem: EventEmitter<string>; 
     @Output() ItemSelection = new EventEmitter<any>();
 
     constructor(
@@ -44,7 +45,9 @@ export class ProyTreeComponent implements OnInit {
   subscribeToParentEmitter(): void { 
     this.AddItem.subscribe((data: any) => { 
       this.addItemToTree(data);
-      //this.message = data; 
+    }); 
+    this.UpdateItem.subscribe((data: any) => { 
+      this.updateItemTotree(data);
     }); 
   }
   addItemToTree(data){
@@ -55,6 +58,13 @@ export class ProyTreeComponent implements OnInit {
         this.myTree.render();
         this.myTree.expandItem(selectedItem.element);
     }
+  }
+  updateItemTotree(data){
+    let selectedItem = this.myTree.getSelectedItem();
+    if (selectedItem != null) {
+       this.myTree.updateItem({ label: data.Nombre,value:data.Id_Proyecto }, selectedItem.element)
+    }
+
   }
   crearTree(){
     this.source = {
@@ -86,5 +96,10 @@ export class ProyTreeComponent implements OnInit {
     let selectedItem = this.myTree.getSelectedItem();
     this.ItemSelection.emit(selectedItem);
   }
-
+  expandAll(){
+    let selectedItem = this.myTree.getSelectedItem();
+    if (selectedItem != null) {
+        this.myTree.expandItem(selectedItem.element);
+    }
+  }
 }

@@ -1244,9 +1244,6 @@ export class PlanoComponent implements OnInit {
     this.PantallaLoading = true;
     for (let Orden of this.OrderProducts){
       Orden.Facturar = Orden.Nueva_Cantidad;
-      //if(Orden.Facturar != Orden.Nueva_Cantidad){
-      //  Orden.Cantidad = Orden.Nueva_Cantidad
-      //}
     }
     //Validar si es de crédito debe ser por fuerza tiquete electrónico.
     if(this.factura.Tipo_Documento == '04'){
@@ -1260,7 +1257,6 @@ export class PlanoComponent implements OnInit {
         await this.planoService.ActualizarIdClientePedido(this.Pedido.Id_Pedido,this.factura.Id_Cliente);
       }
     }
-
     //Validar si no se esta facturando el total Si es así entonces copiar la orden y facturar el monto ajustado
     await this.validarCuentaParcial();
     //return false;
@@ -1286,7 +1282,6 @@ export class PlanoComponent implements OnInit {
       await this.generarFacturaElectronica();
     }else{
       //Ejecutar interfaz inventario.
-      //jaime
       if(this.factura.Condicion_Venta == '02'){
         //Generar Cuenta por cobrar
         await this.apiService.postRecord('Call sp_Res_Crear_CxC(' + this.Pedido.Id_Pedido+ ')' );
@@ -1377,6 +1372,8 @@ export class PlanoComponent implements OnInit {
   }
 
   async generarFacturaElectronica(){
+    //Actualizar la condicion de venta del Movimiento 
+    await this.planoService.actualizarCondicionVentaPedido(this.Pedido.Id_Pedido,this.factura.Condicion_Venta);
     if(this.Pedido.Metodo_Pago == '99'){
       if(this.factura.Condicion_Venta == '02'){
         //Generar Cuenta por cobrar

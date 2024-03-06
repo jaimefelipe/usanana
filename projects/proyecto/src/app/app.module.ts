@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
 
 import { ProyectoModule } from './proyecto/proyecto.module';
+import { SecurityModule } from '../../../seguridad/src/app/security/security.module';
 @NgModule({
   declarations: [
     AppComponent
@@ -15,7 +16,8 @@ import { ProyectoModule } from './proyecto/proyecto.module';
     BrowserModule,
     AppRoutingModule,
     CoreModule,
-    ProyectoModule
+    ProyectoModule,
+    SecurityModule
   ],
   providers: [],
   bootstrap: [AppComponent]

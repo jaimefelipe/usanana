@@ -36,6 +36,16 @@ export class MovementInventoryService {
     }
     return await this.apiService.executeSqlSyn(sqlConfig);
   }
+  async leerDetallesPorProducto(Id_Producto){
+    let sqlConfig = {
+      table: 'Inv_Movimiento_Detalle inner Join Inv_Movimiento on Inv_Movimiento_Detalle.Id_Movimiento = Inv_Movimiento.Id_Movimiento',
+      fields: 'Id_Producto,Inv_Movimiento.Creado_El,Inv_Movimiento_Detalle.Id_Movimiento,Tipo_Movimiento,Nombre,Cantidad,Unidad_Medida,Precio,Inv_Movimiento_Detalle.Total ',
+      orderField: '',
+      searchField: '',
+      where: 'Id_Producto = ' + Id_Producto
+    }
+    return await this.apiService.executeSqlSyn(sqlConfig);
+  }
   async loadProduct(producto){
     let sqlProducto = {
       table: 'Inv_Producto',

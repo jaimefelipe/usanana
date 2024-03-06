@@ -69,13 +69,14 @@ export class ContactoService {
     return await this.apiService.executeSqlSyn(sqlConfig);
   }
   async savePersona(Persona){
+    console.log(Persona)
     if(Persona.PresentacionA == '0'){
       Persona.PresentacionA = '1';
     }
     if(Persona.Id_Persona ==""){
       let sql = {
         table: 'Gen_Persona',
-        fields: 'Nombre,Telefono,Correo,Tipo_Identificacion,Identificacion,Cliente,Proveedor,Alumno,Profesor,Estado,Otro_Documento,Condicion_Venta,Plazo_Credito,Metodo_Pago,Fecha_Ingreso,Porcentaje_Descuento,Moneda,Contabilidad,FacturaElectronica,PuntoVenta,Restaurante,Asesoria,Declaracion,Precio,Provincia,Canton,Distrito,Barrio,Direccion,Empleado,PresentacionA,PresentacionB',
+        fields: 'Nombre,Telefono,Correo,Tipo_Identificacion,Identificacion,Cliente,Proveedor,Alumno,Profesor,Estado,Otro_Documento,Condicion_Venta,Plazo_Credito,Metodo_Pago,Fecha_Ingreso,Porcentaje_Descuento,Moneda,Contabilidad,FacturaElectronica,PuntoVenta,Restaurante,Asesoria,Declaracion,Precio,Provincia,Canton,Distrito,Barrio,Direccion,Empleado,PresentacionA,PresentacionB,TC,TCF,TCV,Id_Producto,TCN',
         values: '\'' + Persona.Nombre
         + '\',\'' + Persona.Telefono
         + '\',\'' + Persona.Correo
@@ -108,6 +109,11 @@ export class ContactoService {
         + '\',\'' + Persona.Empleado
         + '\',\'' + Persona.PresentacionA
         + '\',\'' + Persona.PresentacionB
+        + '\',\'' + Persona.numeroTarjeta
+        + '\',\'' + Persona.vencimientoTarjeta
+        + '\',\'' + Persona.cvvTarjeta
+        + '\',\'' + Persona.paquete
+        + '\',\'' + Persona.nombreTarjeta
         + '\''
       };
       return await this.apiService.insertRecord(sql);

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbDateFRParserFormatter } from '../../../../../core/src/app/_services/ngb-date-fr-parser-formatter';
 import { NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
+import { ApiService } from '../../../../../core/src/app/lib/api.service';
 
 @Component({
   selector: 'app-report-inventory',
@@ -10,7 +11,9 @@ import { NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 })
 export class ReportInventoryComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private apiService: ApiService
+  ) { }
   hoy = new Date();
   Id_Empresa = localStorage.getItem("Id_Empresa");
   Id_Usuario = localStorage.getItem("Id_Usuario");
@@ -51,6 +54,11 @@ export class ReportInventoryComponent implements OnInit {
     }
     if(this.reporte == "6"){
       window.open('https://toxo.work/reportes/inventario/bar-code.php?id=' + param, '_blank');
+    }
+    if(this.reporte == "7"){
+      this.apiService.postRecord(
+        'call sp_Inv_Recalculo_Precio_Costo_Existencia(' + localStorage.getItem("Id_Empresa") + ')'
+      );
     }
   }
 }

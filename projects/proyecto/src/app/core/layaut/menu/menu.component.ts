@@ -104,7 +104,7 @@ export class MenuComponent implements OnInit {
     localStorage.removeItem('Id_Usuario');
     localStorage.removeItem('Nombre_Usuario');
     localStorage.removeItem('Nombre');
-    window.location.href = '/pov/';
+    window.location.href = '/proyecto/login';
   }
 
   addToHomeScreen() {
