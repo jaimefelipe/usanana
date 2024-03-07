@@ -52,6 +52,15 @@
             <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/cierrecaja']"><li><i class="fa fa-align-justify"></i> Cierre Caja</li></a>
           </ul>
 
+          <li [hidden]="!AppCxC" (click)="clickCxCMenu()" ><a><i class="fa fa-cc"></i>  Cuentas X Cobrar <i [ngClass]='CxCClass' class="fa fa-cog"></i>  </a></li>
+          <ul [hidden]="!CxCMenu" >
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/cxcClasificacion']"><li><i class="fa fa-shopping-bag"></i> Clasificación</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/cuentacxc']"><li><i class="fa fa-credit-card"></i> Cuentas x Cobrar</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/documentocxc']"><li><i class="fa fa-file-o"></i> Documentos</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/movimientocxc']"><li><i class="fa fa-align-justify"></i> Movimientos</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/reportecxc']"><li><i class="fa fa-file"></i> Reporte CXC</li></a>
+          </ul>
+          
 
           <li (click)="clickRestaurantMenu()" ><a><i class="fa fa-cutlery"></i>  Restaurante <i [ngClass]='restaurantClass' class="fa fa-cog"></i>  </a></li>
           <ul [hidden]="!restaurantMenu">
@@ -62,10 +71,12 @@
             <!-- <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/restaurantinvoice']"><li><i class="fa fa-credit-card"></i> Facturar</li></a> -->
             <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/reporteVenta']"><li><i class="fa fa-file"></i> Reportes</li></a>
             <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/consultapedido']"><li><i class="fa fa-file"></i> Consulta Pedidos</li></a>
-
           </ul>
 
         </div>
+
+       
+
 
         <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/marcas']"><li><i class="fa fa-clock-o"></i> Marcas</li></a>
 

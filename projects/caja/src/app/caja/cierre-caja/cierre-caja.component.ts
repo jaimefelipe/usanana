@@ -25,11 +25,13 @@ export class CierreCajaComponent implements OnInit {
   ProductosActivo = false;
   EntradasActivo = false;
   SalidasActivo = false;
+  loading = false;
 
   TotalesClass = 'text-success tablinks active';
   ProductosClass = '';
   EntradasClass = '';
   SalidasClass = '';
+  MensajeLoading = 'Leyendo Cierres';
 
   Cierres = [];
   Cajas = [];
@@ -129,11 +131,13 @@ export class CierreCajaComponent implements OnInit {
     this.EntradasClass = ''
     this.SalidasClass = 'text-success tablinks active';
   }
-  cargarDatos(){
-    this.cargarTotalesCierre();
-    this.cargarProductosCierre();
-    this.cargarEntradasCierre();
-    this.cargarSalidasCierre();
+  async cargarDatos(){
+    this.loading = true;
+    await this.cargarTotalesCierre();
+    await this.cargarProductosCierre();
+    await this.cargarEntradasCierre();
+    await this.cargarSalidasCierre();
+    this.loading = false;
   }
   async cargarTotalesCierre(){
     let Id_Caja = localStorage.getItem('Id_Caja');

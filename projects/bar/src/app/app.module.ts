@@ -12,6 +12,7 @@ import { ContactoModule } from '../../../contacto/src/app/contacto/contacto.modu
 import { CajaModule } from '../../../caja/src/app/caja/caja.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SecurityModule } from '../../../seguridad/src/app/security/security.module';
+import { ReceivableModule } from '../../../conta/src/app/receivable/receivable.module';
 
 
 @NgModule({
@@ -28,7 +29,8 @@ import { SecurityModule } from '../../../seguridad/src/app/security/security.mod
     CajaModule,
     NgbModule,
     SecurityModule,
-    CurrencyMaskModule
+    CurrencyMaskModule,
+    ReceivableModule
   ],
   providers: [],
   bootstrap: [AppComponent]

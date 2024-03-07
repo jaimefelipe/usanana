@@ -162,11 +162,16 @@
                         <td>{{Salida.Descripcion}}</td>
                         <td class="text-right">{{Salida.Hora}}</td>
                         <td class="text-right">{{Salida.Monto}}</td>
-                      </tr>
+                      </tr> 
                       
                     </tbody>
                   </table>
             </div>
         </div>
     </form>
+</div>
+
+<div *ngIf="loading" class="spinner-container">
+  <div class="loading-message">{{MensajeLoading}}</div>
+  <div class="spinner"></div>
 </div>
