@@ -17,11 +17,11 @@ import { ProyectoComponent } from './proyecto/proyecto.component';
 import { ProyTreeComponent } from './proy-tree/proy-tree.component';
 import { ProyActividadComponent } from './proy-actividad/proy-actividad.component';
 import { ProySchedulerComponent } from './proy-scheduler/proy-scheduler.component';
-
-
+import { ProyGanttComponent } from './proy-gantt/proy-gantt.component';
+import { ProyTableroComponent } from './proy-tablero/proy-tablero.component';
 
 @NgModule({
-  declarations: [ProyTreeComponent, ProyectoComponent, ProyActividadComponent, ProySchedulerComponent],
+  declarations: [ProyTreeComponent, ProyectoComponent, ProyActividadComponent, ProySchedulerComponent,ProyGanttComponent,ProyTableroComponent],
   imports: [
     CommonModule,
     BrowserModule,

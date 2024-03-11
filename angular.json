@@ -1157,6 +1157,7 @@
               "node_modules/angular-calendar/css/angular-calendar.css",
               "./node_modules/jqwidgets-ng/jqwidgets/styles/jqx.base.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "./node_modules/frappe-gantt/dist/frappe-gantt.css",
               "projects/main/src/styles.css"
               
             ],

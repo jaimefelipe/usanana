@@ -1,19 +1,64 @@
-<div class="container-fluid pb-5">
-    <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
-    <div class="row">
-      <div class="col-4">
-        <app-proy-tree  (ItemSelection)="ItemSelection($event)" [AddItem]="AddItem" [UpdateItem]="UpdateItem"></app-proy-tree>
-      </div>
-      <div class="col-8">
-        <div class=" tab">
-          <button [ngClass]='GeneralClass' (click)="activarGeneralTab()"   >General</button>
-          <button   >Tablero</button>
-          <button [ngClass]='CalendarioClass' (click)="activarCalendarioTab()" >Calendario</button>
-          <button >Gantt</button>
-       </div>
-        <app-proy-actividad [hidden]="!GeneralTabActivo" (NewItem)="NewItem($event)" (UpdateItem)="updateItem($event)" [ItemSelected]="ItemSelected"></app-proy-actividad>
-        <app-proy-scheduler [hidden]="!CalendarioTabActive"></app-proy-scheduler>
-      </div>
 
+
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-3 border-bottom p-3">Gestor de Proyectos</div>
+    <div class="col-9 border-bottom p-3">
+      <div class="btn-group" role="group" aria-label="Basic example">
+        <button  (click)="activarGeneralTab()"  type="button" class="btn btn-secondary"><i class="fa fa-wpforms" aria-hidden="true"></i></button>
+       <!-- <button type="button" class="btn btn-secondary"><i class="fa fa-list" aria-hidden="true"></i></button>-->
+        <button (click)="activarTableroTab()" type="button" class="btn btn-secondary"> <i class="fa fa-columns" aria-hidden="true"></i></button>
+        <button (click)="activarCalendarioTab()" type="button" class="btn btn-secondary"><i class="fa fa-calendar" aria-hidden="true"></i></button>
+        <button (click)="activarGanttTab()" type="button" class="btn btn-secondary"><i class="fa fa-bar-chart" aria-hidden="true"></i></button>
+      </div>
+    </div>
+    <div class="col-3  m-0 p-2 sidebar">
+      <div id="accordion">
+        <div class="m-0 p-0" *ngFor="let item of menuItems;let i = index">
+          <div class="card-header m-0 p-0">
+            <button (click)="seleccionarItem(item)" class="btn btn-light text-primary btn-outline-primary btn-block btn-block text-left">Protafolio,{{item.Nombre}}</button>
+          </div> 
+          <div [hidden]="item.collapse" *ngFor="let item2 of item.items;let i = index">
+            <div class="card-header m-0 p-0">
+              <button  (click)="seleccionarItem(item2)" class="btn btn-light  text-secondary btn-block text-left">&nbsp;Programa,{{item2.Nombre}}</button>
+            </div>
+            <div [hidden]="item2.collapse" *ngFor="let item3 of item2.items;let i = index">
+              <div class="card-header m-0 p-0">
+                <button  (click)="seleccionarItem(item3)" class="btn btn-light  text-success btn-block text-left">&nbsp;&nbsp;Proyecto,{{item3.Nombre}}</button>
+              </div>
+              <div [hidden]="item3.collapse" *ngFor="let item4 of item3.items;let i = index">
+                <div class="card-header m-0 p-0">
+                  <button  (click)="seleccionarItem(item4)" class="btn btn-light  text-warning btn-block text-left">&nbsp;&nbsp;&nbsp;Fase,{{item4.Nombre}}</button>
+                </div>
+                <div [hidden]="item4.collapse" *ngFor="let item5 of item4.items;let i = index">
+                  <div class="card-header m-0 p-0">
+                    <button  (click)="seleccionarItem(item5)" class="btn btn-light  text-info btn-block text-left">&nbsp;&nbsp;&nbsp;&nbsp;Tarea,{{item5.Nombre}}</button>
+                  </div>
+                  <div [hidden]="item5.collapse" *ngFor="let item6 of item5.items;let i = index">
+                    <div class="card-header m-0 p-0">
+                      <button  (click)="seleccionarItem(item6)" class="btn btn-light  text-primary btn-block text-left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Actividad,{{item6.Nombre}}</button>
+                    </div>
+                    <div [hidden]="item6.collapse" *ngFor="let item7 of item6.items;let i = index">
+                      <div class="card-header m-0 p-0">
+                        <button  (click)="seleccionarItem(item7)" class="btn btn-light btn-block text-left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{item7.Nombre}}</button>
+                      </div>
+                       
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+    <div class="col-9 ">
+      <app-proy-actividad [hidden]="!GeneralTabActivo" (NewItem)="NewItem($event)" (UpdateItem)="updateItem($event)" [ItemSelected]="ItemSelected"></app-proy-actividad>
+      <app-proy-tablero [hidden]="!TableroTabActivo" [ItemSelected]="ItemSelected"></app-proy-tablero>
+      <app-proy-scheduler [hidden]="!CalendarioTabActive"></app-proy-scheduler>
+      <app-proy-gantt  [hidden]="!GanttTabActive"></app-proy-gantt>
     </div>
   </div>
+

@@ -38,3 +38,15 @@
     .form-group {
         margin-bottom: 0px;
       }
+
+       /* Estilo personalizado para la barra lateral */
+    .sidebar {
+      background-color: #f8f9fa;
+      min-height: 100vh;
+    }
+    /* Estilo personalizado para el área de trabajo */
+    .workspace {
+      background-color: #ffffff;
+      min-height: 100vh;
+    }
+    
