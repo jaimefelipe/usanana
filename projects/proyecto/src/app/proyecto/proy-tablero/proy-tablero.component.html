@@ -1,3 +1,75 @@
-<p>
-  Tablero Kanban
-</p>
+<div *ngIf="loading" class="spinner-container">
+  <div class="loading-message">{{MensajeLoading}}</div>
+  <div class="spinner"></div>
+</div>
+
+
+<div class="container-fluid overflow-auto p-3">
+  <div class="row w1900 " >
+    <div class="col min-width-300">
+      <div class="card" (drop)="drop($event,'Pendientes')" (dragover)="allowDrop($event)">
+        <div class="card-header">
+            Pendientes
+        </div>
+        <ul  class="list-group list-group-flush" *ngFor="let Pendiente of Pendientes;let i = index">
+          <li draggable="true" (dragstart)="drag($event, Pendiente,'Pendientes')" class="list-group-item">{{Pendiente.Nombre}}</li>
+        </ul> 
+      </div>
+    </div>
+    
+    <div class="col min-width-300">
+      <div class="card"  (drop)="drop($event, 'proceso')" (dragover)="allowDrop($event)">
+        <div class="card-header">
+            En Proceso
+        </div>
+        <ul  class="list-group list-group-flush" *ngFor="let Proceso of Proceso;let i = index">
+          <li draggable="true" (dragstart)="drag($event, Proceso,'proceso')" class="list-group-item">{{Proceso.Nombre}}</li>
+        </ul> 
+      </div>
+    </div>
+
+    <div class="col min-width-300">
+      <div class="card"  (drop)="drop($event, 'ajustes')" (dragover)="allowDrop($event)">
+        <div class="card-header">
+            Ajustes
+        </div>
+        <ul class="list-group list-group-flush" *ngFor="let Ajuste of Ajustes;let i = index">
+          <li draggable="true" (dragstart)="drag($event, Ajuste,'ajustes')" class="list-group-item">{{Ajuste.Nombre}}</li>
+        </ul> 
+      </div>
+    </div>
+
+    <div class="col min-width-300">
+      <div class="card"  (drop)="drop($event, 'VistoBueno')" (dragover)="allowDrop($event)">
+        <div class="card-header">
+            Visto Bueno
+        </div>
+        <ul class="list-group list-group-flush" *ngFor="let VB of VistoBueno;let i = index">
+          <li draggable="true" (dragstart)="drag($event, VistoBueno,'VistoBueno')" class="list-group-item">{{VB.Nombre}}</li>
+        </ul> 
+      </div>
+    </div>
+    <div class="col min-width-300">
+      <div class="card" (drop)="drop($event, 'Aprobado')" (dragover)="allowDrop($event)">
+        <div class="card-header">
+           Aprobado
+        </div>
+        <ul class="list-group list-group-flush" *ngFor="let Aprobado of Aprobado;let i = index">
+          <li draggable="true" (dragstart)="drag($event, Aprobado,'Aprobado')" class="list-group-item">{{Aprobado.Nombre}}</li>
+        </ul> 
+      </div>
+    </div>
+    <div class="col min-width-300">
+      <div class="card" (drop)="drop($event, 'Terminado')" (dragover)="allowDrop($event)">
+        <div class="card-header">
+           Terminado
+        </div>
+        <ul class="list-group list-group-flush" *ngFor="let Terminado of Terminado;let i = index">
+          <li (dragstart)="drag($event, Terminado,'Terminado')" class="list-group-item">{{Terminado.Nombre}}</li>
+        </ul> 
+      </div>
+    </div>
+
+  </div>
+</div>
+

@@ -1,7 +1,8 @@
-import { Component,OnInit } from '@angular/core';
+import { Component,OnInit, Input } from '@angular/core';
 import { ProySchedulerService } from './proy-scheduler.service';
 import { ProyActividadService } from '../proy-actividad/proy-actividad.service';
 import {  format, addDays, startOfWeek, endOfWeek, subDays } from 'date-fns';
+import { Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-proy-scheduler',
@@ -9,9 +10,14 @@ import {  format, addDays, startOfWeek, endOfWeek, subDays } from 'date-fns';
   styleUrl: './proy-scheduler.component.css'
 })
 export class ProySchedulerComponent implements  OnInit{
-  
+  @Input() ItemSelected: EventEmitter<string>; 
+  @Input() TabSelected: EventEmitter<string>; 
+
   constructor(private proySchedulerService:ProySchedulerService,
     private proyActividadService:ProyActividadService) {}
+
+  Task_Id = '';
+  Tab_Id = '';
   EventoPanel = false;
   GeneralTabActivo = true;
   SeguimientoTabActivo = false;
@@ -90,8 +96,20 @@ export class ProySchedulerComponent implements  OnInit{
   ];
   
   ngOnInit(): void {
-     this.manipulate();
+    this.subscribeToParentEmitter(); 
   }  
+
+  subscribeToParentEmitter(): void { 
+    this.ItemSelected.subscribe((data: any) => { 
+      this.Task_Id = data;
+      this.manipulate();
+    }); 
+    this.TabSelected.subscribe((data: any) => { 
+        this.Tab_Id = data;
+        this.manipulate();
+    });
+  } 
+
   // Function to generate the calendar
   SelectMes(){
     this.MesPanel = true;
@@ -182,17 +200,22 @@ export class ProySchedulerComponent implements  OnInit{
 
   async  manipulate(){
     this.dayone = new Date(this.year, this.month, 1).getDay();
+    console.log('ULtimo Dia del mes',this.dayone);
   // Obtiene el ultimo dia del mes
     this.lastdate = new Date(this.year, this.month + 1, 0).getDate();
+    console.log('ultimo dia del mes',this.lastdate);
    // Obtienen el dia de la ultima fecha del mes
     this.dayend = new Date(this.year, this.month, this.lastdate).getDay();
+    console.log('ultimo dia de la ultima fecha del mes',this.dayend)
    // Obtinene la ultima fecha del mes anterior.
     this.monthlastdate = new Date(this.year, this.month, 0).getDate();
+    console.log('Ultima fecha del mes anterior',this.monthlastdate);
     // Loop to add the last dates of the previous month
     // Bucle para agregar las ultimas fechas del mes anterior
     
     let Inicio = this.year + '-'+  (this.month +1)  + '-' + 1 + ' 00:00:00';
     let Fin = this.year + '-'+  (this.month +1) + '-' + this.lastdate + ' 23:59:59';
+    this.FechasAmostrar = [];
     await this.leerEventos(Inicio,Fin);
 
     for (let i = this.dayone; i > 0; i--) {

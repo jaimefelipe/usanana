@@ -67,7 +67,7 @@ export class AccountantReportComponent implements OnInit {
       this.Fin = this.FechaFin.day + '/' + this.FechaFin.month + '/' + this.FechaFin.year;
       let param = '1&e=' + this.Id_Empresa + '&u=' + this.Id_Usuario + '&i=' + this.Inicio + '&f=' + this.Fin;
       if(this.reporte == "1"){
-        window.open('http://toxo.work/reportes/contabilidad/cge-reporte-iva.php?id=' + param, '_blank');
+        window.open('https://toxo.work/reportes/contabilidad/cge-reporte-iva.php?id=' + param, '_blank');
       }
     }
     if(this.reporte =='2'){

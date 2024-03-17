@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,Input } from '@angular/core';
+import { ProyGanttService } from './proy-gantt.service';
+import { Output, EventEmitter } from '@angular/core';
 /*
 import * as GanttModule from 'frappe-gantt';
 const Gantt = GanttModule.default; 
@@ -13,8 +15,16 @@ const Gantt = GanttModule.default;
   styleUrls: ['./proy-gantt.component.css']
 })
 export class ProyGanttComponent implements OnInit {
+  @Input() ItemSelected: EventEmitter<string>; 
+  @Input() TabSelected: EventEmitter<string>; 
 
-  constructor() { }
+  constructor(
+    private proyGanttService:ProyGanttService
+  ) { }
+
+  Task_Id = '';
+  Tab_Id = '';
+  Tareas = [];
   tasks = [
     {
     id: 'Task 1',
@@ -29,9 +39,36 @@ export class ProyGanttComponent implements OnInit {
 
  
   ngOnInit() {
+    this.subscribeToParentEmitter(); 
      
-     // @ts-ignore-start
-    this.gantt = new Gantt("#gantt", this.tasks, {
+  }
+
+  subscribeToParentEmitter(): void { 
+    this.ItemSelected.subscribe((data: any) => { 
+      this.Task_Id = data;
+      this.leerTareas();
+    }); 
+    this.TabSelected.subscribe((data: any) => { 
+        this.Tab_Id = data;
+        this.leerTareas();
+    });
+  } 
+
+  cambiarDia(){
+    this.gantt.change_view_mode('Day')
+  }
+  cambiarSemana(){
+    this.gantt.change_view_mode('Week')
+  }
+  cambiarMes(){
+    this.gantt.change_view_mode('Month')
+  }
+  async leerTareas(){
+    if(this.Tab_Id == '4'){
+      let data = await this.proyGanttService.leerItems(this.Task_Id);
+      this.Tareas = data['data'];
+      // @ts-ignore-start
+    this.gantt = new Gantt("#gantt", this.Tareas, {
       header_height: 50,
       column_width: 30,
       step: 24,
@@ -70,14 +107,6 @@ export class ProyGanttComponent implements OnInit {
     });
 
     // @ts-ignore-end
-  }
-  cambiarDia(){
-    this.gantt.change_view_mode('Day')
-  }
-  cambiarSemana(){
-    this.gantt.change_view_mode('Week')
-  }
-  cambiarMes(){
-    this.gantt.change_view_mode('Month')
+    }
   }
 }

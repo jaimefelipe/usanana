@@ -1,11 +1,14 @@
 import { Component,OnInit,EventEmitter  } from '@angular/core';
 import { ProyectoService } from './proyecto.service';
 import { jqxTreeComponent } from 'jqwidgets-ng/jqxtree';
+import { NgbDateFRParserFormatter } from '../../../../../core/src/app/_services/ngb-date-fr-parser-formatter';
+import { NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-proyecto',
   templateUrl: './proyecto.component.html',
-  styleUrl: './proyecto.component.css'
+  styleUrl: './proyecto.component.css',
+  providers: [{provide: NgbDateParserFormatter, useClass: NgbDateFRParserFormatter}]
 })
 export class ProyectoComponent implements OnInit {
   constructor(
@@ -13,8 +16,15 @@ export class ProyectoComponent implements OnInit {
 ) { }
   
   ItemSelected = new EventEmitter<any>();
+  FechaInicioSelected = new EventEmitter<any>();
+  FechaFinSelected = new EventEmitter<any>();
   AddItem = new EventEmitter<any>();
   UpdateItem = new EventEmitter<any>();
+  TabSelected = new EventEmitter<any>();
+  hoy = new Date();
+  
+  primerDiaDelMes = new Date(this.hoy.getFullYear(), this.hoy.getMonth(), 1);
+  ultimoDiaDelMes = new Date(this.hoy.getFullYear(), this.hoy.getMonth() + 1, 0);
 
   GeneralTabActivo = true;
   TableroTabActivo = false;
@@ -26,15 +36,28 @@ export class ProyectoComponent implements OnInit {
   CalendarioClass = '';
   GanttClass = "";
   
+  FechaInicio =  {
+    month: this.primerDiaDelMes.getMonth() + 1,
+    day: this.primerDiaDelMes.getDate(),
+    year: this.primerDiaDelMes.getFullYear()
+  }
+  FechaFin =  {
+    month: this.ultimoDiaDelMes.getMonth() + 1,
+    day: this.ultimoDiaDelMes.getDate(),
+    year: this.ultimoDiaDelMes.getFullYear()
+  }
 
+  //Inicio = this.FechaInicio.day + '/' + this.FechaInicio.month + '/' + this.FechaInicio.year;
+  //Fin = this.FechaFin.day + '/' + this.FechaFin.month + '/' + this.FechaFin.year;
+
+  
   ngOnInit(): void {
     this.cargarProyectos();
+    this.FechaInicioCambia();
+    this.FechaFinCambia();
   }
 
   menuItems = [];
-
- 
-
 
   activarGeneralTab(){
     this.GeneralTabActivo = true;
@@ -45,6 +68,7 @@ export class ProyectoComponent implements OnInit {
     this.TableroClass = "";
     this.CalendarioClass = '';
     this.GanttClass = "";
+    this.SeleccionarTab(1);
   }
   activarTableroTab(){
     this.GeneralTabActivo = false;
@@ -55,6 +79,7 @@ export class ProyectoComponent implements OnInit {
     this.TableroClass = 'text-success tablinks active';
     this.CalendarioClass = '';
     this.GanttClass = "";
+    this.SeleccionarTab(2);
   }
   activarCalendarioTab(){
     this.GeneralTabActivo = false;
@@ -65,6 +90,7 @@ export class ProyectoComponent implements OnInit {
     this.TableroClass = "";
     this.CalendarioClass = 'text-success tablinks active';
     this.GanttClass = "";
+    this.SeleccionarTab(3);
   }
 
   activarGanttTab(){
@@ -76,6 +102,7 @@ export class ProyectoComponent implements OnInit {
     this.TableroClass = "";
     this.CalendarioClass = '';
     this.GanttClass = 'text-success tablinks active';
+    this.SeleccionarTab(4);
   }
   
 
@@ -83,6 +110,7 @@ export class ProyectoComponent implements OnInit {
   async cargarProyectos(){
     let data = await this.proyectoService.cargarProyectos();
     this.menuItems = this.crearTree(data);
+    this.seleccionarItem(this.menuItems[0]);
   }
 
   crearTree(data){
@@ -103,17 +131,58 @@ export class ProyectoComponent implements OnInit {
     return records;
   }
 
+  colapsarItem(item){
+    item.collapse = !item.collapse;
+  }
   /* Trabajo con los Items */
   seleccionarItem(item){
-    item.collapse = !item.collapse;
+    //item.collapse = !item.collapse;
     this.ItemSelected.emit(item.value); 
+    
   }
+  findId(array: any[], targetId: number,Texto): any | null {
+    for (let item of array) {
+      if (item.Id_Proyecto === targetId) {
+        item.Nombre = Texto;
+        return item;
+      }
+      if (item.items.length > 0) {
+        let found = this.findId(item.items, targetId, Texto);
+        if (found !== null) {
+          return found;
+        }
+      }
+    }
+    return null;
+  }
+
+
   NewItem(Item){
     this.AddItem.emit(Item);
   }
   updateItem(Item){
-    this.UpdateItem.emit(Item);
+    //this.UpdateItem.emit(Item);
+    let result = this.findId(this.menuItems, Item.Id_Proyecto,Item.Nombre);
+
   }
 
-
+  SeleccionarTab(Tab){
+    this.FechaInicioCambia();
+    this.FechaFinCambia();
+    this.TabSelected.emit(Tab)
+  }
+  FechaInicioCambia(){
+    //Cambiar fecha de Fin al ultimo dia del ments de la fecha de inicio
+    let fechaSeleccionada = new Date(this.FechaInicio.year+'-'+this.FechaInicio.month+'-'+this.FechaInicio.day);
+    let ultimoDiaDelMes = new Date(fechaSeleccionada.getFullYear(), fechaSeleccionada.getMonth() + 1, 0);
+    this.FechaFin =  {
+      month: ultimoDiaDelMes.getMonth() + 1,
+      day: ultimoDiaDelMes.getDate(),
+      year: ultimoDiaDelMes.getFullYear()
+    }
+    this.FechaInicioSelected.emit(this.FechaInicio);
+  }
+  FechaFinCambia(){
+    this.FechaFinSelected.emit(this.FechaFin);
+  }
 }
