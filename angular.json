@@ -657,13 +657,13 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "2mb",
+                  "maximumError": "4mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumWarning": "10kb",
+                  "maximumError": "20kb"
                 }
               ],
               "outputHashing": "all"
@@ -1155,10 +1155,10 @@
             ],
             "styles": [
               "node_modules/angular-calendar/css/angular-calendar.css",
-              "./node_modules/jqwidgets-ng/jqwidgets/styles/jqx.base.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "./node_modules/frappe-gantt/dist/frappe-gantt.css",
-              "projects/main/src/styles.css"
+              "projects/main/src/styles.css",
+              "node_modules/@worktile/gantt/styles/index.scss",
               
             ],
             "scripts": [
@@ -1223,9 +1223,7 @@
               "projects/proyecto/src/assets"
             ],
             "styles": [
-              "./node_modules/jqwidgets-ng/jqwidgets/styles/jqx.dark.css",
               "./node_modules/jqwidgets-ng/jqwidgets/styles/jqx.fluent.css",
-              "./node_modules/jqwidgets-ng/jqwidgets/styles/jqx.base.css",
               "projects/proyecto/src/styles.css"
             ],
             "scripts": []
@@ -1631,6 +1629,110 @@
             "styles": [
               "@angular/material/prebuilt-themes/indigo-pink.css",
               "projects/cobros/src/styles.css"
+            ],
+            "scripts": []
+          }
+        }
+      }
+    },
+    "rrhh": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "standalone": false
+        },
+        "@schematics/angular:directive": {
+          "standalone": false
+        },
+        "@schematics/angular:pipe": {
+          "standalone": false
+        }
+      },
+      "root": "projects/rrhh",
+      "sourceRoot": "projects/rrhh/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:application",
+          "options": {
+            "baseHref": "/rrhh/",
+            "outputPath": "dist/rrhh",
+            "index": "projects/rrhh/src/index.html",
+            "browser": "projects/rrhh/src/main.ts",
+            "polyfills": [
+              "zone.js"
+            ],
+            "tsConfig": "projects/rrhh/tsconfig.app.json",
+            "assets": [
+              "projects/rrhh/src/favicon.ico",
+              "projects/rrhh/src/assets"
+            ],
+            "styles": [
+              "projects/rrhh/src/styles.css",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              
+            ],
+            "scripts": [
+              "node_modules/jquery/dist/jquery.min.js",
+              "node_modules/bootstrap/dist/js/bootstrap.min.js"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "rrhh:build:production"
+            },
+            "development": {
+              "buildTarget": "rrhh:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "buildTarget": "rrhh:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
+            "tsConfig": "projects/rrhh/tsconfig.spec.json",
+            "assets": [
+              "projects/rrhh/src/favicon.ico",
+              "projects/rrhh/src/assets"
+            ],
+            "styles": [
+              "projects/rrhh/src/styles.css"
             ],
             "scripts": []
           }

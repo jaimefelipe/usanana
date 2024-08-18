@@ -17,11 +17,15 @@ import { ProyectoComponent } from './proyecto/proyecto.component';
 import { ProyTreeComponent } from './proy-tree/proy-tree.component';
 import { ProyActividadComponent } from './proy-actividad/proy-actividad.component';
 import { ProySchedulerComponent } from './proy-scheduler/proy-scheduler.component';
-import { ProyGanttComponent } from './proy-gantt/proy-gantt.component';
+import { ProyWeekComponent } from './proy-week/proy-week.component';
 import { ProyTableroComponent } from './proy-tablero/proy-tablero.component';
+import { ProyGanttComponent } from './proy-gantt/proy-gantt.component';
+import { NgxGanttModule } from '@worktile/gantt';
+import {TranslateModule} from '@ngx-translate/core';
+import {DayPilotModule} from "daypilot-pro-angular";
 
 @NgModule({
-  declarations: [ProyTreeComponent, ProyectoComponent, ProyActividadComponent, ProySchedulerComponent,ProyGanttComponent,ProyTableroComponent],
+  declarations: [ProyTreeComponent, ProyectoComponent, ProyActividadComponent, ProySchedulerComponent,ProyTableroComponent,ProyGanttComponent,ProyWeekComponent],
   imports: [
     CommonModule,
     BrowserModule,
@@ -31,6 +35,11 @@ import { ProyTableroComponent } from './proy-tablero/proy-tablero.component';
     jqxTreeModule, 
     jqxExpanderModule,
     BrowserAnimationsModule,
+    NgxGanttModule,
+    DayPilotModule,
+    TranslateModule.forRoot({
+      defaultLanguage: 'es'
+    }),
     CalendarModule.forRoot({
       provide: DateAdapter,
       useFactory: adapterFactory,

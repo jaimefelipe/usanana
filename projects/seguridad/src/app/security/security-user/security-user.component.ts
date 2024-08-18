@@ -24,6 +24,7 @@ export class SecurityUserComponent implements OnInit {
     Id_Usuario: '',
     Nombre_Usuario:'',
     Nombre:'',
+    Numero_Identificacion:'',
     Correo:'',
     Tipo_Usuario:'0',
     Estado:'',
@@ -98,6 +99,7 @@ export class SecurityUserComponent implements OnInit {
       this.Usuario  = {
         Id_Usuario: '',
         Nombre_Usuario:'',
+        Numero_Identificacion:'',
         Nombre:'',
         Correo:'',
         Tipo_Usuario:'0',

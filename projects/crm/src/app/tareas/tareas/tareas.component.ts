@@ -25,9 +25,12 @@ export class TareasComponent implements OnInit {
   searchFieldPersona = '';
   BotonActivo = 0;
   TipoPersona = '';
+  
+  TareasVencidas = [];
+  TareasHoy = [];
+  TareasManana = [];
+  Tareas = [];
 
-
-  Tareas =[];
   Beneficiarios=[];
   Personas = [];
   FechaInicio =  {
@@ -141,7 +144,10 @@ export class TareasComponent implements OnInit {
   }
 
   async leerTareas(){
-    let data = await this.tareasService.leerTareas(this.paginacion,this.searchField)
+    await this.leerTareasVencidas();
+    await this.leerTareasHoy();
+    await this.leerTareasManana();
+    let data = await this.tareasService.leerTareas(this.paginacion,this.searchField,'',3)
     if(data['total'] == 0){
       this.Tareas = [];
     }else{
@@ -149,7 +155,44 @@ export class TareasComponent implements OnInit {
       console.log(data)
     }
   }
+  async leerTareasVencidas(){
+    let data = await this.tareasService.leerTareas(this.paginacion,this.searchField,'',4)
+    if(data['total'] == 0){
+      this.TareasVencidas = [];
+    }else{
+      this.TareasVencidas = data['data'];
+      console.log(data)
+    }
+  }
+  async leerTareasHoy(){
+    let data = await this.tareasService.leerTareas(this.paginacion,this.searchField,'',1)
+    if(data['total'] == 0){
+      this.TareasHoy = [];
+    }else{
+      this.TareasHoy = data['data'];
+      console.log(data)
+    }
+  }
+
+  async leerTareasManana(){
+    let data = await this.tareasService.leerTareas(this.paginacion,this.searchField,'',2)
+    if(data['total'] == 0){
+      this.TareasManana = [];
+    }else{
+      this.TareasManana = data['data'];
+      console.log(data)
+    }
+  }
+
+  async terminarTarea(Tarea){
+    alert('Termiado');
+  }
   async grabar(){
+    //Fecha
+    //2024-07-06 09:58:03
+    this.Tarea.Inicio =  this.FechaInicio.year + '-' + this.FechaInicio.month + '-' + this.FechaInicio.day;
+    this.Tarea.Fin =  this.FechaFin.year + '-' + this.FechaFin.month + '-' + this.FechaFin.day;
+    console.log(this.Tarea);
     if(this.Tarea.Id_Tarea == ''){
       await this.tareasService.nuevaTarea(this.Tarea);
     }else{

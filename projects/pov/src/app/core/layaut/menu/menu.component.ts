@@ -24,7 +24,7 @@ export class MenuComponent implements OnInit {
   AppServices = false;
   AppConfiguracion = false;
   AppInventario = false;
-  AppSeguridad = false;
+  AppSeguridad = false;  
   AppVentas = false;
   AppCxC = false;
   AppCompras = false;
@@ -35,6 +35,9 @@ export class MenuComponent implements OnInit {
   AppHospedaje = false;
   AppPersona = false;
   AppPOV = false;
+  inventarioMenu = false;
+  comprasMenu = false;
+  
 
   UserMenu = [];
   ventasMenu = false;
@@ -43,6 +46,9 @@ export class MenuComponent implements OnInit {
   deferredPrompt: any;
   showButton = true;
   ventasClass = 'fa fa-arrow-right';
+  inventarioClass = 'fa fa-arrow-right';
+  comprasClass = 'fa fa-arrow-right';
+  
 
   //Obtener los Datos del Usuario
   //Si No hay Datos, Entonces usar menu de ventas.
@@ -95,6 +101,23 @@ export class MenuComponent implements OnInit {
       this.ventasClass = 'fa fa-arrow-right';
     }else{
       this.ventasClass = 'fa fa-arrow-left';
+    }
+  }
+  clickInventarioMenu(){
+    this.inventarioMenu = !this.inventarioMenu;
+    if(this.inventarioClass == 'fa fa-arrow-left'){
+      this.inventarioClass = 'fa fa-arrow-right';
+    }else{
+      this.inventarioClass = 'fa fa-arrow-left';
+    }
+  }
+  
+  clickComprasMenu(){
+    this.comprasMenu = !this.comprasMenu;
+    if(this.comprasClass == 'fa fa-arrow-left'){
+      this.comprasClass = 'fa fa-arrow-right';
+    }else{
+      this.comprasClass = 'fa fa-arrow-left';
     }
   }
 
@@ -161,8 +184,10 @@ export class MenuComponent implements OnInit {
       //Opciones para Cuando El Sistema de this.Seguridad No esta Activo
       if(this.Seguridad[13]==1){
         this.AppPOV=true;
-        this.AppVentas = true
+        this.AppVentas = true 
       }
+      if(this.Seguridad[2]==1){this.AppInventario=true}
+      if(this.Seguridad[1]==1){this.AppCompras=true}
       //Opciones del Usuario maestro
       if(localStorage.getItem('ToxoMT') == '1'){
         this.AppPOV=true

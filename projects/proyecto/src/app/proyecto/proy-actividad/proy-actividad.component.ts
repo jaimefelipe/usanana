@@ -79,7 +79,7 @@ export class ProyActividadComponent implements OnInit {
 
   subscribeToParentEmitter(): void { 
     this.ItemSelected.subscribe((data: any) => { 
-      this.Proyecto.Id_Proyecto = data;
+      this.Proyecto = data;
       this.leerProyecto();
       this.leerSeguimientos();
       //this.message = data; 
@@ -236,7 +236,6 @@ export class ProyActividadComponent implements OnInit {
     this.asignarMiembrosTarea();
   }
   async asignarMiembrosTarea(){
-    console.log('Asignar')
     let MiembroArray = [];
     this.Proyecto.Miembros = "";
     for (let Miembro of this.Miembros){
@@ -256,6 +255,7 @@ export class ProyActividadComponent implements OnInit {
   //Seguimientos
   async leerSeguimientos(){
     let data = await this.proyActividadService.leerNotas(this.Proyecto.Id_Proyecto);
+      
     if (data['total'] == 0) {
       this.Seguimientos = [];
     }else{

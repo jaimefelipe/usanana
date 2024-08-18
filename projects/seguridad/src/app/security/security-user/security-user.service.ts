@@ -40,7 +40,7 @@ export class SecurityUserService {
   }
   async loadUser(Id_Usuario){
     let Master = localStorage.getItem("ToxoMT");
-    let campos = 'Id_Usuario,Nombre,Correo,Nombre_Usuario,Seg_Usuario.Estado,Tipo_Usuario,Ventas,Compras,Inventario,CXC,CXP,CG,BA,Restaurante,Transporte,Seguridad,Hospedaje,Turismo,Salonero,Academico,Pov'
+    let campos = 'Id_Usuario,Nombre,Correo,Nombre_Usuario,Seg_Usuario.Estado,Tipo_Usuario,Ventas,Compras,Inventario,CXC,CXP,CG,BA,Restaurante,Transporte,Seguridad,Hospedaje,Turismo,Salonero,Academico,Pov,Numero_Identificacion'
     if(Master == '1'){
       campos = campos + ',Clave';
     }
@@ -77,9 +77,15 @@ export class SecurityUserService {
       + '\',Academico=\''+ Usuario.Academico
       + '\',Estado=\''+ Usuario.Estado
       + '\',Pov=\''+ Usuario.Pov
+      + '\',Numero_Identificacion=\''+ Usuario.Numero_Identificacion
       + '\'',
       where: 'Id_Usuario=' + Usuario.Id_Usuario
     };
+    let dat = await this.ValidarPersonaExiste(Usuario.Numero_Identificacion);
+    if(dat['total'] == 0){
+      //insertar la persona;
+      await this.CrearPersonaBasdaUsuario(Usuario.Numero_Identificacion,Usuario.Nombre);
+    }
     return await this.apiService.updateRecord(sql);
   }
   async inserUsert(Usuario){
@@ -87,7 +93,7 @@ export class SecurityUserService {
     let Clave = 'Password';
     let sql = {
       table: 'Seg_Usuario',
-      fields: 'Nombre,Nombre_Usuario,Correo,Clave,Tipo_Usuario,Estado,Ventas,Compras,Inventario,CXC,CXP,CG,BA,Restaurante,Transporte,Seguridad,Hospedaje,Turismo,Academico,Pov',
+      fields: 'Nombre,Nombre_Usuario,Correo,Clave,Tipo_Usuario,Estado,Ventas,Compras,Inventario,CXC,CXP,CG,BA,Restaurante,Transporte,Seguridad,Hospedaje,Turismo,Academico,Pov,Numero_Identificacion',
       Empresa: false,
       values: '\'' + Usuario.Nombre
       + '\',\'' + userName
@@ -109,8 +115,14 @@ export class SecurityUserService {
       + '\',\'' + Usuario.Turismo
       + '\',\'' + Usuario.Academico
       + '\',\'' + Usuario.Pov
+      + '\',\'' + Usuario.Numero_Identificacion
       + '\''
     };
+    let dat = await this.ValidarPersonaExiste(Usuario.Numero_Identificacion);
+    if(dat['total'] == 0){
+      //insertar la persona;
+      await this.CrearPersonaBasdaUsuario(Usuario.Numero_Identificacion,Usuario.Nombre);
+    }
     return await this.apiService.insertRecord(sql);
   }
   async composeUsername(Name){
@@ -159,7 +171,24 @@ export class SecurityUserService {
     return await this.apiService.postRecord(sql);
   }
   async ChangeUserStatus(Id_User,Id_Empresa,Status){
-    let sql = "Update Seg_Usuario_Empresa set Status = " + Status + " where Id_Usario = " + Id_User + " and Id_Empresa = " + Id_Empresa;
+    let sql = "Update Seg_Usuario_Empresa set Estado = " + Status + " where Id_Usuario = " + Id_User + " and Id_Empresa = " + Id_Empresa;
     return await this.apiService.postRecord(sql);
   }
+
+  //Agregar Persona si no existe a la compania actual
+  //1 validar si persona existe
+  async ValidarPersonaExiste(Numero_Identificacion){
+    let sql = "Select Id_Persona from Gen_Persona where Identificacion = '" + Numero_Identificacion +"' and Id_Empresa = "+ localStorage.getItem('Id_Empresa');
+    return await this.apiService.postRecord(sql);
+  }
+  async CrearPersonaBasdaUsuario(Identificacion,Nombre){
+    let sql = {
+      table: 'Gen_Persona',
+      fields: 'Identificacion,Nombre,Estado',
+      values: '\'' + Identificacion
+      + '\',\'' + Nombre + '\',1'
+    };
+    return await this.apiService.insertRecord(sql);
+  }
+
 }

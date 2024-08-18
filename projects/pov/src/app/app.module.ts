@@ -10,6 +10,7 @@ import { CajaModule } from '../../../caja/src/app/caja/caja.module';
 import { SalesModule } from '../../../factura/src/app/sales/sales.module';
 import { PurchasesModule } from '../../../factura/src/app/purchases/purchases.module';
 import { SecurityModule } from '../../../seguridad/src/app/security/security.module';
+import { InventoryModule } from '../../../inventario/src/app/inventory/inventory.module';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { SecurityModule } from '../../../seguridad/src/app/security/security.mod
     CajaModule,
     SalesModule,
     PurchasesModule,
-    SecurityModule
+    SecurityModule,
+    InventoryModule
   ],
   providers: [],
   bootstrap: [AppComponent]

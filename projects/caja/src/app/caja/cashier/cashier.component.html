@@ -27,7 +27,7 @@
               <h4 class="card-title">Sucursal: {{Caja.Nombre}}</h4>
               <h4 class="card-title">Caja # {{Caja.Numero_Caja}}</h4>
               {{Caja.Id_Caja}} Consecutivo {{Caja.Consecutivo}} -
-              Estado :
+              Cierre {{Caja.Id_Caja_Diaria}}- Estado :
               <span *ngIf="Caja.Estado == '1'" class="text-success"> Abierta</span>
               <span *ngIf="Caja.Estado == '0'" class="text-danger"> Cerrada</span>
             </div>

@@ -95,7 +95,7 @@ export class ContactoComponent implements OnInit {
     Canton : '',
     Distrito:'',
     Barrio:'',
-    Otras_Senas:'',
+    Direccion:'',
     Proveedor:'',
     Cliente:'',
     Alumno:'',
@@ -120,7 +120,8 @@ export class ContactoComponent implements OnInit {
     Asesoria:'',
     Declaracion:'',
     Precio:'',
-    Empleado:''
+    Empleado:'',
+    Codigo_Proveedor:''
   }
   CarreraEstudiante = {
     Id_Carrera_Estudiante:'',
@@ -300,7 +301,7 @@ export class ContactoComponent implements OnInit {
         Canton : '',
         Distrito:'',
         Barrio:'',
-        Otras_Senas:'',
+        Direccion:'',
         Proveedor:'',
         Cliente:'',
         Alumno:'',
@@ -325,7 +326,8 @@ export class ContactoComponent implements OnInit {
         Asesoria:'',
         Declaracion:'',
         Precio:'',
-        Empleado:''
+        Empleado:'',
+        Codigo_Proveedor:''
 
       }
     }

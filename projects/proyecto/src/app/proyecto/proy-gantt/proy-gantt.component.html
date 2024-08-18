@@ -1,4 +1,7 @@
-<button (click)="cambiarDia()" >Dia</button>
-<button (click)="cambiarSemana()" >Semana</button>
-<button (click)="cambiarMes()" >Mes</button>
-<svg id="gantt"></svg>
+<div *ngIf="loading" class="spinner-container">
+  <div class="loading-message">Leyendo tareas</div>
+  <div class="spinner"></div>
+</div>
+
+<div id="dp"></div>
+

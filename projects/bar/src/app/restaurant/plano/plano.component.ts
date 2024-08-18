@@ -9,6 +9,7 @@ import { SubCategoryService } from '../../../../../inventario/src/app/inventory/
 import { ProductService } from '../../../../../inventario/src/app/inventory/product/product.service';
 import { InvoiceService } from '../../../../../factura/src/app/sales/invoice/invoice.service';
 import { ApiService } from '../../../../../core/src/app/lib/api.service';
+import { CashierService } from '../../../../../caja/src/app/caja/cashier/cashier.service';
 
 import Swal from 'sweetalert2';
 @Component({
@@ -28,6 +29,7 @@ export class PlanoComponent implements OnInit {
     private productService:ProductService,
     private invoiceService:InvoiceService,
     private apiService:ApiService,
+    private cashierService:CashierService
 
     ) { }
   RegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
@@ -287,7 +289,26 @@ export class PlanoComponent implements OnInit {
   }
   async loadCaja(){
     this.Caja = localStorage.getItem("Id_Caja");
-    return true;
+    //Validar si el cierre de Caja pertenece al dia en cuestion.
+    // jaime
+    let Id_Caja_Diaria = localStorage.getItem('Id_Caja_Diaria');
+    let Data = await this.cashierService.LeerCajaDiaria(Id_Caja_Diaria);
+    let Fecha_Caja_Diaria = Data['data'][0]['Creado_El'];
+
+    // 1. Convierte tu cadena de fecha y hora en un objeto Date
+    const fecha = new Date(Fecha_Caja_Diaria.replace(' ', 'T'));
+
+    // 2. Obtén la fecha de hoy a las 6 de la mañana
+    const hoy = new Date();
+    hoy.setHours(6, 0, 0, 0); // Establece las 6:00 AM de hoy
+
+    // 3. Compara ambas fechas
+    if (fecha < hoy) {
+      Swal.fire('No se ha realizado el cierre de caja de ayer, esto ocuacionara problemas en los informes');
+      return false;
+    } else {
+      return true;
+    }
   }
   async leerMultioUsuairo(){
     let data = await this.restaurantOrderService.LoadParameMultiUser();
@@ -387,7 +408,6 @@ export class PlanoComponent implements OnInit {
     this.PantallaCrearCuenta = false;
   }
   async CrearCuenta(){
-    //Jaime
     //Insertar Registro en ResPedido.
     this.Pedido.Id_Caja = this.Caja;
     this.Pedido.Servicio = this.Mesa.Servicio;
@@ -1030,7 +1050,11 @@ export class PlanoComponent implements OnInit {
     }
     this.cobro3 = false;
     this.cobro2 = false;
+    this.factura.Tipo_Documento = '04';
+    this.factura.Numero_Identificacion = '';
+    this.factura.Correo = '';
     this.factura.Nombre = this.Pedido.Nombre;
+    this.factura.Condicion_Venta = '01';
     this.Pedido.Metodo_Pago = '99';
     this.Pedido.Metodo_Pago1 = '';
     this.Pedido.Metodo_Pago2 = '';
@@ -1297,7 +1321,6 @@ export class PlanoComponent implements OnInit {
       Id_Pedido:this.Pedido.Id_Pedido
     }
     await this.planoService.actualizarCajaPedido(cajaDiaria);
-    //jaime
     this.imprimirTiqueteElectronico();
     this.PantallaLoading = false;
     return true;
@@ -1417,7 +1440,6 @@ export class PlanoComponent implements OnInit {
       //
       if(this.Regimen !== '3' ){
         this.PantallaLoading = false;
-        //jaime
         this.AplicandoFacturaHacienda(Invoice.Id_Factura);
       }
     }

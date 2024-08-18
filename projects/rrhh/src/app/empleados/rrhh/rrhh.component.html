@@ -1,0 +1,64 @@
+<form>
+
+  <div >
+      <div class="form-row">
+      
+      <div class="form-group col-md-6">
+          <label>Fecha Contratación</label>
+          <div class="input-group">
+            <input class="form-control" [(ngModel)]="Persona.Fecha_I" name="Fecha" placeholder="Fecha" ngbDatepicker
+              #d1="ngbDatepicker">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary fa fa-calendar" (click)="d1.toggle()" type="button"></button>
+            </div>
+          </div>
+      </div>
+      <div class="form-group col-md-6">
+          <label>Fecha cese Labores</label>
+          <div class="input-group">
+            <input class="form-control" [(ngModel)]="Persona.Fecha_S" name="Fecha" placeholder="Fecha" ngbDatepicker
+              #d2="ngbDatepicker">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary fa fa-calendar" (click)="d2.toggle()" type="button"></button>
+            </div>
+          </div>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="name">Tipo de Contrato</label>
+        <select [(ngModel)]="Persona.Tipo_Contrato" name="Tipo_Contrato" class="form-control">
+        <option value='01'>Fijo</option>
+        <option value='02'>Temporal</option>
+        <option value='03'>Jornal</option>
+        </select>
+    </div>
+      <div class="form-group col-md-6">
+        <label for="name">Tipo de Jornada</label>
+        <select [(ngModel)]="Persona.Tipo_Jornada" name="Tipo_Jornada" class="form-control">
+        <option value='01'>Diurna</option>
+        <option value='02'>Nocturna</option>
+        <option value='03'>Mixta</option>
+        <option value='04'>Destajo</option>
+        </select>
+    </div>
+      <div class="form-group col-md-6">
+          <label># Contrato</label>
+          <input [(ngModel)]="Persona.Numero_Contrato" name="Numero_Contrato" type="text" placeholder="Numero Contrato" class="form-control">
+      </div>
+      <div class="form-group col-md-6">
+          <label>Salario</label>
+          <input [(ngModel)]="Persona.Salario_Mes" name="Salario_Mes" type="text" placeholder="Salario Mensual" class="form-control">
+      </div>
+      <div class="form-group col-md-6">
+          <label for="name">Estado</label>
+          <select [(ngModel)]="Persona.Estado" name="Estado" class="form-control">
+          <option value='1'>Activo</option>
+          <option value='2'>Inactivo</option>
+          <option value='3'>Suspendido</option>
+          <option value='4'>Vacaciones</option>
+          <option value='5'>Despedido</option>
+          <option value='6'>Renuncio</option>
+          </select>
+      </div>
+      </div>
+  </div>
+  </form>  

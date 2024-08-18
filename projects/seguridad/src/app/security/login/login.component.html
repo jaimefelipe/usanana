@@ -3,7 +3,7 @@
   <div class="login-box card border-0 shadow-none">
     <div class="card-body">
       <form class="form-horizontal form-material" id="loginform">
-        <div class="toxo"><img width="150px" src="./assets/Logo-Codex.png"></div>
+        <div class="toxo"><img width="150px" src="/assets/Logo-Codex.png"></div>
         <h3 class="box-title text-center">Conéctate</h3>
         <div class="form-group ">
           <div class="col-xs-12">
@@ -18,7 +18,6 @@
         <div class="form-group" [hidden]="!multiCompany" >
           <div class="col-xs-12">
             <select  [(ngModel)]="registro.empresa" name="empresa" class="form-control" placeholder="Elije el Dashboard" >
-                <option value="0" selected>Elije el Dashboard</option>
                 <option [value]="item.Id_Empresa" *ngFor="let item of companies"> {{item.Nombre}} </option>
             </select>
           </div>
@@ -34,7 +33,7 @@
         <div class="form-group row">
           <div class="col-md-12 font-14">
             <div class="checkbox checkbox-primary pull-left p-t-0">
-            </div>Click <a href="javascript:void(0)" id="to-recover" class="text-dark pull-right">aquí</a> si olvidaste tu contraseña
+            </div>Click <a href="javascript:void(0)" id="to-recover" class="text-dark ">aquí</a> si olvidaste tu contraseña
             | <a class="text-dark m-l-5" [routerLink]="['/signup']">Registrarse</a>
           </div>
         </div>
@@ -47,7 +46,7 @@
 <div class="fixed-bottom ">
   <div class="col-md-12 font-14 fondoArquetipo text-white">
       <div class="text-center mb-4">Empresas del grupo</div>
-      <div class="text-center "><img width="150px" src="./assets/arquetipoblanco.svg"></div>
+      <div class="text-center "><img width="150px" src="/assets/arquetipoblanco.svg"></div>
 
   </div>
 </div>

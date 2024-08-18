@@ -213,7 +213,7 @@
         </div>
         <div class="form-group col-md-6">
           <label for="name">Dirección</label>
-          <input [(ngModel)]="Persona.Otras_Senas" name="Otras_Senas" type="text" class="form-control">
+          <input [(ngModel)]="Persona.Direccion" name="Direccion" type="text" class="form-control">
         </div>
 
       </div>
@@ -299,6 +299,10 @@
 
     <div >
       <div class="form-row">
+        <div class="form-group col-md-3">
+          <label for="name">Codigo Proveedor</label>
+          <input [(ngModel)]="Persona.Codigo_Proveedor" name="Otro_Documento" placeholder="Codigo Proveedor" type="text" class="form-control">
+        </div>
         <div class="form-group col-md-3">
           <label for="name">Contrato #</label>
           <input [(ngModel)]="Persona.Otro_Documento" name="Otro_Documento" placeholder="Número de Contrato" type="text" class="form-control">

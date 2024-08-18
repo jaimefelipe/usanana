@@ -15,7 +15,7 @@ import { ContactoModule } from '../../../contacto/src/app/contacto/contacto.modu
 import { CajaModule } from '../../../caja/src/app/caja/caja.module';
 import { GeneralModule } from '../../../main/src/app/general/general.module';
 import { SecurityModule } from '../../../seguridad/src/app/security/security.module';
-import { ReceivableModule } from '../../../conta/src/app/receivable/receivable.module';
+import { ReceivableModule } from '../../../conta/src/app/receivable/receivable.module'; 
 
 /**
  * modulos loclaes

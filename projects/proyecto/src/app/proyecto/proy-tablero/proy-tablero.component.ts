@@ -1,6 +1,11 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Output, EventEmitter } from '@angular/core';
 import { ProyTableroService } from './proy-tablero.service';
+//import { DayPilot } from "daypilot-pro-angular";
+//import { DayPilot } from 'daypilot-pro-angular';
+import { ProySchedulerService } from '../proy-scheduler/proy-scheduler.service';
+import { DayPilot } from '../../../assets/daypilot/daypilot-all.min';
+
 
 @Component({
   selector: 'app-proy-tablero',
@@ -13,10 +18,13 @@ export class ProyTableroComponent implements OnInit {
   @Input() TabSelected: EventEmitter<string>; 
   @Input() FechaInicioSelected:EventEmitter<string>;
   @Input() FechaFinSelected:EventEmitter<string>;
+  @Output() SeleccionarItem = new EventEmitter<any>();
 
   constructor(
-    private proyTableroService:ProyTableroService
+    private proyTableroService:ProyTableroService,
+    private proySchedulerService:ProySchedulerService
   ) { }
+  
   loading = false;
   MensajeLoading = "Cargando Tareas";
    Task_Id = '';
@@ -27,71 +35,122 @@ export class ProyTableroComponent implements OnInit {
    VistoBueno = [];
    Aprobado =[];
    Terminado = [];
+   eventos = [];
    FechaInicio:any;
    FechaFin:any;
   ItemTrasladandose = {
     Id_Proyecto:''
   };
   panelOrigen = '';
+
+  dp = new DayPilot.Kanban("dpK", {
+    columnWidthSpec: "Auto",
+    swimlaneMoveHandling: "Disabled",
+    cardDeleteHandling: "Disabled",
+    cardMoveHandling: "Update",
+    onCardMoved: (args) => {
+      args.control.message("Card moved: " + args.card.data.name);
+    },
+    columns: [
+      {name: "Pendientes", id: "1", barColor: "#f9ba25"},
+      {name: "En Proceso", id: "2"},
+      {name: "Ajustes", id: "3"},
+      {name: "Visto Bueno", id: "4"},
+      {name: "Aprobado", id: "5"},
+      {name: "Terminado", id: "6"}
+
+    ]
+});
+
+
   ngOnInit() {
+    console.log(DayPilot)
+    this.dp.onCardClicked = function(args){
+      console.log(args)
+    }
+    this.dp.init()
     this.subscribeToParentEmitter(); 
   }
   subscribeToParentEmitter(): void { 
     this.ItemSelected.subscribe((data: any) => { 
-      if(this.Task_Id != data){
-        this.Task_Id = data;
-        this.leerDatos();
+      if(this.Task_Id != data.value){
+        this.Task_Id = data.value;
+        if(data.level < 7){
+          //this.leerDatos();
+          this.leerEventos();
+        }
       }
       
     }); 
     this.TabSelected.subscribe((data: any) => { 
       if(this.Tab_Id !=data){
         this.Tab_Id = data;
-        this.leerDatos();
+        //this.leerDatos();
+        this.leerEventos();
       }
     });
     this.FechaInicioSelected.subscribe((data: any) => { 
       this.FechaInicio = data.day + '/' +data.month + '/' + data.year
-      this.leerDatos();
+      this.leerEventos();
     });
     this.FechaFinSelected.subscribe((data: any) => { 
       this.FechaFin = data.day + '/' +data.month + '/' + data.year
-      this.leerDatos();
+      this.leerEventos();
      });
   } 
-  async leerDatos(){
-    this.loading = true;
+
+async leerEventos(inicio?,fin?){
     if(this.Tab_Id == '2'){
-      this.Pendientes = [];
-      this.Proceso = [];
-      this.Ajustes = [];
-      this.VistoBueno= [];
-      this.Aprobado= [];
-      this.Terminado = [];
+      this.loading = true;
+      if(!inicio){
+        inicio = '2024-04-01';
+        fin = '2024-04-30';
+      }
+      let data = await this.proySchedulerService.leerActividades('',inicio,fin);
+      if(data['total'] == 0 ){
+        this.eventos = [];
+      }else{
+        this.eventos = data['data'];
+      }
+      
+      for(let i=0;i<this.eventos.length;i++){
+        switch(this.eventos[i]['Estado']) { 
+          case '1': { 
+             //statements; 
+             this.Pendientes.push(this.eventos[i]);
+             break; 
+          } 
+          case '2': {
+            this.Proceso.push(this.eventos[i]); 
+             //statements; 
+             break; 
+          } 
+          case '3': {
+            this.Ajustes.push(this.eventos[i]); 
+             //statements; 
+             break; 
+          }
+          case '4': {
+            this.VistoBueno.push(this.eventos[i]); 
+             //statements; 
+             break; 
+          }
+          case '5': {
+            this.Terminado.push(this.eventos[i]); 
+             //statements; 
+             break; 
+          }  
+       } 
+        this.eventos[i]['column'] = this.eventos[i]['Estado'];
+      }
 
-      let data = await this.proyTableroService.leerItems(this.Task_Id,1,this.FechaInicio,this.FechaFin);
-      this.Pendientes = data['data'];
-
-      data = await this.proyTableroService.leerItems(this.Task_Id,2,this.FechaInicio,this.FechaFin);
-      this.Proceso = data['data'];
-
-      data = await this.proyTableroService.leerItems(this.Task_Id,3,this.FechaInicio,this.FechaFin);
-      this.Ajustes = data['data'];
-
-      data = await this.proyTableroService.leerItems(this.Task_Id,4,this.FechaInicio,this.FechaFin);
-      this.VistoBueno = data['data'];
-
-      data = await this.proyTableroService.leerItems(this.Task_Id,5,this.FechaInicio,this.FechaFin);
-      this.Aprobado = data['data'];
-
-      data = await this.proyTableroService.leerItems(this.Task_Id,6,this.FechaInicio,this.FechaFin);
-      this.Terminado = data['data'];
-
+      this.dp.cards.list = this.eventos;
+      this.dp.update();
+      this.loading = false;
     }
-    this.loading = false;
   }
+
   drag(ev,elemento,panel) {
-    console.log(elemento)
     this.ItemTrasladandose = elemento;
     this.panelOrigen = panel;
     //Eliminar el elemento del array
@@ -171,5 +230,7 @@ export class ProyTableroComponent implements OnInit {
   async actualizarEstadoTarea(Estado){
     let data = await this.proyTableroService.CambiarEstadoTarea(this.ItemTrasladandose.Id_Proyecto,Estado)
   }
-
+  dobleClick(elemento){
+    this.SeleccionarItem.emit(elemento);
+  }
 }

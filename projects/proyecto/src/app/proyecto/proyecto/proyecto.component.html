@@ -9,8 +9,10 @@
         <button  (click)="activarGeneralTab()"  type="button" class="btn btn-secondary"><i class="fa fa-wpforms" aria-hidden="true"></i></button>
        <!-- <button type="button" class="btn btn-secondary"><i class="fa fa-list" aria-hidden="true"></i></button>-->
         <button (click)="activarTableroTab()" type="button" class="btn btn-secondary"> <i class="fa fa-columns" aria-hidden="true"></i></button>
+        <button (click)="activarWeekTab()" type="button" class="btn btn-secondary"><i class="fa fa-list-alt" aria-hidden="true"></i></button>
         <button (click)="activarCalendarioTab()" type="button" class="btn btn-secondary"><i class="fa fa-calendar" aria-hidden="true"></i></button>
         <button (click)="activarGanttTab()" type="button" class="btn btn-secondary"><i class="fa fa-bar-chart" aria-hidden="true"></i></button>
+
       </div>
     </div>
     <div class="col-2 border-bottom p-3">
@@ -50,31 +52,31 @@
       <div id="accordion">
         <div class="m-0 p-0" *ngFor="let item of menuItems;let i = index">
           <div class="card-header m-0 p-0">
-            <button (dblclick)="colapsarItem(item)" (click)="seleccionarItem(item)" class="btn btn-light text-primary btn-outline-primary btn-block btn-block text-left">Protafolio,{{item.Nombre}}</button>
+            <button (dblclick)="colapsarItem(item)" (click)="seleccionarItem(item)" class="btn btn-light text-success btn-outline-primary btn-block btn-block text-left">Protafolio,{{item.Nombre}}</button>
           </div> 
           <div [hidden]="item.collapse" *ngFor="let item2 of item.items;let i = index">
             <div class="card-header m-0 p-0">
-              <button (dblclick)="colapsarItem(item)" (click)="seleccionarItem(item2)" class="btn btn-light  text-secondary btn-block text-left">&nbsp;Programa,{{item2.Nombre}}</button>
+              <button (dblclick)="colapsarItem(item)" (click)="seleccionarItem(item2)" class="btn btn-light  text-warning  btn-block text-left">&nbsp;Programa,{{item2.Nombre}}</button>
             </div>
             <div [hidden]="item2.collapse" *ngFor="let item3 of item2.items;let i = index">
               <div class="card-header m-0 p-0">
-                <button  (dblclick)="colapsarItem(item)" (click)="seleccionarItem(item3)" class="btn btn-light  text-success btn-block text-left">&nbsp;&nbsp;Proyecto,{{item3.Nombre}}</button>
+                <button  (dblclick)="colapsarItem(item)" (click)="seleccionarItem(item3)" class="btn btn-light  btn-block text-left">&nbsp;&nbsp;Proyecto,{{item3.Nombre}}</button>
               </div>
               <div [hidden]="item3.collapse" *ngFor="let item4 of item3.items;let i = index">
                 <div class="card-header m-0 p-0">
-                  <button (dblclick)="colapsarItem(item)" (click)="seleccionarItem(item4)" class="btn btn-light  text-warning btn-block text-left">&nbsp;&nbsp;&nbsp;Fase,{{item4.Nombre}}</button>
+                  <button (dblclick)="colapsarItem(item)" (click)="seleccionarItem(item4)" class="btn btn-light btn-block text-left">&nbsp;&nbsp;&nbsp;Fase,{{item4.Nombre}}</button>
                 </div>
                 <div [hidden]="item4.collapse" *ngFor="let item5 of item4.items;let i = index">
                   <div class="card-header m-0 p-0">
-                    <button (dblclick)="colapsarItem(item)" (dblclick)="colapsarItem(item)" (click)="seleccionarItem(item5)" class="btn btn-light  text-info btn-block text-left">&nbsp;&nbsp;&nbsp;&nbsp;Entregable,{{item5.Nombre}}</button>
+                    <button (dblclick)="colapsarItem(item)" (dblclick)="colapsarItem(item)" (click)="seleccionarItem(item5)" class="btn btn-light  btn-block text-left">&nbsp;&nbsp;&nbsp;&nbsp;Entregable,{{item5.Nombre}}</button>
                   </div>
                   <div [hidden]="item5.collapse" *ngFor="let item6 of item5.items;let i = index">
                     <div class="card-header m-0 p-0">
-                      <button  (dblclick)="colapsarItem(item)" (click)="seleccionarItem(item6)" class="btn btn-light  text-primary btn-block text-left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tarea,{{item6.Nombre}}</button>
+                      <button  (dblclick)="colapsarItem(item)" (click)="seleccionarItem(item6)" class="btn btn-light  btn-block text-left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tarea,{{item6.Nombre}}</button>
                     </div>
                     <div [hidden]="item6.collapse" *ngFor="let item7 of item6.items;let i = index">
                       <div class="card-header m-0 p-0">
-                        <button  (click)="seleccionarItem(item7)" class="btn btn-light btn-block text-left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Actividad,{{item7.Nombre}}</button>
+                        <button  (click)="seleccionarItem(item7)" class="btn btn-light text-primary  btn-block text-left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Actividad,{{item7.Nombre}}</button>
                       </div>
                        
                     </div>
@@ -89,9 +91,43 @@
     </div>
     <div class="col-9 ">
       <app-proy-actividad [hidden]="!GeneralTabActivo" (NewItem)="NewItem($event)"  (UpdateItem)="updateItem($event)" [ItemSelected]="ItemSelected" ></app-proy-actividad>
-      <app-proy-tablero [hidden]="!TableroTabActivo" [ItemSelected]="ItemSelected" [TabSelected]="TabSelected" [FechaInicioSelected]="FechaInicioSelected" [FechaFinSelected]="FechaFinSelected" ></app-proy-tablero>
-      <app-proy-scheduler [hidden]="!CalendarioTabActive" [ItemSelected]="ItemSelected" [TabSelected]="TabSelected"></app-proy-scheduler>
-      <app-proy-gantt  [hidden]="!GanttTabActive" [ItemSelected]="ItemSelected" [TabSelected]="TabSelected"></app-proy-gantt>
+      <app-proy-tablero [hidden]="!TableroTabActivo" (SeleccionarItem)="SeleccionarItem($event)" [ItemSelected]="ItemSelected" [TabSelected]="TabSelected" [FechaInicioSelected]="FechaInicioSelected" [FechaFinSelected]="FechaFinSelected" ></app-proy-tablero>
+      <app-proy-week [hidden]="!WeekTabActive" (SeleccionarItem)="SeleccionarItem($event)" [ItemSelected]="ItemSelected" [TabSelected]="TabSelected"></app-proy-week>
+      <app-proy-scheduler [hidden]="!CalendarioTabActive" (SeleccionarItem)="SeleccionarItem($event)" [ItemSelected]="ItemSelected" [TabSelected]="TabSelected"></app-proy-scheduler>
+      <app-proy-gantt  [hidden]="!GanttTabActive" (SeleccionarItem)="SeleccionarItem($event)" [ItemSelected]="ItemSelected" [TabSelected]="TabSelected"></app-proy-gantt>
+    </div>
+</div>
+
+
+<!-- Pantall Notas -->
+<div [hidden]="!PantallaActividad" class="modal-main">
+
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Editar Actividad</h2>
+    </div>
+    <div class="card-body modal-grid">
+  
+      
+      <div class="form-row row">
+        
+        <app-proy-actividad (NewItem)="NewItem($event)"  (UpdateItem)="updateItem($event)" [ItemSelected]="ItemSelected" ></app-proy-actividad>
+
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8 col-md-10">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="cerrarMiembroPanel()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
+</div>
 

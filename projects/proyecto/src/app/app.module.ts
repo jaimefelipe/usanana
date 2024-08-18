@@ -6,8 +6,10 @@ import { AppComponent } from './app.component';
 
 import { CoreModule } from './core/core.module';
 
-import { ProyectoModule } from './proyecto/proyecto.module';
+//import { ProyectoModule } from './proyecto/proyecto.module';
 import { SecurityModule } from '../../../seguridad/src/app/security/security.module';
+import { TareasModule } from './tareas/tareas.module';
+
 @NgModule({
   declarations: [
     AppComponent
@@ -16,8 +18,9 @@ import { SecurityModule } from '../../../seguridad/src/app/security/security.mod
     BrowserModule,
     AppRoutingModule,
     CoreModule,
-    ProyectoModule,
-    SecurityModule
+    //ProyectoModule,
+    SecurityModule,
+    TareasModule
   ],
   providers: [],
   bootstrap: [AppComponent]

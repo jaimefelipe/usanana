@@ -93,7 +93,7 @@ export class ReportComponent implements OnInit {
       window.open('https://toxo.work/reportes/bar/reporte-actividad.php?id=' + param, '_blank');
     }
     if(this.reporte == "7"){
-      window.open('https://toxo.work/reportes/bar/reporte-marcas.php?id=' + param, '_blank');
+      window.open('https://toxo.work/reportes/bar/reporte-marcas-xls.php?id=' + param, '_blank');
     }
     if(this.reporte == "8"){
       window.open('https://toxo.work/reportes/bar/reporte-facturacion-venta-xls.php?id=' + param, '_blank');

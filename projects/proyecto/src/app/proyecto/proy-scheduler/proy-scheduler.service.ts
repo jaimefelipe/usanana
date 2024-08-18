@@ -11,7 +11,7 @@ export class ProySchedulerService {
   async leerActividades(Id_Proyecto?,Inicio?,Fin?){
     let sqlConfig = {
       table: 'Pro_Proyecto',
-      fields: "Id_Proyecto,Nombre,Inicio,Fin,Descripcion,Miembros,Estado",
+      fields: "Id_Proyecto, Id_Proyecto as id,Nombre as text,Inicio as start,Fin as end,Descripcion,Miembros,Estado",
       where:" Nivel = 7 and Inicio >='" + Inicio + "' and Fin <= '"+Fin + "'"
     }
     return await this.apiService.executeSqlSyn(sqlConfig);

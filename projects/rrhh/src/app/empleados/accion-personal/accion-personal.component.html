@@ -1,0 +1,353 @@
+<div [hidden]="edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Accion de Personal</h2>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+        </div>
+        <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+          placeholder="Buscar">
+        <div class="input-group-append">
+          <button class="btn btn-success" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
+              aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form>
+    <div class="form-row">
+      <div class="form-group col-12 col-sm-6" *ngFor="let Accion of Acciones;let i = index">
+        <div class="card">
+          <a (click)="editRecord(Accion)">
+            <div class="card-body">
+              Fecha: {{Accion.Fecha_Accion }} <!-- | date:'d/M/YYY' -->
+              <b>{{Accion.Nombre}} </b>,{{Accion.Departamento}}, {{Accion.Puesto}}
+              Tipo: 
+              <span *ngIf="Accion.Tipo_Accion == '1'" class="text-primary"> Nombramiento</span>
+              <span *ngIf="Accion.Tipo_Accion == '2'" class="text-primary"> Vacaciones</span>
+              <span *ngIf="Accion.Tipo_Accion == '3'" class="text-primary"> Suspencion</span>
+              <span *ngIf="Accion.Tipo_Accion == '4'" class="text-primary"> Aunento Salarial</span>
+              <span *ngIf="Accion.Tipo_Accion == '5'" class="text-primary"> Cambio de puesto</span>
+              <span *ngIf="Accion.Tipo_Accion == '6'" class="text-primary"> Despido</span>
+              <span *ngIf="Accion.Tipo_Accion == '7'" class="text-primary"> Renuncia</span>
+              Estado :
+              <span *ngIf="Accion.Estado == '0'" class="text-primary"> Registrado</span>
+              <span *ngIf="Accion.Estado == '1'" class="text-warning"> Mayorizado</span>
+             
+
+              <h6>Id:{{Accion.Id_Accion_Personal}}</h6>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="container-fluid">
+    <ul class="pagination">
+      <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"
+            aria-hidden="true"></i></a></li>
+    </ul>
+  </div>
+</div>
+<!--
+    Form de Edición
+  -->
+  
+  <div [hidden]="!edit" class="container pb-5">
+    <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+    <h2>Accion de Personal</h2>
+  
+    <form>
+      <div class="form-row">
+        <div class="form-group col-md-3">
+          <label for="name">Tipo de Accion</label>
+          <select [(ngModel)]="Accion.Tipo_Accion" name="Tipo_Accion" class="form-control">
+            <option value='1'>Nombramiento</option>
+            <option value='2'>Vacaciones</option>
+            <option value='3'>Suspencion</option>
+            <option value='4'>Aumento Salarial</option>
+            <option value='5'>Cambio Puesto</option>
+            <option value='6'>Despido </option>
+            <option value='7'>Renuncia </option>
+          </select>
+        </div>
+        <div class="form-group col-md-3">
+          <label>Fecha</label>
+          <div class="input-group">
+            <input class="form-control" [(ngModel)]="Fecha_Accion" name="Fecha" placeholder="Fecha" ngbDatepicker
+              #d1="ngbDatepicker">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary fa fa-calendar" (click)="d1.toggle()" type="button"></button>
+            </div>
+          </div>
+        </div>
+        <div class="form-group col-md-6">
+          <label>Empleado</label>
+          <div class="form-group col-md-12">
+            <div class="input-group">
+        
+              <div class="input-group-append">
+                <button type="button" (click)="OpenEmpleadoPanel()" class="form-control btn btn-primary"><i
+                    class="fa fa-search"></i></button>
+              </div>
+              <input [(ngModel)]="Accion.Nombre" disabled name="NombreCliente" id="NombreCliente" type="input"
+                class="form-control" placeholder="Cliente">
+            </div>
+          </div>
+        </div>
+        <div class="card form-group col-md-6">
+          <div class="card-header">
+            Situación actual
+          </div>
+          <div class="card-body form-row">
+            <div class="form-group col-md-3">
+              <label>Puesto</label>
+            </div>
+            <div class="form-group col-md-9">
+              <div class="input-group">
+          
+                
+                <input  disabled="disabled" [(ngModel)]="Accion.Puesto_Anterior" disabled name="Puesto_Anterior" id="Puesto_Anterior" type="input"
+                  class="form-control" placeholder="Puesto Anterior">
+              </div>
+            </div>
+
+            <div class="form-group col-md-3">
+              <label>Departamento</label>
+            </div>
+            <div class="form-group col-md-9">
+              <div class="input-group">
+          
+                
+                <input disabled="disabled" [(ngModel)]="Accion.Departamento_Anterior" disabled name="Departamento_Anterior" id="Departamento_Anterior" type="input"
+                  class="form-control" placeholder="Departamento Anterior">
+              </div>
+            </div>
+
+            <div class="form-group col-md-3">
+              <label>Salario</label>
+            </div>
+            <div class="form-group col-md-9">
+              <input disabled="disabled" [(ngModel)]="Accion.Salario_Anterior" name="Salario_Anterior" type="text" placeholder="Salario_Anterior" class="form-control" style="text-align:right;">
+            </div>
+
+          </div>
+        </div>
+       <div class="card form-group col-md-6">
+          <div class="card-header">
+            Situación propuesta
+          </div>
+          <div class="card-body form-row">
+            <div class="form-group col-md-3">
+              <label>Puesto</label>
+            </div>
+            <div class="form-group col-md-9">
+              <div class="input-group">
+          
+                <div class="input-group-append">
+                  <button type="button" (click)="OpenPuestosPanel()" class="form-control btn btn-primary"><i
+                      class="fa fa-search"></i></button>
+                </div>
+                <input [(ngModel)]="Accion.Puesto" disabled name="Puesto" id="Puesto" type="input"
+                  class="form-control" placeholder="Puesto">
+              </div>
+            </div>
+
+            <div class="form-group col-md-3">
+              <label>Departamento</label>
+            </div>
+            <div class="form-group col-md-9">
+              <div class="input-group">
+          
+                <div class="input-group-append">
+                  <button type="button" (click)="OpenDepartamentosPanel()" class="form-control btn btn-primary"><i
+                      class="fa fa-search"></i></button>
+                </div>
+                <input  [(ngModel)]="Accion.Departamento" disabled name="Departamento" id="Departamento" type="input"
+                  class="form-control" placeholder="Departamento">
+              </div>
+            </div>
+
+            <div class="form-group col-md-3">
+              <label>Salario</label>
+            </div>
+            <div class="form-group col-md-9">
+              <input [(ngModel)]="Accion.Salario" name="Salario" type="text" placeholder="Salario" class="form-control" style="text-align:right;">
+            </div>
+
+            <div class="form-group col-md-3">
+              <label>Fecha inicio</label>
+            </div>
+            <div class="form-group col-md-9">
+              <div class="input-group">
+                <input class="form-control" [(ngModel)]="Fecha_Inicio" name="Fecha_Inicio" placeholder="Fecha Inicio" ngbDatepicker
+                  #d2="ngbDatepicker">
+                <div class="input-group-append">
+                  <button class="btn btn-outline-secondary fa fa-calendar" (click)="d2.toggle()" type="button"></button>
+                </div>
+              </div>
+            </div>
+            <div class="form-group col-md-3">
+              <label>Fecha final</label>
+            </div>
+            <div class="form-group col-md-9">
+              <div class="input-group">
+                <input class="form-control" [(ngModel)]="Fecha_Fin" name="Fecha_Fin" placeholder="Fecha Fin" ngbDatepicker
+                  #d3="ngbDatepicker">
+                <div class="input-group-append">
+                  <button class="btn btn-outline-secondary fa fa-calendar" (click)="d3.toggle()" type="button"></button>
+                </div>
+              </div>
+            </div>
+          </div>
+       </div>
+
+        
+
+        <div class="form-group col-md-12">
+          <div class="form-row">
+            <div class="form-group col-6 col-md-8">
+  
+            </div>
+            <div class="form-group col-3 col-md-2">
+              <button (click)="grabar()" type="button" class="btn btn-success" title="Cancela edicion">Grabar</button>
+            </div>
+            <div class="form-group col-3 col-md-2">
+              <button (click)="cancel()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  
+  </div>
+
+
+<!--Inicio Pantalla Empleados -->
+<div [hidden]="!PantallaEmpleados" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Seleccionar Empleado</h2>
+      <input [(ngModel)]="searchFieldEmpleados" (blur)="searchEmpleados()" (keydown)="keytabEmpleados($event)" type="text"
+        class="form-control" placeholder="Buscar">
+    </div>
+    <div class="card-body modal-grid">
+      <div class="form-row">
+        <div class="form-group col-12 col-sm-6" *ngFor="let Empleado of Empleados;let i = index">
+          <a (click)="SeleccionarEmpleado(Empleado)">
+            <div class="card">
+              <div class="card-body">
+                Contrato:{{Empleado.Otro_Documento}}
+                <h5>{{Empleado.Nombre}}</h5>
+                Id:{{Empleado.Identificacion}}, Tel:{{Empleado.Telefono}}
+                Estado :
+                <span *ngIf="Empleado.Estado == '1'" class="text-success"> Activo</span>
+                <span *ngIf="Empleado.Estado == '2'" class="text-warning"> Inactivo</span>
+                <span *ngIf="Empleado.Estado == '3'" class="text-warning"> Suspendido</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8 col-md-10">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="closePantallaEmpleados()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--Fin  Pantalla Empleados -->
+
+<!--Inicio Pantalla Puestos -->
+<div [hidden]="!PantallaPuestos" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Seleccionar Puesto</h2>
+      <input [(ngModel)]="searchFieldPuestos" (blur)="searchPuestos()" (keydown)="keytabPuestos($event)" type="text"
+        class="form-control" placeholder="Buscar">
+    </div>
+    <div class="card-body modal-grid">
+      <div class="form-row">
+        <div class="form-group col-12 col-sm-6" *ngFor="let Puesto of Puestos;let i = index">
+          <a (click)="SeleccionarPuesto(Puesto)">
+            <div class="card">
+              <div class="card-body">
+                <h5>{{Puesto.Puesto}}</h5>
+                
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8 col-md-10">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="closePantallaPuestos()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--Fin  Pantalla Puestos -->
+
+<!--Inicio Pantalla Departamento -->
+<div [hidden]="!PantallaDepartamentos" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Seleccionar Departamento</h2>
+      <input [(ngModel)]="searchFieldDepartamentos" (blur)="searchDepartamentos()" (keydown)="keytabDepartamentos($event)" type="text"
+        class="form-control" placeholder="Buscar">
+    </div>
+    <div class="card-body modal-grid">
+      <div class="form-row">
+        <div class="form-group col-12 col-sm-6" *ngFor="let Departamento of Departamentos;let i = index">
+          <a (click)="SeleccionarDepartamento(Departamento)">
+            <div class="card">
+              <div class="card-body">
+                <h5>{{Departamento.Departamento}}</h5>
+                
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8 col-md-10">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="closePantallaDepartamento()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--Fin  Pantalla Departamento -->

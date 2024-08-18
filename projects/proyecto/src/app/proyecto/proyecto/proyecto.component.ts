@@ -20,6 +20,7 @@ export class ProyectoComponent implements OnInit {
   FechaFinSelected = new EventEmitter<any>();
   AddItem = new EventEmitter<any>();
   UpdateItem = new EventEmitter<any>();
+
   TabSelected = new EventEmitter<any>();
   hoy = new Date();
   
@@ -30,6 +31,8 @@ export class ProyectoComponent implements OnInit {
   TableroTabActivo = false;
   CalendarioTabActive = false;
   GanttTabActive = false;
+  PantallaActividad = false;
+  WeekTabActive = false;
 
   GeneralClass = 'text-success tablinks active';
   TableroClass = "";
@@ -64,6 +67,7 @@ export class ProyectoComponent implements OnInit {
     this.TableroTabActivo = false;
     this.CalendarioTabActive = false;
     this.GanttTabActive = false;
+    this.WeekTabActive = false;
     this.GeneralClass = 'text-success tablinks active';
     this.TableroClass = "";
     this.CalendarioClass = '';
@@ -75,22 +79,36 @@ export class ProyectoComponent implements OnInit {
     this.TableroTabActivo = true;
     this.CalendarioTabActive = false;
     this.GanttTabActive = false;
+    this.WeekTabActive = false;
     this.GeneralClass = "";
     this.TableroClass = 'text-success tablinks active';
     this.CalendarioClass = '';
     this.GanttClass = "";
     this.SeleccionarTab(2);
   }
-  activarCalendarioTab(){
+  activarWeekTab(){
     this.GeneralTabActivo = false;
     this.TableroTabActivo = false;
-    this.CalendarioTabActive = true;
+    this.CalendarioTabActive = false;
+    this.WeekTabActive = true;
     this.GanttTabActive = false;
     this.GeneralClass = '';
     this.TableroClass = "";
     this.CalendarioClass = 'text-success tablinks active';
     this.GanttClass = "";
-    this.SeleccionarTab(3);
+    this.SeleccionarTab(3); 
+  }
+  activarCalendarioTab(){
+    this.GeneralTabActivo = false;
+    this.TableroTabActivo = false;
+    this.CalendarioTabActive = true;
+    this.GanttTabActive = false;
+    this.WeekTabActive = false;
+    this.GeneralClass = '';
+    this.TableroClass = "";
+    this.CalendarioClass = 'text-success tablinks active';
+    this.GanttClass = "";
+    this.SeleccionarTab(4);
   }
 
   activarGanttTab(){
@@ -98,11 +116,12 @@ export class ProyectoComponent implements OnInit {
     this.TableroTabActivo = false;
     this.CalendarioTabActive = false;
     this.GanttTabActive = true;
+    this.WeekTabActive = false;
     this.GeneralClass = '';
     this.TableroClass = "";
     this.CalendarioClass = '';
     this.GanttClass = 'text-success tablinks active';
-    this.SeleccionarTab(4);
+    this.SeleccionarTab(5);
   }
   
 
@@ -136,8 +155,9 @@ export class ProyectoComponent implements OnInit {
   }
   /* Trabajo con los Items */
   seleccionarItem(item){
+    
     //item.collapse = !item.collapse;
-    this.ItemSelected.emit(item.value); 
+    this.ItemSelected.emit(item); 
     
   }
   findId(array: any[], targetId: number,Texto): any | null {
@@ -185,4 +205,13 @@ export class ProyectoComponent implements OnInit {
   FechaFinCambia(){
     this.FechaFinSelected.emit(this.FechaFin);
   }
+  SeleccionarItem(item){
+    item.value = item.Id_Proyecto;
+    this.seleccionarItem(item);
+    this.PantallaActividad=true;
+  }
+  cerrarMiembroPanel(){
+    this.PantallaActividad = false;
+  }
 }
+

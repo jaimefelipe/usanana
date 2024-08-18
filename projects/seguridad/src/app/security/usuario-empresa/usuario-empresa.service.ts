@@ -23,7 +23,7 @@ constructor(
   async cargarUsuarioEmpresa(Id_Usuario_Empresa){
     let sqlConfig = {
       table: 'Seg_Usuario_Empresa inner Join Seg_Usuario on Seg_Usuario_Empresa.Id_Usuario = Seg_Usuario.Id_Usuario inner join Gen_Empresa on Seg_Usuario_Empresa.Id_Empresa = Gen_Empresa.Id_Empresa',
-      fields: 'Id_Usuario_Empresa,Seg_Usuario_Empresa.Id_Empresa,Seg_Usuario_Empresa.Id_Usuario,Seg_Usuario_Empresa.Estado, Gen_Empresa.Nombre as Nombre_Empresa, Seg_Usuario.Nombre as Nombre_Usuario, Seg_Usuario.Correo',
+      fields: 'Id_Usuario_Empresa,Seg_Usuario_Empresa.Id_Empresa,Seg_Usuario_Empresa.Id_Usuario,Seg_Usuario_Empresa.Estado, Gen_Empresa.Nombre as Nombre_Empresa, Seg_Usuario.Nombre as Nombre_Usuario, Seg_Usuario.Correo,Seg_Usuario.Numero_Identificacion',
       where: 'Seg_Usuario_Empresa.Id_Usuario_Empresa = '+Id_Usuario_Empresa,
       Empresa: false
     }
@@ -39,6 +39,11 @@ constructor(
       + '\'',
       where: 'Id_Usuario_Empresa=' + UsuarioEmpresa.Id_Usuario_Empresa
     };
+    let dat = await this.ValidarPersonaExiste(UsuarioEmpresa.Numero_Identificacion);
+    if(dat['total'] == 0){
+      //insertar la persona;
+      await this.CrearPersonaBasdaUsuario(UsuarioEmpresa.Numero_Identificacion,UsuarioEmpresa.Nombre);
+    }
     return await this.apiService.updateRecord(sql);
   }
   async inserUsert(UsuarioEmpresa){
@@ -51,6 +56,11 @@ constructor(
       + '\',\'' + UsuarioEmpresa.Estado
       + '\''
     };
+    let dat = await this.ValidarPersonaExiste(UsuarioEmpresa.Numero_Identificacion);
+    if(dat['total'] == 0){
+      //insertar la persona;
+      await this.CrearPersonaBasdaUsuario(UsuarioEmpresa.Numero_Identificacion,UsuarioEmpresa.Nombre);
+    }
     return await this.apiService.insertRecord(sql);
   }
 
@@ -64,5 +74,19 @@ constructor(
     return await this.apiService.executeSqlSyn(sqlConfig);
   }
 
-
+  //Agregar Persona si no existe a la compania actual
+  //1 validar si persona existe
+  async ValidarPersonaExiste(Numero_Identificacion){
+    let sql = "Select Id_Persona from Gen_Persona where Identificacion = '" + Numero_Identificacion +"' and Id_Empresa = "+ localStorage.getItem('Id_Empresa');
+    return await this.apiService.postRecord(sql);
+  }
+  async CrearPersonaBasdaUsuario(Identificacion,Nombre){
+    let sql = {
+      table: 'Gen_Persona',
+      fields: 'Identificacion,Nombre,Estado',
+      values: '\'' + Identificacion
+      + '\',\'' + Nombre + '\',1'
+    };
+    return await this.apiService.insertRecord(sql);
+  }
 }

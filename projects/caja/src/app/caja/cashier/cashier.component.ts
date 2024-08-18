@@ -71,7 +71,8 @@ export class CashierComponent implements OnInit {
     Id_Cajero:'',
     Estado:'',
     Nombre:'',
-    Nombre_Usuario:''
+    Nombre_Usuario:'',
+    Id_Caja_Diaria:''
   }
   ngOnInit(): void {
     this.loadCategories();
@@ -104,7 +105,8 @@ export class CashierComponent implements OnInit {
       Id_Cajero:'',
       Estado:'',
       Nombre:'',
-      Nombre_Usuario:''
+      Nombre_Usuario:'',
+      Id_Caja_Diaria:''
     }
   }
   ChangePage(action){
@@ -196,11 +198,33 @@ export class CashierComponent implements OnInit {
     async abrirCaja(){
       //Determinar si ya el usuario tiene una caja abierta
       if(localStorage.getItem('Id_Caja')){
+        Swal.fire({
+          title: 'Desea Abrirla de todos Modeos?',
+          text: "Usuario ya cuenta con Una Caja abierta, No puede abrir otra",
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Si, abrir la caja!'
+        }).then((result) => {
+          if (result.value) {
+            return this.postabrirCaja();
+          }else{
+            return false;
+          }
+        });
+      }else{
+        this.postabrirCaja();
+      }
+      /*
+      if(localStorage.getItem('Id_Caja')){
         Swal.fire('Usuario ya cuenta con Una Caja abierta, No puede abrir otra');
         return false;
       }
-      let data = await this.cashierService.abrirCaja(this.Caja,localStorage.getItem('Id_Usuario'));
-      localStorage.setItem('Id_Caja',this.Caja.Id_Caja);
+      */
+      
+    }
+    async postabrirCaja(){
+     
 
       //Crear Registro de Caja Diaria
       let Caja = {
@@ -211,18 +235,27 @@ export class CashierComponent implements OnInit {
       }
       let CajaDiaria = await this.cashierService.crearRegistroDiario(Caja);
       localStorage.setItem('Id_Caja_Diaria',CajaDiaria['data'][0]['Identity']);
+
+      let data = await this.cashierService.abrirCaja(this.Caja,localStorage.getItem('Id_Usuario'),CajaDiaria['data'][0]['Identity']);
+      localStorage.setItem('Id_Caja',this.Caja.Id_Caja);
+
+
+
       this.search();
       this.cancel();
       return true;
     }
     async cerrarCaja(){
       //Levantar pantalla para de Arqueo de Caja.
-      this.PantallaArqueo = true;
-      return false;
-      let data = await this.cashierService.cerrarCaja(this.Caja.Id_Caja);
-      localStorage.removeItem('Id_Caja');
-      this.search();
-      this.cancel();
+      if(localStorage.getItem('Id_Caja') == this.Caja.Id_Caja){
+        this.PantallaArqueo = true;
+        let data = await this.cashierService.cerrarCaja(this.Caja.Id_Caja);
+        localStorage.removeItem('Id_Caja');
+        this.search();
+        this.cancel();
+      }else{
+        Swal.fire("El cajero estra tratando de cerrar una caja a la cual no esta asociado");
+      }
     }
 
     async GenerarCierre(){

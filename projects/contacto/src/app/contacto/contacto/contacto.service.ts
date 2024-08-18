@@ -61,7 +61,7 @@ export class ContactoService {
   async loadPersona(Id_Persona){
     let sqlConfig = {
       table: 'Gen_Persona',
-      fields: 'Id_Persona,Nombre,Telefono,Correo,Identificacion,Tipo_Identificacion,Porcentaje_Comision,Porcentaje_Descuento,Cliente,Proveedor,Alumno,Profesor,Estado,Otro_Documento,Condicion_Venta,Plazo_Credito,Metodo_Pago,Fecha_Ingreso,Porcentaje_Descuento,Moneda,Ultima_Factura,Contabilidad,FacturaElectronica,PuntoVenta,Restaurante,Asesoria,Declaracion,Precio,Provincia,Canton,Distrito,Barrio,Direccion,Empleado,PresentacionA,PresentacionB',
+      fields: 'Id_Persona,Nombre,Telefono,Correo,Identificacion,Tipo_Identificacion,Porcentaje_Comision,Porcentaje_Descuento,Cliente,Proveedor,Alumno,Profesor,Estado,Otro_Documento,Condicion_Venta,Plazo_Credito,Metodo_Pago,Fecha_Ingreso,Porcentaje_Descuento,Moneda,Ultima_Factura,Contabilidad,FacturaElectronica,PuntoVenta,Restaurante,Asesoria,Declaracion,Precio,Provincia,Canton,Distrito,Barrio,Direccion,Empleado,PresentacionA,PresentacionB,Codigo_Proveedor,Direccion',
       orderField: '',
       searchField: '',
       where: "Id_Persona = " + Id_Persona
@@ -76,7 +76,7 @@ export class ContactoService {
     if(Persona.Id_Persona ==""){
       let sql = {
         table: 'Gen_Persona',
-        fields: 'Nombre,Telefono,Correo,Tipo_Identificacion,Identificacion,Cliente,Proveedor,Alumno,Profesor,Estado,Otro_Documento,Condicion_Venta,Plazo_Credito,Metodo_Pago,Fecha_Ingreso,Porcentaje_Descuento,Moneda,Contabilidad,FacturaElectronica,PuntoVenta,Restaurante,Asesoria,Declaracion,Precio,Provincia,Canton,Distrito,Barrio,Direccion,Empleado,PresentacionA,PresentacionB,TC,TCF,TCV,Id_Producto,TCN',
+        fields: 'Nombre,Telefono,Correo,Tipo_Identificacion,Identificacion,Cliente,Proveedor,Alumno,Profesor,Estado,Otro_Documento,Condicion_Venta,Plazo_Credito,Metodo_Pago,Fecha_Ingreso,Porcentaje_Descuento,Moneda,Contabilidad,FacturaElectronica,PuntoVenta,Restaurante,Asesoria,Declaracion,Precio,Provincia,Canton,Distrito,Barrio,Direccion,Empleado,PresentacionA,PresentacionB,TC,TCF,TCV,Id_Producto,TCN,Codigo_Proveedor',
         values: '\'' + Persona.Nombre
         + '\',\'' + Persona.Telefono
         + '\',\'' + Persona.Correo
@@ -114,6 +114,7 @@ export class ContactoService {
         + '\',\'' + Persona.cvvTarjeta
         + '\',\'' + Persona.paquete
         + '\',\'' + Persona.nombreTarjeta
+        + '\',\'' + Persona.Codigo_Proveedor
         + '\''
       };
       return await this.apiService.insertRecord(sql);
@@ -152,6 +153,8 @@ export class ContactoService {
         + '\',Empleado=\''+ Persona.Empleado
         + '\',PresentacionA=\''+ Persona.PresentacionA
         + '\',PresentacionB=\''+ Persona.PresentacionB
+        + '\',Codigo_Proveedor=\''+ Persona.Codigo_Proveedor
+        + '\',Direccion=\''+ Persona.Direccion
         + '\'',
         where: 'Id_Persona=' + Persona.Id_Persona
       };

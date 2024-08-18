@@ -199,7 +199,13 @@ export class MenuComponent implements OnInit {
     localStorage.removeItem('Id_Usuario');
     localStorage.removeItem('Nombre_Usuario');
     localStorage.removeItem('Nombre');
-    window.location.href = '/';
+    localStorage.removeItem('Id_Caja_Diaria');
+    localStorage.removeItem('Id_Caja');
+    localStorage.removeItem('ToxoSG');
+    localStorage.removeItem('ToxoMT');
+    localStorage.removeItem('Empresa');
+    let arrlocation = window.location.pathname.split('/');
+    window.location.href = "/"+arrlocation[1]+'/';
   }
 
   addToHomeScreen() {

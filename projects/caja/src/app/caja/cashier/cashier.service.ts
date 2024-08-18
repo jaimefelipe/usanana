@@ -10,7 +10,7 @@ export class CashierService {
   async loadCajas(paginacion,search?) {
     let sqlConfig = {
       table: 'Ven_Caja Inner Join Gen_Sucursal on Ven_Caja.Id_Sucursal = Gen_Sucursal.Id_Sucursal',
-      fields: 'Id_Caja,Ven_Caja.Id_Sucursal,Numero_Caja,Consecutivo,Saldo_Apertura,Saldo_Actual,Id_Cajero,Ven_Caja.Estado,Gen_Sucursal.Nombre',
+      fields: 'Id_Caja,Ven_Caja.Id_Sucursal,Numero_Caja,Consecutivo,Saldo_Apertura,Saldo_Actual,Id_Cajero,Ven_Caja.Estado,Gen_Sucursal.Nombre,Id_Caja_Diaria',
       orderField: '',
       searchField: search,
       paginacion: paginacion
@@ -20,7 +20,7 @@ export class CashierService {
   async loadCaja(Id_Caja){
     let sqlConfig = {
       table: 'Ven_Caja left Join Seg_Usuario on Ven_Caja.Id_Cajero = Seg_Usuario.Id_Usuario',
-      fields: 'Id_Caja,Id_Sucursal,Numero_Caja,Consecutivo,Saldo_Apertura,Saldo_Actual,Id_Cajero,Ven_Caja.Estado,Nombre_Usuario',
+      fields: 'Id_Caja,Id_Sucursal,Numero_Caja,Consecutivo,Saldo_Apertura,Saldo_Actual,Id_Cajero,Ven_Caja.Estado,Nombre_Usuario,Id_Caja_Diaria',
       orderField: '',
       searchField: '',
       where: "Id_Caja = " + Id_Caja
@@ -78,8 +78,8 @@ export class CashierService {
     let sql = 'Update Ven_Caja Set Estado = 0, Id_Cajero = NULL where Id_Caja = ' + id_Caja;
     return await this.apiService.postRecord(sql);
   }
-  async abrirCaja(Caja,Cajero){
-    let sql = 'Update Ven_Caja Set Estado = 1, Saldo_Apertura = ' + Caja.Saldo_Apertura +',Saldo_Actual = '+ Caja.Saldo_Apertura +', Id_Cajero = ' + Cajero +' where Id_Caja = ' + Caja.Id_Caja;
+  async abrirCaja(Caja,Cajero,Id_Caja_Diaria){
+    let sql = 'Update Ven_Caja Set Estado = 1, Saldo_Apertura = ' + Caja.Saldo_Apertura +',Saldo_Actual = '+ Caja.Saldo_Apertura +', Id_Cajero = ' + Cajero + ',Id_Caja_Diaria='+Id_Caja_Diaria+' where Id_Caja = ' + Caja.Id_Caja;
     return await this.apiService.postRecord(sql);
   }
   async ActualizarSaldo(Id_Caja,Saldo){
@@ -160,6 +160,22 @@ export class CashierService {
       table: 'Ven_Caja_Diaria',
       fields: 'Id_Caja_Diaria',
       where: where
+    }
+    return await this.apiService.executeSqlSyn(sqlConfig);
+  }
+  async LeerCajaDiaria(Id_Caja_Diaria){
+    let sqlConfig = {
+      table: 'Ven_Caja_Diaria',
+      fields: 'Creado_El',
+      where:'Id_Caja_Diaria = ' + Id_Caja_Diaria
+    }
+    return await this.apiService.executeSqlSyn(sqlConfig);
+  }
+  async LeerCierreDeCaja(Id_Caja){
+    let sqlConfig = {
+      table: 'Ven_Caja',
+      fields: 'Id_Caja_Diaria',
+      where:'Id_Caja = ' + Id_Caja
     }
     return await this.apiService.executeSqlSyn(sqlConfig);
   }

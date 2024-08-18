@@ -105,7 +105,7 @@ export class CoordinateComponent implements OnInit {
   async coordinar(){
     let data = await this.coordinateService.coordinar();
     if(data['success'] == 'true'){
-      alert('Ok')
+      
     }
   }
   async LoadDates(search?:any){

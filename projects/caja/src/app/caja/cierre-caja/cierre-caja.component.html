@@ -91,6 +91,7 @@
                     <thead>
                       <tr>
                         <th scope="col">#</th>
+                        <th scope="col">Categoria</th>
                         <th scope="col">Producto</th>
                         <th scope="col">Cantidad</th>
                         <th scope="col">Monto</th>
@@ -99,6 +100,7 @@
                     <tbody *ngFor="let Producto of Productos;let i = index">
                       <tr>
                         <th>{{Producto.id}}</th>
+                        <td>{{Producto.Nombre}}</td>
                         <td>{{Producto.Producto}}</td>
                         <td class="text-right">{{Producto.Cantidad}}</td>
                         <td class="text-right">{{Producto.Monto}}</td>

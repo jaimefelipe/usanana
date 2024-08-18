@@ -34,7 +34,7 @@
 }
 
 .app-logo {
-  background: url("../../../../../../../assets/logo_tansparent.png");
+  background: url("../../../../assets/logo_tansparent.png");
   background-repeat: no-repeat;
   max-width: 100%;
   background-position: center;
@@ -63,7 +63,7 @@ img {
 
 
 .conta {
-  background: url(../../../../../../../assets/conta1.png) no-repeat;
+  background: url(/assets/conta1.png) no-repeat;
   cursor:pointer;
   border: none;
   background-size: cover;
@@ -73,7 +73,7 @@ img {
 }
 
 .venta {
-  background: url(../../../../../../../assets/venta.png) no-repeat;
+  background: url(/assets/venta.png) no-repeat;
   cursor:pointer;
   border: none;
   background-size: cover;
@@ -82,35 +82,7 @@ img {
   font-size: 2rem;
 }
 .factura {
-  background: url(../../../../../../../assets/factura.png) no-repeat;
-  cursor:pointer;
-  border: none;
-  background-size: cover;
-  width: 80px;
-  height: 80px;
-  font-size: 2rem;
-}
-.menu {
-  background: url(../../../../../../../assets/menu.png) no-repeat;
-  cursor:pointer;
-  border: none;
-  background-size: cover;
-  width: 80px;
-  height: 80px;
-  font-size: 2rem;
-}
-
-.bus {
-  background: url(../../../../../../../assets/bus.png) no-repeat;
-  cursor:pointer;
-  border: none;
-  background-size: cover;
-  width: 80px;
-  height: 80px;
-  font-size: 2rem;
-}
-.turismo {
-  background: url(../../../../../../../assets/turismo.png) no-repeat;
+  background: url(/assets/factura.png) no-repeat;
   cursor:pointer;
   border: none;
   background-size: cover;

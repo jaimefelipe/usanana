@@ -28,6 +28,7 @@
           <li [hidden]="!AppPOV" (click)="clickVentasMenu()" ><a><i class="fa fa-credit-card"></i>  Proyectos<i [ngClass]='ventasClass' class="fa fa-cog"></i>  </a></li>
           <ul [hidden]="!ventasMenu">
             <a (click)="hideMenu()" [hidden]="!AppVentas" [routerLink]="['/proyecto']"><li><i class="fa fa-credit-card"></i> Proyectos</li></a>
+            <a (click)="hideMenu()" [hidden]="!AppVentas" [routerLink]="['/tareas']"><li><i class="fa fa-credit-card"></i> Tareas</li></a>
           </ul>
         </div>
 

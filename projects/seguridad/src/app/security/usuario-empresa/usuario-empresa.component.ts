@@ -36,6 +36,7 @@ export class UsuarioEmpresaComponent implements OnInit {
     Nombre_Empresa:'',
     Id_Usuario:'',
     Nombre_Usuario:'',
+    Numero_Identificacion:'',
     Estado:''
   }
   ngOnInit() {
@@ -54,7 +55,7 @@ export class UsuarioEmpresaComponent implements OnInit {
   async cargarUsuariosEmpresa(search?){
     let data = await this.usuarioEmpresaService.cargarUsuariosEmpresa(this.paginacion,search);
     if(data['total'] == 0){
-
+      this.UsuariosEmpresas = [];
     }else{
       this.UsuariosEmpresas = data['data'];
     }

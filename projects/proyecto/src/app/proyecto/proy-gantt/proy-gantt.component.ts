@@ -1,12 +1,9 @@
-import { Component, OnInit,Input } from '@angular/core';
+import { Component, OnInit,Input,ViewChild,ElementRef  } from '@angular/core';
 import { ProyGanttService } from './proy-gantt.service';
 import { Output, EventEmitter } from '@angular/core';
-/*
-import * as GanttModule from 'frappe-gantt';
-const Gantt = GanttModule.default; 
-*/
-//import Gantt from "frappe-gantt";
-
+import { GanttItem,GanttToolbarOptions,GanttViewType,GanttBarClickEvent,GanttDragEvent } from '@worktile/gantt';
+//import {DayPilot, DayPilotGanttComponent} from "daypilot-pro-angular";
+import { DayPilot } from '../../../assets/daypilot/daypilot-all.min';
 
 
 @Component({
@@ -17,32 +14,70 @@ const Gantt = GanttModule.default;
 export class ProyGanttComponent implements OnInit {
   @Input() ItemSelected: EventEmitter<string>; 
   @Input() TabSelected: EventEmitter<string>; 
+  @Output() SeleccionarItem = new EventEmitter<any>();
+  
+  //@ViewChild("gantt")
+  //gantt: DayPilotGanttComponent;
 
   constructor(
     private proyGanttService:ProyGanttService
   ) { }
-
+ 
+  loading = false;
   Task_Id = '';
   Tab_Id = '';
   Tareas = [];
-  tasks = [
-    {
-    id: 'Task 1',
-    name: 'Tarea de Prueba',
-    start: '2024-03-10',
-    end: '2024-03-12',
-    progress: 20
-    //dependencies: 'Task 2, Task 3'
-    }
-  ]
-  gantt: any;
+  Miembros = [];
+  
+  dp = new DayPilot.Gantt("dp", {
+    cellWidthSpec: "Fixed",
+    cellWidth: 40,
+    timeHeaders: [{"groupBy":"Month"},{"groupBy":"Day","format":"d"}],
+    scale: "Day",
+    days: DayPilot.Date.today().daysInMonth(),
+    startDate: DayPilot.Date.today().firstDayOfMonth(),
+    taskHeight: 35,
+    rowHeaderHideIconEnabled: false,
+    rowMoveHandling: "Update",
+    onRowMoved: (args) => {
+      //args.control.message("Row moved: " + args.source.text());
+    },
+    taskMoveHandling: "Update",
+    onTaskMoved: (args) => {
+      let start =args.newStart.getYear() + '-' + (args.newStart.getMonth() + 1 )+ '-' + args.newStart.getDay()+ ' ' + args.task.data['HoraInicio'];
+      let end =  args.newEnd.getYear() + '-' + ( args.newEnd.getMonth() + 1 )+ '-' + args.newEnd.getDay() + ' ' + args.task.data['HoraFin'];
+      let TaskId = args.task.data['taskId'];
+      this.updateTask(TaskId,start,end);
+      //args.control.message("Task moved to: " + args.newStart);
+    },
+    onTaskResized:(args) =>{
+      let start =args.newStart.getYear() + '-' + (args.newStart.getMonth() + 1 )+ '-' + args.newStart.getDay()+ ' ' + args.task.data['HoraInicio'];
+      let end =  args.newEnd.getYear() + '-' + ( args.newEnd.getMonth() + 1 )+ '-' + args.newEnd.getDay() + ' ' + args.task.data['HoraFin'];
+      let TaskId = args.task.data['taskId'];
+      //this.updateTask(TaskId,start,end);
+    },
+    linkCreateHandling: "Update",
+    onLinkCreated: (args) => {
+      //args.control.message("Link created, type: " + args.type);
+    },
+    rowCreateHandling: "Enabled",
+    onRowCreate: (args) => {
+      args.control.tasks.add(new DayPilot.Task({
+        id: DayPilot.guid(),
+        text: args.text,
+        start: new DayPilot.Date().getDatePart(),
+        end: new DayPilot.Date().getDatePart().addDays(1)
+      }));
+    },
+  });
+  
 
- 
   ngOnInit() {
-    this.subscribeToParentEmitter(); 
-     
+    this.subscribeToParentEmitter();
+    this.dp.init();
   }
 
+  
   subscribeToParentEmitter(): void { 
     this.ItemSelected.subscribe((data: any) => { 
       this.Task_Id = data;
@@ -54,59 +89,62 @@ export class ProyGanttComponent implements OnInit {
     });
   } 
 
-  cambiarDia(){
-    this.gantt.change_view_mode('Day')
-  }
-  cambiarSemana(){
-    this.gantt.change_view_mode('Week')
-  }
-  cambiarMes(){
-    this.gantt.change_view_mode('Month')
+  async LeerMiembros(){
+    let data = await this.proyGanttService.LeerMiembros();
+    this.Miembros = data['data'];
   }
   async leerTareas(){
-    if(this.Tab_Id == '4'){
+    if(this.Tab_Id == '5'){
+      this.loading = true;
+      await this.LeerMiembros();
       let data = await this.proyGanttService.leerItems(this.Task_Id);
       this.Tareas = data['data'];
-      // @ts-ignore-start
-    this.gantt = new Gantt("#gantt", this.Tareas, {
-      header_height: 50,
-      column_width: 30,
-      step: 24,
-      view_modes: ['Quarter Day', 'Half Day', 'Day', 'Week', 'Month'],
-      bar_height: 20,
-      bar_corner_radius: 3,
-      arrow_curve: 5,
-      padding: 18,
-      view_mode: 'Week',
-      date_format: 'YYYY-MM-DD',
-      language: 'es', // or 'es', 'it', 'ru', 'ptBr', 'fr', 'tr', 'zh', 'de', 'hu'
-      on_click: function (task) {
-        console.log(task);
-      },
-      on_date_change: function(task, start, end) {
-        console.log(task, start, end);
-      },
-      on_progress_change: function(task, progress) {
-        console.log(task, progress);
-      },
-      on_view_change: function(mode) {
-        console.log(mode);
-      },
-      /*custom_popup_html: function(task) {
-        // the task object will contain the updated
-        // dates and progress value
-        const end_date = task._end;
-        return `
-        <div class="details-container">
-          <h5>${task.name}</h5>
-          <p>Expected to finish by ${end_date}</p>
-          <p>${task.progress}% completed!</p>
-        </div>
-        `;
-      }*/
-    });
-
-    // @ts-ignore-end
+      let Grupos = [];
+      for(let y=0;y<this.Miembros.length;y++){
+        let g = {
+          "id": this.Miembros[y]['Id_Persona'],
+          "text": this.Miembros[y]['name'],
+          "children":[],
+          "row": {
+            "collapsed": false
+          },
+          "start": "2024-04-04T00:00:00",
+          "end": "2024-04-16T00:00:00",
+        }
+        let tareas = []
+        for(let i = 0;i<this.Tareas.length;i++){
+          for(let x =0;x<this.Tareas[i]['Miembros'].length;x++){
+            
+            if(this.Tareas[i]['Miembros'][x]['Id_Persona'] == this.Miembros[y]['Id_Persona']){
+              let inicio = this.Tareas[i].start.split(' ');
+              let fin = this.Tareas[i].end.split(' ');
+              let m ={
+                id: this.Tareas[i].Id+y,
+                taskId: this.Tareas[i].Id,
+                start: this.Tareas[i].start, 
+                end: this.Tareas[i].end, 
+                text: this.Tareas[i].name, 
+                complete: 50,
+                HoraInicio:inicio[1],
+                HoraFin:fin[1]
+              }
+              tareas.push(m);
+            }
+          }
+        }
+        g.children = tareas;
+        Grupos.push(g)
+      }
+      this.dp.tasks.list = Grupos;
+      this.dp.update();
+      this.loading = false;
     }
   }
+  SelItem(Item){
+    this.SeleccionarItem.emit(Item);
+  }
+  updateTask(taskId,Start,End){
+    let data = this.proyGanttService.actualizarItem(taskId,Start,End);
+  }
 }
+

@@ -39,9 +39,9 @@ export class ProductService {
     return await this.apiService.executeSqlSyn(sqlConfig);
   }
   async loadProductsByCategory(Id_Categoria,search?,Estado?){
-    let where ='Inv_Producto.Categoria = \'' + Id_Categoria + '\''
+    let where ='Inv_Producto.Tipo_Codigo = 1 and Inv_Producto.Categoria = \'' + Id_Categoria + '\''
     if(Estado){
-      where = "Inv_Producto.Estado = 1 and " + where
+      where = "Inv_Producto.Tipo_Codigo = 1 and Inv_Producto.Estado = 1 and " + where
     }
     let sqlConfig = {
       table: 'Inv_Producto left Join Inv_Categoria On Inv_Producto.Categoria = Inv_Categoria.Id_Categoria',

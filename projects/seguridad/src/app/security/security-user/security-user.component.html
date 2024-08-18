@@ -69,6 +69,10 @@
         <input [(ngModel)]="Usuario.Correo" name="Correo" type="text" placeholder="Correo" class="form-control">
       </div>
       <div [hidden]="Master=='0'" class="form-group col-md-4">
+        <label>Identificación</label>
+        <input [(ngModel)]="Usuario.Numero_Identificacion" name="Numero_Identificacion" type="text" placeholder="Numero_Identificacion" class="form-control">
+      </div>
+      <div [hidden]="Master=='0'" class="form-group col-md-4">
         <label>Clave</label>
         <input [(ngModel)]="Usuario.Clave" name="Clave" type="text" placeholder="Clave" class="form-control">
       </div>

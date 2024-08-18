@@ -132,7 +132,7 @@ export class ProductComponent implements OnInit {
         this.interfazCobroTc = false;
       }
     }
-    alert(this.interfazCobroTc)
+
   }
   CalculoPrecio(){
     let Tasa = 0;
