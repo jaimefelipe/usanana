@@ -10,9 +10,12 @@ import { RrhhComponent } from './rrhh/rrhh.component';
 import { AccionPersonalComponent } from './accion-personal/accion-personal.component';
 import { DepartamentoComponent } from './departamento/departamento.component';
 import { PuestoComponent } from './puesto/puesto.component';
-import { LocalidadComponent } from './localidad/localidad.component';
+import { ProgramacionComponent } from './programacion/programacion.component';
 
+import { LocalidadComponent } from './localidad/localidad.component';
+import { RollComponent } from './roll/roll.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+
 
 
 
@@ -32,7 +35,9 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     AccionPersonalComponent,
     DepartamentoComponent,
     PuestoComponent,
-    LocalidadComponent
+    LocalidadComponent,
+    RollComponent,
+    ProgramacionComponent
   ]
 })
 export class EmpleadosModule { }

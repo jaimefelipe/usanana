@@ -31,13 +31,15 @@
             <a (click)="hideMenu()" [routerLink]="['/departamento']"><li><i class="fa fa-credit-card"></i> Deparamento </li></a>
             <a (click)="hideMenu()" [routerLink]="['/puesto']"><li><i class="fa fa-credit-card"></i> Puesto </li></a>
             <a (click)="hideMenu()" [routerLink]="['/localidad']"><li><i class="fa fa-credit-card"></i> Localidad </li></a>
+            <a (click)="hideMenu()" [routerLink]="['/roll']"><li><i class="fa fa-credit-card"></i> Roll </li></a>
           </ul>
 
-          <li [hidden]="!AppConfiguracion" (click)="clickPerfilMenu()" ><a><i class="fa fa-cog"></i> RRHH <i [ngClass]='configClass' class="fa fa-cog"></i>  </a></li>
-          <ul [hidden]="!perfilMenu" >
+          <li [hidden]="!AppRRHH" (click)="clickrrhhMenu()" ><a><i class="fa fa-cog"></i> RRHH <i [ngClass]='rrhhClass' class="fa fa-cog"></i>  </a></li>
+          <ul [hidden]="!rrhhMenu" >
             
             <a (click)="hideMenu()" [routerLink]="['/empleados']"><li><i class="fa fa-credit-card"></i> Empleados </li></a>
             <a (click)="hideMenu()" [routerLink]="['/accionpersonal']"><li><i class="fa fa-credit-card"></i> Accion Personal </li></a>
+            <a (click)="hideMenu()" [routerLink]="['/programacion']"><li><i class="fa fa-credit-card"></i> Programación </li></a>
             
           </ul>
 

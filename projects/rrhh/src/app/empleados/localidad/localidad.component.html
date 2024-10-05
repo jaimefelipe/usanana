@@ -1,3 +1,184 @@
-<p>
-  localidad works!
-</p>
+<div [hidden]="edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Localidad</h2>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+        </div>
+        <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+          placeholder="Buscar">
+        <div class="input-group-append">
+          <button class="btn btn-success" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
+              aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form>
+    <div class="form-row">
+
+      <div class="form-group col-12 col-sm-6" *ngFor="let Localidad of Localidades;let i = index">
+        <div class="card">
+          <a (click)="editRecord(Localidad)">
+            <div class="card-body">
+
+              <h4 class="card-title">{{Localidad.Localidad}}</h4>
+              
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="container-fluid">
+    <ul class="pagination">
+      <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"
+            aria-hidden="true"></i></a></li>
+    </ul>
+  </div>
+</div>
+
+<!--
+  Form de Edición
+-->
+
+<div [hidden]="!edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Localidad</h2>
+
+  <form>
+    <div class="form-row">
+      
+      <div class="form-group col-md-4">
+        <label>Codigo</label>
+        <input [(ngModel)]="Localidad.Codigo" name="Codigo" type="text" placeholder="Codigo" class="form-control">
+      </div>
+
+      <div class="form-group col-md-8">
+        <label>Localidad</label>
+        <input [(ngModel)]="Localidad.Localidad" name="Nombre" type="text" placeholder="Nombre" class="form-control">
+      </div>
+
+      <div class="form-group col-md-6">
+        <label>Cliente</label>
+        <div class="form-group col-md-12">
+          <div class="input-group">
+            <div class="input-group-append">
+              <button type="button" (click)="OpenClientePanel()" class="form-control btn btn-primary"><i
+                  class="fa fa-search"></i></button>
+            </div>
+            <input [(ngModel)]="Localidad.Cliente" disabled name="Cliente" id="Cliente" type="input"
+              class="form-control" placeholder="Cliente">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-md-6">
+        <label for="name">Provincia</label>
+        <select [(ngModel)]="Localidad.Provincia" (change)="ProvinciaChange()" name="Provincia" class="form-control">
+          <option value={{Province.Provincia}} *ngFor="let Province of Provinces;let i = index">
+            {{Province.Provincia_Nombre}}</option>
+        </select>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="name">Cantón </label>
+        <select [(ngModel)]="Localidad.Canton" (change)="CantonChange()" name="Canton" class="form-control">
+          <option value={{Canton.Canton}} *ngFor="let Canton of Cantons;let i = index">{{Canton.Canton_Nombre}}
+          </option>
+        </select>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="name">Distrito </label>
+        <select [(ngModel)]="Localidad.Distrito" name="Distrito" class="form-control">
+          <option value={{District.Distrito}} *ngFor="let District of Districts;let i = index">
+            {{District.Distrito_Nombre}}</option>
+        </select>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="name">Barrio</label>
+        <input [(ngModel)]="Localidad.Barrio" name="Barrio" type="text" class="form-control">
+      </div>
+      <div class="form-group col-md-6">
+        <label for="name">Dirección</label>
+        <input [(ngModel)]="Localidad.Direccion" name="Direccion" type="text" class="form-control">
+      </div>
+      <div class="form-group col-md-6">
+        <label for="name">Estado</label>
+        <select [(ngModel)]="Localidad.Estado" name="Estado" class="form-control">
+          <option value='1'>Activo</option>
+          <option value='2'>Inactivo</option>
+          
+        </select>
+      </div>
+   
+      
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-6 col-md-8">
+
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="grabar()" type="button" class="btn btn-success" title="Cancela edicion">Grabar</button>
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="cancel()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+</div>
+
+
+
+<!--Inicio Pantalla Clientes -->
+<div [hidden]="!PantallaClientes" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Seleccionar Empleado</h2>
+      <input [(ngModel)]="searchFieldClientes" (blur)="searchClientes()" (keydown)="keytabClientes($event)" type="text"
+        class="form-control" placeholder="Buscar">
+    </div>
+    <div class="card-body modal-grid">
+      <div class="form-row">
+        <div class="form-group col-12 col-sm-6" *ngFor="let Cliente of Clientes;let i = index">
+          <a (click)="SeleccionarCliente(Cliente)">
+            <div class="card">
+              <div class="card-body">
+                Contrato:{{Cliente.Otro_Documento}}
+                <h5>{{Cliente.Nombre}}</h5>
+                Id:{{Cliente.Identificacion}}, Tel:{{Cliente.Telefono}}
+                Estado :
+                <span *ngIf="Cliente.Estado == '1'" class="text-success"> Activo</span>
+                <span *ngIf="Cliente.Estado == '2'" class="text-warning"> Inactivo</span>
+                <span *ngIf="Cliente.Estado == '3'" class="text-warning"> Suspendido</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8 col-md-10">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="closePantallaClientes()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--Fin  Pantalla Empleados -->

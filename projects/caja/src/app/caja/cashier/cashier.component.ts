@@ -250,6 +250,7 @@ export class CashierComponent implements OnInit {
       if(localStorage.getItem('Id_Caja') == this.Caja.Id_Caja){
         this.PantallaArqueo = true;
         let data = await this.cashierService.cerrarCaja(this.Caja.Id_Caja);
+        let data1 = await this.cashierService.CerrarCierreDiario(this.Caja.Id_Caja_Diaria);
         localStorage.removeItem('Id_Caja');
         this.search();
         this.cancel();

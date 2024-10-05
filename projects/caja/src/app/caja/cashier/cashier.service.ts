@@ -179,4 +179,8 @@ export class CashierService {
     }
     return await this.apiService.executeSqlSyn(sqlConfig);
   }
+  async CerrarCierreDiario(Id_Caja_Diaria){
+    let sql = 'Update Ven_Caja_Diaria Set Cerrado_Por = '+ localStorage.getItem('Nombre_Usuario') +',Cerrado_El = Now() where Id_Caja_Diaria = ' + Id_Caja_Diaria;
+    return await this.apiService.postRecord(sql);
+  }
 }

@@ -11,7 +11,7 @@ export class RrhhService {
   async leerRRHH(Id_Persona){
     let sqlConfig = {
       table: 'Rhh_Empleado',
-      fields: 'Id_Empleado,Id_Persona,Fecha_Ingreso,Fecha_Salida,Tipo_Contrato,Jornada,Numero_Contrato,Salario_Mes,Salario_Mes',
+      fields: 'Id_Empleado,Id_Persona,Fecha_Ingreso,Fecha_Salida,Tipo_Contrato,Jornada,Numero_Contrato,Salario_Mes,Salario_Mes,Id_Roll,Nombre_Roll as Roll',
       orderField: '',
       searchField: '',
       where: "Id_Persona = " + Id_Persona
@@ -23,7 +23,7 @@ export class RrhhService {
     if(Persona.Id_Empleado == ""){
       let sql = {
         table: 'Rhh_Empleado',
-        fields: 'Id_Persona,Fecha_Ingreso,Fecha_Salida,Tipo_Contrato,Jornada,Numero_Contrato,Salario_Mes,Estado',
+        fields: 'Id_Persona,Fecha_Ingreso,Fecha_Salida,Tipo_Contrato,Jornada,Numero_Contrato,Salario_Mes,Estado,Id_Roll,Nombre_Roll',
         values: '\'' + Persona.Id_Persona
         + '\',\'' + Persona.Fecha_Ingreso
         + '\',\'' + Persona.Fecha_Salida
@@ -32,6 +32,8 @@ export class RrhhService {
         + '\',\'' + Persona.Numero_Contrato
         + '\',\'' + Persona.Salario_Mes
         + '\',\'' + Persona.Estado
+        + '\',\'' + Persona.Id_Roll
+        + '\',\'' + Persona.Roll
         + '\''
       };
       return await this.apiService.insertRecord(sql);
@@ -46,6 +48,9 @@ export class RrhhService {
         + '\',Numero_Contrato=\''+ Persona.Numero_Contrato
         + '\',Salario_Mes=\''+ Persona.Salario_Mes
         + '\',Estado=\''+ Persona.Estado
+        + '\',Id_Roll=\''+ Persona.Id_Roll
+        + '\',Nombre_Roll=\''+ Persona.Roll
+
         + '\'',
         where: 'Id_Persona=' + Persona.Id_Persona
       };

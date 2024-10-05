@@ -1,0 +1,378 @@
+<div [hidden]="edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Programación Semanal</h2>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+        </div>
+        <input [(ngModel)]="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+          placeholder="Buscar">
+        <div class="input-group-append">
+          <button class="btn btn-success" type="button" (click)="nuevaSemana()"><i class="fa fa-plus-circle"
+              aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form>
+    <div class="form-row">
+
+      <div class="form-group col-12 col-sm-6" *ngFor="let Semana of Semanas;let i = index">
+        <div class="card">
+          <a (click)="editRecord(Semana)">
+            <div class="card-body">
+              <h4 class="card-title">{{Semana.Anio}} - {{Semana.Mes}} - {{Semana.Semana}}</h4>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="container-fluid">
+    <ul class="pagination">
+      <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"
+            aria-hidden="true"></i></a></li>
+    </ul>
+  </div>
+</div>
+
+
+
+<!--
+    Form de Edición
+  -->
+  
+  <div [hidden]="!pantallaNuevaSemana" class="container pb-5">
+    <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+    <h2>Generar Programacion Semanal</h2>
+  
+    <form>
+      <div class="form-row">
+        
+        <div class="form-group col-md-4">
+          <label>Año</label>
+          <input [(ngModel)]="Semana.Anio" name="Anio" type="text" placeholder="Año" class="form-control">
+        </div>
+        
+
+        <div class="form-group col-md-4">
+          <label>Mes</label>
+          <select [(ngModel)]="Semana.Mes" name="Mes" type="text" class="form-control">
+            <option value='1'>Enero</option>
+            <option value='2'>Febrero</option>
+            <option value='3'>Marzo</option>
+            <option value='4'>Abril</option>
+            <option value='5'>Mayo</option>
+            <option value='6'>Junio</option>
+            <option value='7'>Julio</option>
+            <option value='8'>Agosto</option>
+            <option value='9'>Setiembre</option>
+            <option value='10'>Octubre</option>
+            <option value='11'>Noviembre</option>
+            <option value='12'>Diciembre</option>
+            <option value='13'>Cierre</option>
+          </select>
+        </div>
+        <div class="form-group col-md-4">
+          <label>Semana </label>
+          <select [(ngModel)]="Semana.Semana" name="Semana" type="text" class="form-control">
+            <option value='1'>1</option>
+            <option value='2'>2</option>
+            <option value='3'>3</option>
+            <option value='4'>4</option>
+            <option value='5'>5</option>
+          </select>
+        </div>
+        <div class="form-group col-md-12">
+          <div class="form-row">
+            <div class="form-group col-6 col-md-8">
+  
+            </div>
+            <div class="form-group col-3 col-md-2">
+              <button (click)="generarSemana()" type="button" class="btn btn-success" title="Cancela edicion">Grabar</button>
+            </div>
+            <div class="form-group col-3 col-md-2">
+              <button (click)="cancelarSemana()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  
+  </div>
+  
+  <!--
+    Grid de empleados de la semana 
+  -->
+
+  <div [hidden]="!pantallaEditSemana" class="container pb-5">
+    <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+    <h2>Editar Semana </h2>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+          </div>
+          <input [(ngModel)]="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+            placeholder="Buscar">
+          <div class="input-group-append">
+            <button class="btn btn-success" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
+                aria-hidden="true"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <form>
+      <div class="form-row">
+  
+        <div class="form-group col-12" *ngFor="let Empleado of Empleados;let i = index">
+          <div class="card">
+            <a (click)="editarEmpleado(Empleado)">
+              
+              <div class="card-body">
+                {{Empleado.Nombre}} - {{Empleado.Roll}}
+                <span *ngIf="Empleado.Lunes == '1'" class=""> L: {{Empleado.Inicio_Lunes}}-{{Empleado.Fin_Lunes}}</span>
+                <span *ngIf="Empleado.Lunes == '2'" class="text-success"> L: Libre</span>
+                <span *ngIf="Empleado.Lunes == '3'" class="text-primary"> L: {{Empleado.Inicio_Lunes}}-{{Empleado.Fin_Lunes}} </span>
+                
+                <span *ngIf="Empleado.Martes == '1'" class=""> K: {{Empleado.Inicio_Martes}}-{{Empleado.Fin_Martes}}</span>
+                <span *ngIf="Empleado.Martes == '2'" class="text-success"> K: Libre</span>
+                <span *ngIf="Empleado.Martes == '3'" class="text-primary"> K: {{Empleado.Inicio_Martes}}-{{Empleado.Fin_Martes}} </span>
+
+                <span *ngIf="Empleado.Miercoles == '1'" class=""> M: {{Empleado.Inicio_Miercoles}}-{{Empleado.Fin_Miercoles}}</span>
+                <span *ngIf="Empleado.Miercoles == '2'" class="text-success"> M: Libre</span>
+                <span *ngIf="Empleado.Miercoles == '3'" class="text-primary"> M: {{Empleado.Inicio_Miercoles}}-{{Empleado.Fin_Miercoles}} </span>
+
+                <span *ngIf="Empleado.Jueves == '1'" class=""> J: {{Empleado.Inicio_Jueves}}-{{Empleado.Fin_Jueves}}</span>
+                <span *ngIf="Empleado.Jueves == '2'" class="text-success"> J: Libre</span>
+                <span *ngIf="Empleado.Jueves == '3'" class="text-primary"> J: {{Empleado.Inicio_Jueves}}-{{Empleado.Fin_Jueves}} </span>
+
+                <span *ngIf="Empleado.Viernes == '1'" class=""> V: {{Empleado.Inicio_Viernes}}-{{Empleado.Fin_Viernes}}</span>
+                <span *ngIf="Empleado.Viernes == '2'" class="text-success"> V: Libre</span>
+                <span *ngIf="Empleado.Viernes == '3'" class="text-primary"> V: {{Empleado.Inicio_Viernes}}-{{Empleado.Fin_Viernes}} </span>
+
+                <span *ngIf="Empleado.Sabado == '1'" class=""> S: {{Empleado.Inicio_Sabado}}-{{Empleado.Fin_Sabado}}</span>
+                <span *ngIf="Empleado.Sabado == '2'" class="text-success"> S: Libre</span>
+                <span *ngIf="Empleado.Sabado == '3'" class="text-primary"> S: {{Empleado.Inicio_Sabado}}-{{Empleado.Fin_Sabado}} </span>
+
+                <span *ngIf="Empleado.Domingo == '1'" class=""> D: {{Empleado.Inicio_Domingo}}-{{Empleado.Fin_Domingo}}</span>
+                <span *ngIf="Empleado.Domingo == '2'" class="text-success"> D: Libre</span>
+                <span *ngIf="Empleado.Domingo == '3'" class="text-primary"> D: {{Empleado.Inicio_Domingo}}-{{Empleado.Fin_Domingo}} </span>
+
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </form>
+  
+    <div class="container-fluid">
+      <ul class="pagination">
+        <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"
+              aria-hidden="true"></i></a></li>
+        <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"
+              aria-hidden="true"></i></a></li>
+        <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"
+              aria-hidden="true"></i></a></li>
+      </ul>
+    </div>
+
+    <div class="form-group col-md-12">
+      <div class="form-row">
+        <div class="form-group col-6 col-md-8">
+          <button (click)="generarExcell()" type="button" class="btn btn-danger" title="Generar Excell">Excell</button>
+        </div>
+        
+        <div class="form-group col-3 col-md-2">
+          <button (click)="cancelarEdicionSemana()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+  
+
+    <!--
+   Editar empleado
+  -->
+
+  <div [hidden]="!PantallaEditarEmpleado" class="container pb-5">
+    <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+    <h2>Editar información del Colaborador</h2>
+  
+    <form>
+      <div class="form-row">
+        
+        <div class="form-group col-md-4">
+          <label>Empleado</label>
+          <input [(ngModel)]="Empleado.Nombre" disabled="disabled" name="Codigo" type="text" placeholder="Codigo" class="form-control">
+        </div>
+  
+        <div class="form-group col-md-8">
+          <label>Roll</label>
+          <input [(ngModel)]="Empleado.Roll" disabled="Disabled" name="Nombre" type="text" placeholder="Nombre" class="form-control">
+        </div>
+          <!-- -->
+        <div class="form-group col-md-4">
+          <label for="name">Lunes</label>
+          <select [(ngModel)]="Empleado.Lunes" name="Lunes" class="form-control">
+            <option value='1'>Ordinario</option>
+            <option value='2'>Libre</option>
+            <option value='3'>Extraordinario</option>
+          </select>
+        </div>
+  
+        <div *ngIf="Empleado.Lunes != '2'" class="form-group col-md-4">
+          <label for="name">Hora Inicio Lunes</label>
+          <input [(ngModel)]="Empleado.Inicio_Lunes"  name="Inicio_Lunes" type="time" placeholder="Inicio_Lunes" class="form-control">
+        </div>
+        <div *ngIf="Empleado.Lunes != '2'" class="form-group col-md-4">
+          <label for="name">Hora Fin Lunes</label>
+          <input [(ngModel)]="Empleado.Fin_Lunes" name="Fin_Lunes" type="time" placeholder="Fin_Lunes" class="form-control">
+        </div>
+        <div *ngIf="Empleado.Lunes == '2'" class="form-group col-md-8"></div>
+        
+         <!-- -->
+         <div class="form-group col-md-4">
+          <label for="name">Martes</label>
+          <select [(ngModel)]="Empleado.Martes" name="Martes" class="form-control">
+            <option value='1'>Ordinario</option>
+            <option value='2'>Libre</option>
+            <option value='3'>Extraordinario</option>
+          </select>
+        </div>
+  
+        <div *ngIf="Empleado.Martes != '2'" class="form-group col-md-4">
+          <label for="name">Hora Inicio Martes</label>
+          <input [(ngModel)]="Empleado.Inicio_Martes"  name="Inicio_Martes" type="time" placeholder="Inicio_Martes" class="form-control">
+        </div>
+        <div *ngIf="Empleado.Martes != '2'" class="form-group col-md-4">
+          <label for="name">Hora Fin Martes</label>
+          <input [(ngModel)]="Empleado.Fin_Martes" name="Fin_Martes" type="time" placeholder="Fin_Martes" class="form-control">
+        </div>
+        <div *ngIf="Empleado.Martes == '2'" class="form-group col-md-8"></div>
+  
+        <!-- -->
+        <div class="form-group col-md-4">
+          <label for="name">Miercoles</label>
+          <select [(ngModel)]="Empleado.Miercoles" name="Miercoles" class="form-control">
+            <option value='1'>Ordinario</option>
+            <option value='2'>Libre</option>
+            <option value='3'>Extraordinario</option>
+          </select>
+        </div>
+        <div *ngIf="Empleado.Miercoles != '2'" class="form-group col-md-4">
+          <label for="name">Hora Inicio Miercoles</label>
+          <input [(ngModel)]="Empleado.Inicio_Miercoles"  name="Inicio_Miercoles" type="time" placeholder="Inicio_Miercoles" class="form-control">
+        </div>
+        <div *ngIf="Empleado.Miercoles != '2'" class="form-group col-md-4">
+          <label for="name">Hora Fin Miercoles</label>
+          <input [(ngModel)]="Empleado.Fin_Miercoles" name="Fin_Miercoles" type="time" placeholder="Fin_Miercoles" class="form-control">
+        </div>
+        <div *ngIf="Empleado.Miercoles == '2'" class="form-group col-md-8"></div>
+  
+        <!-- -->
+        <div class="form-group col-md-4">
+          <label for="name">Jueves</label>
+          <select [(ngModel)]="Empleado.Jueves" name="Jueves" class="form-control">
+            <option value='1'>Ordinario</option>
+            <option value='2'>Libre</option>
+            <option value='3'>Extraordinario</option>
+          </select>
+        </div>
+        <div *ngIf="Empleado.Jueves != '2'" class="form-group col-md-4">
+          <label for="name">Hora Inicio Jueves</label>
+          <input [(ngModel)]="Empleado.Inicio_Jueves"  name="Inicio_Jueves" type="time" placeholder="Inicio_Jueves" class="form-control">
+        </div>
+        <div *ngIf="Empleado.Jueves != '2'" class="form-group col-md-4">
+          <label for="name">Hora Fin Jueves</label>
+          <input [(ngModel)]="Empleado.Fin_Jueves" name="Fin_Jueves" type="time" placeholder="Fin_Jueves" class="form-control">
+        </div>
+        <div *ngIf="Empleado.Jueves == '2'" class="form-group col-md-8"></div>
+  
+        <!-- -->
+        <div class="form-group col-md-4">
+          <label for="name">Viernes</label>
+          <select [(ngModel)]="Empleado.Viernes" name="Jueves" class="form-control">
+            <option value='1'>Ordinario</option>
+            <option value='2'>Libre</option>
+            <option value='3'>Extraordinario</option>
+          </select>
+        </div>
+        <div *ngIf="Empleado.Viernes != '2'" class="form-group col-md-4">
+          <label for="name">Hora Inicio Viernes</label>
+          <input [(ngModel)]="Empleado.Inicio_Viernes"  name="Inicio_Viernes" type="time" placeholder="Inicio_Viernes" class="form-control">
+        </div>
+        <div *ngIf="Empleado.Viernes != '2'" class="form-group col-md-4">
+          <label for="name">Hora Fin Viernes</label>
+          <input [(ngModel)]="Empleado.Fin_Viernes" name="Fin_Viernes" type="time" placeholder="Fin_Viernes" class="form-control">
+        </div>
+        <div *ngIf="Empleado.Viernes == '2'" class="form-group col-md-8"></div>
+  
+         <!-- -->
+         <div class="form-group col-md-4">
+          <label for="name">Sabado</label>
+          <select [(ngModel)]="Empleado.Sabado" name="Sabado" class="form-control">
+            <option value='1'>Ordinario</option>
+            <option value='2'>Libre</option>
+            <option value='3'>Extraordinario</option>
+          </select>
+        </div>
+        <div *ngIf="Empleado.Sabado != '2'" class="form-group col-md-4">
+          <label for="name">Hora Inicio Sabado</label>
+          <input [(ngModel)]="Empleado.Inicio_Sabado"  name="Inicio_Sabado" type="time" placeholder="Inicio_Sabado" class="form-control">
+        </div>
+        <div *ngIf="Empleado.Sabado != '2'" class="form-group col-md-4">
+          <label for="name">Hora Fin Sabado</label>
+          <input [(ngModel)]="Empleado.Fin_Sabado" name="Fin_Sabado" type="time" placeholder="Fin_Sabado" class="form-control">
+        </div>
+        <div *ngIf="Empleado.Sabado == '2'" class="form-group col-md-8"></div>
+  
+        <!-- -->
+        <div class="form-group col-md-4">
+          <label for="name">Domingo</label>
+          <select [(ngModel)]="Empleado.Domingo" name="Sabado" class="form-control">
+            <option value='1'>Ordinario</option>
+            <option value='2'>Libre</option>
+            <option value='3'>Extraordinario</option>
+          </select>
+        </div>
+        <div *ngIf="Empleado.Domingo != '2'" class="form-group col-md-4">
+          <label for="name">Hora Inicio Domingo</label>
+          <input [(ngModel)]="Empleado.Inicio_Domingo"  name="Inicio_Domingo" type="time" placeholder="Inicio_Domingo" class="form-control">
+        </div>
+        <div *ngIf="Empleado.Domingo != '2'" class="form-group col-md-4">
+          <label for="name">Hora Fin Domingo</label>
+          <input [(ngModel)]="Empleado.Fin_Domingo" name="Fin_Domingo" type="time" placeholder="Fin_Domingo" class="form-control">
+        </div>
+        <div *ngIf="Empleado.Domingo == '2'" class="form-group col-md-8"></div>
+  
+  
+        
+        <div class="form-group col-md-12">
+          <div class="form-row">
+            <div class="form-group col-6 col-md-8">
+  
+            </div>
+            <div class="form-group col-3 col-md-2">
+              <button (click)="grabarEmpleado()" type="button" class="btn btn-success" title="Cancela edicion">Grabar</button>
+            </div>
+            <div class="form-group col-3 col-md-2">
+              <button (click)="CerrarPantallaEditarEmpleado()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  
+  </div>
+  

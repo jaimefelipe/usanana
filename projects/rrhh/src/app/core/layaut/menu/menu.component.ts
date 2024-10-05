@@ -23,17 +23,19 @@ export class MenuComponent implements OnInit {
   AppServices = false;
   AppConfiguracion = false;
   AppSeguridad = false;
-  AppRRHH = false;
+  AppRRHH = true;
   EsAPP = false;
 
 
   UserMenu = [];
   perfilMenu = false;
+  rrhhMenu = false;
 
 
   deferredPrompt: any;
   showButton = true;
   configClass = 'fa fa-arrow-right';
+  rrhhClass ='fa fa-arrow-right';
 
 
   //Obtener los Datos del Usuario
@@ -93,7 +95,15 @@ export class MenuComponent implements OnInit {
       this.configClass = 'fa fa-arrow-left';
     }
   }
- 
+  clickrrhhMenu(){
+    this.rrhhMenu = !this.rrhhMenu;
+    if(this.rrhhClass  == 'fa fa-arrow-left'){
+      this.rrhhClass = 'fa fa-arrow-right';
+    }else{
+      this.rrhhClass = 'fa fa-arrow-left';
+    }
+  }
+
   logOut(){
     localStorage.setItem('isLoggedin','false');
     localStorage.removeItem('Id_Empresa');

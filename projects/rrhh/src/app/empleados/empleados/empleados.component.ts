@@ -65,7 +65,8 @@ export class EmpleadosComponent implements OnInit {
     Cliente:'',
     Alumno:'',
     Profesor:'',
-    Estado:'',
+    Empleado:'1',
+    Estado:'1',
     Otro_Documento:'',
     Condicion_Venta:'',
     Plazo_Credito:'',
@@ -101,8 +102,9 @@ export class EmpleadosComponent implements OnInit {
     Tipo_Contrato:'',
     Jornada:'',
     Numero_Contrato:'',
-    Salario_Mes:''
-
+    Salario_Mes:'',
+    Id_Roll:'',
+    Roll:''
   }
 
   ngOnInit(): void {
@@ -232,7 +234,8 @@ export class EmpleadosComponent implements OnInit {
         Cliente:'',
         Alumno:'',
         Profesor:'',
-        Estado:'',
+        Empleado:'1',
+        Estado:'1',
         Otro_Documento:'',
         Condicion_Venta:'',
         Plazo_Credito:'',
@@ -268,7 +271,9 @@ export class EmpleadosComponent implements OnInit {
         Tipo_Contrato:'',
         Jornada:'',
         Numero_Contrato:'',
-        Salario_Mes:''
+        Salario_Mes:'',
+        Id_Roll:'',
+        Roll:''
       }
     }
   }
@@ -291,6 +296,8 @@ export class EmpleadosComponent implements OnInit {
         this.Persona.Numero_Contrato = dataRrhh['data'][0]['Numero_Contrato'];
         this.Persona.Salario_Mes = dataRrhh['data'][0]['Salario_Mes'];
         this.Persona.Estado = dataRrhh['data'][0]['Estado'];
+        this.Persona.Id_Roll = dataRrhh['data'][0]['Id_Roll'];
+        this.Persona.Roll = dataRrhh['data'][0]['Roll'];
         let fechaIngresoArr = this.Persona.Fecha_Ingreso.split('-');
         this.Persona.Fecha_I = {
           month: parseInt(fechaIngresoArr[1]),
@@ -320,6 +327,7 @@ export class EmpleadosComponent implements OnInit {
    async grabar(){
     this.Persona.Fecha_Ingreso = this.Persona.Fecha_I.year + '/' + this.Persona.Fecha_I.month + '/' + this.Persona.Fecha_I.day;
     this.Persona.Fecha_Salida = this.Persona.Fecha_S.year + '/' + this.Persona.Fecha_S.month + '/' + this.Persona.Fecha_S.day;
+    this.Persona.Empleado = '1';
     if(this.Persona.Nombre == ""){
       Swal.fire('Favor Suministrar el nombre del Cliente');
       return false;
@@ -327,6 +335,7 @@ export class EmpleadosComponent implements OnInit {
     //this.Persona.Fecha_Ingreso = this.Fecha.day + '-' + this.Fecha.month + '-' + this.Fecha.year;
     let data = await this.contactoService.savePersona(this.Persona);
     if(data['success'] =='true'){
+      this.Persona.Id_Empleado = data['data'][0]['Identity'];
       Swal.fire('Empleado grabado correctamente');
       this.loadPersonas(this.searchField);
       this.edit = false;

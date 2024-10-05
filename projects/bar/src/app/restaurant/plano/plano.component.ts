@@ -849,9 +849,11 @@ export class PlanoComponent implements OnInit {
     this.cerrarPantallaClave();
     if(data['total'] == 0){
       Swal.fire('Clave de Supervisor Incorrecta');
+      return false;
     }else{
       this.Precio  = '';
       this.PantallaEditarPrecio = true;
+      return true;
     }
   }
 
