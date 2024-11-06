@@ -26,7 +26,7 @@ export class CategoryService {
     if(category.Id_Categoria ==""){
       let sql = {
         table: 'Inv_Categoria',
-        fields: 'Nombre,Id_Tipo,Id_Cuenta_Contable_Compras,Id_Cuenta_Contable_Ventas,Codigo_Actividad,Utilidad,Cocina,Servicio,Estado',
+        fields: 'Nombre,Id_Tipo,Id_Cuenta_Contable_Compras,Id_Cuenta_Contable_Ventas,Codigo_Actividad,Utilidad,Cocina,Servicio,Estado,Toma_Fisica',
         values: '\'' + category.Nombre
         + '\',\'' + category.Id_Tipo
         + '\',\'' + category.Id_Cuenta_Contable_Compras
@@ -35,7 +35,8 @@ export class CategoryService {
         + '\',\'' + category.Utilidad
         + '\',\'' + category.Cocina
         + '\',\'' + category.Servicio
-        + '\',\'' + category.Estado + '\''
+        + '\',\'' + category.Estado 
+        + '\',\'' + category.Toma_Fisica + '\''
       };
       return await this.apiService.insertRecord(sql);
     }else{
@@ -49,7 +50,8 @@ export class CategoryService {
         + '\',Utilidad=\'' + category.Utilidad
         + '\',Cocina=\'' + category.Cocina
         + '\',Servicio=\'' + category.Servicio
-        + '\',Estado=\''+ category.Estado  + '\'',
+        + '\',Estado=\''+ category.Estado
+        + '\',Toma_Fisica=\''+ category.Toma_Fisica  + '\'',
         where: 'Id_Categoria=' + category.Id_Categoria
       };
       return await this.apiService.updateRecord(sql);

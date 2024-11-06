@@ -188,7 +188,7 @@ export class PlanoComponent implements OnInit {
     Correo: "",
     Identificacion: "",
     Tipo_Identificacion: "",
-    Condicion_Venta: "",
+    Condicion_Venta: "01",
     Plazo_Credito: "",
     Metodo_Pago: "",
     Estado: "",
@@ -845,6 +845,10 @@ export class PlanoComponent implements OnInit {
     this.PantallaPedirClave = false;
   }
   async validarClaveSupervisor(){
+    if(this.ClaveSupervisor == ''){
+      Swal.fire('Suministre la clave de supervisor');
+      return false;
+    }
     let data = await this.restaurantOrderService.LoadSupervisor(this.ClaveSupervisor);
     this.cerrarPantallaClave();
     if(data['total'] == 0){

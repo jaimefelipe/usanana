@@ -22,7 +22,7 @@
     but hey, it's pure CSS magic.
     -->
       <ul  [hidden]="!showMenu" id="menu">
-        <a (click)="hideMenu()" [routerLink]="['/']"><li><i class="fa fa-home"></i> Inicio {{ambiente}} 2.5.15</li></a>
+        <a (click)="hideMenu()" [routerLink]="['/']"><li><i class="fa fa-home"></i> Inicio {{ambiente}} 2.5.16</li></a>
         <div [hidden]="!logedIn">
 
           <li [hidden]="!AppConfiguracion" (click)="clickPerfilMenu()" ><a><i class="fa fa-cog"></i> Configuración <i [ngClass]='configClass' class="fa fa-cog"></i>  </a></li>
@@ -41,6 +41,7 @@
             <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/articulos']"><li><i class="fa fa-shopping-basket"></i> Artículos</li></a>
             <a (click)="hideMenu()" [hidden]="!AppInventario" [routerLink]="['/movinventario']"><li><i class="fa fa-align-justify"></i> Movimientos</li></a>
             <a (click)="hideMenu()" [hidden]="!AppInventario" [routerLink]="['/invmovdetail']"><li><i class="fa fa-align-justify"></i> Detalle Movimientos</li></a>
+            <a (click)="hideMenu()" [hidden]="!AppInventario" [routerLink]="['/tomafisica']"><li><i class="fa fa-align-justify"></i> Toma Fisica</li></a>
             <a (click)="hideMenu()" [hidden]="!AppInventario" [routerLink]="['/repinventario']"><li><i class="fa fa-file"></i> Reportes</li></a>
             
           </ul>

@@ -1,52 +1,64 @@
-<div [hidden]="edit" class="container pb-5 pt-2">
-  <div class="row">
-    <div class="col-8">
-      <select [(ngModel)]="Tarea.Tipo" name="Tipo" type="text" class="form-control">
-        <option value='1'>Prospeccion</option>
-        <option value='2'>Seguimiento Cliente</option>
-        <option value='3'>Planeacion</option>
-        <option value='4'>Desarrollo</option>
-        <option value='5'>Reunion</option>
-      </select>
-    </div>
+<div [hidden]="edit" class="container-fluid pb-5 pt-2">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Tareas</h2>
+  <div class="container-fluid">
+    <div class="row">
     
-
-    <div class="input-group-append">
-      <button class="btn btn-primary" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
-        aria-hidden="true"></i></button>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <!--
+          <select [(ngModel)]="Tarea.Tipo" name="Tipo" type="text" class="form-control">
+            <option value='1'>Prospeccion</option>
+            <option value='2'>Seguimiento Cliente</option>
+            <option value='3'>Planeacion</option>
+            <option value='4'>Desarrollo</option>
+            <option value='5'>Reunion</option>
+          </select>
+          -->
+          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+        </div>
+        <input [(ngModel)]="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+          placeholder="Buscar">
+        <div class="input-group-append">
+          <button class="btn btn-success" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
+              aria-hidden="true"></i></button>
+        </div>
+      </div>
     </div>
-
   </div>
+
   <form *ngIf="TareasVencidas.length > 0">
     <h4>VENCIDAS</h4>
     <div class="form-row">
-      <div class="form-group col-12 col-sm-6" *ngFor="let Tarea of TareasVencidas;let i = index">
+      <div class="form-group col-12" *ngFor="let Tarea of TareasVencidas;let i = index">
         <div class="card p-1">
           <div class="row">  
-            <a class="col-11 text-danger" (click)="editRecord(Tarea)">
-               <div>{{Tarea.Tarea}} </div>
-               {{Tarea.Inicio | date:'dd MMM yyy hh:mm'}}
+            <a class="col-11" (click)="editRecord(Tarea)">
+               <span class="text-danger">{{Tarea.Tarea}} </span> 
+               {{Tarea.Inicio | date:'dd MMM yyy hh:mm'}}  
+               <span *ngIf="Tarea.Estado == '1'" class="text-primary"> Pendiente</span>
+               <span *ngIf="Tarea.Estado == '2'" class="text-primary"> Inicida</span>
+               <span *ngIf="Tarea.Estado == '3'" class="text-primary"> En Proceso</span>
+               <span *ngIf="Tarea.Estado == '4'" class="text-primary"> Suspendida</span>
+               <span *ngIf="Tarea.Estado == '5'" class="text-primary"> Terminada</span>
             </a>
-            <div class="input-group-append">
-              <div class="col-1"><input type="radio" class="form-check-input" name="{{Tarea.Id_Tarea}}" (change)="terminarTarea(Tarea)"></div>
-            </div>
+            
           </div>
         </div>
       </div>
     </div>
   </form>
+
+
   <form *ngIf="TareasHoy.length > 0">
     <h4>HOY</h4>
     <div class="form-row">
-      <div class="form-group col-12 col-sm-6" *ngFor="let Tarea of TareasHoy;let i = index">
+      <div class="form-group col-12" *ngFor="let Tarea of TareasHoy;let i = index">
         <div class="card p-1">
           <div class="row">  
             <a class="col-11 text-primary" (click)="editRecord(Tarea)">
                <div>{{Tarea.Tarea}} </div>
             </a>
-            <div class="input-group-append">
-              <div class="col-1"><input type="radio" class="form-check-input" name="{{Tarea.Id_Tarea}}" (change)="terminarTarea(Tarea)"></div>
-            </div>
           </div>
         </div>
       </div>
@@ -55,7 +67,7 @@
   <form *ngIf="TareasManana.length > 0">
     <h4>MAÑANA </h4>
     <div class="form-row">
-      <div class="form-group col-12 col-sm-6" *ngFor="let Tarea of TareasManana;let i = index">
+      <div class="form-group col-12" *ngFor="let Tarea of TareasManana;let i = index">
         <div class="card p-1">
           <div class="row">  
             <a class="col-11 text-primary" (click)="editRecord(Tarea)">
@@ -73,15 +85,13 @@
   <form *ngIf="Tareas.length > 0">
     <h4>SIN FECHA</h4>
     <div class="form-row">
-      <div class="form-group col-12 col-sm-6" *ngFor="let Tarea of Tareas;let i = index">
+      <div class="form-group col-12" *ngFor="let Tarea of Tareas;let i = index">
         <div class="card p-1">
           <div class="row">  
             <a class="col-11 text-dark" (click)="editRecord(Tarea)">
                <div>{{Tarea.Tarea}} </div>
             </a>
-            <div class="input-group-append">
-              <div class="col-1"><input type="radio" class="form-check-input" name="{{Tarea.Id_Tarea}}" (change)="terminarTarea(Tarea)"></div>
-            </div>
+            
           </div>
         </div>
       </div>
@@ -229,6 +239,7 @@
           </div>
     
           <div class="form-group col-md-3">
+            <label>Estado</label>
             <select [(ngModel)]="Tarea.Estado" name="Estado" type="text" class="form-control">
               <option value='1'>Pendiente</option>
               <option value='2'>Iniciada</option>
@@ -237,12 +248,12 @@
               <option value='5'>Terminada</option>
             </select>
           </div>
-          <div class="form-group col-2">
+          <div class="form-group col-3">
             <label>Avance</label>
             <input [(ngModel)]="Tarea.Avance" name="Avance" type="numeric" placeholder="Avance" class="form-control">
     
           </div>
-          <div class="form-group col-5">
+          <div class="form-group col-3">
             <label>Fecha Inicio</label>
             <div class="input-group">
               <input class="form-control" placeholder="Inicio" name="Inicio" [(ngModel)]="FechaInicio" ngbDatepicker
@@ -253,7 +264,7 @@
             </div>
           </div>
     
-          <div class="form-group col-5">
+          <div class="form-group col-3">
             <label>Fecha Fin</label>
             <div class="input-group">
               <input class="form-control" placeholder="Fin" name="Fin" [(ngModel)]="FechaFin" ngbDatepicker

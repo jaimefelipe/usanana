@@ -4,6 +4,7 @@ import { PuestoService } from '../puesto/puesto.service';
 import { DepartamentoService } from '../departamento/departamento.service';
 import { AccionPersonalService } from './accion-personal.service';
 import { RrhhService } from '../rrhh/rrhh.service';
+import { RollService } from '../roll/roll.service';
 
 import { NgbDateFRParserFormatter } from '../../../../../core/src/app/_services/ngb-date-fr-parser-formatter';
 import { NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
@@ -22,15 +23,18 @@ export class AccionPersonalComponent implements OnInit {
     private puestoService:PuestoService,
     private departamentoService:DepartamentoService,
     private AccionPersonalService:AccionPersonalService,
-    private rrhhService:RrhhService
+    private rrhhService:RrhhService,
+    private rollService:RollService
   ) { }
 
   edit = false;
   PantallaEmpleados = false;
   PantallaPuestos = false;
   PantallaDepartamentos = false;
+  PantallaRoles = false;
 
   hoy = new Date();
+  
 
   searchField = '';
   searchFieldEmpleados = '';
@@ -72,16 +76,27 @@ export class AccionPersonalComponent implements OnInit {
     Fecha_Fin:'',
     Puesto_Anterior:'',
     Departamento_Anterior:'',
-    Salario_Anterior:''
+    Salario_Anterior:'',
+    Tipo_Contrato:'',
+    Tipo_Contrato_Old:'',
+    Jornada:'',
+    Jornada_Old:'',
+    Id_Roll:'',
+    Nombre_Roll:'',
+    Fecha_Ingreso:'',
+    Fecha_Salida:'',
+    Estado:'0'
   }
 
   Acciones = [];
   Empleados = [];
   Puestos = [];
   Departamentos = [];
+  Roles = [];
 
   ngOnInit() {
     this.leerAcciones();
+    this.leerRoles();
   }
   search(){
     this.leerAcciones();
@@ -96,6 +111,15 @@ export class AccionPersonalComponent implements OnInit {
   searchDepartamentos(){
     this.leerDepartamentos();
   }
+  searchRolles(){
+    this.leerRoles();
+  }
+  keytabRoles(event:any){
+    if (event.key === 'Enter') {
+      this.searchRolles();
+    }
+  }
+
   keytab(event:any){
     if (event.key === 'Enter') {
       this.search();
@@ -162,12 +186,23 @@ export class AccionPersonalComponent implements OnInit {
         Fecha_Fin:'',
         Puesto_Anterior:'',
         Departamento_Anterior:'',
-        Salario_Anterior:''
+        Salario_Anterior:'',
+        Tipo_Contrato:'',
+        Tipo_Contrato_Old:'',
+        Jornada:'',
+        Jornada_Old:'',
+        Id_Roll:'',
+        Nombre_Roll:'',
+        Fecha_Ingreso:'',
+        Fecha_Salida:'',
+        Estado:'0'
       }
     }else{
+      
       let data = await this.AccionPersonalService.leerAccion(e.Id_Accion_Personal);
       if(data['total'] == 1){
         this.Accion = data['data'][0];
+        this.Accion.Id_Accion_Personal = e.Id_Accion_Personal;
         if(this.Accion.Fecha_Accion){
           let fechaAccionArr = this.Accion.Fecha_Accion.split('-');
           this.Fecha_Accion = {
@@ -226,7 +261,9 @@ export class AccionPersonalComponent implements OnInit {
       }
     }
     let data = await this.AccionPersonalService.grabarAccion(this.Accion);
-    this.Accion.Id_Accion_Personal = data['data'][0]['Identity'];
+    if(this.Accion.Id_Accion_Personal == ''){
+      this.Accion.Id_Accion_Personal = data['data'][0]['Identity'];
+    }
     Swal.fire({
       title: 'Desea Aplicar la Accion?',
       text: "Si aplica la accion no le podra realizar ninún cambio!",
@@ -316,26 +353,55 @@ export class AccionPersonalComponent implements OnInit {
   }
   async aplicarAccion(){
     //Consultar si existe el registro del empleado.
-    let Empleado =  {
-      Id_Persona:this.Accion.Id_Persona,
-      Numero_Contrato:this.Accion.Id_Accion_Personal,
-      Salario_Mes:this.Accion.Salario,
-      Estado:'1',
-      Fecha_Ingreso:this.Accion.Fecha_Inicio,
-      Fecha_Salida:'',
-      Tipo_Contrato:'',
-      Jornada:''
-    }
+    let Estado = '1';
     //Accion de Nombramiento
     if(this.Accion.Tipo_Accion == '1'){
-      Empleado.Fecha_Ingreso = this.Accion.Fecha_Inicio;
-      Empleado.Estado = '1';
+      Estado = '1';
     }
     //Accion de Vacaciones
     if(this.Accion.Tipo_Accion == '2'){
-      Empleado.Estado = '2';
+      Estado = '2';
     }
+    let data = await this.AccionPersonalService.AplicarAccion(this.Accion);
+    data = await this.AccionPersonalService.actualizarEstado(this.Accion.Id_Persona,Estado);
+    if(this.Accion.Tipo_Accion == '1'){
+      data = await this.AccionPersonalService.ActualizarFechaIngreso(this.Accion.Id_Persona,this.Accion.Fecha_Inicio);
+    }
+    if(this.Accion.Tipo_Accion == '6' || this.Accion.Tipo_Accion == '7')   {
+      data = await this.AccionPersonalService.ActualizarFechaIngreso(this.Accion.Id_Persona,this.Accion.Fecha_Inicio);
+    }
+    await this.AccionPersonalService.actualizarEstadoAccion(this.Accion.Id_Accion_Personal);
+  }
 
+  openRollPanel(){
+    this.PantallaRoles = true;
+  }
+
+  SeleccionarRoll(roll){
+    this.Accion.Nombre_Roll = roll.Nombre;
+    this.Accion.Id_Roll = roll.Id_Roll;
+    this.closePantallaRoles();
+  }
+  closePantallaRoles(){
+    this.PantallaRoles = false;
+  }
+  async leerRoles(){
+    let paginacion = {
+      FirstRow: 1,
+      LastRow: 50,
+      TotalRows: 0
+    };
+    let data = await this.rollService.loadRolles(paginacion,this.searchField);
+    if(data['total'] == 0){
+      this.Roles = [];
+    }else{
+      this.Roles = data['data'];
+    }
+    
+  }
+  imprimir(){
+    let Param = localStorage.getItem('Id_Empresa')+'&c='+this.Accion.Id_Accion_Personal;
+    window.open('https://toxo.work/reportes/rrhh/accion-personal.php?Id=' + Param, '_blank');
   }
    
 }

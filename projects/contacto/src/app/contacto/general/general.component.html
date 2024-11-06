@@ -1,12 +1,60 @@
 <form>
-
     <div >
         <div class="form-row">
-        <div class="form-group col-md-12">
+         
+        <div class="form-group col-md-4">
+            <label for="name">Estado</label>
+            <select [(ngModel)]="Persona.Estado" name="Estado" class="form-control">
+        
+                <option [hidden]="Persona.Prospecto != '1'" value='11'>Nuevo</option>
+                <option [hidden]="Persona.Prospecto != '1'" value='12'>Contactado</option>
+                <option [hidden]="Persona.Prospecto != '1'" value='13'>Calificado</option>
+                <option [hidden]="Persona.Prospecto != '1'" value='14'>En Proceso</option>
+                <option [hidden]="Persona.Prospecto != '1'" value='15'>Propuesta Enviada</option>
+            
+                <option [hidden]="Persona.Prospecto == '1'" value='1'>Activo</option>
+                <option [hidden]="Persona.Prospecto == '1'" value='2'>Inactivo</option>
+
+                <option [hidden]="Persona.Empleado != '1'" value='3'>Vacaciones</option>
+                <option [hidden]="Persona.Empleado!= '1'"value='4'>Suspendido</option>
+                
+            </select>
+        </div>
+        <div [hidden]="Persona.Prospecto != '1'" class="form-group col-md-4">
+            <label for="name">Origen</label>
+            <input [(ngModel)]="Persona.Origen" name="origen" type="text" placeholder="Origen" class="form-control">
+        </div>
+
+        <div [hidden]="Persona.Prospecto != '1'" class="form-group col-md-4">
+            <label>Agente</label>
+            <div class="form-group col-md-12">
+              <div class="input-group">
+          
+                <div class="input-group-append">
+                  <button type="button" (click)="OpenAgentePanel()" class="form-control btn btn-primary"><i
+                      class="fa fa-search"></i></button>
+                </div>
+                <input [(ngModel)]="Persona.Nombre_Agente" disabled name="Nombre_Agente" id="Nombre_Agente" type="input"
+                  class="form-control" placeholder="Nombre_Agente">
+              </div>
+            </div>
+          </div>
+
+        <div class="form-group col-md-6">
             <label>Nombre</label>
             <input [(ngModel)]="Persona.Nombre" name="Nombre" type="text" placeholder="Nombre" class="form-control">
         </div>
-        <div class="form-group col-md-6">
+
+        <div [hidden]="Persona.Prospecto != '1'" class="form-group col-md-6">
+            <label>Residencia</label>
+            <input [(ngModel)]="Persona.Residencia" name="Residencia" type="text" placeholder="Residencia" class="form-control">
+        </div>
+        <div [hidden]="Persona.Prospecto != '1'" class="form-group col-md-6">
+            <label>Empresa/Posición</label>
+            <input [(ngModel)]="Persona.Posicion" name="Posicion" type="text" placeholder="Posicion" class="form-control">
+        </div>
+
+        <div [hidden]="Persona.Prospecto == '1'" class="form-group col-md-6">
             <label for="name">Tipo de Identificacion</label>
             <select [(ngModel)]="Persona.Tipo_Identificacion" name="Tipo_Identificacion" class="form-control">
             <option value='01'>Cedula Fisica</option>
@@ -15,7 +63,7 @@
             <option value='04'>NITE</option>
             </select>
         </div>
-        <div class="form-group col-md-6">
+        <div [hidden]="Persona.Prospecto == '1'"  class="form-group col-md-6">
             <label>Identificacion</label>
             <input [(ngModel)]="Persona.Identificacion" name="Identificacion" type="text" placeholder="Identificación"
             class="form-control">
@@ -41,14 +89,54 @@
             <label>Linkedin</label>
             <input [(ngModel)]="Persona.Linkedin" name="Linkedin" type="text" placeholder="Linkedin" class="form-control">
         </div>
-        <div class="form-group col-md-6">
-            <label for="name">Estado</label>
-            <select [(ngModel)]="Persona.Estado" name="Estado" class="form-control">
-            <option value='1'>Activo</option>
-            <option value='2'>Inactivo</option>
-            <option value='3'>Suspendido</option>
-            </select>
-        </div>
+        
         </div>
     </div>
     </form>  
+
+
+
+    
+<!--Inicio Pantalla Agentes -->
+<div [hidden]="!PantallaAgentes" class="modal-main">
+    <div class="modal-content  card">
+      <div class="card-header">
+        <h2>Seleccionar Agente</h2>
+        <input [(ngModel)]="searchFieldAgentes" (blur)="searchAgentes()" (keydown)="keytabAgentes($event)" type="text"
+          class="form-control" placeholder="Buscar">
+      </div>
+      <div class="card-body modal-grid">
+        <div class="form-row">
+          <div class="form-group col-12 col-sm-6" *ngFor="let Empleado of Agentes;let i = index">
+            <a (click)="SeleccionarAgente(Empleado)">
+              <div class="card">
+                <div class="card-body">
+                  Contrato:{{Empleado.Otro_Documento}}
+                  <h5>{{Empleado.Nombre}}</h5>
+                  Id:{{Empleado.Identificacion}}, Tel:{{Empleado.Telefono}}
+                  Estado :
+                  <span *ngIf="Empleado.Estado == '1'" class="text-success"> Activo</span>
+                  <span *ngIf="Empleado.Estado == '2'" class="text-warning"> Inactivo</span>
+                  <span *ngIf="Empleado.Estado == '3'" class="text-warning"> Suspendido</span>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+  
+      <div class="card-footer ">
+        <div class="form-group col-md-12">
+          <div class="form-row">
+            <div class="form-group col-8 col-md-10">
+            </div>
+            <div class="form-group col-2">
+              <button (click)="closePantallaAgentes()" type="button" class="btn btn-danger"
+                title="Cancela edicion">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--Fin  Pantalla Empleados -->

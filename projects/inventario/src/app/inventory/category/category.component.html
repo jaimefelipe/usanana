@@ -72,6 +72,14 @@
         </select>
       </div>
       <div class="form-group col-md-6">
+        <label>Toma Física</label>
+        <select [(ngModel)]="category.Toma_Fisica" name="Id_Tipo" type="text" class="form-control">
+          <option value='0'>No </option>
+          <option value='1'>Si</option>
+
+        </select>
+      </div>
+      <div class="form-group col-md-6">
         <label>Nombre</label>
         <input [(ngModel)]="category.Nombre" name="Nombre" type="text" placeholder="Nombre" class="form-control">
       </div>

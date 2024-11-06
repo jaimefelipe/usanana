@@ -34,7 +34,7 @@
               <span *ngIf="Accion.Tipo_Accion == '7'" class="text-primary"> Renuncia</span>
               Estado :
               <span *ngIf="Accion.Estado == '0'" class="text-primary"> Registrado</span>
-              <span *ngIf="Accion.Estado == '1'" class="text-warning"> Mayorizado</span>
+              <span *ngIf="Accion.Estado == '1'" class="text-warning"> Aplicada</span>
              
 
               <h6>Id:{{Accion.Id_Accion_Personal}}</h6>
@@ -62,13 +62,14 @@
   
   <div [hidden]="!edit" class="container pb-5">
     <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
-    <h2>Accion de Personal</h2>
+    <h2>Accion de Personal -   <span *ngIf="Accion.Estado == '0'" class="text-primary">  Registrado</span>
+    <span *ngIf="Accion.Estado == '1'" class="text-primary"> Aplicado</span> </h2> 
   
     <form>
       <div class="form-row">
         <div class="form-group col-md-3">
           <label for="name">Tipo de Accion</label>
-          <select [(ngModel)]="Accion.Tipo_Accion" name="Tipo_Accion" class="form-control">
+          <select [disabled]="Accion.Estado === '1' "  [(ngModel)]="Accion.Tipo_Accion" name="Tipo_Accion" class="form-control">
             <option value='1'>Nombramiento</option>
             <option value='2'>Vacaciones</option>
             <option value='3'>Suspencion</option>
@@ -81,10 +82,10 @@
         <div class="form-group col-md-3">
           <label>Fecha</label>
           <div class="input-group">
-            <input class="form-control" [(ngModel)]="Fecha_Accion" name="Fecha" placeholder="Fecha" ngbDatepicker
+            <input [disabled]="Accion.Estado === '1' " class="form-control" [(ngModel)]="Fecha_Accion" name="Fecha" placeholder="Fecha" ngbDatepicker
               #d1="ngbDatepicker">
             <div class="input-group-append">
-              <button class="btn btn-outline-secondary fa fa-calendar" (click)="d1.toggle()" type="button"></button>
+              <button [disabled]="Accion.Estado === '1' "  class="btn btn-outline-secondary fa fa-calendar" (click)="d1.toggle()" type="button"></button>
             </div>
           </div>
         </div>
@@ -94,7 +95,7 @@
             <div class="input-group">
         
               <div class="input-group-append">
-                <button type="button" (click)="OpenEmpleadoPanel()" class="form-control btn btn-primary"><i
+                <button [disabled]="Accion.Estado === '1' "  type="button" (click)="OpenEmpleadoPanel()" class="form-control btn btn-primary"><i
                     class="fa fa-search"></i></button>
               </div>
               <input [(ngModel)]="Accion.Nombre" disabled name="NombreCliente" id="NombreCliente" type="input"
@@ -111,9 +112,7 @@
               <label>Puesto</label>
             </div>
             <div class="form-group col-md-9">
-              <div class="input-group">
-          
-                
+              <div class="input-group">            
                 <input  disabled="disabled" [(ngModel)]="Accion.Puesto_Anterior" disabled name="Puesto_Anterior" id="Puesto_Anterior" type="input"
                   class="form-control" placeholder="Puesto Anterior">
               </div>
@@ -124,11 +123,27 @@
             </div>
             <div class="form-group col-md-9">
               <div class="input-group">
-          
-                
                 <input disabled="disabled" [(ngModel)]="Accion.Departamento_Anterior" disabled name="Departamento_Anterior" id="Departamento_Anterior" type="input"
                   class="form-control" placeholder="Departamento Anterior">
               </div>
+            </div>
+
+            <div class="form-group col-md-6">
+              <label for="name">Tipo de Contrato</label>
+              <select [(ngModel)]="Accion.Tipo_Contrato_Old" disabled="disabled" name="Tipo_Contrato_old" class="form-control">
+              <option value='01'>Fijo</option>
+              <option value='02'>Temporal</option>
+              <option value='03'>Jornal</option>
+              </select>
+            </div>
+            <div class="form-group col-md-6">
+              <label for="name">Tipo de Jornada</label>
+              <select [(ngModel)]="Accion.Jornada_Old" disabled="disabled" name="Tipo_Jornada_old" class="form-control">
+              <option value='01'>Diurna</option>
+              <option value='02'>Nocturna</option>
+              <option value='03'>Mixta</option>
+              <option value='04'>Destajo</option>
+              </select>
             </div>
 
             <div class="form-group col-md-3">
@@ -137,6 +152,30 @@
             <div class="form-group col-md-9">
               <input disabled="disabled" [(ngModel)]="Accion.Salario_Anterior" name="Salario_Anterior" type="text" placeholder="Salario_Anterior" class="form-control" style="text-align:right;">
             </div>
+
+            <div class="form-group col-md-3">
+              <label>Fecha inicio</label>
+            </div>
+            <div class="form-group col-md-9">
+              <div class="input-group">
+                <input class="form-control" disabled="disabled"  [(ngModel)]="Accion.Fecha_Ingreso" name="Fecha_Ingreso" placeholder="Fecha Inicio" >
+                <div class="input-group-append">
+                  <button disabled="disabled" class="btn btn-outline-secondary fa fa-calendar" (click)="d2.toggle()" type="button"></button>
+                </div>
+              </div>
+            </div>
+            <div class="form-group col-md-3">
+              <label>Fecha final</label>
+            </div>
+            <div class="form-group col-md-9">
+              <div class="input-group">
+                <input class="form-control" disabled="disabled" [(ngModel)]="Accion.Fecha_Salida" name="Fecha_Ingreso" placeholder="Fecha Fin" >
+                <div class="input-group-append">
+                  <button disabled="disabled" class="btn btn-outline-secondary fa fa-calendar" (click)="d3.toggle()" type="button"></button>
+                </div>
+              </div>
+            </div>
+            
 
           </div>
         </div>
@@ -152,10 +191,10 @@
               <div class="input-group">
           
                 <div class="input-group-append">
-                  <button type="button" (click)="OpenPuestosPanel()" class="form-control btn btn-primary"><i
+                  <button [disabled]="Accion.Estado === '1' "  type="button" (click)="OpenPuestosPanel()" class="form-control btn btn-primary"><i
                       class="fa fa-search"></i></button>
                 </div>
-                <input [(ngModel)]="Accion.Puesto" disabled name="Puesto" id="Puesto" type="input"
+                <input [disabled]="Accion.Estado === '1' "  [(ngModel)]="Accion.Puesto" disabled name="Puesto" id="Puesto" type="input"
                   class="form-control" placeholder="Puesto">
               </div>
             </div>
@@ -167,19 +206,51 @@
               <div class="input-group">
           
                 <div class="input-group-append">
-                  <button type="button" (click)="OpenDepartamentosPanel()" class="form-control btn btn-primary"><i
+                  <button [disabled]="Accion.Estado === '1' "  type="button" (click)="OpenDepartamentosPanel()" class="form-control btn btn-primary"><i
                       class="fa fa-search"></i></button>
                 </div>
-                <input  [(ngModel)]="Accion.Departamento" disabled name="Departamento" id="Departamento" type="input"
+                <input [disabled]="Accion.Estado === '1' "  [(ngModel)]="Accion.Departamento" disabled name="Departamento" id="Departamento" type="input"
                   class="form-control" placeholder="Departamento">
               </div>
             </div>
 
+            <div class="form-group col-md-6">
+              <label for="name">Tipo de Contrato</label>
+              <select [disabled]="Accion.Estado === '1' "  [(ngModel)]="Accion.Tipo_Contrato" name="Tipo_Contrato" class="form-control">
+              <option value='1'>Fijo</option>
+              <option value='2'>Temporal</option>
+              <option value='3'>Jornal</option>
+              </select>
+            </div>
+            <div class="form-group col-md-6">
+              <label for="name">Jornada</label>
+              <select [disabled]="Accion.Estado === '1' "  [(ngModel)]="Accion.Jornada" name="Jornada" class="form-control">
+              <option value='1'>Diurna</option>
+              <option value='2'>Nocturna</option>
+              <option value='3'>Mixta</option>
+              <option value='4'>Destajo</option>
+              </select>
+            </div>
+            <div class="form-group col-md-3">
+              <label>Roll</label>
+            </div>
+
+            <div class="form-group col-md-9">
+              <div class="input-group">
+                <div class="input-group-append " >
+                  <button [disabled]="Accion.Estado === '1' "  type="button" (click)="openRollPanel()" class="form-control btn btn-primary"><i
+                      class="fa fa-search"></i></button>
+                </div>
+                <input  [disabled]="Accion.Estado === '1' "  [(ngModel)]="Accion.Nombre_Roll" disabled name="Roll" id="Roll" type="input"
+                  class="form-control" placeholder="Roll">
+              </div>
+            </div>
+            
             <div class="form-group col-md-3">
               <label>Salario</label>
             </div>
             <div class="form-group col-md-9">
-              <input [(ngModel)]="Accion.Salario" name="Salario" type="text" placeholder="Salario" class="form-control" style="text-align:right;">
+              <input [disabled]="Accion.Estado === '1' "  [(ngModel)]="Accion.Salario" name="Salario" type="text" placeholder="Salario" class="form-control" style="text-align:right;">
             </div>
 
             <div class="form-group col-md-3">
@@ -187,10 +258,10 @@
             </div>
             <div class="form-group col-md-9">
               <div class="input-group">
-                <input class="form-control" [(ngModel)]="Fecha_Inicio" name="Fecha_Inicio" placeholder="Fecha Inicio" ngbDatepicker
+                <input [disabled]="Accion.Estado === '1' "  class="form-control" [(ngModel)]="Fecha_Inicio" name="Fecha_Inicio" placeholder="Fecha Inicio" ngbDatepicker
                   #d2="ngbDatepicker">
                 <div class="input-group-append">
-                  <button class="btn btn-outline-secondary fa fa-calendar" (click)="d2.toggle()" type="button"></button>
+                  <button [disabled]="Accion.Estado === '1' "  class="btn btn-outline-secondary fa fa-calendar" (click)="d2.toggle()" type="button"></button>
                 </div>
               </div>
             </div>
@@ -199,10 +270,10 @@
             </div>
             <div class="form-group col-md-9">
               <div class="input-group">
-                <input class="form-control" [(ngModel)]="Fecha_Fin" name="Fecha_Fin" placeholder="Fecha Fin" ngbDatepicker
+                <input [disabled]="Accion.Estado === '1' "  class="form-control" [(ngModel)]="Fecha_Fin" name="Fecha_Fin" placeholder="Fecha Fin" ngbDatepicker
                   #d3="ngbDatepicker">
                 <div class="input-group-append">
-                  <button class="btn btn-outline-secondary fa fa-calendar" (click)="d3.toggle()" type="button"></button>
+                  <button [disabled]="Accion.Estado === '1' "  class="btn btn-outline-secondary fa fa-calendar" (click)="d3.toggle()" type="button"></button>
                 </div>
               </div>
             </div>
@@ -213,11 +284,14 @@
 
         <div class="form-group col-md-12">
           <div class="form-row">
-            <div class="form-group col-6 col-md-8">
+            <div class="form-group col-6 col-md-6">
   
             </div>
             <div class="form-group col-3 col-md-2">
-              <button (click)="grabar()" type="button" class="btn btn-success" title="Cancela edicion">Grabar</button>
+              <button (click)="imprimir()" type="button" class="btn btn-success" title="Cancela edicion">Imprimir</button>
+            </div>
+            <div class="form-group col-3 col-md-2">
+              <button [disabled]="Accion.Estado === '1' "  (click)="grabar()" type="button" class="btn btn-success" title="Cancela edicion">Grabar</button>
             </div>
             <div class="form-group col-3 col-md-2">
               <button (click)="cancel()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
@@ -351,3 +425,41 @@
   </div>
 </div>
 <!--Fin  Pantalla Departamento -->
+
+  <!--Inicio Pantalla Roles -->
+  <div [hidden]="!PantallaRoles" class="modal-main">
+    <div class="modal-content  card">
+      <div class="card-header">
+        <h2>Seleccionar Roll</h2>
+        <input [(ngModel)]="searchField" (blur)="searchRolles()" (keydown)="keytabRoles($event)" type="text"
+          class="form-control" placeholder="Buscar">
+      </div>
+      <div class="card-body modal-grid">
+        <div class="form-row">
+          <div class="form-group col-12 col-sm-6" *ngFor="let Roll of Roles;let i = index">
+            <a (click)="SeleccionarRoll(Roll)">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">{{Roll.Nombre}} | {{Roll.Inicio_Lunes}} - {{Roll.Fin_Lunes}}</h4>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+  
+      <div class="card-footer ">
+        <div class="form-group col-md-12">
+          <div class="form-row">
+            <div class="form-group col-8 col-md-10">
+            </div>
+            <div class="form-group col-2">
+              <button (click)="closePantallaRoles()" type="button" class="btn btn-danger"
+                title="Cancela edicion">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--Fin  Pantalla Empleados -->

@@ -25,17 +25,20 @@ export class MenuComponent implements OnInit {
   AppSeguridad = false;
   AppRRHH = true;
   EsAPP = false;
+  AppPL = true;
 
 
   UserMenu = [];
   perfilMenu = false;
   rrhhMenu = false;
+  PLMenu = false
 
 
   deferredPrompt: any;
   showButton = true;
   configClass = 'fa fa-arrow-right';
   rrhhClass ='fa fa-arrow-right';
+  PLClass ='fa fa-arrow-right';
 
 
   //Obtener los Datos del Usuario
@@ -104,6 +107,14 @@ export class MenuComponent implements OnInit {
     }
   }
 
+  clickPLMenu(){
+    this.PLMenu = !this.PLMenu;
+    if(this.PLClass  == 'fa fa-arrow-left'){
+      this.PLClass = 'fa fa-arrow-right';
+    }else{
+      this.PLClass = 'fa fa-arrow-left';
+    }
+  }
   logOut(){
     localStorage.setItem('isLoggedin','false');
     localStorage.removeItem('Id_Empresa');

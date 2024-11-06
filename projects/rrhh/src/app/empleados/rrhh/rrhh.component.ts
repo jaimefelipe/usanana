@@ -32,10 +32,12 @@ export class RrhhComponent implements OnInit {
     this.PantallaRoles = true;
   }
   searchRolles(){
-
+    this.leerRoles();
   }
-  keytabRoles(e){
-
+  keytabRoles(event:any){
+    if (event.key === 'Enter') {
+      this.searchRolles();
+    }
   }
   SeleccionarRoll(roll){
     this.Persona.Roll = roll.Nombre;

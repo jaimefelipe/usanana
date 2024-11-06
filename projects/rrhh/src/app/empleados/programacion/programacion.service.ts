@@ -29,10 +29,9 @@ async leerSemanas(paginacion,search?,Estado?) {
   }
 
   async leerEmpleadosSemana(paginacion,search?,Id_Semana_Roll?) {
-      console.log(Id_Semana_Roll)
       let sqlConfig = {
         table: 'Rhh_Empleado_Roll inner join Gen_Persona on Rhh_Empleado_Roll.Id_Persona = Gen_Persona.Id_Persona inner join Rhh_Roll on Rhh_Empleado_Roll.Id_Roll =Rhh_Roll.Id_ROll ',
-        fields: 'Rhh_Empleado_Roll.Id_Empleado_Roll,Gen_Persona.Nombre,Rhh_Roll.Nombre as Roll,Rhh_Empleado_Roll.Lunes,Rhh_Empleado_Roll.Inicio_Lunes,Rhh_Empleado_Roll.Fin_Lunes, Rhh_Empleado_Roll.Martes, Rhh_Empleado_Roll.Inicio_Martes, Rhh_Empleado_Roll.Fin_Martes, Rhh_Empleado_Roll.Miercoles, Rhh_Empleado_Roll.Inicio_Miercoles, Rhh_Empleado_Roll.Fin_Miercoles, Rhh_Empleado_Roll.Jueves, Rhh_Empleado_Roll.Inicio_Jueves,Rhh_Empleado_Roll.Fin_Jueves, Rhh_Empleado_Roll.Sabado, Rhh_Empleado_Roll.Inicio_Sabado, Rhh_Empleado_Roll.Fin_Sabado, Rhh_Empleado_Roll.Domingo, Rhh_Empleado_Roll.Inicio_Domingo, Rhh_Empleado_Roll.Fin_Domingo',
+        fields: 'Rhh_Empleado_Roll.Id_Empleado_Roll,Gen_Persona.Nombre,Rhh_Roll.Nombre as Roll,Rhh_Empleado_Roll.Lunes,Rhh_Empleado_Roll.Inicio_Lunes,Rhh_Empleado_Roll.Fin_Lunes, Rhh_Empleado_Roll.Martes, Rhh_Empleado_Roll.Inicio_Martes, Rhh_Empleado_Roll.Fin_Martes, Rhh_Empleado_Roll.Miercoles, Rhh_Empleado_Roll.Inicio_Miercoles, Rhh_Empleado_Roll.Fin_Miercoles, Rhh_Empleado_Roll.Jueves, Rhh_Empleado_Roll.Inicio_Jueves,Rhh_Empleado_Roll.Fin_Jueves, Rhh_Empleado_Roll.Fin_Jueves, Rhh_Empleado_Roll.Viernes,Rhh_Empleado_Roll.Inicio_Viernes,Rhh_Empleado_Roll.Fin_Viernes, Rhh_Empleado_Roll.Sabado, Rhh_Empleado_Roll.Inicio_Sabado, Rhh_Empleado_Roll.Fin_Sabado, Rhh_Empleado_Roll.Domingo, Rhh_Empleado_Roll.Inicio_Domingo, Rhh_Empleado_Roll.Fin_Domingo',
         searchField: search,
         paginacion: paginacion,
         where:'Id_Semana_Roll = ' + Id_Semana_Roll

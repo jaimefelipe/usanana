@@ -10,8 +10,8 @@ export class SecurityUserService {
   async loadAllUsers(paginacion,search?) {
     let sqlConfig = {
       table: 'Seg_Usuario',
-      fields: 'Id_Usuario,Nombre,Nombre_Usuario',
-      orderField: '',
+      fields: 'Id_Usuario,Nombre,Nombre_Usuario,Numero_Identificacion',
+      orderField: ' Nombre ',
       searchField: search,
       simple:true,
       Empresa: false,

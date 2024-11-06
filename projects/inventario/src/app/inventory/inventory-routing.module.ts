@@ -8,6 +8,7 @@ import { InventoryMovementDetailComponent } from './inventory-movement-detail/in
 import { SubCategoryComponent } from './sub-category/sub-category.component';
 import { ExistenciasComponent } from './existencias/existencias.component';
 import { MovimientoArticuloComponent } from './movimiento-articulo/movimiento-articulo.component';
+import { TomaFisicaComponent } from './toma-fisica/toma-fisica.component';
 
 const routes: Routes = [
   {path : 'categorias', component : CategoryComponent},
@@ -18,7 +19,7 @@ const routes: Routes = [
   {path : 'repinventario', component : ReportInventoryComponent},
   {path : 'existencias', component : ExistenciasComponent},
   {path : 'movarticulo', component : MovimientoArticuloComponent},
-
+  {path : 'tomafisica', component : TomaFisicaComponent},
 ];
 
 @NgModule({

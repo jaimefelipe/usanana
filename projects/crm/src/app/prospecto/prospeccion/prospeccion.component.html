@@ -1,5 +1,5 @@
 
-<div [hidden]="edit" class="container pb-5">
+<div [hidden]="edit" class="container-fluid pb-5">
     <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
     <h2>Prospectos</h2>
     <div class="container-fluid">
@@ -20,20 +20,19 @@
     <form>
       <div class="form-row">
   
-        <div class="form-group col-12 col-sm-6" *ngFor="let Persona of Clientes;let i = index">
+        <div class="form-group col-12" *ngFor="let Persona of Clientes;let i = index">
           <div class="card">
             <a (click)="editRecord(Persona)">
               <div class="card-body">
-                <h4 class="card-title">{{paginacion.FirstRow +  i}} - {{Persona.Nombre}}</h4>
-                ID : {{Persona.Identificacion}}, Correo: {{Persona.Correo}} <br>
+                {{paginacion.FirstRow +  i}} - <span class="text-primary"> {{Persona.Nombre}} </span>
+                ID : {{Persona.Identificacion}}, Correo: {{Persona.Correo}} - 
                 Tel: {{Persona.Telefono}} | 
-                <span *ngIf="Persona.Prospecto == '1'" class="text-primary"> Prospecto</span>
-                <span *ngIf="Persona.Cliente== '1'" class="text-primary"> Cliente</span>
-                <span *ngIf="Persona.Proveedor== '1'" class="text-primary"> Proveedor</span>
-                <span *ngIf="Persona.Emisor== '1'" class="text-primary"> Emisor</span>
-                <span *ngIf="Persona.Empleado== '1'" class="text-primary"> Empleado</span>
-                <span *ngIf="Persona.Alumno== '1'" class="text-primary"> Alumno</span>
-                <span *ngIf="Persona.Profesor== '1'" class="text-primary"> Profesor</span>
+                
+                <span *ngIf="Persona.Estado == '11'" class="text-primary"> Nuevo</span>
+                <span *ngIf="Persona.Estado== '12'" class="text-primary"> Contactado</span>
+                <span *ngIf="Persona.Estado== '13'" class="text-primary"> Calificado</span>
+                <span *ngIf="Persona.Estado== '14'" class="text-primary"> En Proceso</span>
+                <span *ngIf="Persona.Estado== '15'" class="text-primary"> Propuesta Enviada</span>
                 
                 <span *ngIf="Persona.Estado== '0'" class="text-success"> Inactivo</span>
                 <span *ngIf="Persona.Estado== '1'" class="text-success"> Activo</span>
@@ -57,17 +56,19 @@
     </div>
   </div>
 
-  <div [hidden]="!edit" class="container pb-5">
+  <div [hidden]="!edit" class="container-fluid p-5">
     <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
     <h2>Prospecto</h2> 
     <div class="tab">
       <button [ngClass]='GeneralClass' (click)="activarGeneral()" >General</button>
-      <button [ngClass]='DireccionClass' (click)="activarDireccion()">Dirección</button>
+      <!--<button [ngClass]='DireccionClass' (click)="activarDireccion()">Dirección</button>-->
       <button [ngClass]='NotasClass' (click)="activarNotas()">Notas</button>
       <button [ngClass]='TareaClass' (click)="activarTarea()">Tareas</button>
     </div>
     <span [hidden]="!edit">
       <app-general [hidden]="!GeneralActivo" [Persona]="Persona" (close)="cancel()"></app-general>
+      <!--<app-direccion [hidden]="!DireccionActivo" [Persona]="Persona" [Provinces]="Provinces" [Cantons]="Cantons" [Districts]="Districts" (provinceChange)="provinceChange()"  (cantonChange)="cantonChange()" ></app-direccion>
+    -->
       <app-notas [hidden]="!NotasActivo" [Persona]="Persona"></app-notas>
       <app-tareas-cliente [hidden]="!TareaActivo" [Persona]="Persona"></app-tareas-cliente>
     </span>

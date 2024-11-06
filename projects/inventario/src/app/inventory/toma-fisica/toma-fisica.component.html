@@ -1,0 +1,245 @@
+<div [hidden]="edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Toma Física de Inventarios</h2>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+        </div>
+        <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+          placeholder="Buscar">
+        <div class="input-group-append">
+          <button class="btn btn-success" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
+              aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form>
+    <div class="form-row">
+      <div class="form-group col-12 col-sm-6" *ngFor="let Asiento of TomasFisicas;let i = index">
+        <div class="card">
+          <a (click)="editRecord(Asiento)">
+            <div class="card-body">
+              Fecha: <b>{{Asiento.Fecha   }}</b> <!-- | date:'d/M/YYY' -->
+             Periodo: <b> {{Asiento.Mes}}-{{Asiento.Anio}}-{{Asiento.Secuencia}}</b>, Documento: <b>{{Asiento.Documento }}</b><br>
+              Sistema
+              <span *ngIf="Asiento.Sistema_Origen == 'CGE'" class="text-primary"> Contabilidad</span>
+              <span *ngIf="Asiento.Sistema_Origen == 'VEN'" class="text-success"> Ventas</span>
+              <span *ngIf="Asiento.Sistema_Origen == 'COM'" class="text-info"> Compras</span>
+              <span *ngIf="Asiento.Sistema_Origen == 'CXC'" class="text-info"> Cuentas Cobrar</span>
+              <span *ngIf="Asiento.Sistema_Origen == 'CXP'" class="text-info"> Cuentas Pagar</span>
+              <span *ngIf="Asiento.Sistema_Origen == 'INV'" class="text-success"> Inventario</span><br>
+              Descripción: <b>{{Asiento.Descripcion }}</b><br>
+              Estado :
+              <span *ngIf="Asiento.Estado == '0'" class="text-primary"> Registrado</span>
+              <span *ngIf="Asiento.Estado == '1'" class="text-warning"> Mayorizado</span>
+              <span *ngIf="Asiento.Diferencia != '0.00000'" class="text-danger"> Descuadrado</span>
+
+              <h6>Id:{{Asiento.Id_Asiento_Contable_Encabezado}}</h6>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="container-fluid">
+    <ul class="pagination">
+      <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"
+            aria-hidden="true"></i></a></li>
+    </ul>
+  </div>
+</div>
+
+
+<!--
+  Form de Edición
+-->
+
+<div [hidden]="!edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Toma Física de Inventario</h2>
+  <form>
+    <div class="form-row">
+       <!-- Inicio de Primera división -->
+       <div class="form-group col-md-3">
+        <div class="input-group">
+          <input class="form-control" [(ngModel)]="Fecha" name="Fecha" placeholder="Fecha" ngbDatepicker
+            #d1="ngbDatepicker">
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary fa fa-calendar" (click)="d1.toggle()" type="button"></button>
+          </div>
+        </div>
+      </div>
+      <div class="input-group col-md-3">
+        <select [(ngModel)]="TomaFisica.Estado" disabled="disabled" name="Estado" type="text"
+          class="form-control">
+          <option value='0'>Registrado</option>
+          <option value='1'>Aplicado</option>
+        </select>
+      </div>
+
+    </div>
+
+
+
+    <!-- Inicio de Inclusión de Productos -->
+    <div  class="form-row bg-info">
+      <div class="form-group col-12 col-md-3">
+        <label>Artículo</label>
+
+        <div class="input-group">
+          <input [disabled]="TomaFisica.Estado !='0'" [(ngModel)]="Detalle.SKU"
+          name="SKU" id="SKU" type="input" class="form-control" placeholder="Código"
+          (blur)="processProduct('Cantidad')" (keydown)="keytab1($event,'Cantidad')">
+          <div class="input-group-append">
+            <button type="button" (click)="obtenerProducto('',1)" class="form-control btn btn-primary"><i
+                class="fa fa-search"></i></button>
+          </div>
+        </div>
+      </div>
+      <div class="form-group col-12 col-md-6">
+        <label>Descripcion</label>
+        <input disabled="disabled" [(ngModel)]="Detalle.Descripcion" name="Descripcion"
+          id="Descripcion" type="input" class="form-control" placeholder="Descripción"
+         > 
+      </div>
+      <div class="form-group col-12 col-md-3">
+        <label>Cantidad</label>
+        <input [disabled]="TomaFisica.Estado !='0'" [(ngModel)]="Detalle.Cantidad" name="Cantidad"
+          id="Cantidad" type="input" class="form-control" placeholder="Cantidad" (blur)="processProduct('SKU')"
+          (keydown)="keytab1($event,'SKU')">
+      </div>
+      
+    </div>
+    <!-- Fin de Inclusión de Productos -->
+
+ <!-- Inicio Lista de Detalles -->
+ <div class="form-row d-none d-md-block">
+  <div class="form-row">
+    <div class="form-group col-md-2 m-1">
+      Código
+    </div>
+    <div class="form-group col-12 col-md-3 m-1">
+      Descripción
+    </div>
+    <div class="form-group col-12 col-md-1 m-1">
+      Cantidad
+    </div>
+    <div class="form-group col-12 col-md-2 m-1">
+      Precio
+    </div>
+    <div class="form-group col-12 col-md-2 m-1">
+      Total
+    </div>
+    <div class="form-group col-12 col-md-1 m-1">
+      Acción
+    </div>
+  </div>
+</div>
+<div class="form-row table table-striped table-hover table-dark table-bordered ">
+  <div class="form-group col-12">
+    <div class="form-row" *ngFor="let Detail of Details;let indice = index">
+      <div class="form-group col-12 col-md-2 m-1">
+        {{Detail.SKU}}
+      </div>
+      <div class="form-group col-12 col-md-3 m-1">
+        {{Detail.Descripcion | slice:0:40}}
+      </div>
+      <div class="form-group col-12 col-md-1 m-1">
+        {{Detail.Cantidad | currency:' '}}
+      </div>
+      <div class="form-group col-12 col-md-2 m-1">
+        {{Detail.Precio | currency:' '}}
+      </div>
+      <div class="form-group col-12 col-md-2 m-1">
+        {{Detail.Total | currency:' '}}
+      </div>
+      <div class="form-group col-12 col-md-1 m-1">
+        <span *ngIf="Detail.Adicional != 1" style="display: inline-block;">
+          <button [disabled]="TomaFisica.Estado !='0'" type="button" class="btn btn-danger btn-sm"
+            style="min-width: 0px;margin-right: 5px;padding: 0rem 0.31rem;"
+            (click)="removeVen_Factura_Detalle(indice)"><i class="fa fa-trash" aria-hidden="true"
+              title="Borrar Linea"></i></button>
+        </span>
+        <button *ngIf="Detail.Adicional != 1" [disabled]="TomaFisica.Estado !='0'" type="button" class="btn btn-primary btn-sm"
+          style="min-width: 0px;margin-right: 5px;padding: 0rem 0.31rem;"
+          (click)="editVen_Factura_Detalle(indice)"><i class="fa fa-edit" aria-hidden="true"
+            title="Editar Linea"></i></button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Fin Lista de Detalles -->
+
+
+
+    <!-- Find de Totales -->
+
+    <div class="form-group col-md-12">
+      <div class="form-row">
+        <div class="form-group col-3 col-md-6">
+
+        </div>
+        <div class="form-group col-3 col-md-2">
+          <button  type="button"
+            class="btn btn-primary  " title="Cancela edicion">Imprimir</button>
+        </div>
+        <div class="form-group col-3 col-md-2">
+          <button    type="button"
+            class="btn btn-success" (click)="grabar()" title="Cancela edicion">Grabar</button>
+        </div>
+        <div class="form-group col-3 col-md-2">
+          <button   type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+  </form>
+</div>
+
+
+<div [hidden]="!PantallaProductos" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Seleccionar Artículo</h2>
+      <input [(ngModel)]="searchFieldProduct"  (keydown)="keytabProduct($event)" type="text"
+        class="form-control" placeholder="Buscar">
+    </div>
+    <div class="card-body modal-grid">
+      <div class="form-row">
+        <div class="form-group col-12 col-sm-6" *ngFor="let Product of registros;let i = index">
+          <a (click)="Seleccionar(Product)">
+            <div class="card">
+              <div class="card-body">
+                {{Product.SKU}}
+                <h4 class="card-title">{{Product.Descripcion}} </h4>
+                <p><b>{{Product.Nombre }}</b></p>
+                Precio : {{Product.Precio|currency: ' '}} Moneda: {{Product.Moneda}}
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8 col-md-10">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="closeModal()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

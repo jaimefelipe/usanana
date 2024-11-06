@@ -11,7 +11,7 @@ export class RrhhService {
   async leerRRHH(Id_Persona){
     let sqlConfig = {
       table: 'Rhh_Empleado',
-      fields: 'Id_Empleado,Id_Persona,Fecha_Ingreso,Fecha_Salida,Tipo_Contrato,Jornada,Numero_Contrato,Salario_Mes,Salario_Mes,Id_Roll,Nombre_Roll as Roll',
+      fields: 'Id_Empleado,Id_Persona,Fecha_Ingreso,Fecha_Salida,Tipo_Contrato,Jornada,Numero_Contrato,Salario_Mes,Salario_Mes,Id_Roll,Nombre_Roll as Roll,Id_Escolaridad,Fecha_Examen_Psicologico,Fecha_Curso_Basico',
       orderField: '',
       searchField: '',
       where: "Id_Persona = " + Id_Persona
@@ -23,10 +23,8 @@ export class RrhhService {
     if(Persona.Id_Empleado == ""){
       let sql = {
         table: 'Rhh_Empleado',
-        fields: 'Id_Persona,Fecha_Ingreso,Fecha_Salida,Tipo_Contrato,Jornada,Numero_Contrato,Salario_Mes,Estado,Id_Roll,Nombre_Roll',
+        fields: 'Id_Persona,Tipo_Contrato,Jornada,Numero_Contrato,Salario_Mes,Estado,Id_Roll,Nombre_Roll,Id_Escolaridad.Fecha_Examen_Psicologico,Fecha_Curso_Basico',
         values: '\'' + Persona.Id_Persona
-        + '\',\'' + Persona.Fecha_Ingreso
-        + '\',\'' + Persona.Fecha_Salida
         + '\',\'' + Persona.Tipo_Contrato
         + '\',\'' + Persona.Jornada
         + '\',\'' + Persona.Numero_Contrato
@@ -34,6 +32,9 @@ export class RrhhService {
         + '\',\'' + Persona.Estado
         + '\',\'' + Persona.Id_Roll
         + '\',\'' + Persona.Roll
+        + '\',\'' + Persona.Id_Escolaridad
+        + '\',\'' + Persona.Fecha_Examen_Psicologico
+        + '\',\'' + Persona.Fecha_Curso_Basico
         + '\''
       };
       return await this.apiService.insertRecord(sql);
@@ -41,8 +42,6 @@ export class RrhhService {
       let sql = {
         table: 'Rhh_Empleado',
         fields: 'Id_Persona=\'' + Persona.Id_Persona
-        + '\',Fecha_Ingreso=\'' + Persona.Fecha_Ingreso
-        + '\',Fecha_Salida=\'' + Persona.Fecha_Salida
         + '\',Tipo_Contrato=\'' + Persona.Tipo_Contrato
         + '\',Jornada=\'' + Persona.Jornada
         + '\',Numero_Contrato=\''+ Persona.Numero_Contrato
@@ -50,9 +49,11 @@ export class RrhhService {
         + '\',Estado=\''+ Persona.Estado
         + '\',Id_Roll=\''+ Persona.Id_Roll
         + '\',Nombre_Roll=\''+ Persona.Roll
-
+        + '\',Id_Escolaridad=\''+ Persona.Id_Escolaridad
+        + '\',Fecha_Examen_Psicologico=\''+ Persona.Fecha_Examen_Psicologico
+        + '\',Fecha_Curso_Basico=\''+ Persona.Fecha_Curso_Basico
         + '\'',
-        where: 'Id_Persona=' + Persona.Id_Persona
+        where: 'Id_Empleado=' + Persona.Id_Empleado
       };
       return await this.apiService.updateRecord(sql);
     }

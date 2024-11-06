@@ -213,12 +213,12 @@
       </div>
       <div [hidden]="!interfazInventario" class="form-group col-md-3">
         <label>Costo Ultima Factura</label>
-        <input [(ngModel)]="Articulo.Ultimo_Costo" disabled class="form-control" name="Ultimo_Costo" id="Ultimo_Costo"
+        <input [(ngModel)]="Articulo.Ultimo_Costo" [disabled]="!Admin" class="form-control" name="Ultimo_Costo" id="Ultimo_Costo"
           type="text" placeholder="Ultimo_Costo">
       </div>
       <div [hidden]="!interfazInventario" class="form-group col-md-3">
         <label>Costo Promedio</label>
-        <input [(ngModel)]="Articulo.Costo_Promedio" disabled class="form-control" name="Costo_Promedio"
+        <input [(ngModel)]="Articulo.Costo_Promedio" [disabled]="!Admin" class="form-control" name="Costo_Promedio"
           id="Costo_Promedio" type="text" placeholder="Costo_Promedio">
       </div>
       <div [hidden]="!interfazInventario" class="form-group col-md-6">

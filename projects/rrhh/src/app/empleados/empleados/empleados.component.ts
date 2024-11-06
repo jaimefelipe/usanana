@@ -104,7 +104,26 @@ export class EmpleadosComponent implements OnInit {
     Numero_Contrato:'',
     Salario_Mes:'',
     Id_Roll:'',
-    Roll:''
+    Roll:'',
+    Id_Escolaridad:'',
+    Fecha_Examen_Psicologico:'',
+    Fecha_EP:{
+      month: this.hoy.getMonth() + 1,
+      day: this.hoy.getDate(),
+      year: this.hoy.getFullYear()
+    },
+    Fecha_Curso_Basico:'',
+    Fecha_CB:{
+      month: this.hoy.getMonth() + 1,
+      day: this.hoy.getDate(),
+      year: this.hoy.getFullYear()
+    },
+    Fecha_Carnet_Portacion:'',
+    Fecha_CP:{
+      month: this.hoy.getMonth() + 1,
+      day: this.hoy.getDate(),
+      year: this.hoy.getFullYear()
+    }
   }
 
   ngOnInit(): void {
@@ -273,7 +292,26 @@ export class EmpleadosComponent implements OnInit {
         Numero_Contrato:'',
         Salario_Mes:'',
         Id_Roll:'',
-        Roll:''
+        Roll:'',
+        Id_Escolaridad:'',
+        Fecha_Examen_Psicologico:'',
+        Fecha_EP:{
+          month: this.hoy.getMonth() + 1,
+          day: this.hoy.getDate(),
+          year: this.hoy.getFullYear()
+        },
+        Fecha_Curso_Basico:'',
+        Fecha_CB:{
+          month: this.hoy.getMonth() + 1,
+          day: this.hoy.getDate(),
+          year: this.hoy.getFullYear()
+        },
+        Fecha_Carnet_Portacion:'',
+        Fecha_CP:{
+          month: this.hoy.getMonth() + 1,
+          day: this.hoy.getDate(),
+          year: this.hoy.getFullYear()
+        }
       }
     }
   }
@@ -289,27 +327,67 @@ export class EmpleadosComponent implements OnInit {
       //Leer RRhh
       let dataRrhh = await this.rrhhService.leerRRHH(this.Persona.Id_Persona);
       if(dataRrhh['total']==1){
+        this.Persona.Id_Empleado = dataRrhh['data'][0]['Id_Empleado'];
         this.Persona.Fecha_Ingreso = dataRrhh['data'][0]['Fecha_Ingreso'];
         this.Persona.Fecha_Salida = dataRrhh['data'][0]['Fecha_Salida'];
         this.Persona.Tipo_Contrato = dataRrhh['data'][0]['Tipo_Contrato'];
         this.Persona.Jornada = dataRrhh['data'][0]['Jornada'];
         this.Persona.Numero_Contrato = dataRrhh['data'][0]['Numero_Contrato'];
         this.Persona.Salario_Mes = dataRrhh['data'][0]['Salario_Mes'];
-        this.Persona.Estado = dataRrhh['data'][0]['Estado'];
+        //this.Persona.Estado = dataRrhh['data'][0]['Estado'];
         this.Persona.Id_Roll = dataRrhh['data'][0]['Id_Roll'];
         this.Persona.Roll = dataRrhh['data'][0]['Roll'];
+        this.Persona.Id_Escolaridad = dataRrhh['data'][0]['Id_Escolaridad'];
         let fechaIngresoArr = this.Persona.Fecha_Ingreso.split('-');
-        this.Persona.Fecha_I = {
-          month: parseInt(fechaIngresoArr[1]),
-          day: parseInt(fechaIngresoArr[2]),
-          year: parseInt(fechaIngresoArr[0]),
+        this.Persona.Fecha_Examen_Psicologico = dataRrhh['data'][0]['Fecha_Examen_Psicologico'];
+        let fechaExamenPsicologicoArr = this.Persona.Fecha_Examen_Psicologico.split('-');
+        this.Persona.Fecha_EP = {
+          month: parseInt(fechaExamenPsicologicoArr[1]),
+          day: parseInt(fechaExamenPsicologicoArr[2]),
+          year: parseInt(fechaExamenPsicologicoArr[0]),
         }
+        let fechaCursoBasicoArr = this.Persona.Fecha_Curso_Basico.split('-');
+        this.Persona.Fecha_CB = {
+          month: parseInt(fechaCursoBasicoArr[1]),
+          day: parseInt(fechaCursoBasicoArr[2]),
+          year: parseInt(fechaCursoBasicoArr[0]),
+        } 
+        let fechaCarnePortacionArr = this.Persona.Fecha_Carnet_Portacion.split('-');
+        this.Persona.Fecha_CB = {
+          month: parseInt(fechaCarnePortacionArr[1]),
+          day: parseInt(fechaCarnePortacionArr[2]),
+          year: parseInt(fechaCarnePortacionArr[0]),
+        }         
+        if(this.Persona.Fecha_Ingreso == ''){
+          this.Persona.Fecha_I = {
+            month: this.hoy.getMonth() + 1,
+            day: this.hoy.getDate(),
+            year: this.hoy.getFullYear()
+          }
+        }else{
+          this.Persona.Fecha_I = {
+            month: parseInt(fechaIngresoArr[1]),
+            day: parseInt(fechaIngresoArr[2]),
+            year: parseInt(fechaIngresoArr[0]),
+          }
+        }
+
+        
         let fechaSalidaArr = this.Persona.Fecha_Salida.split('-');
-        this.Persona.Fecha_S = {
-          month: parseInt(fechaSalidaArr[1]),
-          day: parseInt(fechaSalidaArr[2]),
-          year: parseInt(fechaSalidaArr[0]),
+        if(this.Persona.Fecha_Salida == ''){
+          this.Persona.Fecha_S = {
+            month: this.hoy.getMonth() + 1,
+            day: this.hoy.getDate(),
+            year: this.hoy.getFullYear()
+          }
+        }else{
+          this.Persona.Fecha_S = {
+            month: parseInt(fechaSalidaArr[1]),
+            day: parseInt(fechaSalidaArr[2]),
+            year: parseInt(fechaSalidaArr[0]),
+          }
         }
+        
       }else{
         this.Persona.Id_Empleado = "";
         this.Persona.Fecha_Ingreso = "";
@@ -318,6 +396,17 @@ export class EmpleadosComponent implements OnInit {
         this.Persona.Jornada = "";
         this.Persona.Numero_Contrato = "";
         this.Persona.Salario_Mes = "";
+        this.Persona.Estado = '1';
+        this.Persona.Fecha_I = {
+          month: this.hoy.getMonth() + 1,
+          day: this.hoy.getDate(),
+          year: this.hoy.getFullYear()
+        }
+        this.Persona.Fecha_S = {
+          month: this.hoy.getMonth() + 1,
+          day: this.hoy.getDate(),
+          year: this.hoy.getFullYear()
+        }
       }
     }
    }
@@ -335,13 +424,18 @@ export class EmpleadosComponent implements OnInit {
     //this.Persona.Fecha_Ingreso = this.Fecha.day + '-' + this.Fecha.month + '-' + this.Fecha.year;
     let data = await this.contactoService.savePersona(this.Persona);
     if(data['success'] =='true'){
-      this.Persona.Id_Empleado = data['data'][0]['Identity'];
+      if(this.Persona.Id_Persona == ''){
+        this.Persona.Id_Persona = data['data'][0]['Identity'];
+      }
       Swal.fire('Empleado grabado correctamente');
       this.loadPersonas(this.searchField);
       this.edit = false;
     }
     //Grabar informacion de RRhh.
-    let dataRrhh = await this.rrhhService.grabarRRHH(this.Persona);
+    this.Persona.Fecha_Examen_Psicologico = this.Persona.Fecha_EP.year + '/' + this.Persona.Fecha_EP.month + '/' + this.Persona.Fecha_EP.day;
+    this.Persona.Fecha_Curso_Basico = this.Persona.Fecha_CB.year + '/' + this.Persona.Fecha_CB.month + '/' + this.Persona.Fecha_CB.day;
+    this.Persona.Fecha_Carnet_Portacion = this.Persona.Fecha_CP.year + '/' + this.Persona.Fecha_CP.month + '/' + this.Persona.Fecha_CP.day;
+    await this.rrhhService.grabarRRHH(this.Persona);
     return true;
    }
    async loadProvinces() {

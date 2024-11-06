@@ -7,18 +7,24 @@ import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
 import { SecurityModule } from '../../../seguridad/src/app/security/security.module';
 import { EmpleadosModule } from './empleados/empleados.module';
+import { PlanillaModule } from './planilla/planilla.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ContactoModule } from '../../../contacto/src/app/contacto/contacto.module';
+
+
 
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
+  declarations: [		
+    AppComponent,
+   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     CoreModule,
     SecurityModule,
     EmpleadosModule,
+    PlanillaModule,
+    ContactoModule,
     NgbModule
   ],
   providers: [],

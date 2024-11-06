@@ -48,6 +48,7 @@ export class CategoryComponent implements OnInit {
     Servicio:'',
     Cocina: '0',
     Estado: '1',
+    Toma_Fisica:'0'
   };
   ngOnInit(): void {
     this.SeguridadStr = localStorage.getItem('ToxoSG');
@@ -102,6 +103,7 @@ export class CategoryComponent implements OnInit {
         Cocina: '0',
         Servicio:'',
         Estado: '1',
+        Toma_Fisica:'0'
       };
       this.searchFieldAccount = '';
       this.searchAccount();

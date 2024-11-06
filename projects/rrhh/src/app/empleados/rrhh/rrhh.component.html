@@ -3,76 +3,113 @@
   <div >
       <div class="form-row">
       
-      <div class="form-group col-md-6">
+        <div class="form-group col-md-6">
           <label>Fecha Contratación</label>
           <div class="input-group">
-            <input class="form-control" [(ngModel)]="Persona.Fecha_I" name="Fecha" placeholder="Fecha" ngbDatepicker
+            <input [disabled]="true"  class="form-control" [(ngModel)]="Persona.Fecha_I" name="Fecha" placeholder="Fecha" ngbDatepicker
               #d1="ngbDatepicker">
             <div class="input-group-append">
-              <button class="btn btn-outline-secondary fa fa-calendar" (click)="d1.toggle()" type="button"></button>
+              <button disabled="disabled" class="btn btn-outline-secondary fa fa-calendar" (click)="d1.toggle()" type="button"></button>
             </div>
           </div>
-      </div>
-      <div class="form-group col-md-6">
+        </div>
+        <div class="form-group col-md-6">
           <label>Fecha cese Labores</label>
           <div class="input-group">
-            <input class="form-control" [(ngModel)]="Persona.Fecha_S" name="Fecha" placeholder="Fecha" ngbDatepicker
+            <input [disabled]="true" class="form-control" [(ngModel)]="Persona.Fecha_S" name="Fecha" placeholder="Fecha" ngbDatepicker
               #d2="ngbDatepicker">
             <div class="input-group-append">
               <button class="btn btn-outline-secondary fa fa-calendar" (click)="d2.toggle()" type="button"></button>
             </div>
           </div>
-      </div>
-      <div class="form-group col-md-6">
-        <label for="name">Tipo de Contrato</label>
-        <select [(ngModel)]="Persona.Tipo_Contrato" name="Tipo_Contrato" class="form-control">
-        <option value='01'>Fijo</option>
-        <option value='02'>Temporal</option>
-        <option value='03'>Jornal</option>
-        </select>
-      </div>
-      <div class="form-group col-md-6">
-        <label for="name">Tipo de Jornada</label>
-        <select [(ngModel)]="Persona.Tipo_Jornada" name="Tipo_Jornada" class="form-control">
-        <option value='01'>Diurna</option>
-        <option value='02'>Nocturna</option>
-        <option value='03'>Mixta</option>
-        <option value='04'>Destajo</option>
-        </select>
-      </div>
-      <div class="form-group col-md-6">
-        <label>Roll</label>
-        <div class="form-group col-md-12">
-          <div class="input-group">
-            <div class="input-group-append " >
-              <button type="button" (click)="openRollPanel()" class="form-control btn btn-primary"><i
-                  class="fa fa-search"></i></button>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="name">Tipo de Contrato</label>
+          <select disabled="disabled" [(ngModel)]="Persona.Tipo_Contrato" name="Tipo_Contrato" class="form-control">
+          <option value='1'>Fijo</option>
+          <option value='2'>Temporal</option>
+          <option value='3'>Jornal</option>
+          </select>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="name">Tipo de Jornada</label>
+          <select  disabled="disabled" [(ngModel)]="Persona.Jornada" name="Jornada" class="form-control">
+          <option value='1'>Diurna</option>
+          <option value='2'>Nocturna</option>
+          <option value='3'>Mixta</option>
+          <option value='4'>Destajo</option>
+          </select>
+        </div>
+        <div class="form-group col-md-6">
+          <label>Roll</label>
+          <div class="form-group col-md-12">
+            <div class="input-group">
+              <div class="input-group-append " >
+                <button type="button" (click)="openRollPanel()" class="form-control btn btn-primary"><i
+                    class="fa fa-search"></i></button>
+              </div>
+              <input [(ngModel)]="Persona.Roll" disabled name="Roll" id="Roll" type="input"
+                class="form-control" placeholder="Roll">
             </div>
-            <input [(ngModel)]="Persona.Roll" disabled name="Roll" id="Roll" type="input"
-              class="form-control" placeholder="Roll">
           </div>
         </div>
-      </div>
       
-      <div class="form-group col-md-6">
-          <label># Contrato</label>
-          <input [(ngModel)]="Persona.Numero_Contrato" name="Numero_Contrato" type="text" placeholder="Numero Contrato" class="form-control">
-      </div>
-      <div class="form-group col-md-6">
-          <label>Salario</label>
-          <input [(ngModel)]="Persona.Salario_Mes" name="Salario_Mes" type="text" placeholder="Salario Mensual" class="form-control">
-      </div>
-      <div class="form-group col-md-6">
-          <label for="name">Estado</label>
-          <select [(ngModel)]="Persona.Estado" name="Estado" class="form-control">
-          <option value='1'>Activo</option>
-          <option value='2'>Inactivo</option>
-          <option value='3'>Suspendido</option>
-          <option value='4'>Vacaciones</option>
-          <option value='5'>Despedido</option>
-          <option value='6'>Renuncio</option>
-          </select>
-      </div>
+        <div class="form-group col-md-6">
+            <label># Contrato</label>
+            <input [(ngModel)]="Persona.Numero_Contrato" name="Numero_Contrato" type="text" placeholder="Numero Contrato" class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+            <label>Salario</label>
+            <input disabled="disabled" [(ngModel)]="Persona.Salario_Mes" name="Salario_Mes" type="text" placeholder="Salario Mensual" class="form-control">
+        </div>
+        
+        <div class="form-group col-md-6">
+            <label for="name">Escolaridad</label>
+            <select [(ngModel)]="Persona.Id_Escolaridad" name="Id_Escolaridad" class="form-control">
+            <option value='1'>Primer Ciclo Completo</option>
+            <option value='2'>Primaria Completa </option>
+            <option value='3'>Tercer Ciclo Completo (Noveno)</option>
+            <option value='4'>Secundaria Completa</option>
+            <option value='5'>Tecnico Medio</option>
+            <option value='6'>Bachiller Universitario</option>
+            <option value='7'>Licenciado Universitario</option>
+            <option value='8'>Post Grado Universitariooption</option>
+            </select>
+        </div>
+      
+        <div class="form-group col-md-4">
+          <label>Vencimiento Exámen Psicolágico</label>
+          <div class="input-group">
+            <input  class="form-control" [(ngModel)]="Persona.Fecha_EP" name="Fehca_Examen_Psicologico" placeholder="Fehca_Examen_Psicologico" ngbDatepicker
+              #d3="ngbDatepicker">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary fa fa-calendar" (click)="d3.toggle()" type="button"></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-4">
+          <label>Vencimiento Curso Básico</label>
+          <div class="input-group">
+            <input  class="form-control" [(ngModel)]="Persona.Fecha_CB" name="Fecha_Curso_Basico" placeholder="Fecha_Curso_Basico" ngbDatepicker
+              #d4="ngbDatepicker">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary fa fa-calendar" (click)="d4.toggle()" type="button"></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-4">
+          <label>Vencimiento Carné Portación</label>
+          <div class="input-group">
+            <input  class="form-control" [(ngModel)]="Persona.Fecha_CP" name="Fecha_Carnet_Portacion" placeholder="Fecha_Carnet_Portacion" ngbDatepicker
+              #d5="ngbDatepicker">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary fa fa-calendar" (click)="d5.toggle()" type="button"></button>
+            </div>
+          </div>
+        </div>
+
       </div>
   </div>
   </form>  

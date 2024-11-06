@@ -40,7 +40,8 @@ export class ProspeccionComponent implements OnInit {
   Provinces = [];
   Cantons = [];
   Districts = [];
-  
+  Agentes = [];
+
   paginacion = {
     FirstRow: 1,
     LastRow: 50,
@@ -62,7 +63,7 @@ export class ProspeccionComponent implements OnInit {
     Cliente:'',
     Alumno:'',
     Profesor:'',
-    Estado:'',
+    Estado:'11',
     Otro_Documento:'',
     Condicion_Venta:'',
     Plazo_Credito:'',
@@ -81,7 +82,9 @@ export class ProspeccionComponent implements OnInit {
     Restaurante:'',
     Asesoria:'',
     Declaracion:'',
-    Precio:''
+    Precio:'',
+    Id_Agente:'',
+    Nombre_Agente:''
   }
 
   ngOnInit(): void {
@@ -264,6 +267,7 @@ export class ProspeccionComponent implements OnInit {
     this.edit = true;
     if(Persona){
       this.Persona.Id_Persona = Persona.Id_Persona;
+      this.Persona.Prospecto = '1';
       this.loadPersona();
     }else{
       this.Persona = {
@@ -282,7 +286,7 @@ export class ProspeccionComponent implements OnInit {
         Cliente:'',
         Alumno:'',
         Profesor:'',
-        Estado:'',
+        Estado:'11',
         Otro_Documento:'',
         Condicion_Venta:'',
         Plazo_Credito:'',
@@ -301,8 +305,9 @@ export class ProspeccionComponent implements OnInit {
         Restaurante:'',
         Asesoria:'',
         Declaracion:'',
-        Precio:''
-
+        Precio:'',
+        Id_Agente:'',
+        Nombre_Agente:''
       }
     }
   }
@@ -315,6 +320,9 @@ export class ProspeccionComponent implements OnInit {
       if(this.Persona.Moneda == ''){
         this.Persona.Moneda = 'CRC';
       }
+      //Leer el nombre del Agente
+      let Agente = await this.contactoService.loadPersona(this.Persona.Id_Agente);
+      this.Persona.Nombre_Agente = Agente['data'][0]['Nombre'];
     }
    }
    cancel(){

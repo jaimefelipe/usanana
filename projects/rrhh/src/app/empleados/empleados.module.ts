@@ -16,9 +16,6 @@ import { LocalidadComponent } from './localidad/localidad.component';
 import { RollComponent } from './roll/roll.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
-
-
-
 @NgModule({
   imports: [
     CommonModule,

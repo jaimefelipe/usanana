@@ -13,7 +13,8 @@ export class CompanyService {
     let sqlConfig = {
       table: 'Gen_Empresa',
       fields: 'Id_Empresa,Nombre',
-      orderField: '',
+      orderField: 'Nombre',
+      orderDirection:' ASC ',
       simple:true,
       Empresa:false
     }

@@ -91,6 +91,16 @@ export class UsuarioEmpresaComponent implements OnInit {
   }
 
   grabar(){
+    //Cargar Datos del usuario
+    //Recorrer el array para obtener datos
+    
+    for (let usuario of this.Usuarios) {
+      if(usuario.Id_Usuario == this.UsuarioEmpresa.Id_Usuario){
+        this.UsuarioEmpresa.Nombre_Usuario = usuario.Nombre;
+        this.UsuarioEmpresa.Numero_Identificacion = usuario.Numero_Identificacion;
+      }
+    }
+
     if(this.UsuarioEmpresa.Id_Usuario_Empresa == ''){
       let data = this.usuarioEmpresaService.inserUsert(this.UsuarioEmpresa);
     }else{
