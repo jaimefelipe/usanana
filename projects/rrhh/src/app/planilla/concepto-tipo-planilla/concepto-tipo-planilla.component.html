@@ -1,0 +1,100 @@
+<div [hidden]="edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Concepto por tipo de Planilla</h2>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+        </div>
+        <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+          placeholder="Buscar">
+        <div class="input-group-append">
+          <button class="btn btn-success" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
+              aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form>
+    <div class="form-row">
+
+      <div class="form-group col-12 col-sm-6" *ngFor="let Centro of ConceptoTipos;let i = index">
+        <div class="card">
+          <a (click)="editRecord(Centro)">
+            <div class="card-body">
+
+              <h4 class="card-title">{{Centro.Nombre}}</h4>
+              
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="container-fluid">
+    <ul class="pagination">
+      <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"
+            aria-hidden="true"></i></a></li>
+    </ul>
+  </div>
+</div>
+
+
+<!--
+  Form de Edición
+-->
+
+<div [hidden]="!edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Usuario</h2>
+
+  <form>
+    <div class="form-row">
+
+      <div class="form-group col-md-6">
+        <label>Compañia</label>
+        <select [(ngModel)]="ConceptoTipo.Id_Tipo_Planilla" name="Id_Empresa" type="text" class="form-control">
+          <option value='{{Tipo.Id_Tipo_Planilla}}' *ngFor="let Tipo of Tipos;let i = index">
+           {{Tipo.Nombre}}</option>
+        </select>
+      </div>
+
+      <div class="form-group col-md-6">
+        <label>Usuario</label>
+        <select [(ngModel)]="ConceptoTipo.Id_Concepto_Calculo" name="Id_Usuario" type="text" class="form-control">
+          <option value='{{Concepto.Id_Concepto_Calculo}}' *ngFor="let Concepto of Conceptos;let i = index">
+             {{Concepto.Nombre}}</option>
+        </select>
+      </div>
+
+      <div class="form-group col-md-6">
+        <label>Estado</label>
+        <select [(ngModel)]="ConceptoTipo.Estado" name="Estado" type="text" class="form-control">
+          <option value='1'>Activo</option>
+          <option value='0'>Inactivo</option>
+        </select>
+      </div>
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-6 col-md-8">
+
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="grabar()" type="button" class="btn btn-success" title="Cancela edicion">Grabar</button>
+          </div>
+          <div class="form-group col-3 col-md-2">
+            <button (click)="cancel()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+</div>
+

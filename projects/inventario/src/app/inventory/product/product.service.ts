@@ -187,6 +187,8 @@ export class ProductService {
         + '\',Foto=\''+ Article.Foto
         + '\',Cantidad_Documento=\''+ Article.Cantidad_Documento
         + '\',Vencimiento_Documento=\''+ Article.Vencimiento_Documento
+        + '\',Ultimo_Costo=\''+ Article.Ultimo_Costo
+        + '\',Costo_Promedio=\''+ Article.Costo_Promedio
         + '\'',
         where: 'Id_Producto=' + Article.Id_Producto
       };

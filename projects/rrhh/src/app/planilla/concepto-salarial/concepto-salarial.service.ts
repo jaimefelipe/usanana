@@ -35,16 +35,16 @@ export class ConceptoSalarialService {
         table: 'Pl_Concepto_Salarial',
         fields: 'Nombre,Tipo_Concepto,Aplica_Como,Tipo_Referencia,Tipo_Valor,Aplica_Calculos,Estado,Secuencia,Valor,Formula,Etiqueta',
         values: '\'' + Periodo.Nombre  + '\','
-        + '\'' + Periodo.Tipo_Concepto
-        + '\'' + Periodo.Aplica_Como
-        + '\'' + Periodo.Tipo_Referencia
-        + '\'' + Periodo.Tipo_Valor
-        + '\'' + Periodo.Aplica_Calculos
-        + '\'' + Periodo.Estado
-        + '\'' + Periodo.Secuencia
-        + '\'' + Periodo.Valor
-        + '\'' + Periodo.Formula
-        + '\'' + Periodo.Etiqueta
+        + '\'' + Periodo.Tipo_Concepto + '\','
+        + '\'' + Periodo.Aplica_Como + '\','
+        + '\'' + Periodo.Tipo_Referencia + '\','
+        + '\'' + Periodo.Tipo_Valor + '\','
+        + '\'' + Periodo.Aplica_Calculos + '\','
+        + '\'' + Periodo.Estado + '\','
+        + '\'' + Periodo.Secuencia + '\','
+        + '\'' + Periodo.Valor + '\','
+        + '\'' + Periodo.Formula + '\','
+        + '\'' + Periodo.Etiqueta 
         + '\''
       };
       return await this.apiService.insertRecord(sql);
