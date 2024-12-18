@@ -19,12 +19,12 @@
   <form>
     <div class="form-row">
 
-      <div class="form-group col-12 col-sm-6" *ngFor="let Centro of ConceptoTipos;let i = index">
+      <div class="form-group col-12 col-sm-6" *ngFor="let ConceptoTipoPlanilla of ConceptoTipos;let i = index">
         <div class="card">
-          <a (click)="editRecord(Centro)">
+          <a (click)="editRecord(ConceptoTipoPlanilla)">
             <div class="card-body">
 
-              <h4 class="card-title">{{Centro.Nombre}}</h4>
+              <h4 class="card-title">{{ConceptoTipoPlanilla.Tipo_Planilla}}- {{ConceptoTipoPlanilla.Concepto_Salarial}} </h4>
               
             </div>
           </a>
@@ -58,24 +58,24 @@
     <div class="form-row">
 
       <div class="form-group col-md-6">
-        <label>Compañia</label>
-        <select [(ngModel)]="ConceptoTipo.Id_Tipo_Planilla" name="Id_Empresa" type="text" class="form-control">
+        <label>Tipo Planilla</label>
+        <select [(ngModel)]="Concepto_Tipo_Planilla.Id_Tipo_Planilla" name="Id_Tipo_Planilla" type="text" class="form-control">
           <option value='{{Tipo.Id_Tipo_Planilla}}' *ngFor="let Tipo of Tipos;let i = index">
            {{Tipo.Nombre}}</option>
         </select>
       </div>
 
       <div class="form-group col-md-6">
-        <label>Usuario</label>
-        <select [(ngModel)]="ConceptoTipo.Id_Concepto_Calculo" name="Id_Usuario" type="text" class="form-control">
-          <option value='{{Concepto.Id_Concepto_Calculo}}' *ngFor="let Concepto of Conceptos;let i = index">
+        <label>Concepto Salarial</label> {{Concepto_Tipo_Planilla.Id_Concepto_Salarial}}
+        <select [(ngModel)]="Concepto_Tipo_Planilla.Id_Concepto_Salarial" name="Id_Concepto_Salarial" type="text" class="form-control">
+          <option value='{{Concepto.Id_Concepto_Salarial}}' *ngFor="let Concepto of Conceptos;let i = index">
              {{Concepto.Nombre}}</option>
         </select>
       </div>
 
       <div class="form-group col-md-6">
         <label>Estado</label>
-        <select [(ngModel)]="ConceptoTipo.Estado" name="Estado" type="text" class="form-control">
+        <select [(ngModel)]="Concepto_Tipo_Planilla.Estado" name="Estado" type="text" class="form-control">
           <option value='1'>Activo</option>
           <option value='0'>Inactivo</option>
         </select>

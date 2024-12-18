@@ -78,7 +78,8 @@ export class MovementInventoryComponent implements OnInit {
     Sub_Total: 0,
     Total: 0,
     Tipo_Impuesto: '',
-    Tipo_Codigo:''
+    Tipo_Codigo:'',
+    Ultimo_Costo:0
   };
 
   ngOnInit(): void {
@@ -251,7 +252,8 @@ export class MovementInventoryComponent implements OnInit {
       Sub_Total: 0,
       Total: 0,
       Tipo_Impuesto: '',
-      Tipo_Codigo:''
+      Tipo_Codigo:'',
+      Ultimo_Costo:0
     };
   }
   processProduct(next, stop?) {
@@ -301,9 +303,16 @@ export class MovementInventoryComponent implements OnInit {
   }
   calcularTotales() {
     if(this.Detalle.Precio >0){
-      this.Detalle.Sub_Total = this.Detalle.Cantidad * this.Detalle.Precio;
-      this.Detalle.IVA = (this.Detalle.Sub_Total * this.Detalle.IVAPorcentaje) / 100;
-      this.Detalle.Total = this.Detalle.Sub_Total + this.Detalle.IVA;
+      // Si es compra es el costo.
+      if(this.Movement.Tipo_Movimiento == '02' || this.Movement.Tipo_Movimiento == '04'){
+        this.Detalle.Sub_Total = this.Detalle.Cantidad * this.Detalle.Precio;
+        this.Detalle.IVA = 0;
+        this.Detalle.Total = this.Detalle.Sub_Total;
+      }else{
+        this.Detalle.Sub_Total = this.Detalle.Cantidad * this.Detalle.Precio;
+        this.Detalle.IVA = (this.Detalle.Sub_Total * this.Detalle.IVAPorcentaje) / 100;
+       
+      }
       if (this.Detalle.Total > 0) {
         this.Details.push(this.Detalle);
       }
@@ -311,16 +320,21 @@ export class MovementInventoryComponent implements OnInit {
     this.Movement.Sub_Total = 0;
     this.Movement.IVA = 0;
     this.Movement.Total = 0;
+    
     for (let i = 0; i < this.Details.length; i++) {
       this.Movement.Sub_Total = this.Movement.Sub_Total + parseFloat(this.Details[i]["Sub_Total"]);
-      this.Movement.IVA = this.Movement.IVA + parseFloat(this.Details[i]["IVA"]);
+      if(this.Movement.Tipo_Movimiento == '02' || this.Movement.Tipo_Movimiento == '04'){
+        this.Movement.IVA = 0;
+      }else{
+        this.Movement.IVA = this.Movement.IVA + parseFloat(this.Details[i]["IVA"]);
+      }
       this.Movement.Total = this.Movement.Sub_Total + this.Movement.IVA;
     }
     this.initDetail();
   }
 
   async obtenerProducto(producto, tipo) {
-    let data = await this.productService.loadProduct(producto);
+    let data = await this.productService.loadProduct(producto); 
     if (data['total'] === 0) {
       data = await this.productService.loadProductLike(producto);
     }
@@ -335,6 +349,12 @@ export class MovementInventoryComponent implements OnInit {
         this.Detalle.IVAPorcentaje = data["data"][0]["Impuesto"];
         this.Detalle.Codigo_Referencia = data["data"][0]["Codigo"];
         this.Detalle.Tipo_Impuesto = data["data"][0]["Tipo_Impuesto"];
+        this.Detalle.Ultimo_Costo = data["data"][0]["Ultimo_Costo"];
+
+        if(this.Movement.Tipo_Movimiento == '02' || this.Movement.Tipo_Movimiento == '04'){
+          this.Detalle.Precio = this.Detalle.Ultimo_Costo;
+        }
+
       } else {
         this.registros = data["data"];
       }

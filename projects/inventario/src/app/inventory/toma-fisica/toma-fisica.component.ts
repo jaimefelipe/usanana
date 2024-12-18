@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ProductService } from '../product/product.service';
+import { TomaFisicaService } from './toma-fisica.service';
 import Swal from "sweetalert2";
 
 @Component({
@@ -10,7 +11,8 @@ import Swal from "sweetalert2";
 export class TomaFisicaComponent implements OnInit {
 
   constructor(
-    private productService:ProductService
+    private productService:ProductService,
+    private tomaFisicaService:TomaFisicaService
   ) { }
 
   edit = false;
@@ -32,8 +34,9 @@ export class TomaFisicaComponent implements OnInit {
   };
 
   TomaFisica = {
+    Id_Toma_Fisica:'',
     Fecha:'',
-    Estado:'0',
+    Estado:'0'
   }
   Fecha =  {
     month: this.hoy.getMonth() + 1,
@@ -42,6 +45,8 @@ export class TomaFisicaComponent implements OnInit {
   }
   
   Detalle = {
+    Id_Toma_Fisica_Detalle:'',
+    Id_Toma_Fisica:'',
     Codigo_Referencia: "",
     SKU : '',
     Id_Empresa: 0,
@@ -62,13 +67,17 @@ export class TomaFisicaComponent implements OnInit {
     Tipo_Impuesto: '',
     Tipo_Codigo:'',
     Adicional:'',
-    Id_Categoria:''
+    Id_Categoria:'',
+    Existencia:''
   }
 
   ngOnInit() {
+    this.leerTomasFisicas();
   }
   initDetail() {
     this.Detalle = {
+      Id_Toma_Fisica_Detalle:'',
+      Id_Toma_Fisica:'',
       Codigo_Referencia: "",
       SKU:'',
       Id_Empresa: 0,
@@ -89,12 +98,16 @@ export class TomaFisicaComponent implements OnInit {
       Tipo_Impuesto: '',
       Tipo_Codigo:'',
       Adicional:'',
-      Id_Categoria:''
+      Id_Categoria:'',
+      Existencia:''
     };
     
   }
   search(){
 
+  }
+  cerrar(){
+    this.edit = false;
   }
   keytab(event:any){
     if (event.key === 'Enter') {
@@ -117,7 +130,18 @@ export class TomaFisicaComponent implements OnInit {
     await this.obtenerProducto(this.searchFieldProduct,0);
   
   }
-  editRecord(e){
+  editRecord(Toma_Fisica){
+    if(!Toma_Fisica){
+      this.TomaFisica = {
+        Id_Toma_Fisica:'',
+        Fecha:'',
+        Estado:'0'
+      }
+      this.initDetail();
+      this.Details = [];
+    }else{
+      this.leerTomaFisica(Toma_Fisica);
+    }
     this.edit = true;
   }
   ChangePage(action:any){
@@ -177,15 +201,16 @@ export class TomaFisicaComponent implements OnInit {
         this.Detalle.Id_Producto = data["data"][0]["Id_Producto"];
         this.Detalle.Tipo_Codigo = data["data"][0]["Tipo_Codigo"];
         this.Detalle.Descripcion = data["data"][0]["Descripcion"];
-        this.Detalle.Precio = data["data"][0]["Precio"];
+        this.Detalle.Precio = data["data"][0]["Ultimo_Costo"];
         this.Detalle.Unidad_Medida = data["data"][0]["Unidad_Medida"];
         this.Detalle.IVAPorcentaje = data["data"][0]["Impuesto"];
         this.Detalle.Codigo_Referencia = data["data"][0]["Codigo"];
         this.Detalle.Tipo_Impuesto = data["data"][0]["Tipo_Impuesto"];
         this.Detalle.SKU = data["data"][0]["SKU"];
         this.Detalle.Id_Categoria = data["data"][0]["Categoria"];
-        this.Detalle.Total = parseFloat(this.Detalle.Cantidad.toString()) + ( parseFloat(this.Detalle.Precio.toString()) * parseFloat(this.Detalle.IVAPorcentaje.toString()) /100);
-        this.Detalle.Total = parseFloat(parseFloat(this.Detalle.Total.toFixed()).toFixed(2));
+        this.Detalle.Existencia = data["data"][0]["Existencia"];
+        //this.Detalle.Total = this.Detalle.Precio * this.Detalle.Cantidad;  //parseFloat(this.Detalle.Precio.toString()) + ( parseFloat(this.Detalle.Precio.toString()) * parseFloat(this.Detalle.IVAPorcentaje.toString()) /100);
+        //this.Detalle.Total = parseFloat(parseFloat(this.Detalle.Total.toFixed()).toFixed(2));
         this.PantallaProductos = false;
         let elemento = document.getElementById("Descripcion");
         elemento.focus();
@@ -205,13 +230,11 @@ export class TomaFisicaComponent implements OnInit {
   }
   async calcularTotales() {
     
-
-    this.Detalle.Sub_Total = this.Detalle.Cantidad;
+    this.Detalle.Sub_Total = this.Detalle.Cantidad * this.Detalle.Precio;
     this.Detalle.Total = this.Detalle.Sub_Total ;
     if (this.Detalle.Total > 0) {
       this.Details.push(this.Detalle);
     }
-    
     this.initDetail()
   }
   removeVen_Factura_Detalle(index: number) {
@@ -226,6 +249,8 @@ export class TomaFisicaComponent implements OnInit {
     this.Detalle.Id_Producto = producto.Id_Producto;
     this.Detalle.SKU = producto.SKU;
     this.Detalle.Descripcion = producto.Descripcion;
+    this.Detalle.Existencia = producto.Existencia;
+    this.Detalle.Precio = producto.Ultimo_Costo;
     await this.processProduct('Cantidad');
     this.PantallaProductos = false;
     document.getElementById('Cantidad').focus();
@@ -234,11 +259,68 @@ export class TomaFisicaComponent implements OnInit {
   closeModal() {
     this.PantallaProductos = false;
   }
+
+  async leerTomasFisicas(){
+    let data = await this.tomaFisicaService.loadTomasFisicas(this.paginacion,this.searchField);
+    if (data['total'] == 0) {
+      this.TomasFisicas = [];
+    } else {
+      this.TomasFisicas = data['data'];
+    }
+  }
+
   grabar(){
     this.grabarEncabezado();
-    this.grabarDetalles();
   }
-  grabarEncabezado(){};
-  grabarDetalles(){};
-  
+  async grabarEncabezado(){
+    let data = await this.tomaFisicaService.saveTomaFisica(this.TomaFisica);
+    if(this.TomaFisica.Id_Toma_Fisica == ''){
+      this.TomaFisica.Id_Toma_Fisica = data["data"][0]["Identity"];
+    }
+    let ListaDetalles = '';
+    for (let i = 0; i < this.Details.length; i++) {
+      
+      if(i > 0){
+        ListaDetalles = ListaDetalles + ',';
+      }
+      ListaDetalles =  await this.grabarDetalles(this.Details[i],ListaDetalles);
+      console.log(ListaDetalles)
+    }
+    this.eliminarDetalles(ListaDetalles)
+    this.leerTomasFisicas();
+    this.cerrar();
+  };
+
+  async eliminarDetalles(lista){
+    let del = await this.tomaFisicaService.deleteDetails(this.TomaFisica.Id_Toma_Fisica,lista);
+}
+
+  async grabarDetalles(Detalle,ListaDetalles){
+    Detalle.Id_Toma_Fisica = this.TomaFisica.Id_Toma_Fisica;
+    let data = await this.tomaFisicaService.saveTomaFisicaDetalle(Detalle);
+    if(Detalle.Id_Toma_Fisica_Detalle == ''){
+      ListaDetalles = ListaDetalles + String(data['data'][0]['Identity']);
+    }else{
+      ListaDetalles = ListaDetalles + String(Detalle.Id_Toma_Fisica_Detalle);
+    }
+    return ListaDetalles;
+  };
+
+  async leerTomaFisica(Toma_Fisica){
+    let data = await this.tomaFisicaService.loadTomaFisica(Toma_Fisica.Id_Toma_Fisica);
+    
+    this.TomaFisica = data['data'][0];
+    let paginacion = {
+      FirstRow: 1,
+      LastRow: 500,
+      TotalRows: 0
+    };
+    let detalle = await this.tomaFisicaService.loadTomasFisicasDetalles(Toma_Fisica.Id_Toma_Fisica,paginacion,'');
+    if (detalle['total'] == 0) {
+      this.Details = [];
+    } else {
+      this.Details = detalle['data'];
+    }
+    
+  }
 }

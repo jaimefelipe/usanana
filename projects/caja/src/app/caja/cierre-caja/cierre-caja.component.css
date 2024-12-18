@@ -67,3 +67,14 @@
         border-top-color: transparent;
         animation: spin 1s linear infinite; /* Animación de rotación */
       }
+
+      .bold-row {
+        font-weight: bold;
+        background-color: #fce4d6; /* Fondo de color pastel */
+        border: 2px solid #f28a2e; /* Borde llamativo */
+      }
+      
+      .low-performance {
+        color: #721c24; /* Texto rojo oscuro */
+        font-weight: bold; /* Negritas opcionales */
+      }

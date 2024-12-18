@@ -144,6 +144,14 @@ export class AccountantReportComponent implements OnInit {
         }
       }
     }
+    if(this.reporte =='12'){
+      for (let i = 0; i < this.Periodos.length; i++) {
+        if(this.Periodos[i].Id_Periodo_Contable == this.Id_Periodo){
+            // Ejecutar el proceso de mayorizacion.
+          this.balanceMensual(this.Periodos[i].Mes,this.Periodos[i].Anio)
+        }
+      }
+    }
   }
   cambiarFechaMes(){
     if(this.reporte =='1'){
@@ -272,5 +280,8 @@ export class AccountantReportComponent implements OnInit {
   }
   async movimientosCuenta(Mes:any,Anio:any){
     window.open('https://toxo.work/reportes/contabilidad/cge-mov-cta.php?id='+localStorage.getItem('Id_Empresa')+'&m='+Mes+'&a='+Anio,'_blank')
+  }
+  async balanceMensual(Mes:any,Anio:any){
+    window.open('https://toxo.work/reportes/contabilidad/cge-balance-mensual-xls.php?id='+localStorage.getItem('Id_Empresa')+'&m='+Mes+'&a='+Anio+'&p='+this.Id_Periodo,'_blank')
   }
 }

@@ -96,18 +96,21 @@
                         <th scope="col">Cantidad</th>
                         <th scope="col">Monto</th>
                         <th scope="col">Costo</th>
+                        <th scope="col">%Costo</th>
+                        <th scope="col">%Rendimiento</th>
                       </tr>
                     </thead>
                     <tbody *ngFor="let Producto of Productos;let i = index">
-                      <tr>
+                      <tr [ngClass]="{'bold-row': !Producto.Nombre, 'low-performance': Producto.Rendimiento < 0.5}">
                         <th>{{Producto.id}}</th>
                         <td>{{Producto.Nombre}}</td>
                         <td>{{Producto.Producto}}</td>
                         <td class="text-right">{{Producto.Cantidad}}</td>
                         <td class="text-right">{{Producto.Monto}}</td>
                         <td class="text-right">{{Producto.Costo}}</td>
+                        <td class="text-right">{{Producto.Porcentaje}}</td>
+                        <td class="text-right">{{Producto.Rendimiento}}</td>
                       </tr>
-                      
                     </tbody>
                   </table>
             </div>

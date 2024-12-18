@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { ConceptoTipoPlanillaService } from './concepto-tipo-planilla.service';
+import { ConceptoSalarialService } from '../concepto-salarial/concepto-salarial.service';
+import { TipoPlanillaService } from '../tipo-planilla/tipo-planilla.service';
 
 @Component({
   selector: 'app-concepto-tipo-planilla',
@@ -7,7 +10,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ConceptoTipoPlanillaComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private conceptoTipoPlanillaService:ConceptoTipoPlanillaService,
+    private conceptoSalarialService:ConceptoSalarialService,
+    private tipoPlanillaService:TipoPlanillaService
+  ) { }
 
   edit = false;
 
@@ -23,20 +30,25 @@ export class ConceptoTipoPlanillaComponent implements OnInit {
     TotalRows: 0
   };
 
-  ConceptoTipo = {
+  Concepto_Tipo_Planilla = {
     Id_Concepto_Tipo_Planilla:'',
     Id_Tipo_Planilla:'',
-    Id_Concepto_Calculo:'',
-    Estado:''
+    Id_Concepto_Salarial:'',
+    Estado:'1'
   }
 
   ngOnInit() {
+    this.leerTipoPlanilla();
+    this.leerConceptoSalariales();
+    this.loadConceptosTipos();
+  }
+  keytab(event){
+    if (event.key === 'Enter') {
+      this.search();
+    }
   }
   search(){
-
-  }
-  keytab(e){
-
+    this.loadConceptosTipos(this.searchField);
   }
   ChangePage(action){
     if (action == 0) {
@@ -58,14 +70,78 @@ export class ConceptoTipoPlanillaComponent implements OnInit {
     }
     this.loadConceptosTipos();
   }
-  editRecord(e){
-
+  async editRecord(ConceptoTipo){
+    this.edit = true;
+    if(ConceptoTipo){
+        await this.loadConceptosTipos(ConceptoTipo.Id_Concepto_Tipo_Planilla);
+    }else{
+      this.Concepto_Tipo_Planilla = {
+        Id_Concepto_Tipo_Planilla:'',
+        Id_Tipo_Planilla:'',
+        Id_Concepto_Salarial:'',
+        Estado:'1'
+      }
+    }
   }
-  loadConceptosTipos(){}
-  grabar(){
+  
+  async loadConceptoTipoPlanilla(Id_Concepto_Tipo_Planilla){
+    let data = await this.conceptoTipoPlanillaService.loadConceptoTIpoPlanilla(Id_Concepto_Tipo_Planilla);
+    if(data['total'] == 0){
+      this.Concepto_Tipo_Planilla = {
+        Id_Concepto_Tipo_Planilla:'',
+        Id_Tipo_Planilla:'',
+        Id_Concepto_Salarial:'',
+        Estado:'1'
+      }
+    }else{
+      this.Concepto_Tipo_Planilla = data['data'][0];
+    }
+  }
 
+  async loadConceptosTipos(search?){
+    let data = await this.conceptoTipoPlanillaService.loadConceptosTipoPlanilla(this.paginacion,search);
+    if(data['total'] == 0){
+      this.ConceptoTipos = [];
+    }else{
+      this.ConceptoTipos = data['data'];
+    }
+  }
+
+  async grabar(){
+    this.conceptoTipoPlanillaService.saveConceptoTipoPlanilla(this.Concepto_Tipo_Planilla);
+    this.loadConceptosTipos();
+    this.cancel();
   }
   cancel(){
+    this.edit = false;
     
+  }
+
+  async leerConceptoSalariales(){
+    let  paginacion = {
+      FirstRow: 1,
+      LastRow: 500,
+      TotalRows: 0
+    };
+    let data = await this.conceptoSalarialService.loadConceptos(paginacion,'');
+    if(data['total'] == 0){
+      this.Conceptos = [];
+    }else{
+      this.Conceptos = data['data'];
+    }
+
+  }
+  async leerTipoPlanilla(){
+    let  paginacion = {
+      FirstRow: 1,
+      LastRow: 500,
+      TotalRows: 0
+    };
+    let data = await this.tipoPlanillaService.loadTipos(paginacion,'');
+    if(data['total'] == 0){
+      this.Tipos = [];
+    }else{
+      this.Tipos = data['data'];
+    }
   }
 }
