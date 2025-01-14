@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ProductService } from '../product/product.service';
 import { TomaFisicaService } from './toma-fisica.service';
 import Swal from "sweetalert2";
+import { ApiService } from "../../../../../core/src/app/lib/api.service";
 
 @Component({
   selector: 'app-toma-fisica',
@@ -12,9 +13,12 @@ export class TomaFisicaComponent implements OnInit {
 
   constructor(
     private productService:ProductService,
-    private tomaFisicaService:TomaFisicaService
+    private tomaFisicaService:TomaFisicaService,
+    private apiService:ApiService
   ) { }
 
+  loading = false;
+  MensajeLoading = 'aplicando';
   edit = false;
   PantallaProductos = false;
   ProductoEncontrado = false;
@@ -229,8 +233,11 @@ export class TomaFisicaComponent implements OnInit {
     //return true;
   }
   async calcularTotales() {
-    
+    if(!this.Detalle.Precio){
+      this.Detalle.Precio = 1;
+    }
     this.Detalle.Sub_Total = this.Detalle.Cantidad * this.Detalle.Precio;
+    
     this.Detalle.Total = this.Detalle.Sub_Total ;
     if (this.Detalle.Total > 0) {
       this.Details.push(this.Detalle);
@@ -269,10 +276,32 @@ export class TomaFisicaComponent implements OnInit {
     }
   }
 
-  grabar(){
-    this.grabarEncabezado();
+  async grabar(){
+    await this.grabarEncabezado();
+    //aplicar Movimientos
+    Swal.fire({
+        title: 'Desea Aplicar la Toma Fisica?',
+        text: "Si aplica la toma fisica no le podra realizar ninún cambio!",
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si, Aplicar la toma Fisica!'
+      }).then((result) => {
+        if (result.value) {
+          this.aplicarTomaFisica()
+        }
+      });
+    this.cerrar();
+  }
+
+  async aplicarTomaFisica(){
+    this.loading = true;
+    await this.apiService.postRecord('Call sp_Inv_Generar_Movimientos_Toma_Fisica(' + localStorage.getItem('Id_Empresa') +  "," + this.TomaFisica.Id_Toma_Fisica +  ",'" + localStorage.getItem('Nombre_Usuario') + "')" );
+    this.loading = false;
   }
   async grabarEncabezado(){
+    this.loading = true;
+    this.TomaFisica.Fecha = this.Fecha.year + '-' + this.Fecha.month + '-' +this.Fecha.day;
     let data = await this.tomaFisicaService.saveTomaFisica(this.TomaFisica);
     if(this.TomaFisica.Id_Toma_Fisica == ''){
       this.TomaFisica.Id_Toma_Fisica = data["data"][0]["Identity"];
@@ -284,11 +313,10 @@ export class TomaFisicaComponent implements OnInit {
         ListaDetalles = ListaDetalles + ',';
       }
       ListaDetalles =  await this.grabarDetalles(this.Details[i],ListaDetalles);
-      console.log(ListaDetalles)
     }
     this.eliminarDetalles(ListaDetalles)
     this.leerTomasFisicas();
-    this.cerrar();
+    this.loading = false;
   };
 
   async eliminarDetalles(lista){
@@ -308,8 +336,13 @@ export class TomaFisicaComponent implements OnInit {
 
   async leerTomaFisica(Toma_Fisica){
     let data = await this.tomaFisicaService.loadTomaFisica(Toma_Fisica.Id_Toma_Fisica);
-    
     this.TomaFisica = data['data'][0];
+    let fechaArr = this.TomaFisica['Fecha'].split('-');
+      this.Fecha = {
+        month: parseInt(fechaArr[1]),
+        day: parseInt(fechaArr[2]),
+        year: parseInt(fechaArr[0]),
+      }
     let paginacion = {
       FirstRow: 1,
       LastRow: 500,

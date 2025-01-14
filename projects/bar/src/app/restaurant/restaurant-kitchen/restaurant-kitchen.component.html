@@ -7,10 +7,10 @@
       <div class="form-group col-3" *ngFor="let Comanda of Comandas;let i = index">
         <div class="card">
             <div class="card-body h-50">
+              <h4>{{Comanda.Tiempo_Transcurrido_Minutos}}</h4>
               <h4 class="card-title text-primary">{{Comanda.Nombre}}</h4>
-              <!-- 
               <h5 class="card-title">{{Comanda.Cantidad}} {{Comanda.Descripcion}}</h5>
-              -->
+              
               <h5 class="card-title text-danger">{{Comanda.Notas}}</h5>
               <h5 class="card-title">{{Comanda.Zona}}-{{Comanda.Mesa}}</h5>
               <!--{{Comanda.Componente}}-->

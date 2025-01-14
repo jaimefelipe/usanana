@@ -22,22 +22,12 @@
         <div class="card">
           <a (click)="editRecord(Asiento)">
             <div class="card-body">
-              Fecha: <b>{{Asiento.Fecha   }}</b> <!-- | date:'d/M/YYY' -->
-             Periodo: <b> {{Asiento.Mes}}-{{Asiento.Anio}}-{{Asiento.Secuencia}}</b>, Documento: <b>{{Asiento.Documento }}</b><br>
-              Sistema
-              <span *ngIf="Asiento.Sistema_Origen == 'CGE'" class="text-primary"> Contabilidad</span>
-              <span *ngIf="Asiento.Sistema_Origen == 'VEN'" class="text-success"> Ventas</span>
-              <span *ngIf="Asiento.Sistema_Origen == 'COM'" class="text-info"> Compras</span>
-              <span *ngIf="Asiento.Sistema_Origen == 'CXC'" class="text-info"> Cuentas Cobrar</span>
-              <span *ngIf="Asiento.Sistema_Origen == 'CXP'" class="text-info"> Cuentas Pagar</span>
-              <span *ngIf="Asiento.Sistema_Origen == 'INV'" class="text-success"> Inventario</span><br>
-              Descripción: <b>{{Asiento.Descripcion }}</b><br>
-              Estado :
+              Fecha: <b>{{Asiento.Fecha | date:'d/M/YYY'  }}</b> <!-- | date:'d/M/YYY' -->
+             Estado :
               <span *ngIf="Asiento.Estado == '0'" class="text-primary"> Registrado</span>
-              <span *ngIf="Asiento.Estado == '1'" class="text-warning"> Mayorizado</span>
-              <span *ngIf="Asiento.Diferencia != '0.00000'" class="text-danger"> Descuadrado</span>
-
-              <h6>Id:{{Asiento.Id_Asiento_Contable_Encabezado}}</h6>
+              <span *ngIf="Asiento.Estado == '1'" class="text-warning"> Aplicado</span>
+              
+              <h6>Id:{{Asiento.Id_Toma_Fisica}}</h6>
             </div>
           </a>
         </div>
@@ -70,10 +60,10 @@
        <!-- Inicio de Primera división -->
        <div class="form-group col-md-3">
         <div class="input-group">
-          <input class="form-control" [(ngModel)]="Fecha" name="Fecha" placeholder="Fecha" ngbDatepicker
+          <input [disabled]="TomaFisica.Estado !='0'" class="form-control" [(ngModel)]="Fecha" name="Fecha" placeholder="Fecha" ngbDatepicker
             #d1="ngbDatepicker">
           <div class="input-group-append">
-            <button class="btn btn-outline-secondary fa fa-calendar" (click)="d1.toggle()" type="button"></button>
+            <button [disabled]="TomaFisica.Estado !='0'" class="btn btn-outline-secondary fa fa-calendar" (click)="d1.toggle()" type="button"></button>
           </div>
         </div>
       </div>
@@ -99,7 +89,7 @@
           name="SKU" id="SKU" type="input" class="form-control" placeholder="Código"
           (blur)="processProduct('Cantidad')" (keydown)="keytab1($event,'Cantidad')">
           <div class="input-group-append">
-            <button type="button" (click)="obtenerProducto('',1)" class="form-control btn btn-primary"><i
+            <button  [disabled]="TomaFisica.Estado !='0'" type="button" (click)="obtenerProducto('',1)" class="form-control btn btn-primary"><i
                 class="fa fa-search"></i></button>
           </div>
         </div>
@@ -132,7 +122,7 @@
     <div class="form-group col-md-2 m-1">
       Código
     </div>
-    <div class="form-group col-12 col-md-3 m-1">
+    <div class="form-group col-12 col-md-4 m-1">
       Descripción
     </div>
     <div class="form-group col-12 col-md-1 m-1">
@@ -142,10 +132,7 @@
       Cantidad
     </div>
     <div class="form-group col-12 col-md-1 m-1">
-      Precio
-    </div>
-    <div class="form-group col-12 col-md-2 m-1">
-      Total
+      Diferencia
     </div>
     <div class="form-group col-12 col-md-1 m-1">
       Acción
@@ -158,7 +145,7 @@
       <div class="form-group col-12 col-md-2 m-1">
         {{Detail.SKU}}
       </div>
-      <div class="form-group col-12 col-md-3 m-1">
+      <div class="form-group col-12 col-md-4 m-1">
         {{Detail.Descripcion | slice:0:40}}
       </div>
       <div class="form-group col-12 col-md-1 m-1">
@@ -168,11 +155,9 @@
         {{Detail.Cantidad | currency:' '}}
       </div>
       <div class="form-group col-12 col-md-2 m-1">
-        {{Detail.Precio | currency:' '}}
+        {{ Detail.Cantidad  - Detail.Existencia | currency:' '}}
       </div>
-      <div class="form-group col-12 col-md-1 m-1">
-        {{Detail.Total | currency:' '}}
-      </div>
+
       <div class="form-group col-12 col-md-1 m-1">
         <span *ngIf="Detail.Adicional != 1" style="display: inline-block;">
           <button [disabled]="TomaFisica.Estado !='0'" type="button" class="btn btn-danger btn-sm"
@@ -189,9 +174,6 @@
   </div>
 </div>
 <!-- Fin Lista de Detalles -->
-
-
-
     <!-- Find de Totales -->
 
     <div class="form-group col-md-12">
@@ -204,7 +186,7 @@
             class="btn btn-primary  " title="Cancela edicion">Imprimir</button>
         </div>
         <div class="form-group col-3 col-md-2">
-          <button    type="button"
+          <button    type="button" [disabled]="TomaFisica.Estado !='0'"
             class="btn btn-success" (click)="grabar()" title="Cancela edicion">Grabar</button>
         </div>
         <div class="form-group col-3 col-md-2">

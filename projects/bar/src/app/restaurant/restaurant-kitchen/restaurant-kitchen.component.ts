@@ -18,13 +18,14 @@ export class RestaurantKitchenComponent implements OnInit {
   ngOnInit(): void {
     setInterval(()=>{
       this.loadComandas();
-    },15000);
+    },515000);
 
     this.loadComandas();
 
   }
   async loadComandas(){
     let products = await this.restaurantKitchenService.loadComandas();
+    console.log(products)
     if(products['total'] == 0){
       this.Comandas = [];
     }else{
