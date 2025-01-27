@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { AsientoDiarioService } from './asiento-diario.service';
 import { NgbDateFRParserFormatter } from '../../../../../core/src/app/_services/ngb-date-fr-parser-formatter';
 import { NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
-//import { CatalogoContableService } from '../catalogo-contable/catalogo-contable.service';
+import { CatalogoContableService } from '../catalogo-contable/catalogo-contable.service';
 import { PeriodoContableService } from "../periodo-contable/periodo-contable.service";
 
 import Swal from 'sweetalert2';
@@ -17,7 +17,7 @@ import Swal from 'sweetalert2';
 export class AsientoDiarioComponent implements OnInit {
 
   constructor(private asientoDiarioService:AsientoDiarioService,
-    //private catalogoContableService:CatalogoContableService,
+    private catalogoContableService:CatalogoContableService,
     private apiService:ApiService,
     private periodoContableService:PeriodoContableService
     ) { }
@@ -150,13 +150,11 @@ export class AsientoDiarioComponent implements OnInit {
     return true;
   }
   async obtenerCuenta(cuenta:any) {
-    //let data = await this.catalogoContableService.loadAccountFromCode(cuenta,0);
-    let data = []
+    let data = await this.catalogoContableService.loadAccountFromCode(cuenta,0);
     if (data['total'] === 0) {
-      let data = []
-      //data = await this.catalogoContableService.loadAccountLike(cuenta,0);
+      data = await this.catalogoContableService.loadAccountLike(cuenta,0);
     }
-    if (data["total"] == 1) {
+    if (data["total"] === 1) {
       this.Detalle.Cuenta = data["data"][0]['Cuenta'];
       this.Detalle.Detalle_Cuenta = data["data"][0]['Descripcion'];
     } else {
@@ -267,8 +265,7 @@ export class AsientoDiarioComponent implements OnInit {
     }
   }
   async loadHijas(search?:any){
-    //let data = await this.catalogoContableService.loadParents(this.paginacion,search,0);
-    let data = []
+    let data = await this.catalogoContableService.loadParents(this.paginacion,search,0);
     if(data['total'] == 0){
       this.Hijas = [];
     }else{

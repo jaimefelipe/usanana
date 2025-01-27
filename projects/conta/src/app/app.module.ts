@@ -18,6 +18,7 @@ import { PurchasesModule } from '../../../factura/src/app/purchases/purchases.mo
 import { GeneralModule } from '../../../main/src/app/general/general.module';
 import { SecurityModule } from '../../../seguridad/src/app/security/security.module';
 import { ReceivableModule } from './receivable/receivable.module';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,9 @@ import { ReceivableModule } from './receivable/receivable.module';
     ReceivableModule,
     AccountantModule
   ],
-  providers: [],
+  providers: [
+    provideAnimationsAsync()
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

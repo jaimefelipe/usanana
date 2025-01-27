@@ -11,18 +11,20 @@ import { CatalogoContableComponent } from './catalogo-contable/catalogo-contable
 import { PeriodoContableComponent } from './periodo-contable/periodo-contable.component';
 import { AsientoDiarioComponent } from './asiento-diario/asiento-diario.component';
 
-//import { TreeModule } from '@circlon/angular-tree-component';
+import { CatalogoTreeComponent } from './catalogo-tree/catalogo-tree.component';
 import { CentroCostoComponent } from './centro-costo/centro-costo.component';
 
+
+import { TreeViewComponent } from './tree-view/tree-view.component';
+
 @NgModule({
-  declarations: [CatalogoContableComponent,AccountantReportComponent, PeriodoContableComponent, AsientoDiarioComponent, CentroCostoComponent],
+  declarations: [CatalogoContableComponent,AccountantReportComponent, PeriodoContableComponent, AsientoDiarioComponent, CentroCostoComponent,CatalogoTreeComponent,TreeViewComponent],
   imports: [
     CommonModule,
     FormsModule,
     NgbModule,
     CurrencyMaskModule,
-    AccountantRoutingModule,
-    //TreeModule
+    AccountantRoutingModule
   ]
 })
 export class AccountantModule { }

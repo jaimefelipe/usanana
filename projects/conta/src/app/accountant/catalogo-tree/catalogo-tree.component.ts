@@ -1,16 +1,58 @@
+import {Component,OnInit} from '@angular/core';
+import { TreeNode } from '../tree-view/tree-view.component';
 import { CatalogoContableService } from '../catalogo-contable/catalogo-contable.service';
 import { CentroCostoService } from '../centro-costo/centro-costo.service';
-import { Component, OnInit,ViewChild } from '@angular/core';
-import { ITreeOptions,TreeComponent,TreeNode } from '@circlon/angular-tree-component';
 import Swal from 'sweetalert2';
+
+// Definir la estructura de Cuenta
+interface Cuenta {
+  Id_Cuenta_Contable: string;
+  Cuenta: string;
+  Padre: string;
+  Descripcion: string;
+  Mayor: string;
+  Deudora: string;
+  Estado: string;
+  Centro_Costo: string;
+  D151: string;
+  Balance: string;
+  Moneda: string;
+  NombrePadre: string;
+  id: string;
+}
+
 
 @Component({
   selector: 'app-catalogo-tree',
   templateUrl: './catalogo-tree.component.html',
   styleUrls: ['./catalogo-tree.component.css']
 })
+
 export class CatalogoTreeComponent implements OnInit {
-  @ViewChild('tree') tree: TreeComponent;
+  treeData: TreeNode[];
+  /*
+  = [
+    {
+      name: 'Root 1',
+      expanded: false,
+      children: [
+        { name: 'Child 1', expanded: false },
+        { name: 'Child 2', expanded: false, children: [
+          { name: 'Grandchild 1', expanded: false },
+          { name: 'Grandchild 2', expanded: false }
+        ]}
+      ]
+    },
+    {
+      name: 'Root 2',
+      expanded: false,
+      children: [
+        { name: 'Child 3', expanded: false },
+        { name: 'Child 4', expanded: false }
+      ]
+    }
+  ];*/
+ 
   constructor(
     private catalogoContableService:CatalogoContableService,
     private centroCostoService:CentroCostoService
@@ -50,14 +92,13 @@ export class CatalogoTreeComponent implements OnInit {
   ngOnInit() {
     this.loadAccounts();
     this.loadCentros();
-
   }
   async loadAccounts(search?:any){
     let data = await this.catalogoContableService.loadCatalogo();
     if(data['total'] == 0){
-      this.Cuentas = [];
+      this.treeData = [];
     }else{
-      this.Cuentas = data['data'];
+      this.treeData = data['data'];
     }
   }
   async loadCentros(search?:any){
@@ -68,149 +109,6 @@ export class CatalogoTreeComponent implements OnInit {
       this.Centros = data['data'];
     }
   }
-
-  options: ITreeOptions = {
-    displayField: 'name',
-    useVirtualScroll: false,
-    nodeHeight: 25,
-    allowDrag: false,
-    allowDrop: false
-  };
-  selectedNode;
-  columns = ['Deudora', 'Mayor'];
-
-  onActivateNode(event: any) {
-    this.selectedNode = event.node.children;
-    // Do stuff with selected node
-  }
-
-  copyNode(node: any, tree) {
-    const parentNode = node.realParent ? node.realParent : node.treeModel.virtualRoot;
-    const copyNode = JSON.stringify(node.children);
-    const newNode = JSON.parse(copyNode);
-    this.deleteIds(newNode);
-    parentNode.children.children.push(newNode);
-    tree.treeModel.update();
-  }
-
-  deleteIds(node: TreeNode) {
-    node.id = null;
-    if (node.children) {
-      node.children.forEach(child => this.deleteIds(child));
-    }
-  }
-
-  addNode(node?: any) {
-    if(node.data.Id_Cuenta_Contable == ''){
-      Swal.fire("Debe Grabar la cuenta para poder generar cuentas hijas");
-      return false;
-    }
-    if(!node){
-      return false;
-      //node = this.tree.treeModel.nodes
-    }
-    this.Old_Cuenta = '';
-    let largo = 1;
-    if (node.data.children) {
-      largo = node.data.children.length + 1;
-    }
-    let NuevaCuenta = "";
-    if(largo < 10){
-      if(node.data.Cuenta.length <2){
-        NuevaCuenta = node.data.Cuenta + largo;
-      }else{
-        NuevaCuenta = node.data.Cuenta + '0'+ largo;
-      }
-    }else{
-      NuevaCuenta = node.data.Cuenta + largo;
-    }
-
-    let Padre = node.data.Cuenta + '-' + node.data.Descripcion
-    const newNode = {
-      Id_Cuenta_Contable:'',
-      Padre:node.data.Cuenta,
-      Estado:'1',
-      Centro_Costo:'999',
-      D151:'0',
-      NombrePadre:Padre,
-      Descripcion: 'Cuenta Nueva',
-      Balance:node.data.Balance,
-      Cuenta:NuevaCuenta,
-      Deudora:node.data.Deudora,
-      Mayor:node.data.Mayor,
-      Moneda:node.data.Moneda,
-      id:''
-    };
-    this.Cuenta = newNode;
-    if (!node.data.children) {
-      node.data.children = [];
-    }
-    node.data.children.push(newNode);
-    this.tree.treeModel.update();
-    const someNode = this.tree.treeModel.getNodeById(node.id);
-    someNode.expand();
-    let lastNode = this.tree.treeModel.getNodeById(node.data.children[node.data.children.length-1]['id']);
-    //lastNode.setActiveAndVisible();
-    //this.tree.treeModel.getNodeById(node.data.children[node.data.children.length-1]['id']).setActiveAndVisible();
-    this.Cuenta.id = node.data.children[node.data.children.length-1]['id'];
-    //this.selectedNode = node.data.children;
-    return true;
-  }
-
-  deleteNode(node, tree) {
-    const parentNode = node.realParent ? node.realParent : node.treeModel.virtualRoot;
-    parentNode.children.children = parentNode.children.children.filter(child => {
-      return child !== node.children;
-    });
-    tree.treeModel.update();
-    if (node && node.parent && node.parent.children && node.parent.children.children.length === 0) {
-      node.parent.children.hasChildren = false;
-    }
-
-    if (this.selectedNode?.id === node.children.id) {
-      this.selectedNode = null;
-    }
-  }
-  async editNode(node,tree){
-    this.Old_Cuenta = '';
-    this.Cuenta = node.data;
-    this.loadAccount(node.data.Id_Cuenta_Contable);
-  }
-  async loadAccount(Id_Cuenta_Contable){
-    let data = await this.catalogoContableService.loadAccount(Id_Cuenta_Contable);
-    this.Cuenta.Padre = data['data'][0]['Padre'];
-    this.Cuenta.NombrePadre = data['data'][0]['NombrePadre'];
-    this.Cuenta.Centro_Costo = data['data'][0]['Centro_Costo'];
-    if(this.Cuenta.Centro_Costo == ''){
-      this.Cuenta.Centro_Costo = '999';
-    }
-    if(this.Cuenta.Centro_Costo == '0'){
-      this.Cuenta.Centro_Costo = '999';
-    }
-    this.Cuenta.D151 = data['data'][0]['D151'];
-    this.Old_Cuenta = this.Cuenta.Cuenta;
-    this.loadAccountName(this.Cuenta.Padre);
-
-  }
-
-  async loadAccountName(Id_Cuenta_Contable){
-    if(!Id_Cuenta_Contable){
-      this.Cuenta.NombrePadre = 'Cuenta Principal';
-      return true;
-    }
-    let data = await this.catalogoContableService.loadAccountFromCode(Id_Cuenta_Contable,3);
-    if(data['total'] == 0){
-      this.Cuenta.NombrePadre = 'Cuenta Principal';
-    }else{
-      this.Cuenta.NombrePadre = data['data'][0]['Cuenta'] + '-' + data['data'][0]['Descripcion'];
-    }
-    return true;
-  }
-
-  openCuentasPanel(){
-    this.loadParents();
-    this.PantallaCuentasPadres = true;
-  }
   async loadParents(search?:any){
     let data = await this.catalogoContableService.loadParents(this.paginacion,search);
     if(data['total'] == 0){
@@ -218,6 +116,35 @@ export class CatalogoTreeComponent implements OnInit {
     }else{
       this.Padres = data['data'];
     }
+  }
+  openCuentasPanel(){
+    this.loadParents();
+    this.PantallaCuentasPadres = true;
+  }
+
+  nuevo(){
+    const nodoEncontrado =this.findNodeByCuenta(this.treeData, this.Cuenta.Cuenta);
+    console.log(nodoEncontrado.children.length);
+    let nuevaCuenta = this.Cuenta.Cuenta + (nodoEncontrado.children.length + 1).toString();
+    let Padre = this.Cuenta.Cuenta;
+    this.Cuenta = {
+      Id_Cuenta_Contable:'',
+      Cuenta:'',
+      Padre:'',
+      Descripcion:'',
+      Mayor:'1',
+      Deudora:'0',
+      Estado:'1',
+      Centro_Costo:'999',
+      D151:'0',
+      Balance:'1',
+      Moneda:'0',
+      NombrePadre:'',
+      id:''
+    }
+    this.Cuenta.Cuenta = nuevaCuenta;
+    this.Cuenta.Padre = Padre;
+    this.loadAccountName(this.Cuenta.Padre);
   }
   async grabar(){
     if(this.Cuenta.Cuenta == ""){
@@ -254,6 +181,49 @@ export class CatalogoTreeComponent implements OnInit {
     }
     return true;
   }
+  async onNodeDoubleClick(node: TreeNode) {
+    const nodeData = await this.convertNodeToObject(node);
+    // Asignar propiedades específicas al objeto Cuenta
+    this.Cuenta = {
+      Id_Cuenta_Contable: nodeData['Id_Cuenta_Contable'],
+      Cuenta: nodeData['Cuenta'],
+      Padre: nodeData['Padre'],
+      Descripcion: nodeData['Descripcion'],
+      Mayor: nodeData['Mayor'],
+      Deudora: nodeData['Deudora'],
+      Estado: nodeData['Estado'],
+      Centro_Costo: nodeData['Centro_Costo'],
+      D151: nodeData['D151'],
+      Balance: nodeData['Balance'],
+      Moneda: nodeData['Moneda'],
+      NombrePadre: nodeData['NombrePadre'],
+      id: nodeData['id']
+    };
+    if (!this.Cuenta.D151) {
+      this.Cuenta.D151 = '0'
+    }
+    if (!this.Cuenta.Centro_Costo) {
+      this.Cuenta.Centro_Costo = '999'
+    }
+    this.loadAccountName(this.Cuenta.Padre);
+  }
+  // Función para convertir el nodo en un objeto de clave-valor
+  // Función para convertir el nodo a un objeto de clave-valor
+  convertNodeToObject(node: TreeNode): { [key: string]: any } {
+    let result: { [key: string]: any } = {};
+
+    // Iterar por todas las propiedades del nodo y agregarlas al objeto resultante
+    for (let key of Object.keys(node)) {
+      if (key !== 'children') {
+        result[key] = node[key];  // Guardar la propiedad tal cual
+      } else if (node[key]) {
+        result[key] = node[key].map(child => this.convertNodeToObject(child));  // Convertir recursivamente los hijos
+      }
+    }
+    return result;
+  }
+
+
   searchPadres(){
     this.loadParents(this.searchFieldPadres)
   }
@@ -262,36 +232,52 @@ export class CatalogoTreeComponent implements OnInit {
       this.searchPadres();
     }
   }
-  cuentaPrincipal(){
-    this.Cuenta.Padre = '';
-    this.Cuenta.NombrePadre = ''
+  SeleccionarPadre(padre){
+    this.Cuenta.Padre = padre.Cuenta;
+    this.Cuenta.NombrePadre = padre.Cuenta + '-' + padre.Descripcion;
+    this.loadAccountName(padre.Cuenta);
     this.closePantallaPadres();
   }
   closePantallaPadres(){
     this.PantallaCuentasPadres = false;
   }
-  SeleccionarPadre(padre){
-    this.Cuenta.Padre = padre.Cuenta;
-    this.Cuenta.NombrePadre = padre.Cuenta + '-' + padre.Descripcion;
-    //this.loadAccountName(padre.Cuenta);
+  cuentaPrincipal(){
+    this.Cuenta.Padre = '';
+    this.Cuenta.NombrePadre = ''
     this.closePantallaPadres();
   }
-  nuevo(){
-    this.Cuenta = {
-      Id_Cuenta_Contable:'',
-      Cuenta:'',
-      Padre:'',
-      Descripcion:'',
-      Mayor:'1',
-      Deudora:'0',
-      Estado:'1',
-      Centro_Costo:'999',
-      D151:'0',
-      Balance:'1',
-      Moneda:'0',
-      NombrePadre:'',
-      id:''
+  async loadAccountName(Id_Cuenta_Contable){
+    if(!Id_Cuenta_Contable){
+      this.Cuenta.NombrePadre = 'Cuenta Principal';
+      return true;
     }
-    this.Cuenta.Cuenta = (this.tree.treeModel.nodes.length+ 1).toString();
+    let data = await this.catalogoContableService.loadAccountFromCode(Id_Cuenta_Contable);
+    if(data['total'] == 0){
+      this.Cuenta.NombrePadre = 'Cuenta Principal';
+    }else{
+      this.Cuenta.NombrePadre = data['data'][0]['Cuenta'] + '-' + data['data'][0]['Descripcion'];
+    }
+    return true;
+  }
+
+
+  findNodeByCuenta(nodes: TreeNode[], cuenta: string): TreeNode | null {
+    for (let node of nodes) {
+      // Si encontramos el nodo con la cuenta que buscamos, lo retornamos
+      if (node['Cuenta'] === cuenta) {
+        return node;
+      }
+  
+      // Si el nodo tiene hijos, hacemos una llamada recursiva para buscar en ellos
+      if (node.children) {
+        const foundInChildren = this.findNodeByCuenta(node.children, cuenta);
+        if (foundInChildren) {
+          return foundInChildren;  // Si encontramos en los hijos, lo retornamos
+        }
+      }
+    }
+  
+    // Si no encontramos el nodo, retornamos null
+    return null;
   }
 }

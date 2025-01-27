@@ -1,0 +1,20 @@
+/* tree-view.component.css */
+ul {
+    list-style-type: none;
+    padding-left: 20px;
+  }
+  
+  li {
+    margin: 5px 0;
+    cursor: pointer;
+  }
+  
+  span {
+    display: inline-block;
+    padding: 5px;
+  }
+  
+  span:hover {
+    background-color: #f0f0f0;
+  }
+  

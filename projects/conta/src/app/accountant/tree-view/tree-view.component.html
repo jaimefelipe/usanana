@@ -1,0 +1,15 @@
+<ul>
+  <ng-container *ngFor="let node of nodes">
+    <li>
+      <span (click)="toggleNode(node)" (dblclick)="onNodeDoubleClick(node)">
+        {{ node.name }}
+        <span *ngIf="node.children && node.expanded">[-]</span>
+        <span *ngIf="node.children && !node.expanded">[+]</span>
+      </span>
+      
+      <ng-container *ngIf="node.children && node.expanded">
+        <app-tree-view *ngIf="node.children" [nodes]="node.children" (nodeDoubleClicked)="onNodeDoubleClick($event)"></app-tree-view>
+      </ng-container>
+    </li>
+  </ng-container>
+</ul>
