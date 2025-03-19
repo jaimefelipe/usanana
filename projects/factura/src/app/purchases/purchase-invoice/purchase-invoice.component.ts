@@ -259,7 +259,7 @@ export class PurchaseInvoiceComponent implements OnInit {
     }
     if (next === 'Descripcion') {
       if (this.Detalle.SKU === '') {
-        //alert('Debe digitar El codigo');
+       
         return false;
       }
       this.obtenerProducto(this.Detalle.SKU, 1);

@@ -283,6 +283,7 @@ export class ApiService {
     if (data['success'] == "true") {
       return data;
     } else {
+      alert(data['error']);
       Swal.fire({
         title:'Update',
         text:data['error'],
@@ -317,6 +318,7 @@ export class ApiService {
     if (data['success'] == "true") {
       return data;
     } else {
+      alert(data['error']);
       Swal.fire({
         title:'Insert',
         text:data['error'],

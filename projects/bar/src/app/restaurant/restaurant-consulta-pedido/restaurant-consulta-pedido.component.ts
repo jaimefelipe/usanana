@@ -286,7 +286,7 @@ export class RestaurantConsultaPedidoComponent implements OnInit {
       if(this.Regimen !== '3' ){
         this.AplicandoFacturaHacienda(Invoice.Id_Factura);
       }
-      //alert('Re-facturado');
+      
       this.loadPedidos();
       this.cancel()
     }

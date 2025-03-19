@@ -69,6 +69,7 @@ export class TaskKanbanComponent implements OnInit, AfterViewInit {
         if (event.requestType === 'cardChanged') {
             const updatedCard = event.changedRecords[0]; // Tarjeta movida
             this.updateCardStatus(updatedCard.Id, updatedCard.Status);
+            //Cambiar Fechas reales en estado de las tareas;
         }
     }
 

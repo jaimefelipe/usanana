@@ -307,7 +307,7 @@ export class CashierMovementComponent implements OnInit {
 
     if (next === "Descripcion2") {
       if (this.Detalle.Codigo_Referencia === "") {
-        //alert('Debe digitar El codigo');
+       
         return false;
       }
       this.obtenerProducto(this.Detalle.Codigo_Referencia, 1);

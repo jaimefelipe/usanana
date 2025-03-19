@@ -28,6 +28,18 @@ export class TaskTreeComponent implements OnInit {
   }
 
   ngOnChanges(changes: any) {
+    if(changes['Proyecto'] && changes['Proyecto']['currentValue']){
+      const proyectoActualizado = changes['Proyecto']['currentValue'];
+      if(proyectoActualizado['Id_Proyecto'] == this.CurrentNode){
+        // Actualizar nodo existente
+        this.updateExistingNode(this.CurrentNode, proyectoActualizado['Nombre']);
+      }else{
+        // Nuevo nodo como hijo
+        let item = { id: proyectoActualizado['Id_Proyecto'], name: proyectoActualizado['Nombre'], subChild: [] };
+        this.addNodeAsChildOfSelected(item);
+      }
+    }
+    /*
     if(changes['Proyecto']['currentValue']){
       if(changes['Proyecto']['currentValue']['Id_Proyecto'] == this.CurrentNode){
         this.treeView.allowEditing = true;
@@ -37,9 +49,10 @@ export class TaskTreeComponent implements OnInit {
         let item: { [key: string]: Object } = { id: changes['Proyecto']['currentValue']['Id_Proyecto'], name: changes['Proyecto']['currentValue']['Nombre'] };
         this.addNodeBelowSelected([item])
       }
-    }
-  }
+    }*/
 
+  }
+  /*
   addNodeBelowSelected(item: any) {
     const selectedId = this.treeView.selectedNodes[0]; // ID del nodo seleccionado
     if (!selectedId) {
@@ -74,7 +87,70 @@ export class TaskTreeComponent implements OnInit {
   
     this.treeView.refresh(); // Refresca la vista si es necesario
   }
-
+  */
+  addNodeAsChildOfSelected(item: any) {
+    const selectedId = this.treeView.selectedNodes[0];
+  
+    if (selectedId) {
+      // Busca el nodo seleccionado (padre)
+      const findNode = (nodes: any[]): any => {
+        for (let node of nodes) {
+          if (node.id === selectedId) {
+            return node;
+          }
+          if (node.subChild) {
+            const found = findNode(node.subChild);
+            if (found) return found;
+          }
+        }
+        return null;
+      };
+  
+      const parentNode = findNode(this.Proyectos);
+      if (!parentNode) {
+        console.warn("No se encontró el nodo seleccionado");
+        return;
+      }
+  
+      if (!parentNode.subChild) {
+        parentNode.subChild = [];
+      }
+  
+      parentNode.subChild.push(item);
+    } else {
+      // No hay nodo seleccionado: Insertar al primer nivel
+      this.Proyectos.push(item);
+    }
+  
+    // Actualización del TreeView
+    (this.treeView.fields as any).dataSource = [...this.Proyectos];
+    this.treeView.refresh();
+    
+  }
+  
+  updateExistingNode(nodeId: string, newName: string) {
+    const updateNodeName = (nodes: any[]) => {
+      for (let node of nodes) {
+        if (node.id === nodeId) {
+          node.name = newName;
+          return true;
+        }
+        if (node.subChild && updateNodeName(node.subChild)) {
+          return true;
+        }
+      }
+      return false;
+    };
+  
+    if (updateNodeName(this.Proyectos)) {
+      // Actualización correcta con type assertion
+      (this.treeView.fields as any).dataSource = [...this.Proyectos];
+      this.treeView.refresh();
+    } else {
+      console.warn("Nodo no encontrado");
+    }
+  }
+  
   async loadAccounts(search?: any) {
     let data = await this.taskTreeService.loadProyectos();
     
@@ -92,11 +168,13 @@ export class TaskTreeComponent implements OnInit {
     };
 
     // Asegurar que el TreeView ya está inicializado antes de expandir
+    /*
     setTimeout(() => {
       if (this.treeView) {
         this.treeView.expandAll();
       }
     }, 100);
+    */
   }
    
   private clickTimeout: any;
@@ -105,7 +183,6 @@ export class TaskTreeComponent implements OnInit {
 
   // Función que se ejecuta al hacer clic en un nodo
   nodeclicked(event: any): void {
-    
     const currentTime = new Date().getTime();
     const timeDiff = currentTime - this.lastClickTime;
     
@@ -125,13 +202,15 @@ export class TaskTreeComponent implements OnInit {
 
  
     onDoubleClick(event: NodeClickEventArgs): void {
+      /*
       const nodeElement = event.node;
       const nodeId = nodeElement.getAttribute("data-uid"); // Obtiene el ID del nodo
       this.CurrentNode = nodeId;
-      
-
       this.nodoSeleccionadoEnTree.emit(nodeId);
-      
+      */
+     const nodeData = this.treeView.getNode(event.node);
+     this.CurrentNode = nodeData['id']; // <-- AHORA ESTO ES CORRECTO
+     this.nodoSeleccionadoEnTree.emit(nodeData['id']);
 
     }
 

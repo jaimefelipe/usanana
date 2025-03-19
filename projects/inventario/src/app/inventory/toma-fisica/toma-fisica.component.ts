@@ -174,7 +174,7 @@ export class TomaFisicaComponent implements OnInit {
     }
     if (next === "Cantidad") {
       if (this.Detalle.SKU === "") {
-        //alert('Debe digitar El codigo');
+       
         return false;
       }
       await this.obtenerProducto(this.Detalle.SKU, 1);

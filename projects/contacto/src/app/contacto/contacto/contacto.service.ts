@@ -125,7 +125,7 @@ export class ContactoService {
         + '\',\'' + Persona.Id_Agente
         + '\',\'' + Persona.Id_Usuario
         + '\',\'' + Persona.Nombre_Usuario
-        + '\',\'' + Persona.Codigo_Activdad_Economica
+        + '\',\'' + Persona.Codigo_Actividad_Economica
         + '\',\'' + Persona.Nombre_Actividad_Economica
         + '\''
       };
@@ -171,7 +171,7 @@ export class ContactoService {
         + '\',Id_Agente=\''+ Persona.Id_Agente
         + '\',Id_Usuario=\''+ Persona.Id_Usuario
         + '\',Nombre_Usuario=\''+ Persona.Nombre_Usuario
-        + '\',Codigo_Activdad_Economica=\''+ Persona.Codigo_Activdad_Economica
+        + '\',Codigo_Actividad_Economica=\''+ Persona.Codigo_Actividad_Economica
         + '\',Nombre_Actividad_Economica=\''+ Persona.Nombre_Actividad_Economica
         + '\'',
         where: 'Id_Persona=' + Persona.Id_Persona

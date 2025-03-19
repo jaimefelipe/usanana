@@ -16,9 +16,26 @@ export class TaskKanbanService {
     return await this.apiService.postRecord(sql);
 }
   async updateProyectStatus(Id_Proyecto,Estado){
+    let hoy = new Date();
+    let Fecha =  {
+      month: hoy.getMonth() + 1,
+      day: hoy.getDate(),
+      year: hoy.getFullYear()
+    }
+    let campo = '';
+    if(Estado == '2'){
+      //Actualizar fecha de inicio 
+      let Inicio = Fecha.year + '-' + Fecha.month + '-' + Fecha.day;
+      campo = "\',Inicio=\'"+Inicio;
+    }
+    if(Estado == '6'){
+      //Actualizar fecha de inicio Fin
+      let Fin = Fecha.year + '-' + Fecha.month + '-' + Fecha.day;
+      campo = "\',Fin=\'"+Fin;
+    }
     let sql = {
       table: 'Pro_Proyecto',
-      fields: 'Estado=\'' + Estado
+      fields: 'Estado=\'' + Estado + campo
       + '\'',
       where: 'Id_Proyecto=' + Id_Proyecto
     };

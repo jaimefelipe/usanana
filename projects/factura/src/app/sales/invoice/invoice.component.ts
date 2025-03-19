@@ -134,7 +134,7 @@ export class InvoiceComponent implements OnInit {
     Metodo_Pago: "01",
     Estado: "",
     Moneda:'',
-    Codigo_Activdad_Economica:'',
+    Codigo_Actividad_Economica:'',
     Nombre_Actividad_Economica:''
   };
   ngOnInit(): void {
@@ -312,7 +312,7 @@ export class InvoiceComponent implements OnInit {
     }
     if (next === "Descripcion") {
       if (this.Detalle.SKU === "") {
-        //alert('Debe digitar El codigo');
+       
         return false;
       }
       await this.obtenerProducto(this.Detalle.SKU, 1);
@@ -634,7 +634,7 @@ export class InvoiceComponent implements OnInit {
         Metodo_Pago: "01",
         Estado: "",
         Moneda:'',
-        Codigo_Activdad_Economica:'',
+        Codigo_Actividad_Economica:'',
         Nombre_Actividad_Economica:''
       };
       this.Details = [];
@@ -893,7 +893,7 @@ export class InvoiceComponent implements OnInit {
         }else{
           this.persona.Nombre = persona.nombre;
           this.persona.Tipo_Identificacion = persona.tipoIdentificacion;
-          this.persona.Codigo_Activdad_Economica = persona['actividades'][0]['codigo'];
+          this.persona.Codigo_Actividad_Economica = persona['actividades'][0]['codigo'];
           this.persona.Nombre_Actividad_Economica = persona['actividades'][0]['descripcion'];
           this.Invoice.Nombre = this.persona.Nombre;
           this.Invoice.Codigo_Identificacion = persona.tipoIdentificacion;

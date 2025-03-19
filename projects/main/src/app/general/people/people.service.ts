@@ -51,7 +51,7 @@ export class PeopleService {
     if(Persona.Id_Persona ==""){
       let sql = {
         table: 'Gen_Persona',
-        fields: 'Nombre,Telefono,Correo,Tipo_Identificacion,Identificacion,Cliente,Proveedor,Empleado,Codigo_Activdad_Economica,Nombre_Actividad_Economica',
+        fields: 'Nombre,Telefono,Correo,Tipo_Identificacion,Identificacion,Cliente,Proveedor,Empleado,Codigo_Actividad_Economica,Nombre_Actividad_Economica',
         values: '\'' + Persona.Nombre
         + '\',\'' + Persona.Telefono
         + '\',\'' + Persona.Correo
@@ -60,7 +60,7 @@ export class PeopleService {
         + '\',\'' + Persona.Cliente
         + '\',\'' + Persona.Proveedor
         + '\',\'' + Persona.Empleado
-        + '\',\'' + Persona.Codigo_Activdad_Economica
+        + '\',\'' + Persona.Codigo_Actividad_Economica
         + '\',\'' + Persona.Nombre_Actividad_Economica
         + '\''
       };
@@ -76,7 +76,7 @@ export class PeopleService {
         + '\',Cliente=\''+ Persona.Cliente
         + '\',Proveedor=\''+ Persona.Proveedor
         + '\',Empleado=\''+ Persona.Empleado
-        + '\',Codigo_Activdad_Economica=\''+ Persona.Codigo_Activdad_Economica
+        + '\',Codigo_Actividad_Economica=\''+ Persona.Codigo_Actividad_Economica
         + '\',Nombre_Actividad_Economica=\''+ Persona.Nombre_Actividad_Economica
         + '\'',
         where: 'Id_Persona=' + Persona.Id_Persona

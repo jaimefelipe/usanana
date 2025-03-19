@@ -101,12 +101,16 @@ async updateProyecto(Proyecto){
 }
 
 async getLastProyectId(Id_Proyecto){
+  let where = "p.Id_Proyecto = '"+ Id_Proyecto+ "'"
+  if(Id_Proyecto ==''){
+    where = "p.Padre = '' and p.Id_Empresa = "+localStorage.getItem('Id_Empresa');
+  }
   //Obtener el Id del ultimo registro
   let sqlConfig = {
     table: 'Pro_Proyecto p',
     fields: 'p.Id_Proyecto,p.Codigo,p.Padre,(SELECT COUNT(*) FROM Pro_Proyecto WHERE Padre = p.Codigo) AS Cantidad_Subproyectos ',
     Empresa:false,
-    where: "p.Id_Proyecto = '"+ Id_Proyecto+ "'"
+    where: where
   }
   return await this.apiService.executeSqlSyn(sqlConfig);
 }

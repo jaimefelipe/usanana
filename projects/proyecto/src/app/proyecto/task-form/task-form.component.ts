@@ -109,12 +109,12 @@ export class TaskFormComponent implements OnInit {
     FechaInicio: { year: 1, month: 1, day: 1 },
     HInicio:'',
     Fin:'',
-    FechaFin:{ year: 1, month: 1, day: 1 },
+    FechaFin: { year: 1, month: 1, day: 1 },
     HFin:'',
     Inicio_Planificado:'',
-    FechaInicioPlanificado:{ year: 1, month: 1, day: 1 },
+    FechaInicioPlanificado:{ year: this.hoy.getFullYear() , month: this.hoy.getMonth() + 1 , day: this.hoy.getDate() },
     Fin_Planificado:'',
-    FechaFinPlanificado:{ year: 1, month: 1, day: 1 },
+    FechaFinPlanificado:{ year: this.hoy.getFullYear() , month: this.hoy.getMonth() + 1 , day: this.hoy.getDate() },
     Duracion_Estimada:'',
     Tiempo_Real:'',
   }
@@ -138,6 +138,16 @@ export class TaskFormComponent implements OnInit {
   closeEditPanel(){
     this.inicializarProyecto();
     this.CerrarPanel.emit();
+  }
+  cambioEstado(event){
+    //Camibios de estado
+    if(this.Proyecto.Estado == '2'){
+        this.Proyecto.FechaInicio = { year: this.hoy.getFullYear() , month: this.hoy.getMonth() + 1 , day: this.hoy.getDate() };
+    }
+    if(this.Proyecto.Estado == '6'){
+      this.Proyecto.FechaFin = { year: this.hoy.getFullYear() , month: this.hoy.getMonth() + 1 , day: this.hoy.getDate() };
+    }
+
   }
   ngOnChanges(changes: SimpleChanges) {
     if(changes['ItemSelected']){
@@ -239,6 +249,7 @@ export class TaskFormComponent implements OnInit {
   }
 
   async getLastProyectoId(Nivel?){
+    console.log('getLastProyectoId',Nivel);
       //obtener el Id el ultimo portafolio para generar uno nuevo
     if(!Nivel){
       Nivel = '';
@@ -247,19 +258,26 @@ export class TaskFormComponent implements OnInit {
     if (data['total'] == 0) {
       this.UltimoCodigo = '0';
     }else{
-      this.UltimoCodigo = data['data'][0]['Codigo'];
-      this.CantidadHijos = data['data'][0]['Cantidad_Subproyectos'];
+      if(Nivel == ''){
+        this.UltimoCodigo = data['total'];
+       // this.CantidadHijos = ;
+      }else{
+        this.UltimoCodigo = data['data'][0]['Codigo'];
+        this.CantidadHijos = data['data'][0]['Cantidad_Subproyectos'];
+      }
     }
     
   }
     async nuevoPadre(){
+      console.log('Nuevo Padre')
       this.inicializarProyecto();
-      await this.getLastProyectoId(1);
+      await this.getLastProyectoId('');
       this.Proyecto.Nivel = '1';
       this.Proyecto.Codigo = (parseInt(this.UltimoCodigo) + 1).toString();
       this.Proyecto.Tipo = '1';
     }
     async nuevoHijo(){
+      console.log('Nuevo Hijo')
       //Deternimar el nivel
       let nivel = this.Proyecto.Nivel;
       let codigo = this.Proyecto.Codigo;
@@ -312,9 +330,9 @@ export class TaskFormComponent implements OnInit {
         FechaFin:{ year: 1, month: 1, day: 1 },
         HFin:'',
         Inicio_Planificado:'',
-        FechaInicioPlanificado:{ year: 1, month: 1, day: 1 },
+        FechaInicioPlanificado:{ year: this.hoy.getFullYear() , month: this.hoy.getMonth() + 1 , day: this.hoy.getDate() },
         Fin_Planificado:'',
-        FechaFinPlanificado:{ year: 1, month: 1, day: 1 },
+        FechaFinPlanificado: { year: this.hoy.getFullYear() , month: this.hoy.getMonth() + 1 , day: this.hoy.getDate() },
         Duracion_Estimada:'',
         Tiempo_Real:'',
       }
@@ -382,10 +400,19 @@ cerrarMiembroPanel(){
 cerrarNotasPanel(){
   this.NotasPanel = false;
 }
-searchMiembro(){
 
+searchMiembro(){
+  //jaime
+  this.leerMiembros(this.tipoActual);
 }
-keytabMiembro(e){}
+
+
+
+keytabMiembro(event){
+  if (event.key === 'Enter') {
+    this.searchMiembro();
+  }
+}
 async leerMiembrosProyecto(){
   let data = await this.taskFormService.leerMiembros(this.Proyecto.Id_Proyecto);
   if (data['total'] == 0) {
@@ -441,7 +468,7 @@ async asignarMiembrosTarea(){
   }
 }
   */
-async leerMiembros(Tipo){
+async leerMiembros(Tipo?){
   let data = await this.contactoService.loadPersonas(this.paginacion,this.searchFieldMiembro,Tipo,1);
   if (data['total'] == 0) {
     this.Contactos = [];
@@ -476,8 +503,6 @@ async agregarSeguimieto(){
       }
       
     }
-    
-    
     this.PanelBusquedaMiembros = true;
   }
   cerrarPanelBusquedaMiembros(){

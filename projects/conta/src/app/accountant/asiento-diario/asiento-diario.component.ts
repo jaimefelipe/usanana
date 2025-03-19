@@ -137,7 +137,7 @@ export class AsientoDiarioComponent implements OnInit {
     }
     if (next === "Detalle_Cuenta") {
       if (this.Detalle.Cuenta === "") {
-        //alert('Debe digitar El codigo');
+       
         return false;
       }
       this.obtenerCuenta(this.Detalle.Cuenta);

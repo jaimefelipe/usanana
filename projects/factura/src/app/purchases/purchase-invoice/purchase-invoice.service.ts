@@ -251,7 +251,7 @@ export class PurchaseInvoiceService {
       }
       return (o);
     } catch (e) {
-      alert('Error in xml2json. See console for details.');
+      
       console.log('Error in xml2json processing node:');
       console.log(o);
       console.log('Error:');

@@ -101,7 +101,7 @@ export class ContactoComponent implements OnInit {
       Alumno: '', Profesor: '', Estado: '', Otro_Documento: '', Condicion_Venta: '', Plazo_Credito: '',
       Metodo_Pago: '', Porcenaje_Descuento: '', Moneda: 'CRC', Ultima_Factura: '', Pagina_Web: '',
       Prospecto: '1', Facebook: '', Linkedin: '', Contabilidad: '', FacturaElectronica: '', PuntoVenta: '',
-      Restaurante: '', Asesoria: '', Declaracion: '', Precio: '',Codigo_Activdad_Economica:'',Nombre_Actividad_Economica:''
+      Restaurante: '', Asesoria: '', Declaracion: '', Precio: '',Codigo_Actividad_Economica:'',Nombre_Actividad_Economica:''
     };
   }
 

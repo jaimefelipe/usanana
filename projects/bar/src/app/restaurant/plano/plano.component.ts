@@ -1885,7 +1885,7 @@ export class PlanoComponent implements OnInit {
     // Cuenta Nuevo
     if(this.Pedido.Id_Nuevo_Pedido == '-99'){
       //Cuenta No existe
-      //alert("Cuenta No existe")
+      
       await this.CrearPedidoNuevo();
     }
     //Actualizar cada uno de los productos al pedido existente.

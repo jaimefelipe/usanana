@@ -547,11 +547,11 @@
           <option value='03'>Consignacion</option>
         </select>
       </div>
-      <div class="form-group col-md-6">
+      <div class="form-group col-md-4">
         <label for="name">Plazo de Cédito </label>
         <input [(ngModel)]="persona.Plazo_Credito" placeholder="Plazo del cédito" name="Plazo_Credito" type="text" class="form-control">
       </div>
-      <div class="form-group col-md-6">
+      <div class="form-group col-md-4">
         <label for="name">Metodo de Págo</label>
         <select [(ngModel)]="persona.Metodo_Pago"  name="Metodo_Pago" class="form-control">
           <option value='01'>Efectivo</option>
@@ -562,6 +562,10 @@
           <option value='04'>Transferencia/Deposito Bancario</option>
           <option value='05'>Recaudo Tercero</option>
         </select>
+      </div>
+      <div class="form-group col-md-4">
+        <label for="name">Codigo de Actividad Economica </label>
+        <input [(ngModel)]="persona.Codigo_Actividad_Economica" placeholder="Codigo Activdad Economica" name="Codigo_Actividad_Economica" type="text" class="form-control">
       </div>
     </div>
 
