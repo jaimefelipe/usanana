@@ -18,6 +18,7 @@ export class CategoryComponent implements OnInit {
   AccountPanel = false;
   CuentasPanel = 1;
   SeguridadStr = localStorage.getItem('ToxoSG');
+  Management = localStorage.getItem('ToxoMT');
   Seguridad = [];
   Categories = [];
   Accounts = [];
@@ -48,16 +49,25 @@ export class CategoryComponent implements OnInit {
     Servicio:'',
     Cocina: '0',
     Estado: '1',
-    Toma_Fisica:'0'
+    Toma_Fisica:'0',
+    Factura:'',
+    POV:'',
+    Bar:'',
+    Conta:''
   };
+  Master = false;
   ngOnInit(): void {
+    if(localStorage.getItem("ToxoMT") == '1'){
+      this.Master = true;
+    }else{
+      this.Master = false;
+    }
     this.SeguridadStr = localStorage.getItem('ToxoSG');
     if (this.SeguridadStr == '') {
       this.SeguridadStr = '0.0.0.0.0.0.0.0';
     }
     
     this.Seguridad = this.SeguridadStr.split('.');
-    console.log(this.Seguridad);
     if (this.Seguridad[2] == 1) {
       this.interfazInventario = true;
     }
@@ -103,7 +113,11 @@ export class CategoryComponent implements OnInit {
         Cocina: '0',
         Servicio:'',
         Estado: '1',
-        Toma_Fisica:'0'
+        Toma_Fisica:'0',
+        Factura:'',
+        POV:'',
+        Bar:'',
+        Conta:''
       };
       this.searchFieldAccount = '';
       this.searchAccount();

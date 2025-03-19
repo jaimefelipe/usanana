@@ -623,41 +623,43 @@
           <h2>{{Pedido.Saldo3 | currency:' '}}</h2>
         </div>
 
-        <!-- Inicio Detalle Detalle -->
-        <div class="form-group col-12 col-sm-12" *ngFor="let product of OrderProducts;let i = index">
-          <div class="card">
-              <div class="card-body m-0 p-2">
-                <div class="form-row m-0 p-0">
-                  <div class="form-group col-md-8 m-0 p-0">
-                    <h4 class="card-title">{{product.Descripcion}}, {{product.Cantidad}}:{{product.Nueva_Cantidad}}</h4>
-                  </div>
-                  <div class="form-group col-md-2 m-0 p-0">
-                    <button (click)="RestarArticuloDetalle(product,i)" type="button" class="btn btn-primary buttonS" title="Cancela edicion">  -  </button>
-                  </div>
-                  <div class="form-group col-md-2 m-0 p-0">
-                    <button (click)="SuprimirArticuloDetalle(product,i)" type="button" class="btn btn-danger buttonS" title="Cancela edicion"> <i class="fa fa-trash-o" aria-hidden="true"
-                      title="Editar Linea"></i> </button>
-                  </div>
-                </div>
-              </div>
+       <!-- Inicio Detalle Detalle -->
+<div class="form-group col-12 col-sm-12" *ngFor="let product of OrderProducts; let i = index">
+  <div class="card">
+    <div class="card-body m-0 p-2">
+      <div class="row m-0 p-0 align-items-center">
+        <div class="col-12 col-md-8 m-0 p-0 mb-2">
+          <h4 class="card-title">{{product.Descripcion}}, {{product.Cantidad}}:{{product.Nueva_Cantidad}}</h4>
+        </div>
+        <div class="col-12 col-md-4 m-0 p-0">
+          <div class="d-flex justify-content-start justify-content-md-end">
+            <button (click)="RestarArticuloDetalle(product,i)" type="button" class="btn btn-primary buttonS mr-2" title="Restar cantidad">-</button>
+            <button (click)="SuprimirArticuloDetalle(product,i)" type="button" class="btn btn-danger buttonS" title="Eliminar artículo">
+              <i class="fa fa-trash-o" aria-hidden="true"></i>
+            </button>
           </div>
         </div>
-        <!-- Fin de Detalle-->
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Fin de Detalle-->
+
       </div>
     </div>
 
-    <div class="card-footer ">
-      <div class="form-group col-md-12">
-        <div class="form-row">
-          <div class="form-group col-8 col-md-8">
+    <div class="card-footer">
+      <div class="form-group">
+        <div class="form-row align-items-center justify-content-end">
+          <div class="col-auto mb-2">
+            <button [disabled]="facturando" (click)="facturar()" type="button" class="btn btn-success" title="Crear Cuenta">
+              Facturar
+            </button>
           </div>
-          <div class="form-group col-2">
-              <button [disabled]="facturando" (click)="facturar()" type="button" class="btn btn-success"
-                title="Crear Cuenta">Facturar</button>
-            </div>
-          <div class="form-group col-2">
-            <button (click)="cerrarPantallaFacturar()" type="button" class="btn btn-danger"
-              title="Cancela edicion">Cancelar</button>
+          <div class="col-auto mb-2">
+            <button (click)="cerrarPantallaFacturar()" type="button" class="btn btn-danger" title="Cancela edición">
+              Cancelar
+            </button>
           </div>
         </div>
       </div>

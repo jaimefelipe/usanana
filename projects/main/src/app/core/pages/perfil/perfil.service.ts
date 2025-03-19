@@ -85,7 +85,7 @@ export class PerfilService {
     return data;
   }
   async loadProductsForCompany(){
-    let sql = " Select Id_Producto, Id_Sub_Categoria from Inv_Producto_Empresa where Id_Empresa = " + localStorage.getItem('Id_Empresa');
+    let sql = " Select Id_Producto, Id_Sub_Categoria as Id_Categoria from Inv_Producto_Empresa where Id_Empresa = " + localStorage.getItem('Id_Empresa');
     let data = await this.apiService.postRecord(sql);
     return data;
   }
@@ -96,8 +96,8 @@ export class PerfilService {
     return data;
   }
 
-  async updateCategoryToProductCompany(Product,Category){
-    let sql = "Update Inv_Producto_Empresa set Id_Sub_Categoria = " + Category + " where Id_Empresa = " + localStorage.getItem('Id_Empresa') + " and Id_Producto = " + Product;
+  async updateCategoryToProductCompany(Product,Category1,Category2){
+    let sql = "Update Inv_Producto_Empresa set Id_Producto = " + Product + ",Id_Sub_Categoria = " + Category1 + " where Id_Empresa = " + localStorage.getItem('Id_Empresa') + " and Id_Sub_Categoria  = " + Category2;
     let data = await this.apiService.postRecord(sql);
     return true;
   }
@@ -118,7 +118,7 @@ export class PerfilService {
   }
   async getSubCategofyForProdictAndCia(Product:any){
     let cia = localStorage.getItem("Id_Empresa");
-    let sql = "select Id_Sub_Categoria from Inv_Producto_Empresa where Id_Empresa = "+cia+ " and Id_Producto  = " + Product;
+    let sql = "select Id_Producto from Inv_Producto_Empresa where Id_Empresa = "+cia+ " and Id_Sub_Categoria  = " + Product;
     let data = await this.apiService.postRecord(sql);
     return data;
   }
@@ -147,4 +147,27 @@ export class PerfilService {
   async loadFile(file){
     return await this.apiService.loadFile(file);
   }
+
+  async updateFacturaUser (){
+    let sql = "Update Seg_Usuario set Ventas = 1, Compras =1 , Inventario = 1  Where Id_Usuario = '" + localStorage.getItem('Id_Usuario') + "'"
+    let data = await this.apiService.postRecord(sql);
+    return data;
+  }
+  async updatePovUser (){
+    let sql = "Update Seg_Usuario set Pov = 1, Compras =1 , Inventario = 1  Where Id_Usuario = '" + localStorage.getItem('Id_Usuario') + "'"
+    let data = await this.apiService.postRecord(sql);
+    return data;
+  }
+  async updateBarUser (){
+    let sql = "Update Seg_Usuario set Restaurante = 1, Compras =1 , Inventario = 1  Where Id_Usuario = '" + localStorage.getItem('Id_Usuario') + "'"
+    let data = await this.apiService.postRecord(sql);
+    return data;
+  }
+  async updateContaUser (){
+    let sql = "Update Seg_Usuario set CG = 1, CXC =1 , CXP = 1, BA = 1  Where Id_Usuario = '" + localStorage.getItem('Id_Usuario') + "'"
+    let data = await this.apiService.postRecord(sql);
+    return data;
+  }
+
+
 }

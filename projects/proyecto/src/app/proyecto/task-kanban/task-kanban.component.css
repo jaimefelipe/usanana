@@ -1,0 +1,12 @@
+.card-status {
+    color: #28a745;
+    font-weight: bold;
+}
+.card-responsable {
+    font-size: 10px;
+    color: #666;
+}
+.expired {
+    color: red;
+    font-weight: bold;
+}

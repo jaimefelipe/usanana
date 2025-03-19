@@ -1,7 +1,7 @@
 
-<div [hidden]="edit" class="container pb-5">
+<div [hidden]="edit" class="container-fluid pb-5">
     <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
-    <h2>Clientes</h2>
+    <h2>Contacto</h2>
     <div class="container-fluid">
       <div class="row">
         <div class="input-group mb-3">
@@ -20,7 +20,7 @@
     <form>
       <div class="form-row">
   
-        <div class="form-group col-12 col-sm-6" *ngFor="let Persona of Clientes;let i = index">
+        <div class="form-group col-12" *ngFor="let Persona of Clientes;let i = index">
           <div class="card">
             <a (click)="editRecord(Persona)">
               <div class="card-body">
@@ -57,12 +57,13 @@
     </div>
   </div>
 
-  <div [hidden]="!edit" class="container pb-5">
+  <div [hidden]="!edit" class="container-fluid pb-5">
     <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
-    <h2>Cliente</h2> 
+    <h2>Contacto</h2> 
     <div class="tab">
       <button [ngClass]='GeneralClass' (click)="activarGeneral()" >General</button>
       <button [ngClass]='DireccionClass' (click)="activarDireccion()">Dirección</button>
+     
       <!-- <button [ngClass]='ContactoClass' (click)="activarContacto()">Contactos</button> -->
       <button [ngClass]='VentaClass' (click)="activarVenta()">Venta</button>
       <button [ngClass]='NotasClass' (click)="activarNotas()">Notas</button>

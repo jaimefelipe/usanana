@@ -248,12 +248,12 @@ export class ApiService {
     return this.sql;
   }
 
-  async executeSqlSyn(sqlConfig: any) {
+  async executeSqlSyn(sqlConfig: any,Tipo?) {
     this.validarLogin();
     this.sqlConfig = sqlConfig;
     this.correctConfig();
     this.makeSql();
-    let data = await this.postRecord();
+    let data = await this.postRecord('',Tipo);
     if (data['success'] == 'true') {
       return data;
     } else {
@@ -265,7 +265,7 @@ export class ApiService {
       //localStorage.setItem('Id_Empresa', '1');
     }
   }
-  async updateRecord(sqlConfig: any) {
+  async updateRecord(sqlConfig: any,Tipo?) {
     this.sqlConfig = sqlConfig;
     let values = this.sqlConfig.fields.split('#');
     this.sqlConfig.fields = values.join('|@*|');
@@ -279,7 +279,7 @@ export class ApiService {
       localStorage.getItem('Nombre_Usuario') +
       "', Modificado_El = NOW() WHERE " +
       this.sqlConfig.where;
-    let data = await this.postRecord();
+    let data = await this.postRecord('',Tipo);
     if (data['success'] == "true") {
       return data;
     } else {
@@ -326,7 +326,20 @@ export class ApiService {
     }
   }
 
-  async postRecord(sql?: any) {
+  async postRecord(sql?: any,Tipo?:any) {
+    //Validar conexion http
+    if (!navigator.onLine) {
+      Swal.fire('No hay internet, revise la conexion');
+      return false;
+    }
+
+    let Url = '';
+    if(Tipo ==2){
+      Url = 'https://toxo.work/core/db/eps_execSql2.php?sql=';
+    }else{
+      Url = this.url;
+    }
+
     let sqlQuery = '';
     if (sql) {
       sqlQuery = sql;
@@ -336,7 +349,8 @@ export class ApiService {
 
     let a = new TextEncoder();
     sqlQuery = encodeURIComponent(sqlQuery);
-    let data = await fetch(this.url, {
+    const startTime = performance.now(); // Iniciamos el contador de tiempo
+    let data = await fetch(Url, {
       method: 'POST',
       cache: 'no-cache',
       mode: 'cors', //no-cors,cors, *cors, same-origin
@@ -349,6 +363,15 @@ export class ApiService {
       body: 'sql=' + sqlQuery,
     })
     .then((response) => {
+        const endTime = performance.now(); // Obtenemos el tiempo de respuesta
+        const latency = endTime - startTime; // Calculamos el tiempo de latencia en milisegundos
+        // Aquí definimos el umbral de latencia que consideramos como "lento"
+        const slowThreshold = 5000; // 1000 ms = 1 segundo, puedes ajustarlo según tus necesidades
+        if (latency > slowThreshold) {
+          Swal.fire('Internet muy lento, no responde, revise la conexion');
+          return false; // La conexión es lenta
+        }
+
         if (!response.ok) {
           throw new Error('HTTP error ' + response.status);
         }
@@ -512,7 +535,7 @@ export class ApiService {
   }
   async getLicence() {
     let sql =
-      'Select Estado, Fecha_Vencimiento,Cantidad_Disponible from Inv_Producto_Empresa where Id_Producto = 1089 and Id_Empresa = ' +
+      'Select Estado, Fecha_Vencimiento,Cantidad_Disponible from Inv_Producto_Empresa where Id_Sub_Categoria = 4 and Id_Empresa = ' +
       localStorage.getItem('Id_Empresa');
     return await this.postRecord(sql);
   }

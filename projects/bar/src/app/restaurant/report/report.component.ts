@@ -97,9 +97,13 @@ export class ReportComponent implements OnInit {
     }
     if(this.reporte == "8"){
       window.open('https://toxo.work/reportes/bar/reporte-facturacion-venta-xls.php?id=' + param, '_blank');
+      //window.open('https://toxo.work/reportes/bar/pl_reporte_horas.php?id=' + param, '_blank');
     }
     if(this.reporte == "9"){
       window.open('https://toxo.work/core/php/hacienda2/consultar_hacienda.php', '_blank');
+    }
+    if(this.reporte == "10"){
+      window.open('https://toxo.work/reportes/bar/pl_reporte_horas.php?id=' + param, '_blank');
     }
   }
 

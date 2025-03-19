@@ -1,0 +1,70 @@
+<div class="container-fluid">
+    <div class="row">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+        </div>
+        <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+          placeholder="Buscar">
+        <div class="input-group-append">
+          <button [disabled]="Persona.Id_Persona == ''" class="btn btn-success" type="button" (click)="abrirPantallaCobros('')"><i class="fa fa-plus-circle"
+              aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form>
+    <div class="form-row">
+      <div class="form-group col-12 col-sm-12" *ngFor="let cobro of Cobros;let i = index">
+        <a (click)="abrirPantallaCobros(cobro)">
+          <div class="card">
+            <div class="card-body">
+              <h6 class="card-title">{{cobro.Monto | currency:' ' }} | {{cobro.Creado_El}} | {{cobro.Detalle}}  - {{cobro.Creado_Por}}</h6>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </form>
+
+
+  <div [hidden]="!PantallaCobros" class="modal-main">
+
+    <div class="modal-content  card">
+      <div class="card-header">
+        <h2>Cobro {{Persona.Nombre}}</h2>
+      </div>
+      <div class="card-body modal-grid">
+        <div class="form-row">
+          <div class="form-group col-md-12">
+            <label>Cobro</label>
+            <input [(ngModel)]="Cobro.Monto" name="Monto" id="Monto" type="number"
+            class="form-control" placeholder="Monto">
+  
+          </div>
+          <div class="form-group col-md-12">
+            <label>Detalle</label>
+            <input [(ngModel)]="Cobro.Detalle" name="Detalle" id="Detalle" type="text"
+            class="form-control" placeholder="Detalle">
+  
+          </div>
+          
+        </div>
+      </div>
+  
+      <div class="card-footer ">
+        <div class="form-group col-12">
+          <div class="form-row">
+            <div class="form-group col-4 col-sm-8">
+            </div>
+            <div class="form-group  col-4 col-sm-2">
+              <button (click)="GrabarCobro()" type="button" class="btn btn-primary" title="Grabar"> Grabar</button>
+            </div>
+            <div class="form-group  col-4 col-sm-2">
+              <button (click)="cerrarPantallaCobros()"  type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

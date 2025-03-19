@@ -73,7 +73,7 @@
       </div>
       <div class="form-group col-md-6">
         <label>Toma Física</label>
-        <select [(ngModel)]="category.Toma_Fisica" name="Id_Tipo" type="text" class="form-control">
+        <select [(ngModel)]="category.Toma_Fisica" name="Toma_Fisica" type="text" class="form-control">
           <option value='0'>No </option>
           <option value='1'>Si</option>
 
@@ -111,6 +111,7 @@
             class="form-control" placeholder="Cuenta Contable">
         </div>
       </div>
+      
       <div [hidden]="!interfazContable" class="form-group col-md-6">
         <label>Cuenta Contable Ventas</label>
         <div class="input-group">
@@ -132,6 +133,37 @@
         </select>
       </div>
 
+      <div [hidden]="!Master" class="form-group col-md-6">
+        <label>Factua Electronica</label>
+        <select [(ngModel)]="category.Factura" name="Factura" type="text" class="form-control">
+          <option value='0'>No </option>
+          <option value='1'>Si</option>
+        </select>
+      </div>
+
+      <div [hidden]="!Master"  class="form-group col-md-6">
+        <label>Punto de Venta</label>
+        <select [(ngModel)]="category.POV" name="Pov" type="text" class="form-control">
+          <option value='0'>No </option>
+          <option value='1'>Si</option>
+        </select>
+      </div>
+
+      <div [hidden]="!Master"  class="form-group col-md-6">
+        <label>Restaurante</label>
+        <select [(ngModel)]="category.Bar" name="Bar" type="text" class="form-control">
+          <option value='0'>No </option>
+          <option value='1'>Si</option>
+        </select>
+      </div>
+
+      <div [hidden]="!Master"  class="form-group col-md-6">
+        <label>Contabilidad</label>
+        <select [(ngModel)]="category.Conta" name="Conta" type="text" class="form-control">
+          <option value='0'>No </option>
+          <option value='1'>Si</option>
+        </select>
+      </div>
 
       <div class="form-group col-md-6">
         <label>Estado</label>

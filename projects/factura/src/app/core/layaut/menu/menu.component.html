@@ -27,7 +27,7 @@
 
           <li [hidden]="!AppVentas" (click)="clickPersonaMenu()" ><a><i class="fa fa-hospital-o"></i>  Contactos <i [ngClass]='personaClass' class="fa fa-cog"></i>  </a></li>
           <ul [hidden]="!PersonaMenu" >
-            <a (click)="hideMenu()" [hidden]="!AppVentas" [routerLink]="['/people']"><li><i class="fa fa-id-card-o"></i> Contactos </li></a>
+            <a (click)="hideMenu()" [hidden]="!AppVentas" [routerLink]="['/contactos']"><li><i class="fa fa-id-card-o"></i> Contactos </li></a>
             <a (click)="hideMenu()" [hidden]="!AppVentas" [routerLink]="['/prodcliente']"><li><i class="fa fa-credit-card"></i> Producto x Cliente </li></a>
           </ul>
 

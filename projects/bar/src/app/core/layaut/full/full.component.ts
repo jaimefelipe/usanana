@@ -26,6 +26,7 @@ export class FullComponent implements OnInit {
   AppCocina = false;
   AppPedido = false;
   logedIn = false;
+  TipoUsuario = localStorage.getItem('ToxoUT');
   ngOnInit() {
     if(localStorage.getItem('isLoggedin') == "true") {
       this.logedIn = true;

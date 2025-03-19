@@ -4,20 +4,27 @@
          
         <div class="form-group col-md-4">
             <label for="name">Estado</label>
-            <select [(ngModel)]="Persona.Estado" name="Estado" class="form-control">
-        
+            <!-- [disabled]="Persona.Empleado !='1'"  -->
+            <select  [(ngModel)]="Persona.Estado" name="Estado" class="form-control">
+                <!--
                 <option [hidden]="Persona.Prospecto != '1'" value='11'>Nuevo</option>
                 <option [hidden]="Persona.Prospecto != '1'" value='12'>Contactado</option>
                 <option [hidden]="Persona.Prospecto != '1'" value='13'>Calificado</option>
                 <option [hidden]="Persona.Prospecto != '1'" value='14'>En Proceso</option>
                 <option [hidden]="Persona.Prospecto != '1'" value='15'>Propuesta Enviada</option>
-            
-                <option [hidden]="Persona.Prospecto == '1'" value='1'>Activo</option>
-                <option [hidden]="Persona.Prospecto == '1'" value='2'>Inactivo</option>
-
-                <option [hidden]="Persona.Empleado != '1'" value='3'>Vacaciones</option>
-                <option [hidden]="Persona.Empleado!= '1'"value='4'>Suspendido</option>
+              -->
                 
+                <option  value='1'>Activo</option>
+                <option  value='2'>Inactivo</option>
+              
+                <!-- 
+                <option [hidden]="Persona.Empleado != '1'" value='0'>Aspirante</option>
+                <option [hidden]="Persona.Empleado != '1'" value='1'>Nombrado</option>
+                <option [hidden]="Persona.Empleado != '1'" value='2'>Vacaciones</option>
+                <option [hidden]="Persona.Empleado != '1'" value='3'>Suspendido</option>
+                <option [hidden]="Persona.Empleado != '1'" value='6'>Despedido</option>
+                <option [hidden]="Persona.Empleado != '1'" value='7'>Renuncia</option>
+                  -->
             </select>
         </div>
         <div [hidden]="Persona.Prospecto != '1'" class="form-group col-md-4">
@@ -53,8 +60,8 @@
             <label>Empresa/Posición</label>
             <input [(ngModel)]="Persona.Posicion" name="Posicion" type="text" placeholder="Posicion" class="form-control">
         </div>
-
-        <div [hidden]="Persona.Prospecto == '1'" class="form-group col-md-6">
+        <!--[hidden]="Persona.Prospecto == '1'" -->
+        <div class="form-group col-md-6">
             <label for="name">Tipo de Identificacion</label>
             <select [(ngModel)]="Persona.Tipo_Identificacion" name="Tipo_Identificacion" class="form-control">
             <option value='01'>Cedula Fisica</option>
@@ -63,7 +70,7 @@
             <option value='04'>NITE</option>
             </select>
         </div>
-        <div [hidden]="Persona.Prospecto == '1'"  class="form-group col-md-6">
+        <div  class="form-group col-md-6">
             <label>Identificacion</label>
             <input [(ngModel)]="Persona.Identificacion" name="Identificacion" type="text" placeholder="Identificación"
             class="form-control">
@@ -90,6 +97,8 @@
             <input [(ngModel)]="Persona.Linkedin" name="Linkedin" type="text" placeholder="Linkedin" class="form-control">
         </div>
         
+       
+
         </div>
     </div>
     </form>  

@@ -15,6 +15,8 @@ import { SecurityModule } from '../../../seguridad/src/app/security/security.mod
 import { ReceivableModule } from '../../../conta/src/app/receivable/receivable.module';
 
 
+
+
 @NgModule({
   declarations: [
     AppComponent

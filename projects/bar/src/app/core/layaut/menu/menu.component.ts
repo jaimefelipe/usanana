@@ -18,6 +18,7 @@ export class MenuComponent implements OnInit {
   Company = localStorage.getItem("Id_Empresa");
   User = localStorage.getItem("Nombre_Usuario");
   SeguridadStr = localStorage.getItem("ToxoSG");
+  TipoUsuario = localStorage.getItem('ToxoUT');
   Master = false;
   Seguridad = [];
   AppServices = false;

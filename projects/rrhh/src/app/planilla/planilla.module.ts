@@ -8,6 +8,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { EmpleadoTipoPlanillaComponent } from './empleado-tipo-planilla/empleado-tipo-planilla.component';
+import { PlReportesComponent } from './pl-reportes/pl-reportes.component';
 
 @NgModule({
   imports: [
@@ -21,7 +22,8 @@ import { EmpleadoTipoPlanillaComponent } from './empleado-tipo-planilla/empleado
     ConceptoSalarialComponent,
     TipoPlanillaComponent,
     ConceptoTipoPlanillaComponent,
-    EmpleadoTipoPlanillaComponent
+    EmpleadoTipoPlanillaComponent,
+    PlReportesComponent
   ]
 })
 export class PlanillaModule { }

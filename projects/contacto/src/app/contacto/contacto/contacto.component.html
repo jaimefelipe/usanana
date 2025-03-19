@@ -20,7 +20,7 @@
   <form>
     <div class="form-row">
 
-      <div class="form-group col-12 col-sm-6" *ngFor="let Persona of Personas;let i = index">
+      <div class="form-group col-12 col-sm-6" *ngFor="let Persona of Contactos;let i = index">
         <div class="card">
           <a (click)="editRecord(Persona)">
             <div class="card-body">
@@ -47,18 +47,70 @@
 
   <div class="container-fluid">
     <ul class="pagination">
-      <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"
+      <li class="page-item"><a (click)="changePage(0)" class="page-link"><i class="fa fa-fast-backward"
             aria-hidden="true"></i></a></li>
-      <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"
+      <li class="page-item"><a (click)="changePage(1)" class="page-link"><i class="fa fa-step-backward"
             aria-hidden="true"></i></a></li>
-      <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"
+      <li class="page-item"><a (click)="changePage(2)" class="page-link"><i class="fa fa-step-forward"
             aria-hidden="true"></i></a></li>
     </ul>
   </div>
 </div> 
+
+
+<div [hidden]="!edit" class="container-fluid pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Contacto</h2> 
+  <div class="tab">
+    <button [ngClass]='GeneralClass' (click)="activarGeneral()" >General</button>
+    <button [ngClass]='DireccionClass' (click)="activarDireccion()">Dirección</button>
+    <button [ngClass]='RollClass' (click)="activarRoll()">Roll</button>
+   
+    <!-- <button [ngClass]='ContactoClass' (click)="activarContacto()">Contactos</button> -->
+    <button *ngIf="BotonVentas" [ngClass]='VentaClass' (click)="activarVenta()">Venta</button>
+    <button *ngIf="BotonNotas" [ngClass]='NotasClass' (click)="activarNotas()">Notas</button>
+    <button *ngIf="BotonCobros" [ngClass]='CobroClass' (click)="activarCobro()">Cobros</button>
+    <button *ngIf="BotonTareas" [ngClass]='TareaClass' (click)="activarTarea()">Tareas</button>
+  </div>
+
+  <span [hidden]="!edit">
+    <app-general [hidden]="!GeneralActivo" [Persona]="Persona" (close)="cancel()"></app-general>
+    <app-direccion [hidden]="!DireccionActivo" [Persona]="Persona" [Provinces]="provinces" [Cantons]="cantons" [Districts]="districts" (provinceChange)="provinceChange()"  (cantonChange)="cantonChange()" ></app-direccion>
+    <app-roll [hidden]="!RollActivo"  [Persona]="Persona"> </app-roll>
+    <app-venta [hidden]="!VentaActivo" [Persona]="Persona"></app-venta>
+    <app-contactos [hidden]="!ContactosActivo" [Persona]="Persona"></app-contactos>
+    <app-notas [hidden]="!NotasActivo" [Persona]="Persona"></app-notas>
+    <app-cobro [hidden]="!CobroActivo" [Persona]="Persona"></app-cobro>
+    <app-tareas [hidden]="!TareaActivo" [Persona]="Persona"></app-tareas>
+  </span>
+
+  <div class="form-row">
+    <div class="form-group col-md-12">
+      <div class="form-row">
+        <div class="form-group col-6 col-md-8">
+
+        </div>
+        <div class="form-group col-3 col-md-2">
+          <button (click)="save()" type="button" class="btn btn-success" title="Cancela edicion">Grabar</button>
+        </div>
+        <div class="form-group col-3 col-md-2">
+          <button (click)="cancel()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+
+
+
+
+
+
 <!--
   Form de Edición
--->
 <div [hidden]="!edit" class="container-fluid pb-5">
   <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
   <h2>Contacto</h2> 
@@ -126,8 +178,9 @@
       </div>
     </div>
   </form>
+-->
 
-    <!-- Datos de Roll -->
+    <!-- Datos de Roll 
     <form [hidden]="!RollActivo">
 
       <div >
@@ -177,12 +230,28 @@
           </div>
         </div>
       </div>
+
+      <div [hidden]="!Persona.Empleado"  class="form-group row align-items-center mb-2">
+        <label class="col-sm-2 col-form-label">Usuario</label>
+        <div class="col-sm-10">
+          <div class="input-group">
+            <input [(ngModel)]="Persona.Nombre_Usuario" disabled name="Nombre_Usuario" id="Nombre_Usuario" type="text"
+              class="form-control" placeholder="Nombre Usuario">
+            <div class="input-group-append">
+              <button (click)="abrirPantallaUsuarios()" type="button" class="btn btn-primary"><i class="fa fa-search"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
       </form>
+      -->
     <!-- Fin datos del roll-->
 
   <!--
       Datos Dirección
-    -->
+    
     <form [hidden]="!DireccionActivo">
     <div>
       <div class="form-row">
@@ -219,10 +288,11 @@
       </div>
     </div>
   </form>
+  -->
     <!-- End of Datos de Dirección-->
   <!--
       Datos de Contactos
-    -->
+   
     <form [hidden]="!ContactosActivo">
       <div class="container-fluid">
         <div class="row">
@@ -253,12 +323,12 @@
         </div>
       </form>
     </form>
-
+ -->
 <!-- End of Datos de contactos-->
 
  <!--
       Datos de Notas
-    -->
+   
     <form [hidden]="!NotasActivo">
       <div class="container-fluid">
         <div class="row">
@@ -289,12 +359,12 @@
         </div>
       </form>
     </form>
-
+ -->
 <!-- End of Datos de Notas-->
 
     <!--
       Datos de Venta
-    -->
+    
   <form [hidden]="!VentaActivo">
 
     <div >
@@ -412,10 +482,14 @@
       </div>
 
     </div>
+    </form>
+    -->
+
     <!-- End of Datos de Venta-->
 
 
-  </form>
+    <!--
+
 
   <form [hidden]="!CarreraActivo">
     <div class="container-fluid">
@@ -447,8 +521,8 @@
       </div>
     </form>
   </form>
-
-<!-- End of Datos de contactos-->
+ -->
+<!-- End of Datos de contactos
 
   <div class="form-row">
     <div class="form-group col-md-12">
@@ -466,8 +540,8 @@
     </div>
   </div>
 </div>
-
-<!-- Pantalla Carrera del Cliente -->
+-->
+<!-- Pantalla Carrera del Cliente 
 
 <div [hidden]="!PantallaCarreraContacto" class="modal-main">
 
@@ -534,8 +608,8 @@
     </div>
   </div>
 </div>
-
-<!-- Pantalla Carreras Activas-->
+-->
+<!-- Pantalla Carreras Activas
 <div [hidden]="!PantallaCarrerasActivas" class="modal-main">
   <div class="modal-content  card">
     <div class="card-header">
@@ -581,8 +655,8 @@
     </div>
   </div>
 </div>
-
-<!-- Pantall Notas -->
+-->
+<!-- Pantall Notas 
 <div [hidden]="!PantallaNotas" class="modal-main">
 
   <div class="modal-content  card">
@@ -616,3 +690,51 @@
     </div>
   </div>
 </div>
+-->
+<!-- Pantall Notas 
+<div [hidden]="!PantallaUsuarios" class="modal-main">
+
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Usuarios</h2>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+        </div>
+        <input [(ngModel)]="searchFieldUsuario" (blur)="searchUsuario()" (keydown)="keytabUsuario($event)" type="text" class="form-control"
+          placeholder="Buscar">
+        
+      </div>
+    </div>
+    <div class="card-body modal-grid">
+      <div class="form-row">
+        
+        <div class="form-group col-12" *ngFor="let Usuario of Usuarios;let i = index">
+          <a (click)="selectUsuario(Usuario)">
+            <div class="card  p-1 custom-card">
+              <div class="card-body py-1 px-2">
+                <h6 class="m-0" >{{Usuario.Nombre }} </h6>
+              </div>
+            </div>
+          </a>
+        </div>
+
+           
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-12">
+        <div class="form-row">
+          <div class="form-group col-4 col-sm-8">
+          </div>
+          
+          <div class="form-group  col-4 col-sm-2">
+            <button (click)="cerrarPantallaUsuarios()"  type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+-->

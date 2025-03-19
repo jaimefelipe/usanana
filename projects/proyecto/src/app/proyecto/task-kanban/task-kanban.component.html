@@ -1,0 +1,38 @@
+<ejs-kanban #kanbanObj keyField="Status" [dataSource]="data" [cardSettings]="cardSettings" 
+    allowEditing="false" (cardClick)="onCardClick($event)" (actionComplete)="onActionComplete($event)" >
+    <ng-template #cardSettingsTemplate let-data>
+      <div class='e-card-content'>
+        
+          <table class="card-template-wrap">
+            <tr>
+                <td>
+                    <!-- {{ statusMap[data.Status] || 'Desconocido' }} -->
+                    <span class="card-status" 
+                            [ngClass]="{'expired': isExpired(data.Inicio_Planificado)}">
+                        {{ data.Inicio_Planificado | date:'d/M/yyyy' }}
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    {{ data.Summary }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p class="card-responsable">👤 {{ data.Responsable }}</p>
+                </td>
+            </tr>
+          </table>
+      </div>
+  </ng-template>
+  <e-columns>
+      <e-column headerText="Pendiente" keyField="1"></e-column>
+      <e-column headerText="En Proceso" keyField="2"></e-column>
+      <e-column headerText="Ajustes" keyField="3"></e-column>
+      <e-column headerText="Visto Bueno" keyField="4"></e-column>
+      <e-column headerText="Aprobado" keyField="5"></e-column>
+      <e-column headerText="Terminado" keyField="6"></e-column>
+      <e-column headerText="Bloqueada" keyField="7"></e-column>
+  </e-columns>
+</ejs-kanban>

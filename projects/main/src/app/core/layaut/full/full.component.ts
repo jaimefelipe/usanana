@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Title, Meta } from '@angular/platform-browser';
 import {Router} from '@angular/router';
-import Swal from 'sweetalert2';
+//import Swal from 'sweetalert2';
+import Swal from 'sweetalert2/dist/sweetalert2.js';
 
 @Component({
   selector: 'app-full',
@@ -90,7 +91,7 @@ export class FullComponent implements OnInit{
     return true;
   }
   venta(){
-    if(this.Seguridad[0] == 0){
+    if(this.Seguridad[13] == 0){
       Swal.fire('No tienes acceso al sistema de Ventas, Contacte a soporte');
       return false;
     }
@@ -132,6 +133,14 @@ export class FullComponent implements OnInit{
   academico(){
     if(this.Seguridad[13] == 0){
       Swal.fire('No tienes acceso al sistema de Transporte, Contacte a soporte');
+      return false;
+    }
+    window.open('/academico/', "_self");
+    return true;
+  }
+  proyectos(){
+    if(this.Seguridad[13] == 0){
+      Swal.fire('No tienes acceso al sistema de Proyectos, Contacte a soporte');
       return false;
     }
     window.open('/academico/', "_self");

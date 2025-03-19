@@ -42,7 +42,7 @@ export class ContactoService {
         }
 
         default: {
-          where = '';
+          where = '1=1';
            break;
         }
      }
@@ -65,7 +65,7 @@ export class ContactoService {
   async loadPersona(Id_Persona){
     let sqlConfig = {
       table: 'Gen_Persona',
-      fields: 'Id_Persona,Nombre,Telefono,Correo,Identificacion,Tipo_Identificacion,Porcentaje_Comision,Porcentaje_Descuento,Cliente,Proveedor,Alumno,Profesor,Estado,Otro_Documento,Condicion_Venta,Plazo_Credito,Metodo_Pago,Fecha_Ingreso,Porcentaje_Descuento,Moneda,Ultima_Factura,Contabilidad,FacturaElectronica,PuntoVenta,Restaurante,Asesoria,Declaracion,Precio,Provincia,Canton,Distrito,Barrio,Direccion,Empleado,PresentacionA,PresentacionB,Codigo_Proveedor,Direccion,Prospecto,Origen,Posicion,Id_Agente',
+      fields: 'Id_Persona,Nombre,Telefono,Correo,Identificacion,Tipo_Identificacion,Porcentaje_Comision,Porcentaje_Descuento,Cliente,Proveedor,Alumno,Profesor,Estado,Otro_Documento,Condicion_Venta,Plazo_Credito,Metodo_Pago,Fecha_Ingreso,Porcentaje_Descuento,Moneda,Ultima_Factura,Contabilidad,FacturaElectronica,PuntoVenta,Restaurante,Asesoria,Declaracion,Precio,Provincia,Canton,Distrito,Barrio,Direccion,Empleado,PresentacionA,PresentacionB,Codigo_Proveedor,Direccion,Prospecto,Origen,Posicion,Id_Agente,Id_Usuario,Nombre_Usuario,Codigo_Actividad_Economica,Nombre_Actividad_Economica',
       orderField: '',
       searchField: '',
       where: "Id_Persona = " + Id_Persona
@@ -73,13 +73,15 @@ export class ContactoService {
     return await this.apiService.executeSqlSyn(sqlConfig);
   }
   async savePersona(Persona){
+    Persona.Identificacion = Persona.Identificacion.replace(/[^0-9]/g, '');
+    
     if(Persona.PresentacionA == '0'){
       Persona.PresentacionA = '1';
     }
     if(Persona.Id_Persona ==""){
       let sql = {
         table: 'Gen_Persona',
-        fields: 'Nombre,Telefono,Correo,Tipo_Identificacion,Identificacion,Cliente,Proveedor,Alumno,Profesor,Estado,Otro_Documento,Condicion_Venta,Plazo_Credito,Metodo_Pago,Fecha_Ingreso,Porcentaje_Descuento,Moneda,Contabilidad,FacturaElectronica,PuntoVenta,Restaurante,Asesoria,Declaracion,Precio,Provincia,Canton,Distrito,Barrio,Direccion,Empleado,PresentacionA,PresentacionB,TC,TCF,TCV,Id_Producto,TCN,Codigo_Proveedor,Origen,Posicion,Id_Agente',
+        fields: 'Nombre,Telefono,Correo,Tipo_Identificacion,Identificacion,Cliente,Proveedor,Alumno,Profesor,Estado,Otro_Documento,Condicion_Venta,Plazo_Credito,Metodo_Pago,Fecha_Ingreso,Porcentaje_Descuento,Moneda,Contabilidad,FacturaElectronica,PuntoVenta,Restaurante,Asesoria,Declaracion,Precio,Provincia,Canton,Distrito,Barrio,Direccion,Empleado,PresentacionA,PresentacionB,TC,TCF,TCV,Id_Producto,TCN,Codigo_Proveedor,Origen,Posicion,Id_Agente,Id_Usuario,Nombre_Usuario,Codigo_Actividad_Economica,Nombre_Actividad_Economica',
         values: '\'' + Persona.Nombre
         + '\',\'' + Persona.Telefono
         + '\',\'' + Persona.Correo
@@ -121,6 +123,10 @@ export class ContactoService {
         + '\',\'' + Persona.Origen
         + '\',\'' + Persona.Posicion
         + '\',\'' + Persona.Id_Agente
+        + '\',\'' + Persona.Id_Usuario
+        + '\',\'' + Persona.Nombre_Usuario
+        + '\',\'' + Persona.Codigo_Activdad_Economica
+        + '\',\'' + Persona.Nombre_Actividad_Economica
         + '\''
       };
       return await this.apiService.insertRecord(sql);
@@ -163,6 +169,10 @@ export class ContactoService {
         + '\',Origen=\''+ Persona.Origen
         + '\',Posicion=\''+ Persona.Posicion
         + '\',Id_Agente=\''+ Persona.Id_Agente
+        + '\',Id_Usuario=\''+ Persona.Id_Usuario
+        + '\',Nombre_Usuario=\''+ Persona.Nombre_Usuario
+        + '\',Codigo_Activdad_Economica=\''+ Persona.Codigo_Activdad_Economica
+        + '\',Nombre_Actividad_Economica=\''+ Persona.Nombre_Actividad_Economica
         + '\'',
         where: 'Id_Persona=' + Persona.Id_Persona
       };

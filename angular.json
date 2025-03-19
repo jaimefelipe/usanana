@@ -140,7 +140,17 @@
             ],
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "projects/main/src/styles.css"
+              "projects/main/src/styles.css",
+              "node_modules/@syncfusion/ej2-base/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-buttons/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-dropdowns/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-grids/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-inputs/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-lists/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-popups/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-navigations/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-splitbuttons/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-angular-pivotview/styles/bootstrap.css"              
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
@@ -152,13 +162,13 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "2mb"
+                  "maximumWarning": "1500kb",
+                  "maximumError": "12mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "8kb",
-                  "maximumError": "12kb"
+                  "maximumWarning": "18kb",
+                  "maximumError": "112kb"
                 }
               ],
               "outputHashing": "all"
@@ -762,13 +772,13 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "1500kb",
+                  "maximumError": "11mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumWarning": "12kb",
+                  "maximumError": "14kb"
                 }
               ],
               "outputHashing": "all"
@@ -945,6 +955,7 @@
               "zone.js"
             ],
             "tsConfig": "projects/main/tsconfig.app.json",
+            "allowedCommonJsDependencies": ["sweetalert2"],
             "assets": [
               "projects/main/src/favicon.ico",
               "projects/main/src/assets"
@@ -963,13 +974,13 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "1500kb",
+                  "maximumError": "11mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumWarning": "12kb",
+                  "maximumError": "14kb"
                 }
               ],
               "outputHashing": "all"
@@ -1066,13 +1077,13 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "1500kb",
+                  "maximumError": "11mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumWarning": "12kb",
+                  "maximumError": "14kb"
                 }
               ],
               "outputHashing": "all"
@@ -1161,6 +1172,25 @@
               "./node_modules/frappe-gantt/dist/frappe-gantt.css",
               "projects/main/src/styles.css",
               "node_modules/@worktile/gantt/styles/index.scss",
+              "node_modules/@syncfusion/ej2-base/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-angular-schedule/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-base/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-buttons/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-calendars/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-dropdowns/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-inputs/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-lists/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-popups/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-navigations/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-angular-schedule/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-layouts/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-angular-kanban/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-splitbuttons/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-grids/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-treegrid/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-gantt/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-richtexteditor/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-angular-pivotview/styles/bootstrap.css"
               
             ],
             "scripts": [
@@ -1175,13 +1205,13 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "5000kb",
+                  "maximumError": "110mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumWarning": "110kb",
+                  "maximumError": "110kb"
                 }
               ],
               "outputHashing": "all"
@@ -1671,8 +1701,7 @@
             ],
             "styles": [
               "projects/rrhh/src/styles.css",
-              "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              
+              "node_modules/bootstrap/dist/css/bootstrap.min.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
@@ -1684,13 +1713,13 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "1500kb",
+                  "maximumError": "11mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumWarning": "12kb",
+                  "maximumError": "14kb"
                 }
               ],
               "outputHashing": "all"

@@ -26,7 +26,7 @@ export class CategoryService {
     if(category.Id_Categoria ==""){
       let sql = {
         table: 'Inv_Categoria',
-        fields: 'Nombre,Id_Tipo,Id_Cuenta_Contable_Compras,Id_Cuenta_Contable_Ventas,Codigo_Actividad,Utilidad,Cocina,Servicio,Estado,Toma_Fisica',
+        fields: 'Nombre,Id_Tipo,Id_Cuenta_Contable_Compras,Id_Cuenta_Contable_Ventas,Codigo_Actividad,Utilidad,Cocina,Servicio,Estado,Toma_Fisica,Factura,POV,Bar,Conta',
         values: '\'' + category.Nombre
         + '\',\'' + category.Id_Tipo
         + '\',\'' + category.Id_Cuenta_Contable_Compras
@@ -36,7 +36,12 @@ export class CategoryService {
         + '\',\'' + category.Cocina
         + '\',\'' + category.Servicio
         + '\',\'' + category.Estado 
-        + '\',\'' + category.Toma_Fisica + '\''
+        + '\',\'' + category.Toma_Fisica 
+        + '\',\'' + category.Factura 
+        + '\',\'' + category.POV
+        + '\',\'' + category.Bar
+        + '\',\'' + category.Conta
+        + '\''
       };
       return await this.apiService.insertRecord(sql);
     }else{
@@ -51,7 +56,12 @@ export class CategoryService {
         + '\',Cocina=\'' + category.Cocina
         + '\',Servicio=\'' + category.Servicio
         + '\',Estado=\''+ category.Estado
-        + '\',Toma_Fisica=\''+ category.Toma_Fisica  + '\'',
+        + '\',Toma_Fisica=\''+ category.Toma_Fisica 
+        + '\',Factura=\''+ category.Factura 
+        + '\',POV=\''+ category.POV 
+        + '\',Bar=\''+ category.Bar 
+        + '\',Conta=\''+ category.Conta  
+        + '\'',
         where: 'Id_Categoria=' + category.Id_Categoria
       };
       return await this.apiService.updateRecord(sql);
@@ -61,7 +71,7 @@ export class CategoryService {
     let Id_Empresa = localStorage.getItem('Id_Empresa');
     let sqlConfig = {
       table: 'Inv_Categoria left Join Cge_Cuenta_Contable as Cuenta_Compras on Inv_Categoria.Id_Cuenta_Contable_Compras = Cuenta_Compras.Cuenta and Cuenta_Compras.Id_Empresa = '+Id_Empresa+' left Join Cge_Cuenta_Contable as Cuenta_Ventas on Inv_Categoria.Id_Cuenta_Contable_Ventas = Cuenta_Ventas.Cuenta and Cuenta_Ventas.Id_Empresa = '+Id_Empresa,
-      fields: "Id_Categoria,Nombre,Inv_Categoria.Estado,Codigo_Actividad,Utilidad,Cocina,Id_Tipo,Cuenta_Compras.Id_Cuenta_Contable as Id_Cuenta_Contable_Compras, concat(Cuenta_Compras.Cuenta,' - ',Cuenta_Compras.Descripcion) as Cuenta_Contable_Compras,Cuenta_Ventas.Id_Cuenta_Contable as Id_Cuenta_Contable_Ventas, concat(Cuenta_Ventas.Cuenta,' - ',Cuenta_Ventas.Descripcion) as Cuenta_Contable_Ventas",
+      fields: "Id_Categoria,Nombre,Inv_Categoria.Estado,Codigo_Actividad,Utilidad,Cocina,Id_Tipo,Cuenta_Compras.Id_Cuenta_Contable as Id_Cuenta_Contable_Compras, concat(Cuenta_Compras.Cuenta,' - ',Cuenta_Compras.Descripcion) as Cuenta_Contable_Compras,Cuenta_Ventas.Id_Cuenta_Contable as Id_Cuenta_Contable_Ventas, concat(Cuenta_Ventas.Cuenta,' - ',Cuenta_Ventas.Descripcion)  as Cuenta_Contable_Ventas,Toma_Fisica,Factura,POV,Bar,Conta",
       orderField: '',
       searchField: '',
       where: "Id_Categoria = " + Id_Category

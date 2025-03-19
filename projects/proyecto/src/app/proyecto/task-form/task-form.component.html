@@ -1,0 +1,568 @@
+<div class="modal-main">
+  <div class="modal-content  card"> 
+  <form class="card-body modal-grid">
+    <div class="form-row row">
+        <div class="form-group col-md-1">
+            <label>Tipo {{Proyecto.Tipo}}</label>
+            <select disabled="disabled" [(ngModel)]="Proyecto.Tipo" name="Tipo" type="text" class="form-control">
+              <option value='1'>Portafolio</option>
+              <option value='2'>Programa</option>
+              <option value='3'>Proyecto</option>
+              <option value='4'>Fase</option>
+              <option value='5'>Entregable</option>
+              <option value='6'>Tarea</option>
+              <option value='7'>Actividad</option>
+            </select>
+
+        </div>
+        <div class="form-group col-md-1">
+            <label>Codigo</label>
+            <input disabled="disabled" [(ngModel)]="Proyecto.Codigo" name="Codigo" type="text" placeholder="Codigo" class="form-control">
+        </div>
+        <div   class="form-group col-md-1">
+          <label>Proridad</label>
+          <select [disabled]="NivelUsuario != '1'" [(ngModel)]="Proyecto.Prioridad" name="Prioridad" type="text" class="form-control">
+            <option value='1'>Baja</option>
+            <option value='2'>Media</option>
+            <option value='3'>Alta</option>
+          </select>
+        </div>
+        <div  class="form-group col-md-1">
+          <label>Estado</label>
+          <select [(ngModel)]="Proyecto.Estado" name="Estado" type="text" class="form-control">
+            <option value='1'>Pendiente</option>
+            <option value='2'>En Proceso</option>
+            <option value='3'>Ajustes</option>
+            <option value='4'>Visto Bueno</option>
+            <option value='5'>Aprobado</option>
+            <option value='6'>Terminado</option>
+            <option value='7'>Bloqueada</option>
+          </select>
+        </div>
+
+        <div class="form-group col-md-1">
+          <label><i class="fa fa-thermometer-quarter" aria-hidden="true"></i> Progreso</label>
+          <input type="number" min="0" max="100" [(ngModel)]="Proyecto.Progreso" name="Progreso"  placeholder="Progreso" class="form-control">
+        </div>
+
+        <div class="form-group col-md-1 d-flex flex-column">
+          <label>Acciones</label>
+          <div class="btn-group">
+              <button type="button" (click)="abrirMiembrosPanel()" class="btn btn-primary">
+                  <i class="fa fa-user-plus"></i>
+              </button>
+              <button type="button" (click)="abrirFechasPanel()" class="btn btn-success">
+                  <i class="fa fa-calendar"></i>
+              </button>
+              <button type="button" (click)="abrirNotasPanel()" class="btn btn-primary">
+                <i class="fa fa-comment-o"></i>
+            </button>
+          </div>
+      </div>
+      
+        <div class="form-group col-md-12">
+            <label>Nombre</label>
+              <input [(ngModel)]="Proyecto.Nombre"  name="Nombre" type="text" placeholder="Nombre" class="form-control">
+        </div>
+        <div class="form-group col-md-12">
+          <label>Descripción</label>
+          <!--
+          <textarea class="form-control" rows="4" [(ngModel)]="Proyecto.Descripcion" name="Descripcion"></textarea>
+          -->
+          <ejs-richtexteditor 
+          id="defaultRTE" 
+          [(value)]="Proyecto.Descripcion" 
+          (change)="onChange($event)" 
+          height="400"
+          [toolbarSettings]="toolbarOptions">
+        </ejs-richtexteditor>
+
+
+        </div>
+        
+        <!-- 
+        <div class="form-row row col-md-12" >
+          <div  class="form-group col-md-12">
+            <label>Seguimiento</label>
+            <div class="input-group">
+              <input [(ngModel)]="Seguimiento"  name="Seguimiento" id="Seguimiento" type="input"
+                class="form-control" placeholder="Seguimiento">
+                <div class="input-group-append">
+                  <button type="button" (click)="agregarSeguimieto()" class="form-control btn btn-primary"><i
+                      class="fa fa-commenting"></i></button>
+                </div>
+            </div>
+          </div>
+          <div   class="form-group col-md-12">
+            <div class="form-group col-12" *ngFor="let Seguimiento of Seguimientos;let i = index">
+              <span class="text-success">{{Seguimiento.Fecha}}</span> | <span class="text-primary"> {{Seguimiento.Nombre | uppercase }} </span> | {{Seguimiento.Nota }}
+            </div>
+          </div>
+        </div>
+      -->
+        <!--
+        <div *ngIf="Proyecto.Nivel == '7' && Proyecto.Id_Proyecto !=''" class="form-group col-md-2">
+          <label>Responsable</label>
+          <div class="input-group">
+            
+            <input [(ngModel)]="Proyecto.Miembros" disabled name="Miembros" id="Miembros" type="input"
+              class="form-control" placeholder="Miembros">
+              <div class="input-group-append">
+                <button type="button" (click)="abrirMiembrosPanel()" class="form-control btn btn-primary"><i
+                    class="fa fa-user-plus"></i></button>
+              </div>
+          </div>
+        </div>
+        <div class="form-group col-md-12">
+          <div class="tab mt-2">
+            <button [ngClass]='GeneralClass' (click)="activarGeneralTab()"  >General</button>
+            <button *ngIf="Proyecto.Id_Proyecto !=''" [ngClass]='SeguimientoClass' (click)="activarSeguimientotab()" >Seguimientos</button>
+            
+          </div>
+          
+      </div>
+        
+      <div class="form-row row col-md-12" [hidden]="!GeneralTabActivo">
+
+        <div class="form-group col-md-12">
+            <label>Descripción</label>
+            <textarea class="form-control" [(ngModel)]="Proyecto.Descripcion" name="Descripcion"></textarea>
+        </div>
+        <div *ngIf="Proyecto.Nivel != '7'" class="form-group col-md-12">
+          <label>Objetivo</label>
+          <textarea class="form-control" [(ngModel)]="Proyecto.Objetivo" name="Objetivo"></textarea>
+        </div>
+        <div *ngIf="Proyecto.Nivel != '7'" class="form-group col-md-6">
+          <label>Alcance</label>
+          <textarea class="form-control" [(ngModel)]="Proyecto.Alcance" name="Objetivo"></textarea>
+        </div>
+        <div *ngIf="Proyecto.Nivel != '7'" class="form-group col-md-6">
+          <label>Restricciones</label>
+          <textarea class="form-control" [(ngModel)]="Proyecto.Restricciones" name="Restricciones"></textarea>
+        </div>
+
+        <div *ngIf="Proyecto.Nivel == '7'" class="form-group col-md-3">
+          <label>Fecha Inicio</label>
+          <div class="input-group">
+            <input class="form-control" placeholder="Inicio" name="Inicio" [(ngModel)]="FechaInicio" ngbDatepicker
+              #d1="ngbDatepicker">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary fa fa-calendar" (click)="d1.toggle()" type="button"></button>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="Proyecto.Nivel == '7'" class="form-group col-md-2">
+          <label>Hora Inicio</label>
+          <input class="form-control" type="time" [(ngModel)]="Proyecto.HInicio" id="HInicio" name="HInicio" >
+        </div>
+
+        <div *ngIf="Proyecto.Nivel == '7'" class="form-group col-md-3">
+          <label>Fecha Final</label>
+          <div class="input-group">
+            <input class="form-control" placeholder="Fin" name="Fin" [(ngModel)]="FechaFin" ngbDatepicker
+              #d2="ngbDatepicker">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary fa fa-calendar" (click)="d2.toggle()" type="button"></button>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="Proyecto.Nivel == '7'" class="form-group col-md-2">
+          <label>Hora Final</label>
+          <input class="form-control" type="time" [(ngModel)]="Proyecto.HFin" id="HFin" name="HFin">
+        </div>
+
+        <div *ngIf="Proyecto.Nivel == '7'" class="form-group col-md-2">
+          <label>Estado</label>
+          <select [(ngModel)]="Proyecto.Estado" name="Estado" type="text" class="form-control">
+            <option value='1'>Pendiente</option>
+            <option value='2'>En Proceso</option>
+            <option value='3'>Ajustes</option>
+            <option value='4'>Visto Bueno</option>
+            <option value='5'>Aprobado</option>
+            <option value='6'>Terminado</option>
+          </select>
+        </div>
+        
+      </div> 
+      <div class="form-row row col-md-12" [hidden]="!SeguimientoTabActivo">
+        <div *ngIf="Proyecto.Id_Proyecto !=''" class="form-group col-md-12">
+          <label>Seguimiento</label>
+          <div class="input-group">
+            <input [(ngModel)]="Seguimiento"  name="Seguimiento" id="Seguimiento" type="input"
+              class="form-control" placeholder="Seguimiento">
+              <div class="input-group-append">
+                <button type="button" (click)="agregarSeguimieto()" class="form-control btn btn-primary"><i
+                    class="fa fa-commenting"></i></button>
+              </div>
+          </div>
+        </div>
+        <div *ngIf="Proyecto.Id_Proyecto !=''" class="form-group col-md-12">
+          <div class="form-group col-12" *ngFor="let Seguimiento of Seguimientos;let i = index">
+            <span class="text-success">{{Seguimiento.Fecha}}</span> | <span class="text-primary"> {{Seguimiento.Nombre | uppercase }} </span> | {{Seguimiento.Nota }}
+          </div>
+        </div>
+      </div>
+
+      -->
+        
+
+    </div>
+  </form>
+  <div class="card-footer ">
+    <div class="form-group col-md-12">
+
+      <div class="form-row">
+        <div class="form-group col-6 col-md-8">
+
+        </div>
+        <div class="form-group col-3 col-md-2">
+          <button (click)="grabar()" type="button" class="btn btn-success" title="Cancela edicion">Grabar</button>
+        </div>
+        <div class="form-group col-3 col-md-2">
+          <button (click)="closeEditPanel()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+        </div>
+      </div>
+
+     
+    </div>
+  </div>
+  </div>
+</div>
+
+
+<div [hidden]="!FechasPanel" class="short-main-modal">
+  <div class="modal-content  card">
+    <div class="card-header py-1 px-3 h-auto">
+      <h6>Fechas {{Proyecto.Nombre}}</h6>
+    </div>
+    <div class="card-body">
+      
+      <div class="form-group row align-items-center mb-2">
+        <label class="col-sm-3 col-form-label">Inicio Planificado</label>
+        <div class="col-sm-9">
+          <div class="input-group">
+            <input class="form-control" [disabled]="NivelUsuario != '1'"  placeholder="FechaInicioPlanificado" name="FechaInicioPlanificado" [(ngModel)]="Proyecto.FechaInicioPlanificado" ngbDatepicker
+            #d1="ngbDatepicker">
+          <div class="input-group-append">
+            <button [disabled]="NivelUsuario != '1'"  class="btn btn-outline-secondary fa fa-calendar" (click)="d1.toggle()" type="button"></button>
+          </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group row align-items-center mb-2">
+        <label class="col-sm-3 col-form-label">Fin Planificado</label>
+        <div class="col-sm-9">
+          <div class="input-group">
+            <input [disabled]="NivelUsuario != '1'" class="form-control" placeholder="FechaFinPlanificado" name="FechaFinPlanificado" [(ngModel)]="Proyecto.FechaFinPlanificado" ngbDatepicker
+            #d2="ngbDatepicker">
+          <div class="input-group-append">
+            <button  [disabled]="NivelUsuario != '1'" class="btn btn-outline-secondary fa fa-calendar" (click)="d2.toggle()" type="button"></button>
+          </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group row align-items-center mb-2">
+        <label class="col-sm-3 col-form-label">Incicio Real</label>
+        <div class="col-sm-9">
+          <div class="input-group">
+            <input class="form-control" placeholder="Inicio" name="Inicio" [(ngModel)]="Proyecto.FechaInicio" ngbDatepicker
+            #d3="ngbDatepicker">
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary fa fa-calendar" (click)="d3.toggle()" type="button"></button>
+          </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group row align-items-center mb-2">
+        <label class="col-sm-3 col-form-label">Fin Real</label>
+        <div class="col-sm-9">
+          <div class="input-group">
+            <input  class="form-control" placeholder="Inicio" name="Inicio" [(ngModel)]="Proyecto.FechaFin" ngbDatepicker
+            #d4="ngbDatepicker">
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary fa fa-calendar" (click)="d4.toggle()" type="button"></button>
+          </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group row align-items-center mb-2">
+        <label class="col-sm-3 col-form-label">Horas Estimadas</label>
+        <div class="col-sm-9">
+            <input [disabled]="NivelUsuario != '1'" class="form-control" type="number" [(ngModel)]="Proyecto.Duracion_Estimada" id="HInicio" name="HInicio" >
+        </div>
+      </div>
+      <div class="form-group row align-items-center mb-2">
+        <label class="col-sm-3 col-form-label">Horas Real</label>
+        <div class="col-sm-9">
+            <input class="form-control" type="number" [(ngModel)]="Proyecto.Tiempo_Real" id="HInicio" name="HInicio" >
+        </div>
+      </div>
+
+    </div>
+
+    <div class="card-footer py-1 px-3 h-auto">
+      <div class="form-group col-md-12 px-0">
+        <div class="form-row">
+          <div class="form-group col-8 col-md-10">
+          </div>
+          <div class="form-group col-2 d-flex justify-content-end">
+            <button (click)="cerrarFechasPanel()" type="button" class="btn btn-danger btn-sm custom-btn"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<div [hidden]="!MiembroPanel" class="short-main-modal">
+  <div class="modal-content  card">
+    <div class="card-header py-1 px-3 h-auto">
+      <h6>Miembros {{Proyecto.Nombre}}</h6>
+    </div>
+    <div class="card-body">
+      
+      <div class="form-group row align-items-center mb-2">
+        <label class="col-sm-2 col-form-label">Cliente</label>
+        <div class="col-sm-10">
+          <div class="input-group">
+            <input [(ngModel)]="Proyecto.ClienteNombre" disabled name="ClienteNombre" id="ClienteNombre" type="text"
+              class="form-control" placeholder="Nombre del Cliente">
+            <div class="input-group-append">
+              <button (click)="abrirPanelBusquedaMiembros(1)" type="button" class="btn btn-primary"><i class="fa fa-search"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="form-group row align-items-center  mb-2">
+        <label class="col-sm-2 col-form-label">Responsable</label>
+        <div class="col-sm-10">
+          <div class="input-group">
+            <input [disabled]="NivelUsuario != '1'" [(ngModel)]="Proyecto.ResponsableNombre" disabled name="ResponsableNombre" id="ResponsableNombre" type="text"
+              class="form-control" placeholder="Nombre del Responsable">
+            <div class="input-group-append">
+              <button [disabled]="NivelUsuario != '1'" (click)="abrirPanelBusquedaMiembros(2)" type="button" class="btn btn-primary"><i class="fa fa-search"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group row align-items-center  mb-2">
+        <label class="col-sm-2 col-form-label">Supervisor</label>
+        <div class="col-sm-10">
+          <div class="input-group">
+            <input [disabled]="NivelUsuario != '1'" [(ngModel)]="Proyecto.SupervidorNombre" disabled name="SupervidorNombre" id="SupervidorNombre" type="text"
+              class="form-control" placeholder="Nombre del Supervisor">
+            <div class="input-group-append">
+              <button [disabled]="NivelUsuario != '1'" (click)="abrirPanelBusquedaMiembros(3)" type="button" class="btn btn-primary"><i class="fa fa-search"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group row align-items-center  mb-2">
+        <label class="col-sm-2 col-form-label">Colaborador</label>
+        <div class="col-sm-10">
+          <div class="input-group">
+            <input [disabled]="NivelUsuario != '1'" [(ngModel)]="Proyecto.ColaboradorNombre" disabled name="ColaboradorNombre" id="ColaboradorNombre" type="text"
+              class="form-control" placeholder="Nombre del Colaborador">
+            <div class="input-group-append">
+              <button [disabled]="NivelUsuario != '1'" (click)="abrirPanelBusquedaMiembros(4)" type="button" class="btn btn-primary"><i class="fa fa-search"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group row align-items-center  mb-2">
+        <label class="col-sm-2 col-form-label">Patrocinador</label>
+        <div class="col-sm-10">
+          <div class="input-group">
+            <input [disabled]="NivelUsuario != '1'" [(ngModel)]="Proyecto.PatrocinadorNombre" disabled name="PatrocinadorNombre" id="PatrocinadorNombre" type="text"
+              class="form-control" placeholder="Nombre del Patrocinador">
+            <div class="input-group-append">
+              <button [disabled]="NivelUsuario != '1'" (click)="abrirPanelBusquedaMiembros(5)" type="button" class="btn btn-primary"><i class="fa fa-search"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group row align-items-center  mb-2">
+        <label class="col-sm-2 col-form-label">Promotor</label>
+        <div class="col-sm-10">
+          <div class="input-group">
+            <input [disabled]="NivelUsuario != '1'" [(ngModel)]="Proyecto.PromotorNombre" disabled name="PromotorNombre" id="PromotorNombre" type="text"
+              class="form-control" placeholder="Nombre del Promotor">
+            <div class="input-group-append">
+              <button [disabled]="NivelUsuario != '1'" (click)="abrirPanelBusquedaMiembros(6)" type="button" class="btn btn-primary"><i class="fa fa-search"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group row align-items-center  mb-2">
+        <label class="col-sm-2 col-form-label">Interesado Clave</label>
+        <div class="col-sm-10">
+          <div class="input-group">
+            <input [disabled]="NivelUsuario != '1'" [(ngModel)]="Proyecto.InteresadoNombre" disabled name="InteresadoNombre" id="InteresadoNombre" type="text"
+              class="form-control" placeholder="Nombre del Interesado">
+            <div class="input-group-append">
+              <button  [disabled]="NivelUsuario != '1'" (click)="abrirPanelBusquedaMiembros(7)" type="button" class="btn btn-primary"><i class="fa fa-search"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="card-footer py-1 px-3 h-auto">
+      <div class="form-group col-md-12 px-0">
+        <div class="form-row">
+          <div class="form-group col-8 col-md-10">
+          </div>
+          <div class="form-group col-2 d-flex justify-content-end">
+            <button (click)="cerrarMiembroPanel()" type="button" class="btn btn-danger btn-sm custom-btn"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<div [hidden]="!PanelBusquedaMiembros" class="middle-main-modal">
+  <div class="modal-content  card">
+    <div class="card-header py-1 px-3 h-auto">
+      <h6>Seleccionar Miembro</h6>
+      <input [(ngModel)]="searchFieldMiembro" (blur)="searchMiembro()" (keydown)="keytabMiembro($event)" type="text"
+        class="form-control" placeholder="Buscar">
+    </div>
+    <div class="card-body modal-grid2">
+      <div class="row p-0">
+        <div class="col-12 p-0">
+
+          <div class="form-group col-12" *ngFor="let Contacto of Contactos;let i = index">
+            <a (click)="selectMiembro(Contacto)">
+              <div class="card  p-1 custom-card">
+                <div class="card-body py-1 px-2">
+                  <h6 class="m-0" >{{Contacto.Nombre }} - {{Contacto.Correo}}</h6>
+                </div>
+              </div>
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer py-1 px-3 h-auto">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8 col-md-10">
+          </div>
+          <div class="form-group col-2 d-flex justify-content-end">
+            <button (click)="cerrarPanelBusquedaMiembros()" type="button" class="btn btn-danger btn-sm custom-btn"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div [hidden]="!NotasPanel" class="middle-main-modal">
+  <div class="modal-content  card">
+    <div class="card-header py-1 px-3 h-auto"> 
+      <h6>Notas {{Proyecto.Nombre}}</h6>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+        </div>
+        <input [(ngModel)]="searchFieldMiembro" name="searchField" (blur)="searchMiembro()" (keydown)="keytabMiembro($event)" type="text" class="form-control"
+          placeholder="Buscar">
+        <div class="input-group-append">
+          <button class="btn btn-success" type="button" (click)="abrirPanelEdicionNotas()"><i class="fa fa-plus-circle"
+              aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </div>
+    <div class="card-body modal-grid2 d-flex flex-column">
+      
+
+          <div class="form-group col-12 p-0 m-0" *ngFor="let Seguimiento of Seguimientos; let i = index">
+            <div class="card p-1 custom-card m-0">
+                <div class="card-body py-1 px-2">
+                    <div class="row no-gutters">
+                        <div class="col-2">
+                            <h6 class="m-0">{{ Seguimiento.Fecha | date:'dd/MM/yyyy HH:mm' }}</h6>
+                        </div>
+                        <div class="col-9">
+                            <h6 class="m-0">{{ Seguimiento.Nota | slice:0:80 }}...</h6>
+                        </div>
+                        <div class="col-1 text-right">
+                            <h6 class="m-0">{{ Seguimiento.Nombre | uppercase }}</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-footer py-1 px-3 h-auto">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8 col-md-10">
+          </div>
+          <div class="form-group col-2 d-flex justify-content-end">
+            <button (click)="cerrarNotasPanel()" type="button" class="btn btn-danger btn-sm custom-btn"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div [hidden]="!EditNotasPanel" class="short-main-modal">
+  <div class="modal-content  card">
+    <div class="card-header py-1 px-3 h-auto">
+      <h6>Notas {{Proyecto.Nombre}}</h6>
+    </div>
+    <div class="card-body">
+
+      <textarea class="form-control" rows="6" [(ngModel)]="Seguimiento" name="Seguimiento"></textarea>
+
+    </div>
+
+    <div class="card-footer py-1 px-3 h-auto">
+      <div class="form-group col-md-12 px-0">
+        <div class="form-row">
+          <div class="form-group col-8 col-md-10">
+          </div>
+          <div class="form-group col-2 d-flex justify-content-end">
+            
+            <button (click)="agregarSeguimieto()" type="button" class="btn btn-success tn-sm custom-btn"
+              title="Cancela edicion"> Agregar </button>
+
+            <button (click)="cerrarPanelEdicionNotas()" type="button" class="btn btn-danger btn-sm custom-btn"
+              title="Cancela edicion"> Cancelar </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

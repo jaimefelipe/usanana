@@ -11,7 +11,7 @@ constructor(private apiService: ApiService) { }
 async loadPedidos(paginacion,search?) {
   let sqlConfig = {
     table: 'Res_Pedido Inner Join Res_Zona on Res_Pedido.Id_Zona = Res_Zona.Id_Zona inner Join Res_Mesa on Res_Pedido.Id_Mesa = Res_Mesa.Id_Mesa',
-    fields: 'Id_Pedido,Res_Mesa.Nombre as Mesa,Res_Zona.Nombre as Zona,Res_Pedido.Nombre,Res_Pedido.Estado,Res_Pedido.Creado_El,Id_Factura,Id_Caja_Diaria,Total,Metodo_Pago',
+    fields: 'Id_Pedido,Res_Mesa.Nombre as Mesa,Res_Zona.Nombre as Zona,Res_Pedido.Nombre,Res_Pedido.Estado,Res_Pedido.Creado_El,Id_Factura,Id_Caja_Diaria,Total,Metodo_Pago,Facturado_EL',
     orderField: '',
     searchField: search,
     paginacion: paginacion

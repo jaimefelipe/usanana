@@ -69,7 +69,7 @@
   </div>
   <span [hidden]="!edit">
    
-    <app-general [hidden]="!GeneralActivo" [Persona]="Persona" (close)="cancel()"></app-general>
+    <app-general [hidden]="!GeneralActivo" [TipoPersona]="1" [Persona]="Persona" (close)="cancel()"></app-general>
     <app-direccion [hidden]="!DireccionActivo" [Persona]="Persona" [Provinces]="Provinces" [Cantons]="Cantons" [Districts]="Districts" (provinceChange)="provinceChange()"  (cantonChange)="cantonChange()" ></app-direccion>
     <app-contactos [hidden]="!ContactosActivo" [Persona]="Persona"></app-contactos>
     <app-rrhh [hidden]="!RhhActivo" [Persona]="Persona"></app-rrhh>

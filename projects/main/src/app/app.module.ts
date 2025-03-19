@@ -10,6 +10,7 @@ import { GeneralModule } from './general/general.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { SecurityModule } from '../../../seguridad/src/app/security/security.module';
+import { ContactoModule } from '../../../contacto/src/app/contacto/contacto.module';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { SecurityModule } from '../../../seguridad/src/app/security/security.mod
     CoreModule,
     GeneralModule,
     NgbModule,
-    SecurityModule
+    SecurityModule,
+    ContactoModule
   ],
   providers: [],
   bootstrap: [AppComponent]

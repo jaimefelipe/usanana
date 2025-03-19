@@ -1,0 +1,58 @@
+<div class="app-container">
+  <ejs-splitter #horizontal height='100%' width='100%' >
+    <e-panes>
+      <e-pane size='20%' [collapsible]='true'>
+        <ng-template #content>
+          <app-task-tree (nodoSeleccionadoEnTree)="itemSeleccionadoEnTreeView($event)" [Proyecto]="Proyecto" ></app-task-tree>
+        </ng-template>
+        <aside>
+          <!-- Emitimos el evento nodeSelected desde el tree hacia el padre -->
+          
+        </aside>
+
+      </e-pane>
+      <e-pane size='80%' [collapsible]='true'>
+        <ng-template #content>
+        <main>
+          <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand">{{Empresa}}</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+          
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav mr-auto">
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Vista
+                  </a>
+                  <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" *ngFor="let view of views" (click)="selectView(view)">
+                      {{ view.name }}
+                    </a>
+                  </div>
+                </li>
+              </ul>
+              <form class="form-inline my-2 my-lg-0">
+                <button class="btn btn-success" (click)="nuevaTarea()" type="button" ><i class="fa fa-plus-circle"
+                  aria-hidden="true">{{NivelText}}</i></button>
+              </form>
+            </div>
+          </nav>
+
+          <section>
+            <!-- Cambiamos la vista según la selección del usuario -->
+            <ng-container [ngSwitch]="selectedView">
+              <app-task-list     *ngSwitchCase="'tareas'"   (TareaSeleccionadaEnList)="tareaSeleccionadaEnList($event)"    [ItemSelected]="ItemSeleccionado"></app-task-list>
+              <app-task-gantt    *ngSwitchCase="'gantt'"    (TareaSeleccionadaEnGantt)="tareaSeleccionadaEnList($event)"   [ItemSelected]="ItemSeleccionado" ></app-task-gantt>
+              <app-task-kanban   *ngSwitchCase="'kanban'"   (TareaSeleccionadaEnKanban)="tareaSeleccionadaEnList($event)"  [ItemSelected]="ItemSeleccionado" ></app-task-kanban>
+              <app-task-calendar *ngSwitchCase="'calendar'" (TareaSeleccionadaEnCalendar)="tareaSeleccionadaEnList($event)" [ItemSelected]="ItemSeleccionado"></app-task-calendar>
+            </ng-container>
+            <app-task-form [hidden]="!Edit" (CambioNivelEnForm)="cambioNivel($event)" (CerrarPanel)="cerrarPanel()"  (NewItem)="newItem($event)" (UpdateItem)="updateItem($event)" [nivelEnElForm]="nivelSeleccionado"  [ItemSelected]="ItemSeleccionado"  ></app-task-form>
+          </section>
+        </main>
+      </ng-template>
+      </e-pane>
+    </e-panes>
+  </ejs-splitter>
+</div>

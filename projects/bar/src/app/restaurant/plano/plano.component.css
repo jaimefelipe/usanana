@@ -1,3 +1,6 @@
+.zindex0{
+  z-index:-1;
+}
 .h-10 {
   min-height: 10px;
 }
@@ -53,7 +56,7 @@ button {
 .plano{
   position: absolute;
   text-align: center;
-  z-index: 99;
+  z-index: 20;
 }
 
 .centered {

@@ -1,9 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { TareasComponent } from './tareas/tareas.component';
+import { TareasMainComponent } from './tareas-main/tareas-main.component';
+import { SeguimientoComponent } from './seguimiento/seguimiento.component';
 
 const routes: Routes = [
-  {path : 'tareas', component : TareasComponent}
+  {path : 'tareas', component : TareasMainComponent},
+  {path : 'seguimiento', component : SeguimientoComponent}
 ];
 
 @NgModule({

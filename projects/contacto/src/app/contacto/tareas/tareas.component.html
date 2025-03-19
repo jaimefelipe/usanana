@@ -1,0 +1,218 @@
+<div class="container-fluid">
+    <div class="row">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+        </div>
+        <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+          placeholder="Buscar">
+        <div class="input-group-append">
+          <button [disabled]="Persona.Id_Persona == ''" class="btn btn-success" type="button" (click)="abrirPantallaTareas('')"><i class="fa fa-plus-circle"
+              aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form>
+    <div class="form-row">
+      <div class="form-group col-12 col-sm-12" *ngFor="let Tarea of Tareas;let i = index">
+        <div class="card">
+          <a (click)="editRecord(Tarea)">
+            <div class="card-body">
+
+              <h6 class="card-title">{{Tarea.Tarea}}
+              {{Tarea.NombreBeneficiario}}
+              Tipo :
+              <span *ngIf="Tarea.Tipo == '1'" class="text-success"> Prospeccion</span>
+              <span *ngIf="Tarea.Tipo == '2'" class="text-success"> Seguimiento Cliente</span>
+              <span *ngIf="Tarea.Tipo == '3'" class="text-success"> Planeamiento</span>
+              <span *ngIf="Tarea.Tipo == '4'" class="text-success"> Desarrollo</span>
+              <span *ngIf="Tarea.Tipo == '5'" class="text-success"> Reunion</span>
+              Estado :
+              <span *ngIf="Tarea.Estado == '1'" class="text-primary"> Pendiente</span>
+              <span *ngIf="Tarea.Estado == '2'" class="text-primary"> Iniciada</span>
+              <span *ngIf="Tarea.Estado == '3'" class="text-primary"> En Proceso</span>
+              <span *ngIf="Tarea.Estado == '4'" class="text-primary"> Suspendida</span>
+              <span *ngIf="Tarea.Estado == '5'" class="text-primary"> Terminada</span> | 
+              {{Tarea.Inicio | date:'d/MMM/yy'}}
+              </h6>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+
+
+  <div [hidden]="!PantallaTareas" class="modal-main">
+
+    <div class="modal-content  card">
+      <div class="card-header">
+        <h2>Tarea {{Persona.Nombre}}</h2>
+      </div>
+      
+      <div class="card-body modal-grid">
+        <div class="form-row">
+          <div class="form-group col-md-4">
+            <label>Tipo</label>
+            <select [(ngModel)]="Tarea.Tipo" name="Tipo" type="text" class="form-control">
+              <option value='1'>Prospeccion</option>
+              <option value='2'>Seguimiento Cliente</option>
+              <option value='3'>Planeacion</option>
+              <option value='4'>Desarrollo</option>
+              <option value='5'>Reunion</option>
+            </select>
+          </div>
+    
+          <div class="form-group col-md-8">
+            <label>Agente</label>
+            <div class="input-group">
+    
+              <div class="input-group-append">
+                <button  type="button" (click)="openPantallaPersona(1)" disabled  class="form-control btn btn-primary"><i
+                    class="fa fa-search"></i></button>
+              </div>
+              <input [(ngModel)]="Tarea.NombreBeneficiario" disabled name="NombreBeneficiario" id="NombreBeneficiario" type="input"
+                class="form-control" placeholder="Beneficiario">
+            </div>
+          </div>
+          <!--
+          <div class="form-group col-md-4">
+            <label>Encargado</label>
+            <div class="input-group">
+    
+              <div class="input-group-append">
+                <button  type="button"  (click)="openPantallaPersona(2)" class="form-control btn btn-primary"><i
+                    class="fa fa-search"></i></button>
+              </div>
+              <input [(ngModel)]="Tarea.NombreEncargado" disabled name="NombreEncargado" id="NombreEncargado" type="input"
+                class="form-control" placeholder="Encargado">
+            </div>
+          </div>
+          <div class="form-group col-md-4">
+            <label>Asistente</label>
+            <div class="input-group">
+    
+              <div class="input-group-append">
+                <button  type="button"  (click)="openPantallaPersona(3)" class="form-control btn btn-primary"><i
+                    class="fa fa-search"></i></button>
+              </div>
+              <input [(ngModel)]="Tarea.NombreAsistente" disabled name="NombreAsistente" id="NombreAsistente" type="input"
+                class="form-control" placeholder="Asistente">
+            </div>
+          </div>
+          <div class="form-group col-md-4">
+            <label>Supervisor</label>
+            <div class="input-group">
+    
+              <div class="input-group-append">
+                <button  type="button"  (click)="openPantallaPersona(4)"  class="form-control btn btn-primary"><i
+                    class="fa fa-search"></i></button>
+              </div>
+              <input [(ngModel)]="Tarea.NombreSupervisor" disabled name="NombreSupervisor" id="NombreSupervisor" type="input"
+                class="form-control" placeholder="Supervisor">
+            </div>
+          </div>
+          -->
+    
+          <div class="form-group col-md-12">
+            <label>Tarea</label>
+            <input [(ngModel)]="Tarea.Tarea" name="Tarea" type="text" placeholder="Tarea" class="form-control">
+    
+          </div>
+    
+          <div class="form-group col-md-3">
+            <label>Estado</label>
+            <select [(ngModel)]="Tarea.Estado" name="Estado" type="text" class="form-control">
+              <option value='1'>Pendiente</option>
+              <option value='2'>Iniciada</option>
+              <option value='3'>En Proceso</option>
+              <option value='4'>Suspendida</option>
+              <option value='5'>Terminada</option>
+            </select>
+          </div>
+          <div class="form-group col-md-3">
+            <label>Avance</label>
+            <input [(ngModel)]="Tarea.Avance" name="Avance" type="numeric" placeholder="Avance" class="form-control">
+    
+          </div>
+          <div class="form-group col-md-3">
+            <label>Fecha Inicio</label>
+            <div class="input-group">
+              <input class="form-control" placeholder="Inicio" name="Inicio" [(ngModel)]="FechaInicio" ngbDatepicker
+                #d1="ngbDatepicker">
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary fa fa-calendar" (click)="d1.toggle()" type="button"></button>
+              </div>
+            </div>
+          </div>
+    
+          <div class="form-group col-md-3">
+            <label>Fecha Fin</label>
+            <div class="input-group">
+              <input class="form-control" placeholder="Fin" name="Fin" [(ngModel)]="FechaFin" ngbDatepicker
+                #d2="ngbDatepicker">
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary fa fa-calendar" (click)="d2.toggle()" type="button"></button>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+  
+      <div class="card-footer ">
+        <div class="form-group col-12">
+          <div class="form-row">
+            <div class="form-group col-4 col-sm-8">
+            </div>
+            <div class="form-group  col-4 col-sm-2">
+              <button (click)="GrabarTarea()" type="button" class="btn btn-primary" title="Grabar"> Grabar</button>
+            </div>
+            <div class="form-group  col-4 col-sm-2">
+              <button (click)="cerrarPantallaTareas()"  type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div [hidden]="!PantallaPersona" class="modal-main">
+    <div class="modal-content  card">
+      <div class="card-header">
+        <h2>Seleccionar {{TipoPersona}}</h2>
+        <input [(ngModel)]="searchFieldPersona" (blur)="searchPersona()" (keydown)="keytabPersona($event)" type="text"
+          class="form-control" placeholder="Buscar">
+      </div>
+      <div class="card-body modal-grid">
+        <div class="form-row">
+          <div class="form-group col-12 col-sm-6" *ngFor="let Beneficiario of Personas;let i = index">
+            <a (click)="SeleccionarPersona(Beneficiario)">
+              <div class="card">
+                <div class="card-body">
+                  <h5>{{Beneficiario.Nombre}}</h5>
+                  Estado :
+                  <span *ngIf="Beneficiario.Estado == '1'" class="text-success"> Activo</span>
+                  <span *ngIf="Beneficiario.Estado == '0'" class="text-warning"> Inactivo</span>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+  
+      <div class="card-footer ">
+        <div class="form-group col-md-12">
+          <div class="form-row">
+            <div class="form-group col-8 col-md-10">
+            </div>
+            <div class="form-group col-2">
+              <button (click)="closePantallaPersona()" type="button" class="btn btn-danger"
+                title="Cancela edicion">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

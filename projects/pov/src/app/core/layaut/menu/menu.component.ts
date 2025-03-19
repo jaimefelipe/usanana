@@ -56,6 +56,7 @@ export class MenuComponent implements OnInit {
 
   ngOnInit(): void {
     //Verificar Login
+    localStorage.setItem('ToxoPOV','1');
     if(localStorage.getItem('isLoggedin') == 'false'){
       let arrlocation = window.location.pathname.split('/');
       if(arrlocation[2] !== 'login'){

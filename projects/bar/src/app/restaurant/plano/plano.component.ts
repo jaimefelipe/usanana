@@ -371,6 +371,10 @@ export class PlanoComponent implements OnInit {
 
   /* Eventos de Pantalla Cuentas */
   async MostrarPantallaCuentas(Mesa){
+    if (!navigator.onLine) {
+      Swal.fire('No hay Internet, Revise la conexion');
+      return false;
+    }
     this.PantallaLoading = true;
     this.Mesa = Mesa;
     await this.LeerPedidosAbiertosMesa(Mesa.Id_Mesa);
@@ -378,6 +382,7 @@ export class PlanoComponent implements OnInit {
     this.PantallaPlano = false;
     this.PantallaLista = false;
     this.PantallaLoading = false;
+    return true;
   }
 
   async LeerPedidosAbiertosMesa(Id_Mesa?:any){
@@ -485,6 +490,7 @@ export class PlanoComponent implements OnInit {
     this.log.Cantidad = '1';
     this.log.Id_Pedido = this.Pedido.Id_Pedido;
     this.log.Id_Pedido_Detalle = Article.Id_Pedido_Detalle;
+    this.log.Id_Producto = Article.Id_Producto;
     this.planoService.InsertLog(this.log);
     this.loadOrderProducts(this.Pedido.Id_Pedido,1);
   }
@@ -501,6 +507,7 @@ export class PlanoComponent implements OnInit {
     this.log.Cantidad = '1';
     this.log.Id_Pedido = this.Pedido.Id_Pedido;
     this.log.Id_Pedido_Detalle = Article.Id_Pedido_Detalle;
+    this.log.Id_Producto = Article.Id_Producto;
     this.planoService.InsertLog(this.log);
 
     //  Imprimir Orden Negativa
@@ -605,11 +612,13 @@ export class PlanoComponent implements OnInit {
   }
   async imprimirComanda(){
     if(window.location.host != 'localhost'){
-      window.open('https://toxo.work/reportes/bar/comanda.php?IdDocument='+this.Pedido.Id_Pedido);
+      window.open('https://toxo.work/reportes/bar/comandaB.php?IdDocument='+this.Pedido.Id_Pedido);
+      /*
       setTimeout(()=>{
         this.planoService.actualizarComanda(this.Pedido.Id_Pedido);
         
-      },10000) 
+      },10000)
+      */ 
       //await this.planoService.actualizarComanda(this.Pedido.Id_Pedido);
     }else{
       let data = await this.planoService.carcarScript('https://toxo.work/reportes/bar/comanda2.php',this.Pedido.Id_Pedido);
@@ -1038,7 +1047,8 @@ export class PlanoComponent implements OnInit {
     this.log.Accion = '9'
     this.log.Cantidad = '1';
     this.log.Id_Pedido = this.Pedido.Id_Pedido;
-    this.log.Id_Pedido = Article.Id_Producto;
+    this.log.Id_Pedido_Detalle = identity;
+    this.log.Id_Producto = Article.Id_Producto;
     this.planoService.InsertLog(this.log);
     this.loadOrderProducts(this.Pedido.Id_Pedido,1);
     this.cerrarPantallaProductos();
@@ -1253,6 +1263,10 @@ export class PlanoComponent implements OnInit {
     }
   }
   async facturar(){
+    if (!navigator.onLine) {
+      Swal.fire('No hay internet, revise la conexion');
+      return false;
+    }
     //Validar el Email
     if(this.factura.Tipo_Documento == '01'){
       const expression: RegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;

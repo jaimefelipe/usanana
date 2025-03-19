@@ -1,0 +1,12 @@
+<ejs-gantt id="ganttDefault" width='80vw' height="430px"
+(actionComplete)="onActionComplete($event)"
+
+(actionBegin)="onActionBegin($event)"
+ [splitterSettings]="splitterSettings"
+ [dataSource]="data" 
+ [taskFields]="taskSettings" 
+ [editSettings]="editSettings" 
+ [allowRowDragAndDrop]='true' 
+ [allowTaskbarDragAndDrop]='true'
+ [toolbar]="toolbar" 
+ ></ejs-gantt>

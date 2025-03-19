@@ -264,7 +264,7 @@ export class ProductService {
     }
     let sqlProducto = {
       table: 'Inv_Producto',
-      fields: 'Id_Producto,Codigo,SKU,Tipo_Codigo,Descripcion,Unidad_Medida,Categoria,Impuesto,Tipo_Impuesto,Precio,Moneda,Estado,Ultimo_Costo',
+      fields: 'Id_Producto,Codigo,SKU,Tipo_Codigo,Descripcion,Unidad_Medida,Categoria,Impuesto,Tipo_Impuesto,Precio,Moneda,Estado,Ultimo_Costo,Existencia',
       where: where
      };
      return await this.apiService.executeSqlSyn(sqlProducto);

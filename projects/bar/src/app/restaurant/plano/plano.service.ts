@@ -71,7 +71,8 @@ export class PlanoService {
     + "',Referencia2='"+Pedido.Referencia2
     + "',Referencia3='"+Pedido.Referencia3
     + "',Monto_Servicio='"+Pedido.Monto_Servicio
-    + "',Facturado_Por='"+localStorage.getItem('Nombre_Usuario')+"' where Id_Pedido = " + Pedido.Id_Pedido;
+    + "',Facturado_El=NOW()"
+    + ",Facturado_Por='"+localStorage.getItem('Nombre_Usuario')+"' where Id_Pedido = " + Pedido.Id_Pedido;
     return await this.apiService.postRecord(sql);
   }
   async ActualizarIdClientePedido(Id_Pedido,Id_Cliente){

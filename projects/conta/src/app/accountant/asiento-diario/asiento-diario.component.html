@@ -23,7 +23,7 @@
           <a (click)="editRecord(Asiento)">
             <div class="card-body">
               Fecha: <b>{{Asiento.Fecha  | date:'d/M/YYY'}}</b> <!-- | date:'d/M/YYY' -->
-             Periodo: <b> {{Asiento.Mes}}-{{Asiento.Anio}}-{{Asiento.Secuencia}}</b>, Documento: <b>{{Asiento.Documento }}</b><br>
+              Periodo: <b> {{Asiento.Mes}}-{{Asiento.Anio}}-{{Asiento.Secuencia}}</b>, Documento: <b>{{Asiento.Documento }}</b><br>
               Sistema
               <span *ngIf="Asiento.Sistema_Origen == 'CGE'" class="text-primary"> Contabilidad</span>
               <span *ngIf="Asiento.Sistema_Origen == 'VEN'" class="text-success"> Ventas</span>

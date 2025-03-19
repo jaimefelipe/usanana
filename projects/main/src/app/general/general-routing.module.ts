@@ -7,7 +7,7 @@ import { LicenciaComponent } from './licencia/licencia.component';
 import { ConsecutivoComponent } from './consecutivo/consecutivo.component';
 
 const routes: Routes = [
-  {path : 'contactos', component : PeopleComponent},
+  {path : 'gcontactos', component : PeopleComponent},
   {path : 'paramxcia', component : ParametrosCiaComponent},
   {path : 'facturaerror', component : FacturaComponentC},
   {path : 'licencias', component : LicenciaComponent},

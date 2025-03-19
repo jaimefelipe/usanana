@@ -40,7 +40,7 @@ export class PeopleService {
   async loadPersona(Id_Persona){
     let sqlConfig = {
       table: 'Gen_Persona',
-      fields: 'Id_Persona,Nombre,Telefono,Correo,Identificacion,Tipo_Identificacion,Porcentaje_Comision, Porcentaje_Descuento,Cliente,Proveedor',
+      fields: 'Id_Persona,Nombre,Telefono,Correo,Identificacion,Tipo_Identificacion,Porcentaje_Comision, Porcentaje_Descuento,Cliente,Proveedor,Empleado',
       orderField: '',
       searchField: '',
       where: "Id_Persona = " + Id_Persona
@@ -51,7 +51,7 @@ export class PeopleService {
     if(Persona.Id_Persona ==""){
       let sql = {
         table: 'Gen_Persona',
-        fields: 'Nombre,Telefono,Correo,Tipo_Identificacion,Identificacion,Cliente,Proveedor',
+        fields: 'Nombre,Telefono,Correo,Tipo_Identificacion,Identificacion,Cliente,Proveedor,Empleado,Codigo_Activdad_Economica,Nombre_Actividad_Economica',
         values: '\'' + Persona.Nombre
         + '\',\'' + Persona.Telefono
         + '\',\'' + Persona.Correo
@@ -59,6 +59,9 @@ export class PeopleService {
         + '\',\'' + Persona.Identificacion
         + '\',\'' + Persona.Cliente
         + '\',\'' + Persona.Proveedor
+        + '\',\'' + Persona.Empleado
+        + '\',\'' + Persona.Codigo_Activdad_Economica
+        + '\',\'' + Persona.Nombre_Actividad_Economica
         + '\''
       };
       return await this.apiService.insertRecord(sql);
@@ -72,6 +75,9 @@ export class PeopleService {
         + '\',Identificacion=\''+ Persona.Identificacion
         + '\',Cliente=\''+ Persona.Cliente
         + '\',Proveedor=\''+ Persona.Proveedor
+        + '\',Empleado=\''+ Persona.Empleado
+        + '\',Codigo_Activdad_Economica=\''+ Persona.Codigo_Activdad_Economica
+        + '\',Nombre_Actividad_Economica=\''+ Persona.Nombre_Actividad_Economica
         + '\'',
         where: 'Id_Persona=' + Persona.Id_Persona
       };

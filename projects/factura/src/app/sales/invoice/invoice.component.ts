@@ -78,7 +78,7 @@ export class InvoiceComponent implements OnInit {
     Correo: "",
     Condicion_Venta: "01",
     Plazo_Credito: "0",
-    Metodo_Pago: "98",
+    Metodo_Pago: "1",
     Moneda: "CRC",
     Tipo_Cambio: "",
     IVA: 0,
@@ -131,9 +131,11 @@ export class InvoiceComponent implements OnInit {
     Tipo_Identificacion: "",
     Condicion_Venta: "",
     Plazo_Credito: "",
-    Metodo_Pago: "98",
+    Metodo_Pago: "01",
     Estado: "",
-    Moneda:''
+    Moneda:'',
+    Codigo_Activdad_Economica:'',
+    Nombre_Actividad_Economica:''
   };
   ngOnInit(): void {
     //Validar Configuracion Contable;
@@ -585,7 +587,7 @@ export class InvoiceComponent implements OnInit {
         Correo: "",
         Condicion_Venta: "01",
         Plazo_Credito: "0",
-        Metodo_Pago: "98",
+        Metodo_Pago: "01",
         Moneda: "CRC",
         Tipo_Cambio: "",
         IVA: 0,
@@ -612,9 +614,12 @@ export class InvoiceComponent implements OnInit {
         Id_Caja_Diaria:localStorage.getItem('Id_Caja_Diaria'),
       };
       if(this.POV){
+        this.Invoice.Metodo_Pago = '98'
         this.Invoice.Tipo_Documento =  '04'
         this.Invoice.Numero_Identificacion = 'Contado';
         this.Invoice.Nombre = 'Cliente de Contado';
+      }else{
+        this.Invoice.Metodo_Pago = '01';
       }
       this.initDetail();
       this.persona = {
@@ -626,9 +631,11 @@ export class InvoiceComponent implements OnInit {
         Tipo_Identificacion: "01",
         Condicion_Venta: "01",
         Plazo_Credito: "0",
-        Metodo_Pago: "98",
+        Metodo_Pago: "01",
         Estado: "",
-        Moneda:''
+        Moneda:'',
+        Codigo_Activdad_Economica:'',
+        Nombre_Actividad_Economica:''
       };
       this.Details = [];
       this.Invoice.Tipo_Cambio = this.tipoCambio.venta;
@@ -862,6 +869,7 @@ export class InvoiceComponent implements OnInit {
     if(this.Invoice.Numero_Identificacion == ''){
       return true;
     }
+    this.Invoice.Numero_Identificacion = this.Invoice.Numero_Identificacion.replace(/[^0-9]/g, '');
     if(this.validandoId == true){
       return false;
     }else{
@@ -885,6 +893,8 @@ export class InvoiceComponent implements OnInit {
         }else{
           this.persona.Nombre = persona.nombre;
           this.persona.Tipo_Identificacion = persona.tipoIdentificacion;
+          this.persona.Codigo_Activdad_Economica = persona['actividades'][0]['codigo'];
+          this.persona.Nombre_Actividad_Economica = persona['actividades'][0]['descripcion'];
           this.Invoice.Nombre = this.persona.Nombre;
           this.Invoice.Codigo_Identificacion = persona.tipoIdentificacion;
           if(this.Invoice.Numero_Identificacion.length == 10){
@@ -894,8 +904,9 @@ export class InvoiceComponent implements OnInit {
             }
           }
           this.Invoice.Condicion_Venta = '01';
-          this.Invoice.Metodo_Pago = '98';
+          this.Invoice.Metodo_Pago = '01';
           this.Invoice.Plazo_Credito = '0';
+
         }
       }else{
         Swal.fire({
@@ -938,7 +949,7 @@ export class InvoiceComponent implements OnInit {
         this.Invoice.Plazo_Credito = "0";
       }
       if (this.Invoice.Metodo_Pago === "") {
-        this.Invoice.Metodo_Pago = "98";
+        this.Invoice.Metodo_Pago = "01";
       }
       if (this.Invoice.Codigo_Identificacion == "") {
         this.Invoice.Codigo_Identificacion = "01";
@@ -1155,7 +1166,7 @@ export class InvoiceComponent implements OnInit {
         this.Invoice.Plazo_Credito = "0";
       }
       if (this.Invoice.Metodo_Pago === "") {
-        this.Invoice.Metodo_Pago = "98";
+        this.Invoice.Metodo_Pago = "01";
       }
       if (this.Invoice.Codigo_Identificacion == "") {
         this.Invoice.Codigo_Identificacion = "01";

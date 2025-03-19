@@ -66,7 +66,7 @@ export class EmpleadosComponent implements OnInit {
     Alumno:'',
     Profesor:'',
     Empleado:'1',
-    Estado:'1',
+    Estado:'0',
     Otro_Documento:'',
     Condicion_Venta:'',
     Plazo_Credito:'',
@@ -254,7 +254,7 @@ export class EmpleadosComponent implements OnInit {
         Alumno:'',
         Profesor:'',
         Empleado:'1',
-        Estado:'1',
+        Estado:'0',
         Otro_Documento:'',
         Condicion_Venta:'',
         Plazo_Credito:'',
@@ -396,7 +396,7 @@ export class EmpleadosComponent implements OnInit {
         this.Persona.Jornada = "";
         this.Persona.Numero_Contrato = "";
         this.Persona.Salario_Mes = "";
-        this.Persona.Estado = '1';
+        this.Persona.Estado = '0';
         this.Persona.Fecha_I = {
           month: this.hoy.getMonth() + 1,
           day: this.hoy.getDate(),

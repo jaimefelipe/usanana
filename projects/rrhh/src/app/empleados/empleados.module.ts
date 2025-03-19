@@ -35,6 +35,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     LocalidadComponent,
     RollComponent,
     ProgramacionComponent
-  ]
+  ],
+  exports:[RrhhComponent]
 })
 export class EmpleadosModule { }

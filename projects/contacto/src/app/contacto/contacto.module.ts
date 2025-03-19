@@ -11,9 +11,13 @@ import { DireccionComponent } from './direccion/direccion.component';
 import { VentaComponent } from './venta/venta.component';
 import { ContactosComponent } from './contactos/contactos.component';
 import { NotasComponent } from './notas/notas.component';
+import { CobroComponent } from './cobro/cobro.component';
+import { TareasComponent } from './tareas/tareas.component';
+import { RollComponent } from './roll/roll.component';
+
 
 @NgModule({
-  exports: [GeneralComponent,DireccionComponent,VentaComponent,ContactosComponent,NotasComponent],
+  exports: [GeneralComponent,DireccionComponent,VentaComponent,ContactosComponent,NotasComponent,ContactoComponent],
   imports: [
     CommonModule,
     BrowserModule,
@@ -21,6 +25,6 @@ import { NotasComponent } from './notas/notas.component';
     FormsModule,
     ContactoRoutingModule
   ],
-  declarations: [ContactoComponent,MarcasComponent, GeneralComponent, DireccionComponent, VentaComponent, ContactosComponent, NotasComponent]
+  declarations: [ContactoComponent,MarcasComponent, GeneralComponent, DireccionComponent, VentaComponent, ContactosComponent, NotasComponent,CobroComponent,TareasComponent,RollComponent]
 })
 export class ContactoModule { }

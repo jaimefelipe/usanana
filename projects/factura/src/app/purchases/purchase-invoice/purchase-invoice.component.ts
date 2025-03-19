@@ -4,7 +4,7 @@ import { CategoryService } from '../../../../../inventario/src/app/inventory/cat
 import { ApiService } from '../../../../../core/src/app/lib/api.service';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-//import { NgxXml2jsonService } from 'ngx-xml2json';
+import { NgxXml2jsonService } from 'ngx-xml2json';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -17,7 +17,7 @@ export class PurchaseInvoiceComponent implements OnInit {
     private router: Router,
     private apiService: ApiService,
     private purchaseInvoiceService: PurchaseInvoiceService,
-    //private ngxXml2jsonService: NgxXml2jsonService,
+    private ngxXml2jsonService: NgxXml2jsonService,
     private productService: ProductService,
     private categoryService:CategoryService
   ) {}
@@ -863,7 +863,7 @@ export class PurchaseInvoiceComponent implements OnInit {
       this.contenidoArchivo = fileReader.result.toString();
       const parser = new DOMParser();
       const xml = parser.parseFromString(this.contenidoArchivo, 'text/xml');
-      //this.FactuaCompraCargada = this.ngxXml2jsonService.xmlToJson(xml);
+      this.FactuaCompraCargada = this.ngxXml2jsonService.xmlToJson(xml);
 
       this.cargarFactuaDeCompra(xml.firstChild.nodeName);
     };
@@ -871,6 +871,7 @@ export class PurchaseInvoiceComponent implements OnInit {
     fileInput.target.value = '';
     return true;
   }
+
   async cargarFactuaDeCompra(tipo) {
     this.PantallaLoading = true;
     if(tipo == 'FacturaElectronica'){
@@ -889,10 +890,9 @@ export class PurchaseInvoiceComponent implements OnInit {
       this.Invoice.Tipo_Documento = '04';
       var FactuaElectronica = this.FactuaCompraCargada['TiqueteElectronico'];
     }
-
     if (
       FactuaElectronica['Receptor']['Identificacion']['Numero'].trim() !=
-      this.Cia_ID.trim()
+this.Cia_ID.trim()
     ) {
 
       //swal.fire('El archivo seleccionado no Pertenecer a la empresa, Seleccione Otro');

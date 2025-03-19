@@ -64,7 +64,7 @@ export class TomaFisicaComponent implements OnInit {
     Unidad_Medida: "",
     Precio: 0,
     Id_Producto: "",
-    Cantidad: 1,
+    Cantidad: "",
     Estado: "",
     Sub_Total: 0,
     Total: 0,
@@ -95,7 +95,7 @@ export class TomaFisicaComponent implements OnInit {
       Unidad_Medida: "",
       Precio: 0,
       Id_Producto: "",
-      Cantidad: 1,
+      Cantidad: "",
       Estado: "",
       Sub_Total: 0,
       Total: 0,
@@ -192,15 +192,18 @@ export class TomaFisicaComponent implements OnInit {
   }
 
   async obtenerProducto(producto, tipo) {
-    if(this.ProductoEncontrado){
-      //return false;
+    if(tipo = 2){
+      let data = await this.productService.loadProductLike(producto,1,3);
+      this.registros = data["data"];
+      this.PantallaProductos =true;
+      return false;
     }
     let data = await this.productService.loadProduct(producto,1,3);
     if (data['total'] === 0) {
       data = await this.productService.loadProductLike(producto,1,3);
     }
-    if (data["total"] == 1) {
-      if (tipo == 1) {
+    if (data["total"] === 1) {
+      if (tipo === 1) {
         //Hay un registro hay que cargarlo
         this.Detalle.Id_Producto = data["data"][0]["Id_Producto"];
         this.Detalle.Tipo_Codigo = data["data"][0]["Tipo_Codigo"];
@@ -218,7 +221,6 @@ export class TomaFisicaComponent implements OnInit {
         this.PantallaProductos = false;
         let elemento = document.getElementById("Descripcion");
         elemento.focus();
-
       } else {
         this.registros = data["data"];
       }
@@ -230,13 +232,13 @@ export class TomaFisicaComponent implements OnInit {
       this.registros = data["data"];
     }
     
-    //return true;
+    return true;
   }
   async calcularTotales() {
     if(!this.Detalle.Precio){
       this.Detalle.Precio = 1;
     }
-    this.Detalle.Sub_Total = this.Detalle.Cantidad * this.Detalle.Precio;
+    this.Detalle.Sub_Total = parseInt(this.Detalle.Cantidad) * this.Detalle.Precio;
     
     this.Detalle.Total = this.Detalle.Sub_Total ;
     if (this.Detalle.Total > 0) {

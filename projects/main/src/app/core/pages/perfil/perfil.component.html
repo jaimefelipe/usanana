@@ -6,7 +6,7 @@
     -->
     <div class="form-row">
       <div class="form-group col-2 col-sm-1">
-        <button type="button" data-toggle="collapse" href="#GeneralData" class="form-control btn btn-primary"><i
+        <button type="button" data-toggle="collapse" href="#GeneralData"  class="form-control btn btn-primary"><i
             class="fa fa-bars"></i></button>
       </div>
       <div class="form-group col-10 col-sm-11">
@@ -125,6 +125,47 @@
       </div>
     </div>
     <!-- End of Datos de Dirección-->
+        <!--
+      Datos Aplicación
+    -->
+    <div class="form-row">
+      <div class="form-group col-2 col-sm-1">
+        <button type="button" data-toggle="collapse" href="#Aplicaciones" class="form-control btn btn-info"><i
+            class="fa fa-bars"></i></button>
+      </div>
+      <div class="form-group col-10 col-sm-11">
+        <h3>Seleccionar Sistema</h3>
+      </div>
+    </div>
+    <div class="collapse" id="Aplicaciones">
+      <div class="form-row">
+        <div class="form-group col-12 col-sm-6" *ngFor="let product of Products;let i = index">
+          <div class="card">
+            <div class="card-body">
+
+              <div class="custom-control custom-switch">
+                 <input type="checkbox" [(ngModel)]="product.Seleccionado" name="Seleccionado{{i}}"  class="form-control custom-control-input" id="Seleccionado{{i}}" (change)="onProductSelected($event,product,i)">
+                 <label class="custom-control-label" for="Seleccionado{{i}}">
+                  <h5 class="card-title">{{product.Nombre}}</h5>
+                </label>
+              </div>
+
+              <select id="tipoCuenta{{i}}" type="text" class="form-control" (change)="categoryChange($event,i)">
+                <option *ngFor="let categoria of ProductosCategoria[i]" value={{categoria.Id_Producto}}
+                  selected="{{categoria.Selected}}">
+                  {{categoria.Descripcion }} ({{categoria.Precio * (1+ (categoria.Impuesto/100))| currency : ' ₡' }} )
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="form-group col-md-12">
+          <button (click)='udateUserData(4)' class="btn btn-primary" type="submit">Actualizar Sistemas</button>
+        </div>
+      </div>
+    </div> <!-- End of Facturación -->
+    
+    
     <!--
       Datos Facturación
     -->
@@ -149,11 +190,7 @@
             <i class="fa fa-credit-card"></i> - Credit Card</button>
         </div>
         -->
-        <div class="form-group col-6 col-sm-3">
-          <button type="button" (click)="colapsePaypal()" data-toggle="collapse" href="#PayPal"
-            class="form-control btn btn-secondary">
-            <i class="fa fa-cc-paypal"></i> - PayPal</button>
-        </div>
+       
         <div class="form-group col-6 col-sm-3">
           <button type="button" (click)="colapseMobile()" data-toggle="collapse" href="#SinpeMovil"
             class="form-control btn btn-success">
@@ -196,15 +233,7 @@
             </div>
           </div>
         </div>
-        <div class="collapse" id="PayPal">
-          <div class="form-row">
-            <div class="form-group col-md-12">
-              Usted debe realizar una transferencia por medio de Paypal al correo <b>cobros&#64;toxo.training</b> en los
-              primeros 5
-              días de cada més y Reportar el número y fecha de la transferencia en la sección de facturación.
-            </div>
-          </div>
-        </div>
+        
         <div class="collapse" id="Deposito">
           <div class="form-row">
             <div class="form-group col-md-12">
@@ -221,45 +250,11 @@
       </div>
     </div><!-- End of Facturación -->
 
-    <!--
-      Datos Aplicación
-    -->
-    <div class="form-row">
-      <div class="form-group col-2 col-sm-1">
-        <button type="button" data-toggle="collapse" href="#Aplicaciones" class="form-control btn btn-info"><i
-            class="fa fa-bars"></i></button>
-      </div>
-      <div class="form-group col-10 col-sm-11">
-        <h3>Comprar Licencias</h3>
-      </div>
-    </div>
-    <div class="collapse" id="Aplicaciones">
-      <div class="form-row">
-        <div class="form-group col-12 col-sm-6" *ngFor="let product of Products;let i = index">
-          <div class="card">
-            <div class="card-body">
 
-              <div class="custom-control custom-switch">
-                 <input type="checkbox" [(ngModel)]="product.Seleccionado" name="Seleccionado{{i}}"  class="form-control custom-control-input" id="Seleccionado{{i}}" (change)="onProductSelected($event,product,i)">
-                 <label class="custom-control-label" for="Seleccionado{{i}}">
-                  <h5 class="card-title">{{product.Descripcion}}</h5>
-                </label>
-              </div>
-
-              <select id="tipoCuenta{{i}}" type="text" class="form-control" (change)="categoryChange($event,i)">
-                <option *ngFor="let categoria of ProductosCategoria[i]" value={{categoria.Id_Sub_Categoria}}
-                  selected="{{categoria.Selected}}">
-                  {{categoria.Nombre}} ({{categoria.Precio | currency : ' ' }} ) {{categoria.Parametro1}} Documentos
-                </option>
-              </select>
-            </div>
-          </div>
-        </div>
-        <div class="form-group col-md-12">
-          <button (click)='udateUserData(4)' class="btn btn-primary" type="submit">Actualizar Licencias</button>
-        </div>
-      </div>
-    </div> <!-- End of Facturación -->
+   
+   
+   
+   
     <!--
       Datos Factura Electrónica
     -->
@@ -274,6 +269,9 @@
     </div>
     <div class="collapse" id="HaciendaData">
       <div class="form-row">
+        <div class="form-group col-12">
+          <b>Si no cuenta con el registro ante el Ministerio de Hacienda Contacte a Soporte, Nosotros el ayudamos con el registro del mismo.</b>
+        </div>
         <div class="form-group col-md-6">
           <label for="name">Correo de Facturación</label>
           <input [(ngModel)]="Empresa.Correo_Hacienda" name="Correo_Hacienda" type="text" class="form-control">

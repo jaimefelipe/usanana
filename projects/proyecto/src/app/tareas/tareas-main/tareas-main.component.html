@@ -1,0 +1,40 @@
+<header class="navbar navbar-expand-lg navbar-dark bg-light p-2">
+  <div class="container-fluid">
+    
+    <!-- Logo con enlace a inicio -->
+    <a class="navbar-brand" [routerLink]="['/']">
+      <img src="/assets/toxologo.png" width="85px" alt="Logo">
+    </a>
+
+    <!-- Título del sistema -->
+    <h6 class="text-primary ml-3 my-0">Gestor de Tareas </h6>
+    <h6 class="text-secondary ml-3 my-0">{{Empresa}}</h6>
+    
+    <ul class="navbar-nav text-primary ml-3 my-0 ">
+      <li class="nav-item dropdown ml-3 my-0 ">
+        <a  class="nav-link dropdown-toggle text-success ml-3 my-0" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Vista
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" *ngFor="let view of views" (click)="selectView(view)">
+            {{ view.name }}
+          </a>
+        </div>
+      </li>
+    </ul>
+
+    <!-- Nombre del usuario -->
+    <span class="ml-auto mr-5 text-primary">
+      <i class="fa fa-user-circle"></i> {{ nombreUsuario }}
+    </span>
+
+  </div>
+</header>
+
+<ng-container [ngSwitch]="selectedView">
+  <app-tareas *ngSwitchCase="'tareas'"  (CerrarPanel)="cerrarPanel()" (TareaSeleccionadaEnList)="tareaSeleccionadaEnList($event)" ></app-tareas>
+  <app-task-form  [hidden]="!Edit" (CerrarPanel)="cerrarPanel()" [ItemSelected]="ItemSeleccionado"></app-task-form>
+  <app-task-kanban *ngSwitchCase="'kanban'" (TareaSeleccionadaEnKanban)="tareaSeleccionadaEnList($event)" [ItemSelected]="ItemSeleccionado"></app-task-kanban>
+  <app-task-calendar *ngSwitchCase="'calendar'" (TareaSeleccionadaEnCalendar)="tareaSeleccionadaEnList($event)" [ItemSelected]="ItemSeleccionado"></app-task-calendar>
+</ng-container>
+

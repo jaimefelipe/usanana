@@ -26,8 +26,10 @@
 
               <h4 class="card-title">{{Usuario.Nombre}}</h4>
               Tipo :
-              <span *ngIf="Usuario.Tipo_Usuario == '0'" class="text-primary"> Administrador</span>
-              <span *ngIf="Usuario.Tipo_Usuario == '1'" class="text-success"> Usuario</span>
+              <span *ngIf="Usuario.Tipo_Usuario == '0'" class="text-success"> Usuario Regular</span>
+              <span *ngIf="Usuario.Tipo_Usuario == '1'" class="text-primary"> Administrador</span>
+              <span *ngIf="Usuario.Tipo_Usuario == '2'" class="text-success"> Cajero</span>
+              <span *ngIf="Usuario.Tipo_Usuario == '3'" class="text-success"> Marca</span>
               Estado :
               <span *ngIf="Usuario.Estado == '1'" class="text-success"> Activo</span>
               <span *ngIf="Usuario.Estado == '0'" class="text-danger"> Inactivo</span>
@@ -83,8 +85,10 @@
       <div class="form-group col-md-4">
         <label>Tipo de Usuario</label>
         <select [(ngModel)]="Usuario.Tipo_Usuario" name="Tipo_Usuario" type="text" class="form-control">
+          <option value='0'>Usuario Regular</option>
           <option value='1'>Administrador</option>
-          <option value='0'>Usuario</option>
+          <option value='2'>Cajero</option>
+          <option value='3'>Marca</option>
         </select>
       </div>
 

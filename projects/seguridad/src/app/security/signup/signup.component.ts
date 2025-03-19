@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SignupService } from './signup.service';
+import { LoginService } from '../login/login.service';
 import { Router } from "@angular/router";
 import Swal from 'sweetalert2';
 @Component({
@@ -9,7 +10,12 @@ import Swal from 'sweetalert2';
 })
 export class SignupComponent implements OnInit {
 
-  constructor(private signupService:SignupService,private router: Router) { }
+  constructor(
+    private signupService:SignupService,
+    private router: Router,
+    private loginService:LoginService
+  ) { }
+
   registro = {
     nombre: '',
     correo:'',
@@ -18,6 +24,7 @@ export class SignupComponent implements OnInit {
     terminos:false,
   }
   regActive = true;
+  PantallaLoading = true;
   pass = {
     strength : '',
     color :'none',
@@ -49,10 +56,20 @@ export class SignupComponent implements OnInit {
     }
   }
   async createUser(){
+    Swal.fire('Procesando');
     let user = await this.signupService.createUser(this.registro);
     if(user){
-      Swal.fire('Usuario ' + this.registro.correo + ' Creado Correctamente');
-      this.router.navigate(['/login']);
+      //Swal.fire('Usuario ' + this.registro.correo + ' Creado Correctamente');
+      let registro = {
+        email: this.registro.correo,
+        password:this.registro.clave1,
+        empresa:localStorage.getItem('Id_Empresa')
+      }
+
+      this.loginService.authenticateUser(registro);
+      //Registrar Usuario
+      localStorage.setItem('isLoggedin', 'true');
+      this.router.navigate(['/perfil']);
     }
   }
   validateForm(){

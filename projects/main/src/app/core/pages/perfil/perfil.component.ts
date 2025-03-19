@@ -3,7 +3,9 @@ import { PerfilService } from './perfil.service';
 import { Component, OnInit } from '@angular/core';
 import { ProductosService } from '../productos/productos.service';
 import { BranchService } from '../../../general/branch/branch.service';
+import { Router } from "@angular/router";
 import Swal from 'sweetalert2';
+
 declare var $: any;
 @Component({
   selector: 'app-perfil',
@@ -15,6 +17,7 @@ export class PerfilComponent implements OnInit {
     private perfilService: PerfilService,
     private productosService: ProductosService,
     private signupService: SignupService,
+    private router: Router,
     private branchService: BranchService
   ) {}
   fileData!: File;
@@ -78,6 +81,7 @@ export class PerfilComponent implements OnInit {
     this.readUserData();
     this.getProductList();
   }
+  
   async loadCiaInfo() {
     let data = await this.perfilService.loadCiaInfo();
     if (data['total'] > 0) {
@@ -161,14 +165,14 @@ export class PerfilComponent implements OnInit {
       //Recorre cada producto disponible
       for (let prod of this.Products) {
         //Si el producto comprado es igual al producto disponible, prender el switch
-        if (producto.Id_Producto == prod.Id_Producto) {
+        if (producto.Id_Categoria == prod.Id_Categoria) {
           //obtener el producto de la ram
           prod.Seleccionado = true;
           //let name = "customSwitch"+prod.Id_Producto;
 
           //this.form.get("customSwitch"+prod.Id_Producto).setValue(true);
           //Cargar las categorias asociadas al producto comprado
-          this.getCategoryForProduct(prod.Id_Producto, index);
+          this.getCategoryForProduct(prod.Id_Categoria, index);
         } else {
           prod.Seleccionado = false;
         }
@@ -176,18 +180,20 @@ export class PerfilComponent implements OnInit {
       }
     }
   }
-  async getCategoryForProduct(Id_Producto, Indice) {
-    let data = await this.perfilService.getCategoryForProduct(Id_Producto);
+  async getCategoryForProduct(Id_Categoria, Indice) {
+    //let data = await this.perfilService.getCategoryForProduct(Id_Producto);
+    //Obtener los servicios asociados a la categoria
+    let data = await this.productosService.getProducts(Id_Categoria)
     if (data['total'] > 0) {
       //Leer la subCategoría de la base de datos.
 
       /**
        * Carga el dropdown de las categrias de un producto
        */
-      let SubCategoriaPorDefecto = await this.perfilService.getSubCategofyForProdictAndCia(Id_Producto);
+      let SubCategoriaPorDefecto = await this.perfilService.getSubCategofyForProdictAndCia(Id_Categoria);
       if (SubCategoriaPorDefecto['total'] > 0) {
         for (let sub of data['data']){
-          if(sub['Id_Sub_Categoria'] == SubCategoriaPorDefecto['data'][0]['Id_Sub_Categoria']){
+          if(sub['Id_Producto'] == SubCategoriaPorDefecto['data'][0]['Id_Producto']){
             sub['Selected'] = 'selected';
           }
         }
@@ -200,13 +206,14 @@ export class PerfilComponent implements OnInit {
        * Define el producto y categoría seleccionada por el usuario
        */
       this.UserProducts[Indice] = {
-        Id_Producto: Id_Producto,
-        Id_Sub_Categoria: data['data'][0]['Id_Sub_Categoria'],
+        Id_Producto: this.ProductosCategoria[Indice][0]['Id_Producto'],
+        Id_Categoria: data['data'][0]['Categoria'],
       };
     }
   }
   async getProductList() {
-    let data = await this.productosService.getProducts();
+    //let data = await this.productosService.getProducts();
+    let data = await this.productosService.getGategoria();
     this.Products = data['data'];
     this.loadProductsForCompany();
   }
@@ -280,10 +287,14 @@ export class PerfilComponent implements OnInit {
         //Generar, Sucursa, Caja;
         data = await this.signupService.crearSucursal();
         data = await this.signupService.crearCaja();
+        $('#GeneralData').collapse('hide');
+        $('#DireccionData').collapse('show');
         break;
       }
       case 2: {
         data = await this.perfilService.updateAddress(this.Empresa);
+        $('#DireccionData').collapse('hide');
+        $('#Aplicaciones').collapse('show');
         break;
       }
       case 3: {
@@ -294,23 +305,58 @@ export class PerfilComponent implements OnInit {
         break;
       }
       case 4: {
-        data = await this.updateAppInfo(this.UserProducts);
-        break;
+        if(this.UserProducts.length  == 0){
+          Swal.fire('Debe seleccionar una aplicacion');
+          break;
+        }else{
+          data = await this.updateAppInfo(this.UserProducts);
+          $('#Aplicaciones').collapse('hide');
+          $('#HaciendaData').collapse('show');
+          break;
+        }
       }
       case 5: {
         data = await this.perfilService.updateHacienda(this.Empresa);
+        if (data['success'] == 'true') {
+          Swal.fire('Datos Actualizados');
+        } 
+        this.router.navigate(['/']);
         break;
       }
     }
+    /*
     if (data['success'] == 'true') {
       Swal.fire('Datos Actualizados');
     } else {
       Swal.fire('Error actualizando datos');
-    }
+    }*/
   }
   
   async updateAppInfo(productsToUpdate) {
     //UserProducts Son los productos de la ram
+    //Actualizar los sistemas del usuario
+    for (let productoToUpdate of productsToUpdate) {
+      for (let producto of this.Products) {
+          if(productoToUpdate.Id_Categoria == producto.Id_Categoria){
+            if(producto.Factura == 1){
+              await this.perfilService.updateFacturaUser();
+              localStorage.setItem('ToxoSG','1.1.1.0.0.0.0.0.0.0.0.0.0.0');
+            }
+            if(producto.Pov == 1){
+              await this.perfilService.updatePovUser();
+              localStorage.setItem('ToxoSG','0.1.1.0.0.0.0.0.0.0.0.0.0.1')
+            }
+            if(producto.Bar == 1){
+              await this.perfilService.updateBarUser();
+              localStorage.setItem('ToxoSG','0.1.1.0.0.0.0.1.0.0.0.0.0.0')
+            }
+            if(producto.Conta ==1 ){
+              await this.perfilService.updateContaUser();
+              localStorage.setItem('ToxoSG','0.0.0.1.1.1.1.0.0.0.0.0.0.0')
+            }
+          }
+      }
+    }
     //Leer de nuevo los datos de la base de datos.
     let ProductByCompany = await this.perfilService.loadProductsForCompany();
     //aqui esta el erro.
@@ -320,7 +366,7 @@ export class PerfilComponent implements OnInit {
       for (let producto of productsToUpdate) {
         await this.perfilService.addProductToCompany(
           producto.Id_Producto,
-          producto.Id_Sub_Categoria
+          producto.Id_Categoria
         );
         return true;
       }
@@ -330,11 +376,11 @@ export class PerfilComponent implements OnInit {
        */
       for (let productoRam of productsToUpdate) {
         for (let productoHD of ProductByCompany['data']) {
-          if (productoRam.Id_Producto == productoHD.Id_Producto) {
+          if (productoRam.Id_Sub_Categoria === productoHD.Id_Sub_Categoria) {
             /**
              * Si el producto de la Ram es igual al Producto del HD no hacer nada de lo contario alertar al usuario y actualizar los datos.
              */
-            if (productoRam.Id_Sub_Categoria == productoHD.Id_Sub_Categoria) {
+            if (productoRam.Id_Producto == productoHD.Id_Producto) {
               let data = {
                 success: 'true',
               };
@@ -359,9 +405,11 @@ export class PerfilComponent implements OnInit {
               });
               if (this.respuestaMesage == true) {
                 //Actualizar la Categoría
+                console.log(productoRam)
                 data = await this.perfilService.updateCategoryToProductCompany(
                   productoRam.Id_Producto,
-                  productoRam.Id_Sub_Categoria
+                  productoRam.Id_Categoria,
+                  productoHD.Id_Categoria
                 );
                 //Agregar Los Registros para Factura Electrónica.
                 await this.addFErecords(productoRam.Id_Producto);
@@ -431,13 +479,15 @@ export class PerfilComponent implements OnInit {
   }
   async onProductSelected(Event, Producto, Indice) {
     if (Event.target.checked) {
-      await this.getCategoryForProduct(Producto.Id_Producto, Indice);
+      await this.getCategoryForProduct(Producto.Id_Categoria, Indice);
     } else {
       this.UserProducts.splice(Indice, 1);
       this.ProductosCategoria[Indice] = [];
     }
   }
   categoryChange(event, indice) {
-    this.UserProducts[indice]['Id_Sub_Categoria'] = event.target.value;
+    this.UserProducts[indice]['Id_Producto'] = event.target.value;
+   // this.UserProducts[indice]['Id_Categoria'] = Categoria;
+
   }
 }

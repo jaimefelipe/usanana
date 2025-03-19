@@ -43,7 +43,8 @@ export class PeopleComponent implements OnInit {
     Barrio:'',
     Otras_Senas:'',
     Proveedor:'',
-    Cliente:''
+    Cliente:'',
+    Empleado:''
   }
   ngOnInit(): void {
     this.loadPersonas();
@@ -76,7 +77,8 @@ export class PeopleComponent implements OnInit {
         Barrio:'',
         Otras_Senas:'',
         Proveedor:'',
-        Cliente:''
+        Cliente:'',
+        Empleado:''
       }
     }
   }

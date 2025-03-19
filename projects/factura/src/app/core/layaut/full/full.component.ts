@@ -12,6 +12,7 @@ import {Router} from '@angular/router';
 export class FullComponent implements OnInit {
   hideMenu = true;
   MenuRestaurante = false;
+  Empresa = localStorage.getItem("Empresa");
   constructor(
     private titleService: Title,
     private metaService: Meta,

@@ -4,38 +4,33 @@
     <img src="/assets/toxologo.png" width="85px">
     <div class="container center">
       <div>
-        <img src="/assets/tercerizar.png">
+        <img src="/assets/tercerizar.png" width="100%">
       </div>
       <div class="text-center">
         <h1>
-          <font color="#fc6824">SISTEMA BAR & RESTAURANTE TOXO</font>
+          <font color="#fc6824">SISTEMA BAR & RESTAURANTE SALVATEC</font>
         </h1>
-        <h3>
-          <font color="#fc6824">Tomate un respiro,</font> Déjalo en nuestras manos.
-        </h3>
-        <h3>
-          <font color="#fc6824">TOXO</font> Expertos en tercerización de servicios
-        </h3>
+        
       </div>
     </div>
   </div>
 
   <div [hidden]="!logedIn" class="container center form-row">
-    <div class="form-group col-md-6 text-center">
+    <div class="form-group col-md-4 text-center">
       <button  (click)="pedidos()" type="button" class="conta" title="Cancela edicion"></button>
       <div>
         PEDIDOS
       </div>
     </div>
 
-    <div class="form-group col-md-6 text-center">
+    <div class="form-group col-md-4 text-center">
       <button  (click)="cajas()" type="button" class="venta" title="Cancela edicion"></button>
       <div>
         CAJAS
       </div>
     </div>
 
-    <div class="form-group col-md-6 text-center">
+    <div class="form-group col-md-4 text-center">
       <button  (click)="cocina()" type="button" class="venta" title="Cancela edicion"></button>
       <div>
         COCINA
@@ -43,7 +38,7 @@
     </div>
 
   </div>
-
+  <app-res-tabla-dinamica [hidden]="TipoUsuario >='2'"></app-res-tabla-dinamica>
   <div [hidden]="!hideMenu" class="container">
         <p>
           Existen varios motivos por los que una empresa decide tercerizar servicios, la que más peso tiene, es concentrar

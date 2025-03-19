@@ -22,12 +22,12 @@
     but hey, it's pure CSS magic.
     -->
       <ul  [hidden]="!showMenu" id="menu">
-        <a (click)="hideMenu()" [routerLink]="['/']"><li><i class="fa fa-home"></i> Inicio {{ambiente}} 2.5.18</li></a>
+        <a (click)="hideMenu()" [routerLink]="['/']"><li><i class="fa fa-home"></i> Inicio {{ambiente}} 2.5.20</li></a>
         <div [hidden]="!logedIn">
 
-          <li [hidden]="!AppConfiguracion" (click)="clickPerfilMenu()" ><a><i class="fa fa-cog"></i> Configuración <i [ngClass]='configClass' class="fa fa-cog"></i>  </a></li>
+          <li  [hidden]="!AppConfiguracion || TipoUsuario > '1'" (click)="clickPerfilMenu()" ><a><i class="fa fa-cog"></i> Configuración <i [ngClass]='configClass' class="fa fa-cog"></i>  </a></li>
           <ul [hidden]="!perfilMenu" >
-            <a (click)="hideMenu()" [hidden]="!AppVentas" [routerLink]="['/people']"><li><i class="fa fa-credit-card"></i> Contactos </li></a>
+            <a (click)="hideMenu()" [hidden]="!AppVentas" [routerLink]="['/contactos']"><li><i class="fa fa-credit-card"></i> Contactos </li></a>
             <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/restaurantzone']"><li><i class="fa fa-map-signs"></i> Zonas</li></a>
             <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/restaurantplace']"><li><i class="fa fa-map-marker"></i> Mesa/Lugar</li></a>
             <!--<a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/placemap']"><li><i class="fa fa-map-marker"></i> Mesa/plano</li></a>-->
@@ -36,13 +36,13 @@
 
           <li [hidden]="!AppInventario" (click)="clickInventarioMenu()" ><a><i class="fa fa-hospital-o"></i>  Inventario <i [ngClass]='inventarioClass' class="fa fa-cog"></i>  </a></li>
           <ul [hidden]="!inventarioMenu" >
-            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/categorias']"><li><i class="fa fa-shopping-bag"></i> Categorías</li></a>
-            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/subcategorias']"><li><i class="fa fa-shopping-bag"></i> Sub Categorías</li></a>
-            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/articulos']"><li><i class="fa fa-shopping-basket"></i> Artículos</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn || TipoUsuario > '1'" [routerLink]="['/categorias']"><li><i class="fa fa-shopping-bag"></i> Categorías</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn || TipoUsuario > '1'" [routerLink]="['/subcategorias']"><li><i class="fa fa-shopping-bag"></i> Sub Categorías</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn || TipoUsuario > '1'" [routerLink]="['/articulos']"><li><i class="fa fa-shopping-basket"></i> Artículos</li></a>
             <a (click)="hideMenu()" [hidden]="!AppInventario" [routerLink]="['/movinventario']"><li><i class="fa fa-align-justify"></i> Movimientos</li></a>
-            <a (click)="hideMenu()" [hidden]="!AppInventario" [routerLink]="['/invmovdetail']"><li><i class="fa fa-align-justify"></i> Detalle Movimientos</li></a>
+            <a (click)="hideMenu()" [hidden]="!AppInventario || TipoUsuario <= '1'" [routerLink]="['/invmovdetail']"><li><i class="fa fa-align-justify"></i> Detalle Movimientos</li></a>
             <a (click)="hideMenu()" [hidden]="!AppInventario" [routerLink]="['/tomafisica']"><li><i class="fa fa-align-justify"></i> Toma Fisica</li></a>
-            <a (click)="hideMenu()" [hidden]="!AppInventario" [routerLink]="['/repinventario']"><li><i class="fa fa-file"></i> Reportes</li></a>
+            <a (click)="hideMenu()" [hidden]="!AppInventario || TipoUsuario > '1'" [routerLink]="['/repinventario']"><li><i class="fa fa-file"></i> Reportes</li></a>
             
           </ul>
 
@@ -50,10 +50,10 @@
           <ul [hidden]="!CajaMenu" >
             <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/cajaventas']"><li><i class="fa fa-credit-card"></i> Cajas</li></a>
             <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/cajamovimiento']"><li><i class="fa fa-align-justify"></i> Movimiento de Cajas</li></a>
-            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/cierrecaja']"><li><i class="fa fa-align-justify"></i> Cierre Caja</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn || TipoUsuario > '1'" [routerLink]="['/cierrecaja']"><li><i class="fa fa-align-justify"></i> Cierre Caja</li></a>
           </ul>
 
-          <li [hidden]="!AppCxC" (click)="clickCxCMenu()" ><a><i class="fa fa-cc"></i>  Cuentas X Cobrar <i [ngClass]='CxCClass' class="fa fa-cog"></i>  </a></li>
+          <li [hidden]="!AppCxC || TipoUsuario > '1'" (click)="clickCxCMenu()" ><a><i class="fa fa-cc"></i>  Cuentas X Cobrar <i [ngClass]='CxCClass' class="fa fa-cog"></i>  </a></li>
           <ul [hidden]="!CxCMenu" >
             <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/cxcClasificacion']"><li><i class="fa fa-shopping-bag"></i> Clasificación</li></a>
             <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/cuentacxc']"><li><i class="fa fa-credit-card"></i> Cuentas x Cobrar</li></a>
@@ -70,8 +70,8 @@
             <!-- <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/pedidorestaurant']"><li><i class="fa fa-pencil"></i> Pedidos/Lista</li></a> -->
             <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/restaurantkitchen']"><li><i class="fa fa-television"></i> Cocina</li></a>
             <!-- <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/restaurantinvoice']"><li><i class="fa fa-credit-card"></i> Facturar</li></a> -->
-            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/reporteVenta']"><li><i class="fa fa-file"></i> Reportes</li></a>
-            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/consultapedido']"><li><i class="fa fa-file"></i> Consulta Pedidos</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn || TipoUsuario > '1'" [routerLink]="['/reporteVenta']"><li><i class="fa fa-file"></i> Reportes</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn " [routerLink]="['/consultapedido']"><li><i class="fa fa-file"></i> Consulta Pedidos</li></a>
           </ul>
 
         </div>

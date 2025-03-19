@@ -1,0 +1,8 @@
+.e-treeview {
+    left: -26px;
+    
+}
+
+.e-treeview e.ul {
+    height: 100vh;
+}

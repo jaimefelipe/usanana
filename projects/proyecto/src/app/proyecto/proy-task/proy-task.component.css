@@ -1,0 +1,5 @@
+.app-container { display: flex; height: 100vh; }
+aside { width: 20%; border-right: 1px solid #ccc; }
+main { flex-grow: 1; padding: 1em; }
+nav { margin-bottom: 1em; margin-right: 30px; }
+button { margin-right: 0.5em; }

@@ -275,17 +275,19 @@ export class CashierComponent implements OnInit {
         day: hoy.getDate(), 
         year: hoy.getFullYear()
       }
-      console.log(window.location.pathname)
       let Inicio = FechaInicio.day + '/' + FechaInicio.month + '/' + FechaInicio.year;
-      
-      if(window.location.pathname == '/bar/cajaventas' ){
-        let Param = 'e='+localStorage.getItem("Id_Empresa") + "&i="+Inicio+"&f="+Inicio+"&c="+this.Caja.Id_Caja+"&cc="+localStorage.getItem('Id_Caja_Diaria')
-         window.open('https://toxo.work/reportes/bar/reporte-ventas.php?Id=1' + Param, '_blank');
-      }else{
-        let param = '1&e=' + localStorage.getItem("Id_Empresa") + '&u=' + localStorage.getItem("Id_Usuario") + '&i=' + Inicio + '&f=' + Inicio + '&c=' + localStorage.getItem('Id_Caja') + '&cc=' + localStorage.getItem('Id_Caja_Diaria');
-        window.open('https://toxo.work/reportes/cajas/cierre-diario.php?id=' + param, '_blank');
-        //window.open('https://toxo.work/reportes/cajas/arqueo-caja.php?Id_Caja=' + this.Caja.Id_Caja, '_blank');
+      // Si el usuario no es administrador no mostrar el cierre de Caja
+      if(localStorage.getItem('ToxoUT') == '1' ){
+        if(window.location.pathname == '/bar/cajaventas' ){
+          let Param = 'e='+localStorage.getItem("Id_Empresa") + "&i="+Inicio+"&f="+Inicio+"&c="+this.Caja.Id_Caja+"&cc="+localStorage.getItem('Id_Caja_Diaria')
+           window.open('https://toxo.work/reportes/bar/reporte-ventas.php?Id=1' + Param, '_blank');
+        }else{
+          let param = '1&e=' + localStorage.getItem("Id_Empresa") + '&u=' + localStorage.getItem("Id_Usuario") + '&i=' + Inicio + '&f=' + Inicio + '&c=' + localStorage.getItem('Id_Caja') + '&cc=' + localStorage.getItem('Id_Caja_Diaria');
+          window.open('https://toxo.work/reportes/cajas/cierre-diario.php?id=' + param, '_blank');
+        }
       }
+
+      
       localStorage.removeItem('Id_Caja');
       localStorage.removeItem('Id_Caja_Diaria');
     }

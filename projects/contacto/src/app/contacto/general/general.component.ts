@@ -11,6 +11,7 @@ export class GeneralComponent implements OnInit {
 
   @Input() Persona : any;
   @Input() edit:any;
+  @Input() TipoPersona:any;
   @Output() close = new EventEmitter<string>();
   PantallaAgentes= false;
   searchFieldAgentes = "";
@@ -22,6 +23,11 @@ export class GeneralComponent implements OnInit {
 
   ngOnInit(): void {
     this.buscarAgentes();
+    if(this.TipoPersona =='1'){
+      this.Persona.Empleado =='1';
+      this.Persona.Prospecto =='0';
+    }
+    this.Persona.Prospecto = '1';
   }
   cancel(){
     this.close.emit(this.Persona);

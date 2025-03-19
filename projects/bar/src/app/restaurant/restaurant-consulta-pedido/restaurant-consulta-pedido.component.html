@@ -22,7 +22,7 @@
             <div class="card-body">
 
               <h4 class="card-title">{{Pedido.Zona}}-{{Pedido.Mesa}},{{Pedido.Nombre}}</h4>
-              {{Pedido.Creado_El}},Monto: {{Pedido.Total | currency:' '}},Cierre:{{Pedido.Id_Caja_Diaria}},Pedido:{{Pedido.Id_Pedido}},Factura:{{Pedido.Id_Factura}}
+              Creado: {{Pedido.Creado_El}}, Facturado:{{Pedido.Facturado_EL}} ,Monto: {{Pedido.Total | currency:' '}},Cierre:{{Pedido.Id_Caja_Diaria}},Pedido:{{Pedido.Id_Pedido}},Factura:{{Pedido.Id_Factura}}
               Metodo pago :
               <span *ngIf="Pedido.Metodo_Pago == '99'" class="text-success"> Otro - Efectivo</span>
               <span *ngIf="Pedido.Metodo_Pago == '01'" class="text-success"> Efectivo</span>
