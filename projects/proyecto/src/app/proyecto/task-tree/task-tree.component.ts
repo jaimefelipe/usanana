@@ -13,6 +13,7 @@ export class TaskTreeComponent implements OnInit {
   @Output() nodoSeleccionadoEnTree = new EventEmitter<any>();
   @Input() Proyecto: any;
   ItemSelected = new EventEmitter<any>();
+  @Input() recargar: EventEmitter<void>; 
   
   CurrentNode:any;
   Proyectos: Object[];
@@ -24,7 +25,12 @@ export class TaskTreeComponent implements OnInit {
 
   ngOnInit() {
     this.loadAccounts();
-    
+    if (this.recargar) {
+      this.recargar.subscribe(() => {
+        //this.cargarDatosKanban();
+        this.loadAccounts();
+      });
+    }
   }
 
   ngOnChanges(changes: any) {
@@ -39,55 +45,7 @@ export class TaskTreeComponent implements OnInit {
         this.addNodeAsChildOfSelected(item);
       }
     }
-    /*
-    if(changes['Proyecto']['currentValue']){
-      if(changes['Proyecto']['currentValue']['Id_Proyecto'] == this.CurrentNode){
-        this.treeView.allowEditing = true;
-        this.treeView.updateNode(this.CurrentNode, changes['Proyecto']['currentValue']['Nombre']);
-        this.treeView.allowEditing = false;
-      }else{
-        let item: { [key: string]: Object } = { id: changes['Proyecto']['currentValue']['Id_Proyecto'], name: changes['Proyecto']['currentValue']['Nombre'] };
-        this.addNodeBelowSelected([item])
-      }
-    }*/
-
   }
-  /*
-  addNodeBelowSelected(item: any) {
-    const selectedId = this.treeView.selectedNodes[0]; // ID del nodo seleccionado
-    if (!selectedId) {
-      console.warn("No hay un nodo seleccionado");
-      return;
-    }
-  
-    // Buscar el nodo en la estructura de datos
-    const findNodeAndParent = (nodes: any[], parent: any = null): any => {
-      for (let i = 0; i < nodes.length; i++) {
-        if (nodes[i].id === selectedId) {
-          return { node: nodes[i], index: i, parent };
-        }
-        if (nodes[i].children) {
-          const result = findNodeAndParent(nodes[i].children, nodes[i]);
-          if (result) return result;
-        }
-      }
-      return null;
-    };
-  
-    const result = findNodeAndParent(this.Proyectos);
-    if (!result) {
-      console.warn("No se encontró el nodo seleccionado");
-      return;
-    }
-  
-    const { node: selectedNode, index, parent } = result;
-    const siblings = parent ? parent.children : this.Proyectos; // Si tiene padre, usa sus hijos
-  
-    siblings.splice(index + 1, 0, item); // Inserta después del nodo seleccionado
-  
-    this.treeView.refresh(); // Refresca la vista si es necesario
-  }
-  */
   addNodeAsChildOfSelected(item: any) {
     const selectedId = this.treeView.selectedNodes[0];
   
@@ -167,14 +125,6 @@ export class TaskTreeComponent implements OnInit {
       child: 'subChild' 
     };
 
-    // Asegurar que el TreeView ya está inicializado antes de expandir
-    /*
-    setTimeout(() => {
-      if (this.treeView) {
-        this.treeView.expandAll();
-      }
-    }, 100);
-    */
   }
    
   private clickTimeout: any;
@@ -183,6 +133,8 @@ export class TaskTreeComponent implements OnInit {
 
   // Función que se ejecuta al hacer clic en un nodo
   nodeclicked(event: any): void {
+    this.onDoubleClick(event);
+    /*
     const currentTime = new Date().getTime();
     const timeDiff = currentTime - this.lastClickTime;
     
@@ -198,6 +150,7 @@ export class TaskTreeComponent implements OnInit {
     }
 
     this.lastClickTime = currentTime;
+    */
   }
 
  

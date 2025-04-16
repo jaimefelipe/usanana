@@ -35,6 +35,7 @@ export class MenuComponent implements OnInit {
   AppHospedaje = false;
   AppPersona = false;
   AppPOV = false;
+  AppProyecto = false;
 
   UserMenu = [];
   ventasMenu = false;
@@ -156,17 +157,17 @@ export class MenuComponent implements OnInit {
         if(menu['Id_App']==30){this.AppCompras=true}
         if(menu['Id_App']==1035){this.AppRestaurante=true}
         if(menu['Id_App']==1039){this.AppCxC=true}
+        
       }
     }else{
       //Opciones para Cuando El Sistema de this.Seguridad No esta Activo
-      if(this.Seguridad[13]==1){
-        this.AppPOV=true;
-        this.AppVentas = true
+      if(this.Seguridad[14]==1){
+        this.AppProyecto=true;
+        
       }
       //Opciones del Usuario maestro
       if(localStorage.getItem('ToxoMT') == '1'){
-        this.AppPOV=true
-        this.AppVentas = true
+        this.AppProyecto=true;
 
       }
     }

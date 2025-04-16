@@ -18,7 +18,7 @@ export class FacturaCService {
     }
     let sqlConfig = {
       table: 'Ven_Factura inner join Gen_Empresa on Gen_Empresa.Id_Empresa = Ven_Factura.Id_Empresa',
-      fields: 'Ven_Factura.Id_Empresa,Id_Factura,Consecutivo,Ven_Factura.Creado_El,Tipo_Documento,Ven_Factura.Nombre,Ven_Factura.Numero_Identificacion,Respuesta_MH, Gen_Empresa.Nombre as Empresa, Error_MH',
+      fields: 'Ven_Factura.Id_Empresa,Id_Factura,Consecutivo,Ven_Factura.Creado_El,Tipo_Documento,Ven_Factura.Nombre,Ven_Factura.Numero_Identificacion,Respuesta_MH, Gen_Empresa.Nombre as Empresa',
       orderField: '',
       searchField: search,
       Empresa:false,
@@ -31,7 +31,7 @@ export class FacturaCService {
   async loadInvoice(Id_Factura){
     let sqlConfig = {
       table: 'Ven_Factura',
-      fields: 'Id_Factura,Id_Caja,Tipo_Documento,Nombre,Codigo_Identificacion,Numero_Identificacion,Correo,Condicion_Venta,Plazo_Credito,Metodo_Pago,Moneda,Tipo_Cambio,IVA,Sub_Total,Total,Respuesta_MH,Error_MH,Consecutivo,Creado_El',
+      fields: 'Id_Factura,Id_Caja,Tipo_Documento,Nombre,Codigo_Identificacion,Numero_Identificacion,Correo,Condicion_Venta,Plazo_Credito,Metodo_Pago,Moneda,Tipo_Cambio,IVA,Sub_Total,Total,Respuesta_MH,Consecutivo,Creado_El',
       orderField: '',
       searchField: '',
       Empresa:false,

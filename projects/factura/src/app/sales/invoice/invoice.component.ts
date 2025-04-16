@@ -97,7 +97,8 @@ export class InvoiceComponent implements OnInit {
     Exo_Monto : 0,
     Clave_Numerica:'',
     Cobro:0,
-    Id_Caja_Diaria:localStorage.getItem('Id_Caja_Diaria')
+    Id_Caja_Diaria:localStorage.getItem('Id_Caja_Diaria'),
+    Actividad_Economica:''
   };
   Detalle = {
     Codigo_Referencia: "",
@@ -397,7 +398,7 @@ export class InvoiceComponent implements OnInit {
 
           detail.SKU = 'ADC'+this.Cargos[i]['Id_Factura_Cargos'];
           detail.Id_Categoria = this.Cargos[i]['Id_Categoria'];
-          detail.Total = detail.Precio
+          //detail.Total = detail.Precio
           detail.Adicional = '1';
         }
         SubTotalCargo = SubTotalCargo + detail.Sub_Total;
@@ -435,13 +436,25 @@ export class InvoiceComponent implements OnInit {
     this.Invoice.Total = 0;
     // tslint:disable-next-line: prefer-for-of
     await this.procesaAdicionales();
+
+    this.Invoice.Sub_Total = 0;
+    this.Invoice.IVA = 0;
+
+    for (let i = 0; i < this.Details.length; i++) {
+      this.Invoice.Sub_Total += parseFloat(this.Details[i]["Sub_Total"]);
+      this.Invoice.IVA += parseFloat(this.Details[i]["IVA"]);
+    }
+
+    // Aquí se hace una sola vez, después de sumar todo
+    this.Invoice.Total = this.Invoice.Sub_Total + this.Invoice.IVA;
+    /*
     for (let i = 0; i < this.Details.length; i++) {
       //Agregar Validación de Exoneración
       this.Invoice.Sub_Total =
         this.Invoice.Sub_Total + parseFloat(this.Details[i]["Sub_Total"]);
       this.Invoice.IVA = this.Invoice.IVA + parseFloat(this.Details[i]["IVA"]);
       this.Invoice.Total = this.Invoice.Sub_Total + this.Invoice.IVA;
-    }
+    }*/
     this.initDetail()
   }
 
@@ -565,6 +578,10 @@ export class InvoiceComponent implements OnInit {
         let data = this.apiService.aplicarFacturaHacienda(this.Invoice.Id_Factura);
         this.cancel();
       }
+      if(this.Invoice.Respuesta_MH == 'recibido'){
+        let data = this.apiService.aplicarFacturaHacienda(this.Invoice.Id_Factura);
+        this.cancel();
+      }
 
       // Load Details
       let details = await this.invoiceService.loadInvoiceDetails(factura.Id_Factura);
@@ -612,6 +629,7 @@ export class InvoiceComponent implements OnInit {
         Clave_Numerica:'',
         Cobro:0,
         Id_Caja_Diaria:localStorage.getItem('Id_Caja_Diaria'),
+        Actividad_Economica:''
       };
       if(this.POV){
         this.Invoice.Metodo_Pago = '98'
@@ -866,21 +884,22 @@ export class InvoiceComponent implements OnInit {
     this.persona.Moneda = 'CRC';
   }
   async IdValidation() {
+    // Si el id esta vacio no validar
     if(this.Invoice.Numero_Identificacion == ''){
       return true;
     }
-    this.Invoice.Numero_Identificacion = this.Invoice.Numero_Identificacion.replace(/[^0-9]/g, '');
+   
     if(this.validandoId == true){
       return false;
     }else{
       this.validandoId = true;
     }
     //validar si la cedula existe en la base de datos.
-    let data = await this.invoiceService.validClient(
-      this.Invoice.Numero_Identificacion
-    );
-
+    let data = await this.invoiceService.validClient(this.Invoice.Numero_Identificacion);
+    this.Invoice.Numero_Identificacion = this.Invoice.Numero_Identificacion.replace(/[^0-9]/g, '');
+     //Eliminar lo que no es numero
     if (data["total"] === 0) {
+      
       //jbrenes
       this.clienteExiste = false;
       //El Cliente no existe en la base de datos. hay que consultar hacienda para ver si es un usuario registrado de hacienda.
@@ -939,6 +958,14 @@ export class InvoiceComponent implements OnInit {
       this.Invoice.Plazo_Credito = this.persona.Plazo_Credito;
       this.Invoice.Metodo_Pago = this.persona.Metodo_Pago;
       this.Invoice.Moneda = this.persona.Moneda;
+      this.Invoice.Actividad_Economica = this.persona.Codigo_Actividad_Economica
+      //Si la actividad Economica no existe consultarla en el ministerio de hacienda
+      if(this.Invoice.Actividad_Economica === ''){
+        let persona = await this.invoiceService.getApiHacienda(this.Invoice.Numero_Identificacion);
+        this.persona.Codigo_Actividad_Economica = persona['actividades'][0]['codigo'];
+        this.persona.Nombre_Actividad_Economica = persona['actividades'][0]['descripcion'];
+        this.Invoice.Actividad_Economica = this.persona.Codigo_Actividad_Economica;
+      }
       if (this.Invoice.Moneda === "") {
         this.Invoice.Moneda = "CRC";
       }
@@ -964,7 +991,7 @@ export class InvoiceComponent implements OnInit {
     this.PantallaProductos = false;
   }
   async Seleccionar(producto) {
-    //Jaime
+    this.PreAplicarFactura();
     this.Detalle.Id_Producto = producto.Id_Producto;
     this.Detalle.SKU = producto.SKU;
     this.Detalle.Descripcion = producto.Descripcion;
@@ -998,6 +1025,7 @@ export class InvoiceComponent implements OnInit {
     this.calcularTotales();
   }
   async imprimirCotizacion(){
+    // jaime
     if(this.Invoice.Id_Factura == ''){
       await this.aplicarFactura();
     }

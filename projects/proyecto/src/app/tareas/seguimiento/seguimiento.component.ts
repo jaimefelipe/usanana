@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,EventEmitter,Output } from '@angular/core';
 import Swal from 'sweetalert2';
 import { SeguimientoService } from './seguimiento.service';
 
@@ -8,9 +8,8 @@ import { SeguimientoService } from './seguimiento.service';
   styleUrls: ['./seguimiento.component.css']
 })
 export class SeguimientoComponent implements OnInit {
-
   constructor(private seguimientoService:SeguimientoService) { }
-  
+  ItemSeleccionado = 0;
     edit = false;
     searchField = '';
     bankAccountans = [];
@@ -65,14 +64,7 @@ export class SeguimientoComponent implements OnInit {
      }
      editRecord(Centro){
       this.edit = true;
-      if(Centro){
-          this.loadCentro(Centro.Id_Centro_Costo);
-      }else{
-        this.Centro = {
-          Id_Centro_Costo:'',
-         Nombre:''
-        }
-      }
+      this.ItemSeleccionado = Centro.Id_Proyecto;
      }
     async loadCentros(search?:any){
       let data = await this.seguimientoService.loadNotas(this.paginacion,search);
@@ -108,6 +100,9 @@ export class SeguimientoComponent implements OnInit {
       }
       return true;
     }
-  
+    cerrarPanel(){
+      this.edit = false;
+      this.ItemSeleccionado = -1;
+    }
 
 }

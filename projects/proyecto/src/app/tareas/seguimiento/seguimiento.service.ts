@@ -9,7 +9,7 @@ export class SeguimientoService {
 constructor(private apiService: ApiService) {}
   async loadNotas(paginacion,search?,Estado?) {
     let sqlConfig = {
-      table: 'Pro_Nota inner join Gen_Persona on Pro_Nota.Id_Persona = Gen_Persona.Id_Persona inner join Pro_Proyecto on Pro_Nota.Id_Proyecto = Pro_Proyecto.Id_Proyecto ',
+      table: 'Pro_Nota inner join Gen_Persona on Pro_Nota.Id_Persona = Gen_Persona.Id_Usuario inner join Pro_Proyecto on Pro_Nota.Id_Proyecto = Pro_Proyecto.Id_Proyecto ',
       fields: 'Id_Nota,Pro_Nota.Id_Proyecto,Pro_Nota.Id_Persona,Gen_Persona.Nombre,Nota,Pro_Nota.Creado_El as Fecha, Pro_Proyecto.Nombre as Actividad',
       searchField: search,
       paginacion: paginacion,

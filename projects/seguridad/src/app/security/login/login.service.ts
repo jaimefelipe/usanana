@@ -20,7 +20,7 @@ export class LoginService {
     let clave = reg.password;
     let sqlUsuario = {
       table:'Seg_Usuario inner join Seg_Usuario_Empresa on Seg_Usuario.Id_Usuario = Seg_Usuario_Empresa.Id_Usuario inner join Gen_Empresa on Seg_Usuario_Empresa.Id_Empresa = Gen_Empresa.Id_Empresa',
-      fields: 'Seg_Usuario.Tipo_Usuario,Seg_Usuario.Id_Usuario,Seg_Usuario.Nombre_Usuario,Seg_Usuario.Nombre,Master,Ventas,Compras,Inventario,CXC,CXP,CG,BA,Restaurante,Transporte,Seguridad,Hospedaje,Turismo,Gen_Empresa.Nombre as Empresa,Academico,Pov',
+      fields: 'Seg_Usuario.Tipo_Usuario,Seg_Usuario.Id_Usuario,Seg_Usuario.Nombre_Usuario,Seg_Usuario.Nombre,Master,Ventas,Compras,Inventario,CXC,CXP,CG,BA,Restaurante,Transporte,Seguridad,Hospedaje,Turismo,Gen_Empresa.Nombre as Empresa,Academico,Pov,Proyecto',
       where: '(Seg_Usuario.Estado = 1) AND (Seg_Usuario_Empresa.Estado = 1) AND  (Seg_Usuario.Clave = \'' + clave + '\')  and (Seg_Usuario.Correo = \'' + email + '\') and (Seg_Usuario_Empresa.Id_Empresa=\'' + company + '\' )',
       Empresa: false
     };
@@ -39,7 +39,7 @@ export class LoginService {
       localStorage.setItem('Version', '2.0.0.2');
       localStorage.setItem('ToxoMT', user[0].Master);
       localStorage.setItem('ToxoUT', user[0].Tipo_Usuario);
-      localStorage.setItem('ToxoSG', user[0].Ventas + '.'+user[0].Compras + '.'+user[0].Inventario + '.'+user[0].CXC + '.'+user[0].CXP + '.'+user[0].CG + '.'+user[0].BA + '.'+user[0].Restaurante + '.'+user[0].Transporte + '.'+user[0].Seguridad + '.'+user[0].Hospedaje + '.'+user[0].Turismo + '.'+user[0].Academico + '.'+user[0].Pov);
+      localStorage.setItem('ToxoSG', user[0].Ventas + '.'+user[0].Compras + '.'+user[0].Inventario + '.'+user[0].CXC + '.'+user[0].CXP + '.'+user[0].CG + '.'+user[0].BA + '.'+user[0].Restaurante + '.'+user[0].Transporte + '.'+user[0].Seguridad + '.'+user[0].Hospedaje + '.'+user[0].Turismo + '.'+user[0].Academico + '.'+user[0].Pov+ '.'+user[0].Proyecto);
       localStorage.removeItem('Id_Caja');
       
       // obtener numero de caja abierta

@@ -22,11 +22,11 @@
     but hey, it's pure CSS magic.
     -->
       <ul  [hidden]="!showMenu" id="menu">
-        <a (click)="hideMenu()" [routerLink]="['/']"><li><i class="fa fa-home"></i> Inicio {{ambiente}} 1.00.00</li></a>
+        <a (click)="hideMenu()" [routerLink]="['/']"><li><i class="fa fa-home"></i> Inicio {{ambiente}} 1.00.02</li></a>
         <div [hidden]="!logedIn">
 
-          <li [hidden]="!AppPOV" (click)="clickVentasMenu()" ><a><i class="fa fa-credit-card"></i>  Proyectos<i [ngClass]='ventasClass' class="fa fa-cog"></i>  </a></li>
-          <ul [hidden]="!ventasMenu">
+          <li [hidden]="!AppProyecto" (click)="clickVentasMenu()" ><a><i class="fa fa-credit-card"></i>  Proyectos<i [ngClass]='ventasClass' class="fa fa-cog"></i>  </a></li>
+          <ul [hidden]="!AppProyecto">
             <a (click)="hideMenu()" [routerLink]="['/contactos']"><li><i class="fa fa-address-card-o"></i>  Contactos</li></a>
             <a (click)="hideMenu()" [routerLink]="['/proyecto']"><li><i class="fa fa-credit-card"></i> Proyectos</li></a>
             <a (click)="hideMenu()" [routerLink]="['/seguimiento']"><li><i class="fa fa-credit-card"></i> Seguimiento</li></a>

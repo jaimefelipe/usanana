@@ -9,10 +9,21 @@ export class TaskFormService {
 constructor(private apiService: ApiService) {}
 
 async leerProyecto(Id_Proyecto){
+  let Id_Empresa = localStorage.getItem('Id_Empresa')
   let sqlConfig = {
-    table: 'Pro_Proyecto',
-    fields: 'Id_Proyecto,Tipo,Nivel,Codigo,Padre,Nombre,Descripcion,Objetivo,Alcance,Restricciones,Inicio,Fin,Estado,Miembros,Prioridad,Progreso,Responsable,Inicio_Planificado,Fin_Planificado,Duracion_Estimada,Tiempo_Real,Cliente,ClienteNombre,Responsable,ResponsableNombre,Supervidor,SupervidorNombre,Colaborador,ColaboradorNombre,Patrocinador,PatrocinadorNombre,Promotor,PromotorNombre,Interesado,InteresadoNombre',
-    where:"Id_Proyecto = " + Id_Proyecto
+    table: `Pro_Proyecto p
+left join Pro_Proyecto p1 on p.Padre = p1.Codigo and p1.Id_Empresa = `+Id_Empresa+`
+left join Pro_Proyecto p2 on p1.Padre = p2.Codigo and p2.Id_Empresa =  `+Id_Empresa+`
+left join Pro_Proyecto p3 on p2.Padre = p3.Codigo and p3.Id_Empresa =  `+Id_Empresa+`
+left join Pro_Proyecto p4 on p3.Padre = p4.Codigo and p4.Id_Empresa =  `+Id_Empresa+`
+left join Pro_Proyecto p5 on p4.Padre = p5.Codigo and p5.Id_Empresa =  `+Id_Empresa+`
+left join Pro_Proyecto p6 on p5.padre = p6.Codigo	and p6.Id_Empresa =  `+Id_Empresa+``,
+    fields: `p.Id_Proyecto,p.Tipo,p.Nivel,p.Codigo,p.Padre,p.Nombre,p.Descripcion,p.Objetivo,p.Alcance,p.Restricciones,p.Inicio,p.Fin,p.Estado,p.Miembros,p.Prioridad,p.Progreso,p.Inicio_Planificado,p.Fin_Planificado,p.Duracion_Estimada,p.Tiempo_Real,p.Cliente,p.ClienteNombre,p.Responsable,p.ResponsableNombre,p.Supervidor,p.SupervidorNombre,p.Colaborador,p.ColaboradorNombre,p.Patrocinador,p.PatrocinadorNombre,p.Promotor,p.PromotorNombre,p.Interesado,p.InteresadoNombre, 
+p1.Nombre as Tarea, p1.Codigo as Codigo_Tarea, p2.Nombre as Entregable, p2.Codigo as Codigo_Entregable, p3.Nombre as Fase, p3.Codigo as Nombre_Fase, 
+p4.Nombre as Proyecto, p4.Codigo as Codigo_Proyecto, p5.Nombre as Programa, p5.Codigo as Codigo_Programa, p6.Nombre as Portafolio, p6.Codigo as Codigo_Portafolio`,
+  Empresa: false,
+  orderField:'p.Id_Proyecto',  
+  where:"p.Id_Proyecto = " + Id_Proyecto + ' and p.Id_Empresa =' + Id_Empresa
   }
   return await this.apiService.executeSqlSyn(sqlConfig,2);
 
@@ -101,17 +112,29 @@ async updateProyecto(Proyecto){
 }
 
 async getLastProyectId(Id_Proyecto){
-  let where = "p.Id_Proyecto = '"+ Id_Proyecto+ "'"
-  if(Id_Proyecto ==''){
-    where = "p.Padre = '' and p.Id_Empresa = "+localStorage.getItem('Id_Empresa');
+  let sqlConfig;
+
+  // Si hay un Id_Proyecto, buscar ese proyecto y contar sus subproyectos
+  if (Id_Proyecto !== '') {
+    let where = `p.Id_Proyecto = '${Id_Proyecto}' AND p.Id_Empresa = ${localStorage.getItem('Id_Empresa')}`;
+    sqlConfig = {
+      table: 'Pro_Proyecto p',
+      fields: `p.Id_Proyecto, p.Codigo, p.Padre, 
+               (SELECT COUNT(*) FROM Pro_Proyecto WHERE Padre = p.Codigo) AS Cantidad_Subproyectos`,
+      Empresa: false,
+      where: where
+    };
+  } else {
+    // Caso sin proyecto padre: contar cuántos proyectos no tienen padre
+    sqlConfig = {
+      table: '(SELECT NULL AS Id_Proyecto, 0 AS Codigo, NULL AS Padre, COUNT(*) AS Cantidad_Subproyectos FROM Pro_Proyecto WHERE (Padre IS NULL OR Padre = \'\') AND Id_Empresa = ' + localStorage.getItem('Id_Empresa') + ') AS p',
+      fields: '*',
+      Empresa: false,
+      orderField:'Id_Proyecto',
+      where: '1=1'  // ya viene filtrado en el subquery
+    };
   }
-  //Obtener el Id del ultimo registro
-  let sqlConfig = {
-    table: 'Pro_Proyecto p',
-    fields: 'p.Id_Proyecto,p.Codigo,p.Padre,(SELECT COUNT(*) FROM Pro_Proyecto WHERE Padre = p.Codigo) AS Cantidad_Subproyectos ',
-    Empresa:false,
-    where: where
-  }
+
   return await this.apiService.executeSqlSyn(sqlConfig);
 }
 
@@ -150,11 +173,31 @@ async nuevaNota(Nota){
 }
 async leerNotas(Id_Proyecto){
   let sqlConfig = {
-    table: 'Pro_Nota inner join Gen_Persona on Pro_Nota.Id_Persona = Gen_Persona.Id_Persona',
+    table: 'Pro_Nota inner join Gen_Persona on Pro_Nota.Id_Persona = Gen_Persona.Id_Usuario',
     fields: 'Id_Nota,Id_Proyecto,Pro_Nota.Id_Persona,Nombre,Nota,Pro_Nota.Creado_El as Fecha',
     where:"Id_Proyecto = " + Id_Proyecto
   }
   return await this.apiService.executeSqlSyn(sqlConfig);
 }
 
+  async leerPortaProyectosHijos(Padre,Nivel){
+    let nivelPadre = parseInt(Nivel) - 1;
+    let sqlConfig = {};
+    if(Nivel == '1'){
+      sqlConfig = {
+        table: 'Pro_Proyecto',
+        fields: 'Id_Proyecto,Nivel,Codigo,Padre,Nombre',
+        where:"Padre = '" + Padre + "' and Nivel =" + Nivel
+      }
+      return await this.apiService.executeSqlSyn(sqlConfig);
+    }else{
+      let Id_Empresa = localStorage.getItem('Id_Empresa');
+      sqlConfig = `Select Id_Proyecto,Nivel,Codigo,Padre,Nombre FROM Pro_Proyecto WHERE Padre = ( 
+        Select Codigo From Pro_Proyecto where Nombre = '`+Padre+`' and Nivel = `+nivelPadre+` and  Id_Empresa = `+Id_Empresa+`) 
+        and Nivel = `+Nivel+` And Id_Empresa = `+Id_Empresa+`;`
+
+      return await this.apiService.postRecord(sqlConfig);
+    }
+    
+  }
 }

@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container-fluid">
 
   <div [hidden]="!hideMenu" class="container">
     <img src="/assets/toxologo.png" width="85px">
@@ -15,7 +15,7 @@
     </div>
   </div>
 
-  <div [hidden]="!logedIn" class="container center form-row">
+  <div [hidden]="!logedIn" class="container-fluid center form-row">
     <div class="form-group col-md-4 text-center">
       <button  (click)="pedidos()" type="button" class="conta" title="Cancela edicion"></button>
       <div>
@@ -39,6 +39,7 @@
 
   </div>
   <app-res-tabla-dinamica [hidden]="TipoUsuario >='2'"></app-res-tabla-dinamica>
+  
   <div [hidden]="!hideMenu" class="container">
         <p>
           Existen varios motivos por los que una empresa decide tercerizar servicios, la que más peso tiene, es concentrar

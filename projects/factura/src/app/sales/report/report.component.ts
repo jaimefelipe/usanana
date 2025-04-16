@@ -76,6 +76,9 @@ export class ReportComponent implements OnInit {
     if(this.reporte == "6"){
       window.open('https://toxo.work/reportes/factura/reporte-facturacion-xls.php?id=' + param, '_blank');
     }
+    if(this.reporte == "7"){
+      window.open('https://toxo.work/core/php/hacienda2/consultar_hacienda.php', '_blank');
+    }
   }
   async FacturaMasiva(){
     let sql = "CALL Ven_Generar_Factura_Masiva (" + localStorage.getItem('Id_Empresa')+')';

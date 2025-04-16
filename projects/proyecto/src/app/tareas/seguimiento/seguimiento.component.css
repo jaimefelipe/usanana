@@ -1,0 +1,4 @@
+input[id*="_toolbar_FontColor_Target"],
+input[id*="_toolbar_BackgroundColor_Target"] {
+    display: none !important;
+}

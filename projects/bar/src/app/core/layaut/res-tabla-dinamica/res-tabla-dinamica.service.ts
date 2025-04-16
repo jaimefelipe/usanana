@@ -19,4 +19,15 @@ constructor(private apiService: ApiService) {
     }
     return  await this.apiService.executeSqlSyn(sqlConfig);
   }
+
+  async leerCuboTiquetePromedio(){
+    let sqlConfig = {
+      table: 'Res_CuboTicketPromedio',
+      fields: 'Anio,Mes,Categoria,Cantidad_Pedidos,Ticket_Promedio,Total_Ventas',
+      orderField: '',
+      simple:true,
+      where: 'Id_Empresa = ' + localStorage.getItem('Id_Empresa')
+    }
+    return  await this.apiService.executeSqlSyn(sqlConfig);
+  }
 }

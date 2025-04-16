@@ -34,7 +34,7 @@ export class FullComponent implements OnInit{
     //Cargar los sistemas a los que se esta asociado.
     this.SeguridadStr = localStorage.getItem("ToxoSG");
     if(this.SeguridadStr == ""){
-      this.SeguridadStr = "0.0.0.0.0.0.0.0.0.0.0";
+      this.SeguridadStr = "0.0.0.0.0.0.0.0.0.0.0.0.0";
     }
 
     this.Seguridad = this.SeguridadStr.split(".");
@@ -139,11 +139,11 @@ export class FullComponent implements OnInit{
     return true;
   }
   proyectos(){
-    if(this.Seguridad[13] == 0){
+    if(this.Seguridad[14] == 0){
       Swal.fire('No tienes acceso al sistema de Proyectos, Contacte a soporte');
       return false;
     }
-    window.open('/academico/', "_self");
+    window.open('/proyecto/', "_self");
     return true;
   }
 }

@@ -31,10 +31,62 @@
   </div>
 </header>
 
-<ng-container [ngSwitch]="selectedView">
-  <app-tareas *ngSwitchCase="'tareas'"  (CerrarPanel)="cerrarPanel()" (TareaSeleccionadaEnList)="tareaSeleccionadaEnList($event)" ></app-tareas>
-  <app-task-form  [hidden]="!Edit" (CerrarPanel)="cerrarPanel()" [ItemSelected]="ItemSeleccionado"></app-task-form>
-  <app-task-kanban *ngSwitchCase="'kanban'" (TareaSeleccionadaEnKanban)="tareaSeleccionadaEnList($event)" [ItemSelected]="ItemSeleccionado"></app-task-kanban>
-  <app-task-calendar *ngSwitchCase="'calendar'" (TareaSeleccionadaEnCalendar)="tareaSeleccionadaEnList($event)" [ItemSelected]="ItemSeleccionado"></app-task-calendar>
-</ng-container>
+<ejs-splitter #horizontal height='70%' width='100%' > 
+  <e-panes>
+    <e-pane size='50%' [collapsible]='true'>
+      <ng-template #content>
+        <app-task-kanban [recargar]="nuevaTareaCreada"   (TareaSeleccionadaEnKanban)="tareaSeleccionadaEnList($event)" [ItemSelected]="ItemSeleccionado"></app-task-kanban>
+
+      </ng-template>>
+    </e-pane>
+    <e-pane size='50%' [collapsible]='true'>
+      <ng-template #content>
+        <ng-container [ngSwitch]="selectedView">
+          <app-tareas *ngSwitchCase="'tareas'"  (CerrarPanel)="cerrarPanel()" (TareaSeleccionadaEnList)="tareaSeleccionadaEnList($event)" ></app-tareas>
+          <app-task-form  [hidden]="!Edit" (CerrarPanel)="cerrarPanel()" [ItemSelected]="ItemSeleccionado"></app-task-form>
+          <app-task-kanban *ngSwitchCase="'kanban'" (TareaSeleccionadaEnKanban)="tareaSeleccionadaEnList($event)" [ItemSelected]="ItemSeleccionado"></app-task-kanban>
+          <app-task-calendar [recargar]="nuevaTareaCreada" *ngSwitchCase="'calendar'" (TareaSeleccionadaEnCalendar)="tareaSeleccionadaEnList($event)" [ItemSelected]="ItemSeleccionado"></app-task-calendar>
+        </ng-container>
+
+      </ng-template>>
+    </e-pane>
+  </e-panes>
+</ejs-splitter>
+
+<ejs-splitter #horizontal height='30%' width='100%' >
+  <e-panes>
+    <e-pane size='50%' [collapsible]='true'>
+      <ng-template #content>
+        <div class="voice-recognition-container">
+          <textarea rows="4" class="prompt-input" [(ngModel)]="transcript" placeholder="Escribe tu prompt o usa dictado..."></textarea>
+          
+          <div class="buttons-container">
+            <button class="btn start" (click)="startListening()">🎤 Iniciar Dictado</button>
+            <button class="btn stop" (click)="stopListening()">⏹️ Detener</button>
+            <button class="btn send" (click)="enviarPrompt()">🚀 Enviar</button>
+          </div>
+        </div>
+
+      </ng-template>>
+    </e-pane>
+    <e-pane size='50%' [collapsible]='true'>
+      <ng-template #content>
+
+
+      </ng-template>>
+    </e-pane>
+  </e-panes>
+</ejs-splitter>
+
+
+
+<!-- Pantalla de Procesando -->
+<div [hidden]="!PantallaLoading" class="modal-main">
+
+  <div class="modal-content  card">
+    <h1>
+      Procesando.....
+    </h1>
+  </div>
+</div>
 

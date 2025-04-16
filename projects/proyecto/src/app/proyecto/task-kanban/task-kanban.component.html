@@ -1,38 +1,95 @@
-<ejs-kanban #kanbanObj keyField="Status" [dataSource]="data" [cardSettings]="cardSettings" 
+<ejs-kanban #kanbanObj keyField="Status" [dataSource]="data" [cardSettings]="cardSettings"  cssClass="kanban-overview" 
     allowEditing="false" (cardClick)="onCardClick($event)" (actionComplete)="onActionComplete($event)" >
+    
     <ng-template #cardSettingsTemplate let-data>
-      <div class='e-card-content'>
-        
-          <table class="card-template-wrap">
-            <tr>
-                <td>
-                    <!-- {{ statusMap[data.Status] || 'Desconocido' }} -->
-                    <span class="card-status" 
-                            [ngClass]="{'expired': isExpired(data.Inicio_Planificado)}">
-                        {{ data.Inicio_Planificado | date:'d/M/yyyy' }}
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    {{ data.Summary }}
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <p class="card-responsable">👤 {{ data.Responsable }}</p>
-                </td>
-            </tr>
-          </table>
+      <div class="e-card-content" [ngClass]="'card-bg-' + data.Status">
+        <table class="card-template-wrap">
+          <tr>
+            <td>
+              <span class="card-status" 
+                    [ngClass]="{'expired': isExpired(data.StartTime)}">
+                {{ data.StartTime | date:'d/M/yyyy' }}
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              {{ data.Summary }}
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <p class="card-responsable">👤 {{ data.Responsable }}</p>
+              <p class="card-supervisor">🧑‍💼 {{ data.Supervisor | slice:0:20  }}</p>
+            </td>
+          </tr>
+        </table>
       </div>
   </ng-template>
+
   <e-columns>
-      <e-column headerText="Pendiente" keyField="1"></e-column>
-      <e-column headerText="En Proceso" keyField="2"></e-column>
-      <e-column headerText="Ajustes" keyField="3"></e-column>
-      <e-column headerText="Visto Bueno" keyField="4"></e-column>
-      <e-column headerText="Aprobado" keyField="5"></e-column>
-      <e-column headerText="Terminado" keyField="6"></e-column>
-      <e-column headerText="Bloqueada" keyField="7"></e-column>
+    <e-column headerText="Pendiente" keyField="1">
+      <ng-template #template let-data>
+        <div class="header-template-wrap pendiente-header">
+          <i class="fa fa-hourglass-start header-icon"></i>
+          <div class="header-text">{{ data.headerText }}</div>
+        </div>
+      </ng-template>
+    </e-column>
+    
+    <e-column headerText="En Proceso" keyField="2">
+      <ng-template #template let-data>
+        <div class="header-template-wrap enproceso-header">
+          <i class="fa fa-spinner header-icon"></i>
+          <div class="header-text">{{ data.headerText }} </div>
+        </div>
+      </ng-template>
+    </e-column>
+    
+    <e-column headerText="Terceros" keyField="7">
+      <ng-template #template let-data>
+        <div class="header-template-wrap terceros-header">
+          <i class="fa fa-users header-icon"></i>
+          <div class="header-text">{{ data.headerText }}  </div>
+        </div>
+      </ng-template>
+    </e-column>
+    
+    <e-column headerText="Ajustes" keyField="3">
+      <ng-template #template let-data>
+        <div class="header-template-wrap ajustes-header">
+          <i class="fa fa-cog header-icon"></i>
+          <div class="header-text">{{ data.headerText }}  </div>
+        </div>
+      </ng-template>
+    </e-column>
+    
+    <e-column headerText="Visto Bueno" keyField="4">
+      <ng-template #template let-data>
+        <div class="header-template-wrap vb-header">
+          <i class="fa fa-eye header-icon"></i>
+          <div class="header-text">{{ data.headerText }}  </div>
+        </div>
+      </ng-template>
+    </e-column>
+    
+    <e-column headerText="Aprobado" keyField="5">
+      <ng-template #template let-data>
+        <div class="header-template-wrap aprobado-header">
+          <i class="fa fa-check header-icon"></i>
+          <div class="header-text">{{ data.headerText }}  </div>
+        </div>
+      </ng-template>
+    </e-column>
+    
+    <e-column headerText="Terminado" keyField="6">
+      <ng-template #template let-data>
+        <div class="header-template-wrap terminado-header">
+          <i class="fa fa-flag-checkered header-icon"></i>
+          <div class="header-text">{{ data.headerText }}  </div>
+        </div>
+      </ng-template>
+    </e-column>
+    
   </e-columns>
 </ejs-kanban>

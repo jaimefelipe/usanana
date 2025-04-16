@@ -14,6 +14,7 @@ export class TaskCalendarComponent implements OnInit {
   @ViewChild('scheduleObj') public scheduleObj: ScheduleComponent; // Referencia al calendario
   @Output() TareaSeleccionadaEnCalendar = new EventEmitter<any>();  
   @Input() ItemSelected: number;
+  @Input() recargar: EventEmitter<void>;
   constructor(
     private taskKanbanService:TaskKanbanService,
     private taskCalendarService:TaskCalendarService
@@ -38,6 +39,11 @@ export class TaskCalendarComponent implements OnInit {
     this.eventSettings = {
       dataSource: this.data
     };
+    if (this.recargar) {
+      this.recargar.subscribe(() => {
+        this.leerTareas(-1)
+      });
+    }
   }
   ngOnChanges(changes: SimpleChanges) {
       let Id_Proyecto = changes['ItemSelected']?.currentValue;

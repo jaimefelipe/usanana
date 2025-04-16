@@ -40,7 +40,7 @@ export class SecurityUserService {
   }
   async loadUser(Id_Usuario){
     let Master = localStorage.getItem("ToxoMT");
-    let campos = 'Id_Usuario,Nombre,Correo,Nombre_Usuario,Seg_Usuario.Estado,Tipo_Usuario,Ventas,Compras,Inventario,CXC,CXP,CG,BA,Restaurante,Transporte,Seguridad,Hospedaje,Turismo,Salonero,Academico,Pov,Numero_Identificacion'
+    let campos = 'Id_Usuario,Nombre,Correo,Nombre_Usuario,Seg_Usuario.Estado,Tipo_Usuario,Ventas,Compras,Inventario,CXC,CXP,CG,BA,Restaurante,Transporte,Seguridad,Hospedaje,Turismo,Salonero,Academico,Pov,Numero_Identificacion,Proyecto'
     if(Master == '1'){
       campos = campos + ',Clave';
     }
@@ -77,6 +77,7 @@ export class SecurityUserService {
       + '\',Academico=\''+ Usuario.Academico
       + '\',Estado=\''+ Usuario.Estado
       + '\',Pov=\''+ Usuario.Pov
+      + '\',Proyecto=\''+ Usuario.Proyecto
       + '\',Numero_Identificacion=\''+ Usuario.Numero_Identificacion
       + '\'',
       where: 'Id_Usuario=' + Usuario.Id_Usuario
@@ -93,7 +94,7 @@ export class SecurityUserService {
     let Clave = 'Password';
     let sql = {
       table: 'Seg_Usuario',
-      fields: 'Nombre,Nombre_Usuario,Correo,Clave,Tipo_Usuario,Estado,Ventas,Compras,Inventario,CXC,CXP,CG,BA,Restaurante,Transporte,Seguridad,Hospedaje,Turismo,Academico,Pov,Numero_Identificacion',
+      fields: 'Nombre,Nombre_Usuario,Correo,Clave,Tipo_Usuario,Estado,Ventas,Compras,Inventario,CXC,CXP,CG,BA,Restaurante,Transporte,Seguridad,Hospedaje,Turismo,Academico,Pov,Proyecto,Numero_Identificacion',
       Empresa: false,
       values: '\'' + Usuario.Nombre
       + '\',\'' + userName
@@ -115,6 +116,7 @@ export class SecurityUserService {
       + '\',\'' + Usuario.Turismo
       + '\',\'' + Usuario.Academico
       + '\',\'' + Usuario.Pov
+      + '\',\'' + Usuario.Proyecto
       + '\',\'' + Usuario.Numero_Identificacion
       + '\''
     };

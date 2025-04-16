@@ -25,6 +25,7 @@ export class TaskCalendarService {
     let sqlConfig = {
       table: 'Pro_Proyecto  INNER JOIN Gen_Persona g ON Pro_Proyecto.Responsable = g.Id_Persona',
       fields: " DISTINCT g.Id_Persona, g.Nombre_Usuario as OwnerText,  g.Nombre_Usuario as Id, CONCAT('#', LPAD(HEX(g.Id_Persona * 1234567 % 0xFFFFFF), 6, '0')) AS OwnerColor",
+      orderField:'g.Id_Persona',
       where: " Pro_Proyecto.Responsable IS NOT NULL"
     }
     return await this.apiService.executeSqlSyn(sqlConfig);

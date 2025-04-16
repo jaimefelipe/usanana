@@ -43,7 +43,9 @@ export class SecurityUserComponent implements OnInit {
     Turismo:'0',
     Salonero:'',
     Academico:'',
-    Pov:''
+    Pov:'',
+    Proyecto:'',
+    CRM:''
   }
   edit = false;
   ngOnInit(): void {
@@ -119,7 +121,9 @@ export class SecurityUserComponent implements OnInit {
         Turismo:'0',
         Salonero:'',
         Academico:'',
-        Pov:''
+        Pov:'',
+        Proyecto:'',
+        CRM:''
       }
     }
   }

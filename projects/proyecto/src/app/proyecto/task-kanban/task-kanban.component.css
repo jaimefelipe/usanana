@@ -1,12 +1,98 @@
-.card-status {
-    color: #28a745;
-    font-weight: bold;
+/* ==== ENCABEZADOS ==== */
+.header-template-wrap {
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 5px;
 }
-.card-responsable {
-    font-size: 10px;
-    color: #666;
+
+.header-icon {
+  font-size: 20px;
+  margin-right: 10px;
 }
-.expired {
-    color: red;
-    font-weight: bold;
+
+/* ==== COLORES ENCABEZADO + TARJETAS ==== */
+
+.pendiente-header,
+.e-kanban-column[data-key="1"] .e-card {
+  background-color: #e3f2fd !important;
+}
+
+.enproceso-header,
+.e-kanban-column[data-key="2"] .e-card {
+  background-color: #fff3e0 !important;
+}
+
+.terceros-header,
+.e-kanban-column[data-key="7"] .e-card {
+  background-color: #f3e5f5 !important;
+}
+
+.ajustes-header,
+.e-kanban-column[data-key="3"] .e-card {
+  background-color: #e8f5e9 !important;
+}
+
+.vb-header,
+.e-kanban-column[data-key="4"] .e-card {
+  background-color: #e0f2f1 !important;
+}
+
+.aprobado-header,
+.e-kanban-column[data-key="5"] .e-card {
+  background-color: #f1f8e9 !important;
+}
+
+.terminado-header,
+.e-kanban-column[data-key="6"] .e-card {
+  background-color: #ede7f6 !important;
+}
+
+/* ==== TARJETAS ==== */
+.e-card {
+  border-radius: 6px;
+  padding: 10px;
+  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.1s ease-in-out;
+}
+
+.e-card:hover {
+  transform: scale(1.01);
+}
+
+/* ==== FOOTER DE LA TARJETA ==== */
+.e-card-custom-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.e-card-tag-field {
+  background-color: #dcdcdc;
+  border-radius: 4px;
+  padding: 3px 6px;
+  font-size: 12px;
+  color: #444;
+}
+
+.card-bg-1 { background-color: #e3f2fd; }     /* Pendiente */
+.card-bg-2 { background-color: #fff3e0; }     /* En Proceso */
+.card-bg-3 { background-color: #e8f5e9; }     /* Ajustes */
+.card-bg-4 { background-color: #e0f2f1; }     /* Visto Bueno */
+.card-bg-5 { background-color: #f1f8e9; }     /* Aprobado */
+.card-bg-6 { background-color: #ede7f6; }     /* Terminado */
+.card-bg-7 { background-color: #f3e5f5; }     /* Terceros */
+
+/* Estilo opcional para hacer que el fondo abarque todo y se vea bien */
+.e-card-content {
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.card-template-wrap,
+.card-template-wrap td,
+.card-template-wrap p {
+  background-color: transparent !important;
 }

@@ -7,12 +7,16 @@ import { ProyectoModule } from '../proyecto/proyecto.module';
 import { TareasMainComponent } from './tareas-main/tareas-main.component';
 import { SeguimientoComponent } from './seguimiento/seguimiento.component';
 
+
+import { SplitterModule } from '@syncfusion/ej2-angular-layouts';
+
 @NgModule({
   imports: [
     CommonModule,
     TareasRoutingModule,
     ProyectoModule,
-    FormsModule
+    FormsModule,
+    SplitterModule
   ],
   declarations: [TareasComponent,TareasMainComponent,SeguimientoComponent]
 })

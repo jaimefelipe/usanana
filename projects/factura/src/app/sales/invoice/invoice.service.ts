@@ -9,7 +9,7 @@ export class InvoiceService {
   async loadInvoices(paginacion,search?){
     let sqlConfig = {
       table: 'Ven_Factura',
-      fields: 'Id_Factura,Consecutivo,Creado_El,Tipo_Documento,Nombre,Numero_Identificacion,Respuesta_MH,Error_MH,Moneda,Metodo_Pago,Condicion_Venta',
+      fields: 'Id_Factura,Consecutivo,Creado_El,Tipo_Documento,Nombre,Numero_Identificacion,Respuesta_MH,Moneda,Metodo_Pago,Condicion_Venta',
       orderField: '',
       searchField: search,
       paginacion: paginacion,
@@ -20,7 +20,7 @@ export class InvoiceService {
   async loadInvoice(Id_Factura){
     let sqlConfig = {
       table: 'Ven_Factura Left Join Gen_Persona on Ven_Factura.Id_Empresa = Gen_Persona.Id_Empresa and Ven_Factura.Numero_Identificacion = Gen_Persona.Identificacion',
-      fields: 'Id_Factura,Tipo_Documento,Ven_Factura.Nombre,Codigo_Identificacion,Numero_Identificacion,Ven_Factura.Correo,Ven_Factura.Condicion_Venta,Ven_Factura.Plazo_Credito,Ven_Factura.Metodo_Pago,Ven_Factura.Moneda,Tipo_Cambio,IVA,Sub_Total,Total,Respuesta_MH,Consecutivo,Ven_Factura.Creado_El,Notas,Exonerada,Exo_Numero_Documento,Exo_Nombre_Institucion,Exo_Porcentaje,Exo_Monto,Exo_Fecha_Emision,Gen_Persona.Id_Persona as Id_Cliente,Clave_Numerica,Id_Caja_Diaria',
+      fields: 'Id_Factura,Tipo_Documento,Ven_Factura.Nombre,Codigo_Identificacion,Numero_Identificacion,Ven_Factura.Correo,Ven_Factura.Condicion_Venta,Ven_Factura.Plazo_Credito,Ven_Factura.Metodo_Pago,Ven_Factura.Moneda,Tipo_Cambio,IVA,Sub_Total,Total,Respuesta_MH,Consecutivo,Ven_Factura.Creado_El,Notas,Exonerada,Exo_Numero_Documento,Exo_Nombre_Institucion,Exo_Porcentaje,Exo_Monto,Exo_Fecha_Emision,Gen_Persona.Id_Persona as Id_Cliente,Clave_Numerica,Id_Caja_Diaria,Actividad_Economica_Clientes',
       orderField: '',
       searchField: '',
       where: 'Id_Factura = ' + Id_Factura
@@ -50,7 +50,7 @@ export class InvoiceService {
   async validClient(Numero_Identificacion){
     let sqlCedula = {
       table: 'Gen_Persona',
-      fields: 'Id_Persona,Nombre,Correo,Telefono,Identificacion,Tipo_Identificacion,Condicion_Venta,Plazo_Credito,Metodo_Pago,Estado,Moneda',
+      fields: 'Id_Persona,Nombre,Correo,Telefono,Identificacion,Tipo_Identificacion,Condicion_Venta,Plazo_Credito,Metodo_Pago,Estado,Moneda,Codigo_Actividad_Economica',
       orderField: '',
       searchField: '',
       where: 'Identificacion like \'---' + Numero_Identificacion + '---\' or Nombre like \'---' + Numero_Identificacion + '---\''
@@ -87,7 +87,7 @@ export class InvoiceService {
     }
     let sqlInvoice = {
       table: 'Ven_Factura',
-      fields: 'Id_Cliente,Id_Caja,Nombre,Correo,Numero_Identificacion,Codigo_Identificacion,Metodo_Pago,Plazo_Credito,Condicion_Venta,IVA,Sub_Total,Total,Tipo_Documento,Moneda,Tipo_Cambio,Respuesta_MH,Notas,Exonerada,Exo_Numero_Documento,Exo_Nombre_Institucion,Exo_Fecha_Emision,Exo_Porcentaje,Exo_Monto,Id_Caja_Diaria,Sistema_Origen,Registro_Origen',
+      fields: 'Id_Cliente,Id_Caja,Nombre,Correo,Numero_Identificacion,Codigo_Identificacion,Metodo_Pago,Plazo_Credito,Condicion_Venta,IVA,Sub_Total,Total,Tipo_Documento,Moneda,Tipo_Cambio,Respuesta_MH,Notas,Exonerada,Exo_Numero_Documento,Exo_Nombre_Institucion,Exo_Fecha_Emision,Exo_Porcentaje,Exo_Monto,Id_Caja_Diaria,Sistema_Origen,Registro_Origen,Actividad_Economica_Clientes',
       // tslint:disable-next-line: max-line-length
       values: '\'' + Invoice.Id_Cliente
       + '\',\'' + Caja
@@ -114,6 +114,7 @@ export class InvoiceService {
       + '\',\'' + Invoice.Id_Caja_Diaria
       + '\',\'' + Invoice.Sistema_Origen
       + '\',\'' + Invoice.Registro_Origen
+      + '\',\'' + Invoice.Actividad_Economica
       + '\''
     };
     return await this.apiService.insertRecord(sqlInvoice);
@@ -154,7 +155,8 @@ export class InvoiceService {
       + ',Id_Caja_Diaria=' + Invoice.Id_Caja_Diaria
       + ',Exo_Monto=' + Exoneracion.Exo_Monto
       + ',Creado_El=\'' + Invoice.Creado_El
-      + '\',Notas=\'' + Invoice.Notas + '\'',
+      + '\',Notas=\'' + Invoice.Notas 
+      + '\'Actividad_Economica_Clientes,=\'' + Invoice.Actividad_Economica + '\'',
       where: 'Id_Factura =' + Invoice.Id_Factura
     };
     return await this.apiService.updateRecord(sqlActualizarFactura);

@@ -197,6 +197,7 @@ export class ApiService {
         this.sqlConfig.orderDirection = ' DESC ';
       }*/
     }
+    
     if (this.sqlConfig.orderField != '') {
       this.sql =
         this.sql +
@@ -208,14 +209,16 @@ export class ApiService {
     } else {
       this.sqlConfig.orderField = this.indexField;
     }
-
+    
     let orderFieldArr = this.sqlConfig.orderField.split('.');
+    
     let simpleOrderField = '';
-    if (orderFieldArr.length > 1) {
-      simpleOrderField = orderFieldArr[1];
-    } else {
+    //if (orderFieldArr.length > 1) {
+    //  simpleOrderField = orderFieldArr[1];
+    //} else {
       simpleOrderField = this.sqlConfig.orderField;
-    }
+    //}
+   
     if (this.sqlConfig.simple === false) {
       //Limit y Offset para Mysql
       let tamanio =
@@ -239,6 +242,7 @@ export class ApiService {
         (this.sqlConfig.paginacion.FirstRow - 1);
       this.sql = sql;
     }
+    
   }
   async buildSql(sqlConfig: any) {
     this.validarLogin();
@@ -328,66 +332,58 @@ export class ApiService {
     }
   }
 
-  async postRecord(sql?: any,Tipo?:any) {
-    //Validar conexion http
+  async postRecord(sql?: any, Tipo?: any): Promise<any> {
     if (!navigator.onLine) {
-      Swal.fire('No hay internet, revise la conexion');
-      return false;
+      Swal.fire('No hay internet, revise la conexión');
+      return { success: false, total: 0, Error: 'Sin conexión' };
     }
-
-    let Url = '';
-    if(Tipo ==2){
-      Url = 'https://toxo.work/core/db/eps_execSql2.php?sql=';
-    }else{
-      Url = this.url;
-    }
-
-    let sqlQuery = '';
-    if (sql) {
-      sqlQuery = sql;
-    } else {
-      sqlQuery = this.sql;
-    }
-
-    let a = new TextEncoder();
-    sqlQuery = encodeURIComponent(sqlQuery);
-    const startTime = performance.now(); // Iniciamos el contador de tiempo
-    let data = await fetch(Url, {
-      method: 'POST',
-      cache: 'no-cache',
-      mode: 'cors', //no-cors,cors, *cors, same-origin
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST',
-        'Access-Control-Allow-Headers': 'Content-Type',
-        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-      },
-      body: 'sql=' + sqlQuery,
-    })
-    .then((response) => {
-        const endTime = performance.now(); // Obtenemos el tiempo de respuesta
-        const latency = endTime - startTime; // Calculamos el tiempo de latencia en milisegundos
-        // Aquí definimos el umbral de latencia que consideramos como "lento"
-        const slowThreshold = 5000; // 1000 ms = 1 segundo, puedes ajustarlo según tus necesidades
-        if (latency > slowThreshold) {
-          Swal.fire('Internet muy lento, no responde, revise la conexion');
-          return false; // La conexión es lenta
-        }
-
-        if (!response.ok) {
-          throw new Error('HTTP error ' + response.status);
-        }
-        return response.json();
-      })
-      .then((json) => {
-        return json;
-      })
-      .catch(function () {
-        return JSON.parse('[{"success":"false","total":"0","Error":"error en catch"}]');
+  
+    let Url = Tipo === 2
+      ? 'https://toxo.work/core/db/eps_execSql2.php?sql='
+      : this.url;
+  
+    const sqlQuery = encodeURIComponent(sql || this.sql);
+    const startTime = performance.now();
+  
+    try {
+      const response = await fetch(Url, {
+        method: 'POST',
+        cache: 'no-cache',
+        mode: 'cors',
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST',
+          'Access-Control-Allow-Headers': 'Content-Type',
+          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        },
+        body: 'sql=' + sqlQuery,
       });
-
-    return data;
+  
+      const endTime = performance.now();
+      const latency = endTime - startTime;
+  
+      // 🕒 Mostrar tiempo de respuesta solo de la red/backend
+      console.log(`⏱️ Tiempo de respuesta del servidor: ${(latency / 1000).toFixed(2)} segundos`);
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error ${response.status}`);
+      }
+  
+      if (latency > 10000) {
+        Swal.fire('Internet muy lento, no responde, revise la conexión');
+        return { success: false, total: 0, Error: 'Conexión lenta' };
+      }
+  
+      const json = await response.json(); // fuera de la medición
+      return json;
+  
+    } catch (error) {
+      console.error("Error en postRecord:", error);
+      return { success: false, total: 0, Error: 'Error en catch' };
+    }
   }
+  
+  
   async postScript(url?:any,Id?:any){
     let data = await fetch(url+'?IdDocument='+Id, {
       method: 'POST',

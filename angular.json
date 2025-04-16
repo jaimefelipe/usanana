@@ -142,15 +142,25 @@
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "projects/main/src/styles.css",
               "node_modules/@syncfusion/ej2-base/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-angular-schedule/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-base/styles/bootstrap.css",
               "node_modules/@syncfusion/ej2-buttons/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-calendars/styles/bootstrap.css",
               "node_modules/@syncfusion/ej2-dropdowns/styles/bootstrap.css",
-              "node_modules/@syncfusion/ej2-grids/styles/bootstrap.css",
               "node_modules/@syncfusion/ej2-inputs/styles/bootstrap.css",
               "node_modules/@syncfusion/ej2-lists/styles/bootstrap.css",
               "node_modules/@syncfusion/ej2-popups/styles/bootstrap.css",
               "node_modules/@syncfusion/ej2-navigations/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-angular-schedule/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-layouts/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-angular-kanban/styles/bootstrap.css",
               "node_modules/@syncfusion/ej2-splitbuttons/styles/bootstrap.css",
-              "node_modules/@syncfusion/ej2-angular-pivotview/styles/bootstrap.css"              
+              "node_modules/@syncfusion/ej2-grids/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-treegrid/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-gantt/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-richtexteditor/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-angular-pivotview/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-icons/styles/bootstrap.css"            
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
@@ -1190,7 +1200,8 @@
               "node_modules/@syncfusion/ej2-treegrid/styles/bootstrap.css",
               "node_modules/@syncfusion/ej2-gantt/styles/bootstrap.css",
               "node_modules/@syncfusion/ej2-richtexteditor/styles/bootstrap.css",
-              "node_modules/@syncfusion/ej2-angular-pivotview/styles/bootstrap.css"
+              "node_modules/@syncfusion/ej2-angular-pivotview/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-icons/styles/bootstrap.css"
               
             ],
             "scripts": [

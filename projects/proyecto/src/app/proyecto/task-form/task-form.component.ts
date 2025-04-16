@@ -29,6 +29,12 @@ export class TaskFormComponent implements OnInit {
   Id_Proyecto_Actual = ''
   CantidadHijos:''
   task: any = {};
+  Portafolios = [];
+  Programas = [];
+  Proyectos = [];
+  Fases = [];
+  Entregables = [];
+  Tareas = [];
   constructor(
     private taskFormService:TaskFormService,
     private contactoService:ContactoService
@@ -55,6 +61,7 @@ export class TaskFormComponent implements OnInit {
   NotasPanel = false;
   PanelBusquedaMiembros = false;
   EditNotasPanel = false;
+  InfoPanel = false;
 
   Seguimientos = [];
   Miembros = [];
@@ -71,7 +78,9 @@ export class TaskFormComponent implements OnInit {
   FechaGeneral =  {
     month: this.hoy.getMonth() + 1,
     day: this.hoy.getDate(),
-    year: this.hoy.getFullYear()
+    year: this.hoy.getFullYear(),
+    hour: this.hoy.getHours(),
+    minute: this.hoy.getMinutes(),
   }
   
   Proyecto = {
@@ -106,17 +115,29 @@ export class TaskFormComponent implements OnInit {
     Interesado:'',
     InteresadoNombre:'',
     Inicio:'',
-    FechaInicio: { year: 1, month: 1, day: 1 },
+    FechaInicio: { year: 1, month: 1, day: 1, hour:1, minute:1},
     HInicio:'',
     Fin:'',
-    FechaFin: { year: 1, month: 1, day: 1 },
+    FechaFin: { year: 1, month: 1, day: 1, hour:1, minute:1 },
     HFin:'',
     Inicio_Planificado:'',
-    FechaInicioPlanificado:{ year: this.hoy.getFullYear() , month: this.hoy.getMonth() + 1 , day: this.hoy.getDate() },
+    FechaInicioPlanificado:{ year: this.hoy.getFullYear() , month: this.hoy.getMonth() + 1 , day: this.hoy.getDate(), hour:this.hoy.getHours(), minute:this.hoy.getMinutes() },
     Fin_Planificado:'',
-    FechaFinPlanificado:{ year: this.hoy.getFullYear() , month: this.hoy.getMonth() + 1 , day: this.hoy.getDate() },
+    FechaFinPlanificado:{ year: this.hoy.getFullYear() , month: this.hoy.getMonth() + 1 , day: this.hoy.getDate(), hour:this.hoy.getHours(), minute:this.hoy.getMinutes() },
     Duracion_Estimada:'',
     Tiempo_Real:'',
+    Portafolio:'',
+    Codigo_Portafolio:'',
+    Programa:'',
+    Codigo_Programa:'',
+    Proyecto:'',
+    Codigo_Proyecto:'',
+    Fase:'',
+    Codigo_Fase:'',
+    Entregable:'',
+    Codigo_Entregable:'',
+    Tarea:'',
+    Codigo_Tarea:''
   }
   
   paginacion = {
@@ -141,13 +162,70 @@ export class TaskFormComponent implements OnInit {
   }
   cambioEstado(event){
     //Camibios de estado
+    this.hoy = new Date(); // asegurar fecha actualizada
+
     if(this.Proyecto.Estado == '2'){
-        this.Proyecto.FechaInicio = { year: this.hoy.getFullYear() , month: this.hoy.getMonth() + 1 , day: this.hoy.getDate() };
+        this.Proyecto.FechaInicio = { year: this.hoy.getFullYear() , month: this.hoy.getMonth() + 1 , day: this.hoy.getDate(), hour:this.hoy.getHours(), minute:this.hoy.getMinutes() };
     }
     if(this.Proyecto.Estado == '6'){
-      this.Proyecto.FechaFin = { year: this.hoy.getFullYear() , month: this.hoy.getMonth() + 1 , day: this.hoy.getDate() };
-    }
+      this.Proyecto.FechaFin = { year: this.hoy.getFullYear() , month: this.hoy.getMonth() + 1 , day: this.hoy.getDate(), hour:this.hoy.getHours(), minute:this.hoy.getMinutes() };
+      
+      // Ahora calcular la diferencia:
+      const fechaInicio = new Date(
+        this.Proyecto.FechaInicio.year,
+        this.Proyecto.FechaInicio.month - 1,
+        this.Proyecto.FechaInicio.day,
+        this.Proyecto.FechaInicio.hour,
+        this.Proyecto.FechaInicio.minute
+      );
 
+      const fechaFin = new Date(
+        this.Proyecto.FechaFin.year,
+        this.Proyecto.FechaFin.month - 1,
+        this.Proyecto.FechaFin.day,
+        this.Proyecto.FechaFin.hour,
+        this.Proyecto.FechaFin.minute
+      );
+
+      // Diferencia en milisegundos
+      const diffMs = fechaFin.getTime() - fechaInicio.getTime();
+
+      // Conversión a días, horas y minutos
+      const totalMinutos = Math.floor(diffMs / 60000);
+      const dias = Math.floor(totalMinutos / (24 * 60));
+      const horas = Math.floor((totalMinutos % (24 * 60)) / 60);
+      const minutos = totalMinutos % 60;
+
+      // Guardar en formato días:horas:minutos
+      this.Proyecto.Tiempo_Real = `${dias}:${horas}:${minutos}`;
+    }
+    // Agregar seguimiento
+    let Estado = '';
+    switch (this.Proyecto.Estado) {
+      case "1":
+        Estado = 'Pendiente';
+        break;
+      case "2":
+        Estado = 'En Proceso';
+        break;
+      case "3":
+        Estado = 'Ajustes';
+        break;
+      case "4":
+        Estado = 'Visto Bueno';
+        break;
+      case "5":
+        Estado = 'Aprobado';
+        break;
+      case "6":
+        Estado = 'Terminado';
+        break;
+      case "7":
+        Estado = 'Bloqueada';
+        break;
+    }
+    this.Seguimiento = 'Actividad cambia estado a '+Estado;
+    this.agregarSeguimieto();
   }
   ngOnChanges(changes: SimpleChanges) {
     if(changes['ItemSelected']){
@@ -183,38 +261,76 @@ export class TaskFormComponent implements OnInit {
 
 
   async leerProyecto(){
+    await this.leerSeguimientos();
+    
     let data = await this.taskFormService.leerProyecto(this.Proyecto.Id_Proyecto)
-   
     if (data['total'] == 1) {
       this.Proyecto = data['data'][0];
       
-       this.Proyecto.Descripcion= this.Proyecto.Descripcion.replace(/&quot;/g, '"');
-       this.UltimoCodigo = this.Proyecto.Codigo;
+      this.Proyecto.Descripcion= this.Proyecto.Descripcion.replace(/&quot;/g, '"');
+      this.UltimoCodigo = this.Proyecto.Codigo;
        //cargarFechas
-      let FechaInicio = this.Proyecto.Inicio.split('-');
+      let ArrFechaHoraInicio = this.Proyecto.Inicio.split(' ');
+
+      let ArrFechaInicio = ArrFechaHoraInicio[0];
+      let ArrHoraInicio = ArrFechaHoraInicio[1];
+
+      let FechaInicio = ArrFechaInicio.split('-');
+      let FechaIncioHora = ArrHoraInicio.split(':');
+
       this.Proyecto.FechaInicio = {
         month: parseInt(FechaInicio[1]),
         day: parseInt(FechaInicio[2]),
-        year: parseInt(FechaInicio[0])
+        year: parseInt(FechaInicio[0]),
+        hour: parseInt(FechaIncioHora[0]),
+        minute: parseInt(FechaIncioHora[1])
       }
-      let FechaFin = this.Proyecto.Fin.split('-');
+
+      let ArrFechaHoraFin = this.Proyecto.Fin.split(' ');
+      let ArrFechaFin = ArrFechaHoraFin[0];
+      let ArrHoraFin = ArrFechaHoraFin[1];
+
+      let FechaFin = ArrFechaFin.split('-');
+      let FechaFinHora = ArrHoraFin.split(':');
+
       this.Proyecto.FechaFin = {
         month: parseInt(FechaFin[1]),
         day: parseInt(FechaFin[2]),
-        year: parseInt(FechaFin[0])
+        year: parseInt(FechaFin[0]),
+        hour: parseInt(FechaFinHora[0]),
+        minute: parseInt(FechaFinHora[1])
       }
-      let FechaInicioPlanificada = this.Proyecto.Inicio_Planificado.split('-');
+
+      let ArrFechaHoraInicioPlanificado = this.Proyecto.Inicio_Planificado.split(' ');
+      let ArrFechaInicioPlanificado = ArrFechaHoraInicioPlanificado[0];
+      let ArrHoraInicioPlanificado = ArrFechaHoraInicioPlanificado[1];
+
+      let FechaInicioPlanificado = ArrFechaInicioPlanificado.split('-');
+      let FechaInicioPlanificadoHora = ArrHoraInicioPlanificado.split(':');
+
       this.Proyecto.FechaInicioPlanificado = {
-        month: parseInt(FechaInicioPlanificada[1]),
-        day: parseInt(FechaInicioPlanificada[2]),
-        year: parseInt(FechaInicioPlanificada[0])
+        month: parseInt(FechaInicioPlanificado[1]),
+        day: parseInt(FechaInicioPlanificado[2]),
+        year: parseInt(FechaInicioPlanificado[0]),
+        hour: parseInt(FechaInicioPlanificadoHora[0]),
+        minute: parseInt(FechaInicioPlanificadoHora[1])
       }
-      let FechaFinPlanificada = this.Proyecto.Fin_Planificado.split('-');
+
+      let ArrFechaHoraFinPlanificado = this.Proyecto.Fin_Planificado.split(' ');
+      let ArrFechaFinPlanificado = ArrFechaHoraFinPlanificado[0];
+      let ArrHoraFinPlanificado = ArrFechaHoraFinPlanificado[1];
+
+      let FechaFinPlanificado = ArrFechaFinPlanificado.split('-');
+      let FechaFinPlanificadoHora = ArrHoraFinPlanificado.split(':');
+
       this.Proyecto.FechaFinPlanificado = {
-        month: parseInt(FechaFinPlanificada[1]),
-        day: parseInt(FechaFinPlanificada[2]),
-        year: parseInt(FechaFinPlanificada[0])
+        month: parseInt(FechaFinPlanificado[1]),
+        day: parseInt(FechaFinPlanificado[2]),
+        year: parseInt(FechaFinPlanificado[0]),
+        hour: parseInt(FechaFinPlanificadoHora[0]),
+        minute: parseInt(FechaFinPlanificadoHora[1])
       }
+
       let horaIniciArr = this.Proyecto.Inicio.split(" ");
       let horaFinArr = this.Proyecto.Fin.split(" ");
       this.Proyecto.HInicio = horaIniciArr[1];
@@ -223,23 +339,22 @@ export class TaskFormComponent implements OnInit {
       if(!this.Proyecto.Nivel){
         this.Proyecto.Nivel = '0';
       }
-      await this.leerSeguimientos();
+      console.log(this.Proyecto)
       this.CambioNivelEnForm.emit(this.Proyecto.Nivel);
     }else{
       this.inicializarProyecto();
       this.UltimoCodigo = '';
     }
-    
   }
 
    //Seguimientos
    async leerSeguimientos(){
-    let data = await this.taskFormService.leerNotas(this.Proyecto.Id_Proyecto);
+    let data1 = await this.taskFormService.leerNotas(this.Proyecto.Id_Proyecto);
       
-    if (data['total'] == 0) {
+    if (data1['total'] == 0) {
       this.Seguimientos = [];
     }else{
-      this.Seguimientos = data['data'];
+      this.Seguimientos = data1['data'];
       for (let Seguimiento of this.Seguimientos){
         let Letras = Seguimiento.Nombre.split(' ');
         Seguimiento.Nombre = Letras[0].substring(0,1)+ Letras[1].substring(0,1);
@@ -249,8 +364,7 @@ export class TaskFormComponent implements OnInit {
   }
 
   async getLastProyectoId(Nivel?){
-    console.log('getLastProyectoId',Nivel);
-      //obtener el Id el ultimo portafolio para generar uno nuevo
+    //obtener el Id el ultimo portafolio para generar uno nuevo
     if(!Nivel){
       Nivel = '';
     }
@@ -269,7 +383,6 @@ export class TaskFormComponent implements OnInit {
     
   }
     async nuevoPadre(){
-      console.log('Nuevo Padre')
       this.inicializarProyecto();
       await this.getLastProyectoId('');
       this.Proyecto.Nivel = '1';
@@ -277,7 +390,6 @@ export class TaskFormComponent implements OnInit {
       this.Proyecto.Tipo = '1';
     }
     async nuevoHijo(){
-      console.log('Nuevo Hijo')
       //Deternimar el nivel
       let nivel = this.Proyecto.Nivel;
       let codigo = this.Proyecto.Codigo;
@@ -289,7 +401,12 @@ export class TaskFormComponent implements OnInit {
       this.Proyecto.Padre = codigo;
       await this.getLastProyectoId(this.Id_Proyecto_Actual);
       //this.Proyecto.Codigo = codigo + "."+ (parseInt(this.UltimoCodigo) + 1);
-      this.Proyecto.Codigo = this.UltimoCodigo + '.' + (parseInt(this.CantidadHijos) + 1);
+      if(this.UltimoCodigo == '0'){
+        this.Proyecto.Codigo = (parseInt(this.CantidadHijos) + 1).toString();
+      }else{
+        this.Proyecto.Codigo = this.UltimoCodigo + '.' + (parseInt(this.CantidadHijos) + 1);
+      }
+      
     }
     async inicializarProyecto(){
       this.Proyecto = {
@@ -324,17 +441,29 @@ export class TaskFormComponent implements OnInit {
         Interesado:'',
         InteresadoNombre:'',
         Inicio:'',
-        FechaInicio:{ year: 1, month: 1, day: 1 },
+        FechaInicio: { year: 1, month: 1, day: 1, hour:1, minute:1},
         HInicio:'',
         Fin:'',
-        FechaFin:{ year: 1, month: 1, day: 1 },
+        FechaFin: { year: 1, month: 1, day: 1, hour:1, minute:1 },
         HFin:'',
         Inicio_Planificado:'',
-        FechaInicioPlanificado:{ year: this.hoy.getFullYear() , month: this.hoy.getMonth() + 1 , day: this.hoy.getDate() },
+        FechaInicioPlanificado:{ year: this.hoy.getFullYear() , month: this.hoy.getMonth() + 1 , day: this.hoy.getDate(), hour:this.hoy.getHours(), minute:this.hoy.getMinutes() },
         Fin_Planificado:'',
-        FechaFinPlanificado: { year: this.hoy.getFullYear() , month: this.hoy.getMonth() + 1 , day: this.hoy.getDate() },
+        FechaFinPlanificado:{ year: this.hoy.getFullYear() , month: this.hoy.getMonth() + 1 , day: this.hoy.getDate(), hour:this.hoy.getHours(), minute:this.hoy.getMinutes() },
         Duracion_Estimada:'',
         Tiempo_Real:'',
+        Portafolio:'',
+        Codigo_Portafolio:'',
+        Programa:'',
+        Codigo_Programa:'',
+        Proyecto:'',
+        Codigo_Proyecto:'',
+        Fase:'',
+        Codigo_Fase:'',
+        Entregable:'',
+        Codigo_Entregable:'',
+        Tarea:'',
+        Codigo_Tarea:''
       }
     }
     grabar(){
@@ -363,14 +492,39 @@ export class TaskFormComponent implements OnInit {
       let data = await this.taskFormService.newProyecto(this.Proyecto);
       if(data['success'] == 'true'){
         this.Proyecto.Id_Proyecto = data['data'][0]['Identity'];
-        this.NewItem.emit(this.Proyecto);
+        if(this.Proyecto.Nivel != '7'){
+          this.NewItem.emit(this.Proyecto);
+        }
       }
-      Swal.fire('Datos Actualizados')
+      //Swal.fire('Datos Actualizados')
+      Swal.fire({
+              title: 'Datos Actualizados',
+              text: "Desea cerrar pantalla actual",
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Si, Cerrar Pantalla'
+            }).then((result) => {
+              if (result.value) {
+                this.closeEditPanel();
+              }
+            });
     }
     async actualizarProyecto(){
       let data = await this.taskFormService.updateProyecto(this.Proyecto);
       this.UpdateItem.emit(this.Proyecto)
-      Swal.fire('Datos Actualizados')
+      Swal.fire({
+        title: 'Datos Actualizados',
+        text: "Desea cerrar pantalla actual",
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si, Cerrar Pantalla'
+      }).then((result) => {
+        if (result.value) {
+          this.closeEditPanel();
+        }
+      });
     }
   
  // Eventos de los miembros
@@ -388,6 +542,10 @@ abrirFechasPanel(){
 abrirNotasPanel(){
   this.NotasPanel = true;
 }
+abrirInfoPanel(){
+  this.leerProyectosHijos('','1');
+  this.InfoPanel = true;
+}
 cerrarPanelEdicionNotas(){
   this.EditNotasPanel = false;
 }
@@ -400,13 +558,13 @@ cerrarMiembroPanel(){
 cerrarNotasPanel(){
   this.NotasPanel = false;
 }
-
+cerrarInfoPanel(){
+  this.InfoPanel = false;
+}
 searchMiembro(){
   //jaime
   this.leerMiembros(this.tipoActual);
 }
-
-
 
 keytabMiembro(event){
   if (event.key === 'Enter') {
@@ -452,22 +610,7 @@ selectMiembro(Miembro){
   }
   this.cerrarPanelBusquedaMiembros();
 }
-/*
-async deSelectMiembro(miembro,index){
-  let data = await this.taskFormService.DesasignarMiembro(this.Proyecto.Id_Proyecto,miembro.Id_Persona);
-  this.Miembros.splice(index, 1);
-  this.asignarMiembrosTarea();
-}
-async asignarMiembrosTarea(){
-  let MiembroArray = [];
-  this.Proyecto.Miembros = "";
-  for (let Miembro of this.Miembros){
-    let data = await this.taskFormService.AsignarMiembro(this.Proyecto.Id_Proyecto,Miembro.Id_Persona);
-    MiembroArray = Miembro.Nombre.split(' ');
-    this.Proyecto.Miembros = this.Proyecto.Miembros + MiembroArray[0].substring(0,1)+this.Proyecto.Miembros + MiembroArray[1].substring(0,1)+ " "
-  }
-}
-  */
+
 async leerMiembros(Tipo?){
   let data = await this.contactoService.loadPersonas(this.paginacion,this.searchFieldMiembro,Tipo,1);
   if (data['total'] == 0) {
@@ -507,5 +650,93 @@ async agregarSeguimieto(){
   }
   cerrarPanelBusquedaMiembros(){
     this.PanelBusquedaMiembros = false;
+  }
+
+  async leerProyectosHijos(Padre, Nivel) {
+    let data = await this.taskFormService.leerPortaProyectosHijos(Padre, Nivel);
+    if (data['total'] > 0) {
+      switch (Nivel) {
+        case "1":
+          this.Portafolios = data['data'];
+          await this.leerProyectosHijos(this.Proyecto.Portafolio, "2");
+          break;
+        case "2":
+          this.Programas = data['data'];
+          await this.leerProyectosHijos(this.Proyecto.Programa, "3");
+          break;
+        case "3":
+          this.Proyectos = data['data'];
+          await this.leerProyectosHijos(this.Proyecto.Proyecto, "4");
+          break;
+        case "4":
+          this.Fases = data['data'];
+          await this.leerProyectosHijos(this.Proyecto.Fase, "5");
+          break;  
+        case "5":
+          this.Entregables = data['data'];
+          await this.leerProyectosHijos(this.Proyecto.Entregable, "6");
+          break;
+        case "6":
+          this.Tareas = data['data'];
+          break;
+      }
+    }else{
+      const nivel = parseInt(Nivel, 10);
+      if (nivel <= 1) this.Portafolios = [];
+      if (nivel <= 2) this.Programas = [];
+      if (nivel <= 3) this.Proyectos = [];
+      if (nivel <= 4) this.Fases = [];
+      if (nivel <= 5) this.Entregables = [];
+      if (nivel <= 6) this.Tareas = [];
+    }
+  }
+  cambioTarea(Nivel?){
+    this.moverNodoYReestructurar(Nivel)
+
+  }
+  async moverNodoYReestructurar(Nivel) {
+    //1 Hay que saber cual es el nodo actual cual es su padre
+    let NivelAcutal = this.Proyecto.Id_Proyecto;
+    let PadreActual = this.Proyecto.Padre;
+    //2 hay que saber cuales hijos tiene
+
+    //3 hay que saber cual es el nodo sobre el que se quiere mover y su padre
+    let NuevoPadreId = '';
+    switch (Nivel) {
+      case 1:
+        NuevoPadreId = this.Proyecto.Codigo_Portafolio; 
+        await this.leerProyectosHijos(this.Proyecto.Portafolio, "2");
+        break;
+      case 2:
+        NuevoPadreId = this.Proyecto.Codigo_Programa; 
+        await this.leerProyectosHijos(this.Proyecto.Programa, "3"); 
+        break;
+      case 3:
+        NuevoPadreId = this.Proyecto.Codigo_Proyecto; 
+        await this.leerProyectosHijos(this.Proyecto.Proyecto, "4"); 
+        break;
+      case 4:
+        NuevoPadreId = this.Proyecto.Codigo_Fase;
+        await this.leerProyectosHijos(this.Proyecto.Fase, "5"); 
+        break;  
+      case 5:
+        NuevoPadreId = this.Proyecto.Codigo_Entregable;
+        await this.leerProyectosHijos(this.Proyecto.Entregable, "6");
+        break;
+      case 6:
+        NuevoPadreId = this.Proyecto.Codigo_Tarea;
+        break;
+    }
+    //Generar NuevoCodigoHijo
+    //let data = await this.taskFormService.getLastProyectId(Nivel.toString());
+    //let CantidadHijos = data['data'][0]['Cantidad_Subproyectos'];
+    //let NuevoCodigo = NuevoPadreId + '.' + (parseInt(CantidadHijos) + 1);
+    //console.log(Nivel);
+    //console.log(NuevoPadreId);
+    //console.log(NuevoCodigo);
+    
+    //4 hay que ir regorriendo el array y cambiando el codigo
+
+
   }
 }

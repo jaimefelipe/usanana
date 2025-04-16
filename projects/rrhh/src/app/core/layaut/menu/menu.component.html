@@ -28,7 +28,7 @@
 
           <li [hidden]="!AppConfiguracion" (click)="clickPerfilMenu()" ><a><i class="fa fa-cog"></i> Configuración <i [ngClass]='configClass' class="fa fa-cog"></i>  </a></li>
           <ul [hidden]="!perfilMenu" >
-            <a (click)="hideMenu()" [routerLink]="['/people']"><li><i class="fa fa-credit-card"></i> Contactos </li></a>
+            <a (click)="hideMenu()" [routerLink]="['/contactos']"><li><i class="fa fa-credit-card"></i> Contactos </li></a>
             <a (click)="hideMenu()" [routerLink]="['/clientes']"><li><i class="fa fa-credit-card"></i> Clientes </li></a>
             <a (click)="hideMenu()" [routerLink]="['/departamento']"><li><i class="fa fa-credit-card"></i> Deparamento </li></a>
             <a (click)="hideMenu()" [routerLink]="['/puesto']"><li><i class="fa fa-credit-card"></i> Puesto </li></a>
