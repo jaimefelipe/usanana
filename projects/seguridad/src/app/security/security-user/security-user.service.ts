@@ -12,10 +12,11 @@ export class SecurityUserService {
       table: 'Seg_Usuario',
       fields: 'Id_Usuario,Nombre,Nombre_Usuario,Numero_Identificacion',
       orderField: ' Nombre ',
+      orderDirection:' ASC ',
       searchField: search,
       simple:true,
       Empresa: false,
-      paginacion: paginacion
+      paginacion: paginacion 
     }
     return await this.apiService.executeSqlSyn(sqlConfig);
   }

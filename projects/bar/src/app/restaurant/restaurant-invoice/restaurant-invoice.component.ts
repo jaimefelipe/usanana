@@ -314,7 +314,7 @@ export class RestaurantInvoiceComponent implements OnInit {
     }
 
     let data = await this.invoiceService.insertHeader(Invoice, this.Caja,this.Exoneracion);
-    Invoice.Id_Factura = data["data"][0]["Identity"];
+    Invoice.Id_Factura = data["Identity"];
     //Actualizar el Id de la factura en el pedido
     await this.restaurantInvoiceService.UpdateIdFactura(Invoice.Id_Factura,this.Pedido.Id_Pedido);
     //Generar Detalle de Factura.

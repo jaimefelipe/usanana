@@ -219,7 +219,7 @@ export class TransportItineraryComponent implements OnInit {
     if (this.Itinerary.Id_Itinerario == "") {
       //Insertar header
       let data = await this.transportItineraryService.insertItinerary(this.Itinerary);
-      this.Itinerary.Id_Itinerario = data["data"][0]["Identity"];
+      this.Itinerary.Id_Itinerario = data["Identity"];
     }else{
       //Update header
       let data = await this.transportItineraryService.updateItinerary(this.Itinerary);
@@ -237,7 +237,7 @@ export class TransportItineraryComponent implements OnInit {
     if(this.Services[indice].Id_Servicio == ''){
       //Insertar el servicio
       let data = await this.transportItineraryService.insertService(this.Services[indice],this.Itinerary.Id_Itinerario);
-      this.Services[indice].Id_Servicio = data["data"][0]["Identity"];
+      this.Services[indice].Id_Servicio = data["Identity"];
     }else{
       //Actualizar el servicio
       if(this.Services[indice] == 1){

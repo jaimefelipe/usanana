@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from '../../../../../core/src/app/lib/api.service';
+import { postConControl } from '../../../../../core/src/app/lib/net-utils';
 
 @Injectable({
   providedIn: 'root'
@@ -73,11 +74,16 @@ export class PlanoService {
     + "',Monto_Servicio='"+Pedido.Monto_Servicio
     + "',Facturado_El=NOW()"
     + ",Facturado_Por='"+localStorage.getItem('Nombre_Usuario')+"' where Id_Pedido = " + Pedido.Id_Pedido;
-    return await this.apiService.postRecord(sql);
+    //return await this.apiService.postRecord(sql);
+    const url = this.apiService.getUrl();
+    return await  postConControl(url, 'sql=' + encodeURIComponent(sql));
+
   }
   async ActualizarIdClientePedido(Id_Pedido,Id_Cliente){
     let sql = "Update Res_Pedido set Id_Persona ="+Id_Cliente+" where Id_Pedido = " + Id_Pedido;
-    return await this.apiService.postRecord(sql);
+    //return await this.apiService.postRecord(sql);
+    const url = this.apiService.getUrl();
+    return await  postConControl(url, 'sql=' + encodeURIComponent(sql));
   }
   async ActualizarDatosPedidoDetalle(Detalle){
     let sql = `Update Res_Pedido_Detalle Set
@@ -86,25 +92,35 @@ export class PlanoService {
     + `,IVA = `+Detalle.IVA
     + `,Total = `+Detalle.Total
     +` where Id_Pedido_Detalle=`+Detalle.Id_Pedido_Detalle;
-    await this.apiService.postRecord(sql);
+    const url = this.apiService.getUrl();
+    return await  postConControl(url, 'sql=' + encodeURIComponent(sql));
+    //await this.apiService.postRecord(sql);
 
   }
   async actualizarCondicionVentaPedido(Id_Pedido,Condicion){
     let sql = "Update Res_Pedido set Condicion_Venta = '"+ Condicion +"' where Id_Pedido = "+Id_Pedido;
-    return await this.apiService.postRecord(sql);
+    const url = this.apiService.getUrl();
+    return await  postConControl(url, 'sql=' + encodeURIComponent(sql));
+    //return await this.apiService.postRecord(sql);
   }
   async actualizarComanda(Id_Pedido){
     let sql = "Update Res_Pedido_Detalle set Comandado = Cantidad where Id_Pedido = "+Id_Pedido;
-    return await this.apiService.postRecord(sql);
+    const url = this.apiService.getUrl();
+    return await  postConControl(url, 'sql=' + encodeURIComponent(sql));
+    //return await this.apiService.postRecord(sql);
   }
   async CambiarIdPedido(Id_Nuevo_Pedido,Id_Pedido_Anterior){
     let sql = "Update Res_Pedido_Detalle Set Id_Pedido="+Id_Nuevo_Pedido+" where Id_Pedido="+Id_Pedido_Anterior;
-    await this.apiService.postRecord(sql);
+    const url = this.apiService.getUrl();
+    return await  postConControl(url, 'sql=' + encodeURIComponent(sql));
+    //await this.apiService.postRecord(sql);
     //sql = "Update Res_Pedido set Estado = 3 where Id_Pedido="+Id_Pedido;
     //return await this.apiService.postRecord(sql);
   }
-  async carcarScript(url,Id){
-    return await this.apiService.postScript(url,Id);
+  async carcarScript(sql,Id){
+    //return await this.apiService.postScript(url,Id);
+    const url1 = this.apiService.getUrl();
+    return await  postConControl(url1, 'sql=' + encodeURIComponent(sql));
   }
 
   async InsertLog(Log){
@@ -135,30 +151,46 @@ export class PlanoService {
   }
   async actualizarCajaPedido(Caja){
     let sql = "Update Res_Pedido set Id_Caja = "+Caja.Id_Caja+",Id_Caja_Diaria="+Caja.Id_Caja_Diaria+" where Id_Pedido = "+Caja.Id_Pedido;
-    return await this.apiService.postRecord(sql);
+    const url = this.apiService.getUrl();
+    return await  postConControl(url, 'sql=' + encodeURIComponent(sql));
+    //return await this.apiService.postRecord(sql);
   }
   async agregarNota(Articulo){
     let sql = "Update Res_Pedido_Detalle set Notas = '" + Articulo.Notas + "' where Id_Pedido_Detalle = "+Articulo.Id_Pedido_Detalle;
-    return await this.apiService.postRecord(sql);
+    //return await this.apiService.postRecord(sql);
+    const url = this.apiService.getUrl();
+    return await  postConControl(url, 'sql=' + encodeURIComponent(sql));
   }
   async ponerACeroTodo(Id_Pedido){
     let sql = "Update Res_Pedido_Detalle set Cantidad = 0, IVA = 0,Sub_Total = 0,Total = 0 where Id_Pedido = "+Id_Pedido;
     this.apiService.postRecord(sql);
     let sql1 = "Update Res_Pedido set Estado  = 3 where Id_Pedido = "+Id_Pedido;
-    return await this.apiService.postRecord(sql1);
+    const url = this.apiService.getUrl();
+    return await  postConControl(url, 'sql=' + encodeURIComponent(sql1));
+    //return await this.apiService.postRecord(sql1);
   }
   async actualizarSaldoCaja(Total_Pedido){
+    console.log('Actualizar saldo caja')
     let sql = "Update Ven_Caja set Saldo_Actual = Saldo_Actual + " +  Total_Pedido + " where Id_Caja = " + localStorage.getItem("Id_Caja");
-    return await this.apiService.postRecord(sql);
+    //return await this.apiService.postRecord(sql);
+    const url = this.apiService.getUrl();
+    //return await  postConControl(url, 'sql=' + encodeURIComponent(sql));
+    const url1 = this.apiService.getUrl();
+    console.log('LLamando a post Control')
+    return await  postConControl(url1, 'sql=' + encodeURIComponent(sql));
   }
 
   async LoadInvoicePrinter(){
     let sql = "Select Valor From Gen_Parametros_Compania where Parametro = 'Bar_Invoice_Printer' and  Id_Empresa = "+ localStorage.getItem('Id_Empresa') +";";
-    return await this.apiService.postRecord(sql);
+    //return await this.apiService.postRecord(sql);
+    const url = this.apiService.getUrl();
+    return await  postConControl(url, 'sql=' + encodeURIComponent(sql));
   }
   async LoadKitchenPrinter(){
     let sql = "Select Valor From Gen_Parametros_Compania where Parametro = 'Bar_kitchen_Printer' and  Id_Empresa = "+ localStorage.getItem('Id_Empresa') +";";
-    return await this.apiService.postRecord(sql);
+    //return await this.apiService.postRecord(sql);
+    const url = this.apiService.getUrl();
+    return await  postConControl(url, 'sql=' + encodeURIComponent(sql));
   }
 } 
 

@@ -1,0 +1,145 @@
+<form>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+          </div>
+          <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+            placeholder="Buscar">
+          <div class="input-group-append">
+            <button [disabled]="Persona.Id_Persona == ''" class="btn btn-success" type="button" (click)="abrirPantallaCarreraContacto('')"><i class="fa fa-plus-circle"
+                aria-hidden="true"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <form>
+      <div class="form-row">
+        <div class="form-group col-12" *ngFor="let Carrera of CarrerasActivas;let i = index">
+          <a (click)="abrirPantallaCarreraContacto(Carrera)">
+            <div class="card">
+              <div class="card-body">
+                <h4 class="card-title">{{Carrera.Codigo}} -  {{Carrera.Carrera}}</h4>
+                {{Carrera.Ingreso}} - {{Carrera.Graduacion}} - {{Carrera.Estado}}
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </form>
+  </form>
+
+
+  <div [hidden]="!PantallaCarreraContacto" class="modal-main">
+
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Carrera {{Persona.Nombre}}</h2>
+    </div>
+    <div class="card-body modal-grid">
+      <div class="form-row">
+        <div class="form-group col-md-12">
+          <label>Carrera</label>
+          <div class="input-group">
+
+            <div class="input-group-append">
+              <button type="button" (click)="abrirPantallaCarreraActiva()"
+                class="form-control btn btn-primary"><i class="fa fa-search"></i></button>
+            </div>
+            <input [(ngModel)]="CarreraEstudiante.Carrera" disabled name="Carrera" id="Carrera" type="input"
+              class="form-control" placeholder="Carrera">
+          </div>
+        </div>
+        <div class="form-group col-md-4">
+          <label>Fecha Inicio</label>
+          <div class="input-group">
+            <input class="form-control" placeholder="Fecha Ingreso" name="Fecha_Ingreso1" [(ngModel)]="Fecha_Ingreso" ngbDatepicker #d2="ngbDatepicker">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary fa fa-calendar" (click)="d2.toggle()" type="button"></button>
+            </div>
+          </div>
+        </div>
+        <div class="form-group col-md-4">
+          <label for="name">Estado</label>
+          <select [(ngModel)]="CarreraEstudiante.Estado" name="EstadoCarrera" class="form-control">
+            <option value='1'>Activo</option>
+            <option value='2'>Inactivo</option>
+            <option value='3'>Graduado</option>
+          </select>
+        </div>
+        <div [hidden]="CarreraEstudiante.Estado != '3'" class="form-group col-md-4">
+          <label>Fecha Graduación</label>
+          <div class="input-group">
+            <input  [disabled]="CarreraEstudiante.Estado != '3'" class="form-control" placeholder="Fecha Graduación" name="Fecha_Graduacion" [(ngModel)]="Fecha_Graduacion" ngbDatepicker #d3="ngbDatepicker">
+            <div class="input-group-append">
+              <button [disabled]="CarreraEstudiante.Estado != '3'" class="btn btn-outline-secondary fa fa-calendar" (click)="d3.toggle()" type="button"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8 col-md-8">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="grabarCarrera()" type="button" class="btn btn-primary" title="Grabar"> Grabar</button>
+          </div>
+          <div class="form-group col-2">
+            <button (click)="cerrarPantallaCarreraContacto()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div [hidden]="!PantallaCarrerasActivas" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Carrera</h2>
+      <input [(ngModel)]="searchFieldCarrera" (blur)="searchCarrera()" (keydown)="keytabCarrera($event)" type="text"
+        class="form-control" placeholder="Buscar">
+    </div>
+    <div class="card-body modal-grid">
+      <div class="form-row">
+        <div class="form-group col-12 col-sm-6" *ngFor="let Carrera of Carreras;let i = index">
+          <a (click)="SeleccionarCarrera(Carrera)">
+            <div class="card">
+              <div class="card-body">
+                <h4 class="card-title">{{Carrera.Carrera}} </h4>
+                <span *ngIf="Carrera.Nivel == '1'" class="text-success"> Cursos Libres</span>
+                <span *ngIf="Carrera.Nivel == '2'" class="text-success"> Técnico</span>
+                <span *ngIf="Carrera.Nivel == '3'" class="text-success"> Diploma</span>
+                <span *ngIf="Carrera.Nivel == '4'" class="text-success"> Certificación</span>
+                <span *ngIf="Carrera.Nivel == '5'" class="text-success"> Especialización</span>
+                <span *ngIf="Carrera.Nivel == '6'" class="text-success"> Bachillerato</span>
+                <span *ngIf="Carrera.Nivel == '7'" class="text-success"> Licenciatura</span>
+                <span *ngIf="Carrera.Nivel == '8'" class="text-success"> Maestría</span>
+                <span *ngIf="Carrera.Nivel == '9'" class="text-success"> Doctorado</span>
+
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8 col-md-10">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="cerrarPantallaCarreraActiva()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

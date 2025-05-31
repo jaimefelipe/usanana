@@ -111,7 +111,7 @@ export class RestaurantOrderService {
     return await this.apiService.insertRecord(sql);
   }
   async loadOrderProducts(Id_Order){
-    let sql = `Select Id_Pedido_Detalle,Res_Pedido_Detalle.Id_Producto,Cuenta,Cantidad,Facturado,Cantidad-Facturado as Facturar,Res_Pedido_Detalle.Estado,Descripcion,Res_Pedido_Detalle.Precio,Res_Pedido_Detalle.Sub_Total,Res_Pedido_Detalle.IVA,Res_Pedido_Detalle.Total, Notas, Cocina,Inv_Producto.Impuesto,Inv_Producto.Codigo
+    let sql = `Select Id_Pedido_Detalle,Res_Pedido_Detalle.Id_Producto,Cuenta,Cantidad,Facturado,Cantidad-Facturado as Facturar,Res_Pedido_Detalle.Estado,Descripcion,Res_Pedido_Detalle.Precio,Res_Pedido_Detalle.Sub_Total,Res_Pedido_Detalle.IVA,Res_Pedido_Detalle.Total, Notas, Cocina,Inv_Producto.Impuesto,Inv_Producto.Codigo,TieneComponentes
     from Res_Pedido_Detalle
     inner Join Inv_Producto on Res_Pedido_Detalle.Id_Producto = Inv_Producto.Id_Producto
     inner Join Inv_Categoria on Inv_Producto.Categoria = Inv_Categoria.Id_Categoria

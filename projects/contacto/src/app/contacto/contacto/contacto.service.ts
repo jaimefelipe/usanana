@@ -53,7 +53,7 @@ export class ContactoService {
 
     let sqlConfig = {
       table: 'Gen_Persona',
-      fields: 'Id_Persona,Nombre,Telefono,Correo,Identificacion,Tipo_Identificacion,Porcentaje_Comision,Porcentaje_Descuento,Otro_Documento,Ultima_Factura,Prospecto,Cliente,Proveedor,Emisor,Empleado,Estado',
+      fields: 'Id_Persona,Nombre,Telefono,Correo,Correo2,Identificacion,Tipo_Identificacion,Porcentaje_Comision,Porcentaje_Descuento,Otro_Documento,Ultima_Factura,Prospecto,Cliente,Proveedor,Emisor,Empleado,Estado',
       orderField: 'Nombre',
       orderDirection: ' ASC',
       where: where,
@@ -65,7 +65,7 @@ export class ContactoService {
   async loadPersona(Id_Persona){
     let sqlConfig = {
       table: 'Gen_Persona',
-      fields: 'Id_Persona,Nombre,Telefono,Correo,Identificacion,Tipo_Identificacion,Porcentaje_Comision,Porcentaje_Descuento,Cliente,Proveedor,Alumno,Profesor,Estado,Otro_Documento,Condicion_Venta,Plazo_Credito,Metodo_Pago,Fecha_Ingreso,Porcentaje_Descuento,Moneda,Ultima_Factura,Contabilidad,FacturaElectronica,PuntoVenta,Restaurante,Asesoria,Declaracion,Precio,Provincia,Canton,Distrito,Barrio,Direccion,Empleado,PresentacionA,PresentacionB,Codigo_Proveedor,Direccion,Prospecto,Origen,Posicion,Id_Agente,Id_Usuario,Nombre_Usuario,Codigo_Actividad_Economica,Nombre_Actividad_Economica',
+      fields: 'Id_Persona,Nombre,Telefono,Correo,Correo2,Identificacion,Tipo_Identificacion,Porcentaje_Comision,Porcentaje_Descuento,Cliente,Proveedor,Alumno,Profesor,Estado,Otro_Documento,Condicion_Venta,Plazo_Credito,Metodo_Pago,Fecha_Ingreso,Porcentaje_Descuento,Moneda,Ultima_Factura,Contabilidad,FacturaElectronica,PuntoVenta,Restaurante,Asesoria,Declaracion,Precio,Provincia,Canton,Distrito,Barrio,Direccion,Empleado,PresentacionA,PresentacionB,Codigo_Proveedor,Direccion,Prospecto,Origen,Posicion,Id_Agente,Id_Usuario,Nombre_Usuario,Codigo_Actividad_Economica,Nombre_Actividad_Economica',
       orderField: '',
       searchField: '',
       where: "Id_Persona = " + Id_Persona
@@ -81,10 +81,11 @@ export class ContactoService {
     if(Persona.Id_Persona ==""){
       let sql = {
         table: 'Gen_Persona',
-        fields: 'Nombre,Telefono,Correo,Tipo_Identificacion,Identificacion,Cliente,Proveedor,Alumno,Profesor,Estado,Otro_Documento,Condicion_Venta,Plazo_Credito,Metodo_Pago,Fecha_Ingreso,Porcentaje_Descuento,Moneda,Contabilidad,FacturaElectronica,PuntoVenta,Restaurante,Asesoria,Declaracion,Precio,Provincia,Canton,Distrito,Barrio,Direccion,Empleado,PresentacionA,PresentacionB,TC,TCF,TCV,Id_Producto,TCN,Codigo_Proveedor,Origen,Posicion,Id_Agente,Id_Usuario,Nombre_Usuario,Codigo_Actividad_Economica,Nombre_Actividad_Economica',
+        fields: 'Nombre,Telefono,Correo,Correo2,Tipo_Identificacion,Identificacion,Cliente,Proveedor,Alumno,Profesor,Estado,Otro_Documento,Condicion_Venta,Plazo_Credito,Metodo_Pago,Fecha_Ingreso,Porcentaje_Descuento,Moneda,Contabilidad,FacturaElectronica,PuntoVenta,Restaurante,Asesoria,Declaracion,Precio,Provincia,Canton,Distrito,Barrio,Direccion,Empleado,PresentacionA,PresentacionB,TC,TCF,TCV,Id_Producto,TCN,Codigo_Proveedor,Origen,Posicion,Id_Agente,Id_Usuario,Nombre_Usuario,Codigo_Actividad_Economica,Nombre_Actividad_Economica',
         values: '\'' + Persona.Nombre
         + '\',\'' + Persona.Telefono
         + '\',\'' + Persona.Correo
+        + '\',\'' + Persona.Correo2
         + '\',\'' + Persona.Tipo_Identificacion
         + '\',\'' + Persona.Identificacion
         + '\',\'' + Persona.Cliente
@@ -136,6 +137,7 @@ export class ContactoService {
         fields: 'Nombre=\'' + Persona.Nombre
         + '\',Telefono=\'' + Persona.Telefono
         + '\',Correo=\'' + Persona.Correo
+        + '\',Correo2=\'' + Persona.Correo2
         + '\',Tipo_Identificacion=\'' + Persona.Tipo_Identificacion
         + '\',Identificacion=\''+ Persona.Identificacion
         + '\',Cliente=\''+ Persona.Cliente

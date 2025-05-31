@@ -1,0 +1,191 @@
+<div [hidden]="edit" class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Cobros</h2>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+        </div>
+        <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+          placeholder="Buscar">
+        <div class="input-group-append">
+          <button class="btn btn-success" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
+              aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form>
+    <div class="form-row">
+
+      <div class="form-group col-12 col-sm-6" *ngFor="let Cobro of Cobros;let i = index">
+        <div class="card">
+          <a (click)="editRecord(Cobro)">
+            <div class="card-body">
+              <h4 class="card-title">{{Cobro.Nombre}}</h4>
+              {{Cobro.Id_Cobro}}, {{Cobro.Id_Producto}}
+              <span *ngIf="Cobro.Nivel == 1">Registro Libre</span> 
+              <span *ngIf="Cobro.Nivel == 2">Seminario</span>
+              <span *ngIf="Cobro.Nivel == 3">Técnico</span>
+              <span *ngIf="Cobro.Nivel == 4">Diploma</span>
+              <span *ngIf="Cobro.Nivel == 5">Bachillerato</span>
+              <span *ngIf="Cobro.Nivel == 6">Licenciatura</span>
+              <span *ngIf="Cobro.Nivel == 7">Maestría</span>
+              <span *ngIf="Cobro.Nivel == 8">Doctorado</span>
+              <span *ngIf="Cobro.Nivel == 9">Especialización</span>
+              <span *ngIf="Cobro.Nivel == 10">Certificación</span>
+              - 
+              <span *ngIf="Cobro.Unico == 1">Cobro Unico</span>
+              <span *ngIf="Cobro.Unico == 2">Cobro por Matrícula</span>
+              <span *ngIf="Cobro.Unico == 3">Cobro por Crédito</span>
+              <span *ngIf="Cobro.Unico == 4">Cobro Anual</span>
+              -
+              <span *ngIf="Cobro.Credito_Universitario == 0"><span class="badge badge-primary">No es Credito</span></span>
+              <span *ngIf="Cobro.Credito_Universitario == 1"><span class="badge badge-danger">Si es credito</span></span>
+              - 
+              <span *ngIf="Cobro.Estado == 1"><span class="badge badge-primary">Activo</span></span>
+              <span *ngIf="Cobro.Estado == 0"><span class="badge badge-danger">Inactivo</span></span>
+              - {{Cobro.Creado_El}} - {{Cobro.Creado_Por}}
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="container-fluid">
+    <ul class="pagination">
+      <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"
+            aria-hidden="true"></i></a></li>
+    </ul>
+  </div>
+</div>
+  
+   <!--
+    Form de Edición
+  -->
+  
+  <div [hidden]="!edit" class="container pb-5">
+    <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+    <h2>Cobro Academico</h2>
+  
+    <form>
+      <div class="form-row">
+        
+        <div class="form-group col-md-6">
+          <label>Producto/Servicio</label>
+          <div class="input-group">
+            <div class="input-group-append">
+              <button type="button" (click)="openProducto()" class="form-control btn btn-primary"><i class="fa fa-search"></i></button>
+            </div>
+            <input [(ngModel)]="Cobro.NombreProducto" disabled name="NombreProducto" id="NombreProducto" type="input" class="form-control" placeholder="NombreProducto">
+          </div>
+        </div>
+        <div class="form-group col-md-4">
+            <label>Estado</label>
+            <select [(ngModel)]="Cobro.Estado" name="Estado" class="form-control">
+              <option value='1'>Activo</option>
+              <option value='2'>Suspendido</option>
+          </select>
+        </div>
+
+        <div class="form-group col-md-6">
+          <label>Nombre</label>
+          <input [(ngModel)]="Cobro.Nombre" name="Nombre" type="text" placeholder="Nombre" class="form-control">
+        </div>
+
+        <div class="form-group col-md-4">
+            <label>Nivel </label>
+            <select [(ngModel)]="Cobro.Nivel" name="Nivel" class="form-control">
+                <option value='1'>Registro Libre</option>
+                <option value='2'>Seminario</option>
+                <option value='3'>Técnico</option>
+                <option value='4'>Diploma</option>
+                <option value='5'>Bachillerato</option>
+                <option value='6'>Licenciatura</option>
+                <option value='7'>Maestría</option>
+                <option value='8'>Doctorado</option>
+                <option value='9'>Especialización</option>
+                <option value='10'>Certificación</option>
+            </select>
+        </div>
+        <div class="form-group col-md-4">
+            <label>Unico</label>
+            <select [(ngModel)]="Cobro.Unico" name="Unico" class="form-control">
+              <option value='1'>Cobro Unico</option>
+              <option value='2'>Cobro Por Matrícula</option>
+              <option value='3'>Cobro por Crédito</option>
+              <option value='4'>Cobro Anual</option>
+          </select>
+        </div>
+        <div class="form-group col-md-4">
+            <label>Credito_Universitario</label>
+            <select [(ngModel)]="Cobro.Credito_Universitario" name="Credito_Universitario" class="form-control">
+              <option value='0'>No es Crédito</option>
+              <option value='1'>Si es Crédito</option>
+          </select>
+        </div>
+
+
+        <div class="form-group col-md-12">
+          <div class="form-row">
+            <div class="form-group col-6 col-md-8">
+  
+            </div>
+            <div class="form-group col-3 col-md-2">
+              <button (click)="grabar()" type="button" class="btn btn-success" title="Cancela edicion">Grabar</button>
+            </div>
+            <div class="form-group col-3 col-md-2">
+              <button (click)="cancel()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  
+  </div>
+  
+
+  <div [hidden]="!PantallaProductos" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Seleccionar Artículo</h2>
+      <input [(ngModel)]="searchFieldProduct"  (keydown)="keytabProduct($event)" type="text"
+        class="form-control" placeholder="Buscar">
+    </div>
+    <div class="card-body modal-grid">
+      <div class="form-row">
+        <div class="form-group col-12 col-sm-6" *ngFor="let Product of Productos;let i = index">
+          <a (click)="SeleccionarProducto(Product)">
+            <div class="card">
+              <div class="card-body">
+                {{Product.SKU}}
+                <h4 class="card-title">{{Product.Descripcion}} </h4>
+                <p><b>{{Product.Nombre }}</b></p>
+                Precio : {{Product.Precio|currency: ' '}} Moneda: {{Product.Moneda}}
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8 col-md-10">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="closeModal()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

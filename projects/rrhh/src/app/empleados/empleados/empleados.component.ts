@@ -425,7 +425,7 @@ export class EmpleadosComponent implements OnInit {
     let data = await this.contactoService.savePersona(this.Persona);
     if(data['success'] =='true'){
       if(this.Persona.Id_Persona == ''){
-        this.Persona.Id_Persona = data['data'][0]['Identity'];
+        this.Persona.Id_Persona = data['Identity'];
       }
       Swal.fire('Empleado grabado correctamente');
       this.loadPersonas(this.searchField);

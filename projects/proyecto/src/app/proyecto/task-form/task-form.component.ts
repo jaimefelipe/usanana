@@ -491,7 +491,7 @@ export class TaskFormComponent implements OnInit {
     async  proyectoNuevo(){
       let data = await this.taskFormService.newProyecto(this.Proyecto);
       if(data['success'] == 'true'){
-        this.Proyecto.Id_Proyecto = data['data'][0]['Identity'];
+        this.Proyecto.Id_Proyecto = data['Identity'];;
         if(this.Proyecto.Nivel != '7'){
           this.NewItem.emit(this.Proyecto);
         }

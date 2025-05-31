@@ -19,47 +19,19 @@ export class MenuComponent implements OnInit {
   SeguridadStr = localStorage.getItem("ToxoSG");
   Master = false;
   Seguridad = [];
-  AppServices = false;
-  AppConfiguracion = false;
-  AppAcademico = false;
-  AppSeguridad = false;
-  AppVentas = false;
-  AppCxC = false;
-  AppCompras = false;
-  AppRestaurante = false;
-  AppConta = false;
-  AppTransportes = false;
-  AppTurismo = false;
-  AppHospedaje = false;
-
+  
   UserMenu = [];
   perfilMenu = false;
-  ventasMenu = false;
   AcademicoMenu = false;
-  comprasMenu = false;
-  CxCMenu = false;
-  restaurantMenu = false;
-  seguridadMenu = false;
-  ContaMenu = false;
-  ServicesMenu = false;
-  TransportesMenu = false;
-  TurismoMenu = false;
-  HospedajeMenu = false;
+  TesoreriaMenu = false;
+  ProfesorMenu = false;
 
   deferredPrompt: any;
   showButton = true;
-  configClass = 'fa fa-arrow-right';
-  servicesClass = 'fa fa-arrow-right';
-  ventasClass = 'fa fa-arrow-right';
+  ConfigClass = 'fa fa-arrow-right';
   AcademicoClass = 'fa fa-arrow-right';
-  comprasClass = 'fa fa-arrow-right';
-  CxCClass = 'fa fa-arrow-right';
-  restaurantClass = 'fa fa-arrow-right';
-  seguridadClass = 'fa fa-arrow-right';
-  ContaClass = 'fa fa-arrow-right';
-  transportesClass = 'fa fa-arrow-right';
-  turismoClass = 'fa fa-arrow-right';
-  hospedajeClass = 'fa fa-arrow-right';
+  TesoreriaClass = 'fa fa-arrow-right';
+  ProfesorClass = 'fa fa-arrow-right';
 
   //Obtener los Datos del Usuario
   //Si No hay Datos, Entonces usar menu de ventas.
@@ -97,68 +69,13 @@ export class MenuComponent implements OnInit {
   click(){
     this.showMenu = !this.showMenu;
   }
-  clickHospedajeMenu(){
-    this.HospedajeMenu = !this.HospedajeMenu;
-    if(this.hospedajeClass == 'fa fa-arrow-left'){
-      this.hospedajeClass = 'fa fa-arrow-right';
-    }else{
-      this.hospedajeClass = 'fa fa-arrow-left';
-    }
-  }
-  clickTurismoMenu(){
-    this.TurismoMenu = !this.TurismoMenu;
-    if(this.turismoClass == 'fa fa-arrow-left'){
-      this.turismoClass = 'fa fa-arrow-right';
-    }else{
-      this.turismoClass = 'fa fa-arrow-left';
-    }
-  }
-  clickTransportesMenu(){
-    this.TransportesMenu = !this.TransportesMenu;
-    if(this.transportesClass == 'fa fa-arrow-left'){
-      this.transportesClass = 'fa fa-arrow-right';
-    }else{
-      this.transportesClass = 'fa fa-arrow-left';
-    }
-  }
-  clickServicesMenu(){
-    this.ServicesMenu = !this.ServicesMenu;
-    if(this.servicesClass == 'fa fa-arrow-left'){
-      this.servicesClass = 'fa fa-arrow-right';
-    }else{
-      this.servicesClass = 'fa fa-arrow-left';
-    }
-  }
-  clickContaMenu(){
-    this.ContaMenu = !this.ContaMenu;
-    if(this.ContaClass == 'fa fa-arrow-left'){
-      this.ContaClass = 'fa fa-arrow-right';
-    }else{
-      this.ContaClass = 'fa fa-arrow-left';
-    }
-  }
-  clickSeguridadMenu(){
-    this.seguridadMenu = !this.seguridadMenu;
-    if(this.seguridadClass == 'fa fa-arrow-left'){
-      this.seguridadClass = 'fa fa-arrow-right';
-    }else{
-      this.seguridadClass = 'fa fa-arrow-left';
-    }
-  }
-  clickRestaurantMenu(){
-    this.restaurantMenu = !this.restaurantMenu;
-    if(this.restaurantClass == 'fa fa-arrow-left'){
-      this.restaurantClass = 'fa fa-arrow-right';
-    }else{
-      this.restaurantClass = 'fa fa-arrow-left';
-    }
-  }
+
   clickPerfilMenu(){
     this.perfilMenu = !this.perfilMenu;
-    if(this.configClass == 'fa fa-arrow-left'){
-      this.configClass = 'fa fa-arrow-right';
+    if(this.ConfigClass == 'fa fa-arrow-left'){
+      this.ConfigClass = 'fa fa-arrow-right';
     }else{
-      this.configClass = 'fa fa-arrow-left';
+      this.ConfigClass = 'fa fa-arrow-left';
     }
   }
   clickAcademicoMenu(){
@@ -169,30 +86,23 @@ export class MenuComponent implements OnInit {
       this.AcademicoClass = 'fa fa-arrow-left';
     }
   }
-  clickVentasMenu(){
-    this.ventasMenu = !this.ventasMenu;
-    if(this.ventasClass == 'fa fa-arrow-left'){
-      this.ventasClass = 'fa fa-arrow-right';
+  clickTesoreriaMenu(){
+    this.TesoreriaMenu = !this.TesoreriaMenu;
+    if(this.TesoreriaClass == 'fa fa-arrow-left'){
+      this.TesoreriaClass = 'fa fa-arrow-right';
     }else{
-      this.ventasClass = 'fa fa-arrow-left';
+      this.TesoreriaClass = 'fa fa-arrow-left';
     }
   }
-  clickComprasMenu(){
-    this.comprasMenu = !this.comprasMenu;
-    if(this.comprasClass == 'fa fa-arrow-left'){
-      this.comprasClass = 'fa fa-arrow-right';
+  clickProfesorMenu(){
+    this.ProfesorMenu = !this.ProfesorMenu;
+    if(this.ProfesorClass == 'fa fa-arrow-left'){
+      this.ProfesorClass = 'fa fa-arrow-right';
     }else{
-      this.comprasClass = 'fa fa-arrow-left';
+      this.ProfesorClass = 'fa fa-arrow-left';
     }
   }
-  clickCxCMenu(){
-    this.CxCMenu = !this.CxCMenu;
-    if(this.CxCClass == 'fa fa-arrow-left'){
-      this.CxCClass = 'fa fa-arrow-right';
-    }else{
-      this.CxCClass = 'fa fa-arrow-left';
-    }
-  }
+ 
   logOut(){
     localStorage.setItem('isLoggedin','false');
     localStorage.removeItem('Id_Empresa');
@@ -238,64 +148,6 @@ export class MenuComponent implements OnInit {
     //Recorrer las opciones del Usuario y habilidar o desabilidar las obciones del menu
   }
   async activateMenuOptions(){
-    if(this.UserMenu.length > 0){
-      //Opción para cuando el Sistema de Seguridad Esta Activo
-      for (let menu of this.UserMenu) {
-        if(menu['Id_App']==1){this.AppConfiguracion=true}
-        if(menu['Id_App']==3){this.AppSeguridad=true}
-        if(menu['Id_App']==13){this.AppAcademico=true}
-        if(menu['Id_App']==12){this.AppVentas=true}
-        //if(menu['Id_App']==15){this.AppEducacion=true}
-        //if(menu['Id_App']==18){this.AppContactos=true}
-        if(menu['Id_App']==15){this.AppConta=true}
-        if(menu['Id_App']==30){this.AppCompras=true}
-        if(menu['Id_App']==1035){this.AppRestaurante=true}
-        if(menu['Id_App']==1039){this.AppCxC=true}
-      }
-    }else{
-      //Opciones para Cuando El Sistema de this.Seguridad No esta Activo
-       //Activar Menus segun el usuario
-       //AppCxP
-       //AppBA
-      if(this.Seguridad[0]==1){this.AppVentas=true}
-      if(this.Seguridad[1]==1){this.AppCompras=true}
-      if(this.Seguridad[13]==1){this.AppAcademico=true}
-      if(this.Seguridad[3]==1){this.AppCxC=true}
-      //if(this.Seguridad[4]==1){this.AppCxP=true}
-      if(this.Seguridad[5]==1){this.AppConta=true}
-      //if(this.Seguridad[6]==1){this.AppBA=true}
-      if(this.Seguridad[7]==1){this.AppRestaurante=true}
-      if(this.Seguridad[8]==1){this.AppTransportes=true}
-      if(this.Seguridad[8]==1){this.AppServices=true}
-      if(this.Seguridad[9]==1){this.AppSeguridad=true}
-      if(this.Seguridad[10]==1){this.AppHospedaje=true}
-      if(this.Seguridad[11]==1){this.AppTurismo=true}
-      //Opciones para todos los usuarios
-      this.AppConfiguracion = true;
-      this.AppVentas = true;
-      this.AppCompras = true;
-      this.AppAcademico=true;
-
-      //Opciones del Usuario maestro
-      if(localStorage.getItem('ToxoMT') == '1'){
-        this.AppConta = true;
-        this.AppSeguridad=true
-      }
-    }
-    //this.AppSeguridad=true
-    if(this.Master){
-      this.AppConfiguracion=true;
-      this.AppSeguridad=true;
-      this.AppAcademico=true;
-      this.AppVentas=true;
-      this.AppConta=true;
-      this.AppCompras=true;
-      this.AppRestaurante=true;
-      this.AppCxC=true;
-      this.AppServices = true;
-      this.AppTransportes = true;
-      this.AppTurismo = true;
-      this.AppHospedaje = true;
-    }
+  
   }
 }

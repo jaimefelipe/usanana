@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { postConControl } from './net-utils';
 import Swal from 'sweetalert2';
 
 @Injectable({
@@ -16,7 +17,7 @@ export class ApiService {
     //if(window.location.hostname == 'localhost'){
       //this.url = 'http://api.toxo.work/core/db/eps_execSql.php?sql=';
     //}else{
-      this.url = 'https://toxo.work/core/db/eps_execSql.php?sql=';
+      this.url = 'https://toxo.work/core/db/eps_execSql_v2.php?sql=';
     //}
   }
   data = {
@@ -100,15 +101,23 @@ export class ApiService {
     let where = ' WHERE ';
     let EmpresaWhere = '';
     let tableforEmpresa = this.sqlConfig.table.split(' ');
-    if (this.sqlConfig.Empresa) {
-      //EmpresaWhere = ' ( '+ tableforEmpresa[0] + '.Id_Empresa = '+ localStorage.getItem('Id_Empresa') + ')';
-      EmpresaWhere =
-        ' ( ' +
-        tableforEmpresa[0] +
-        '.Id_Empresa = ' +
-        localStorage.getItem('Id_Empresa') +
-        ')';
+    
+
+    let aliasTabla = '';
+    const table = this.sqlConfig.table.trim();
+
+    if (table.startsWith('(')) {
+      const match = table.match(/AS\s+([a-zA-Z_]\w*)$/i);
+      aliasTabla = match ? match[1] : 't'; // alias por defecto 't'
+    } else {
+      aliasTabla = table.split(' ')[0];
     }
+
+    if (this.sqlConfig.Empresa) {
+      EmpresaWhere = `(${aliasTabla}.Id_Empresa = ${localStorage.getItem('Id_Empresa')})`;
+    }
+
+
     this.sqlWhere = '';
     // tslint:disable-next-line: triple-equals
     if (this.sqlConfig.searchField != '') {
@@ -133,15 +142,24 @@ export class ApiService {
         } else {
           isFirst = false;
         }
-        let fieldArray = field.split('AS');
+        let fieldArray = field.split(' AS ');
         let campo = '';
         if (fieldArray.length > 1) {
           campo = fieldArray[0];
+          let primeros4 = campo.substring(0, 4);
+          if(primeros4 == 'CASE'){
+            campo = fieldArray[1];
+          }
+
         } else {
           campo = field;
-          let campodArray = campo.split('as');
+          let campodArray = campo.split(' as ');
           if (campodArray.length > 1) {
             campo = campodArray[0];
+            let primeros4 = campo.substring(0, 4);
+            if(primeros4 == 'CASE'){
+              campo = campodArray[1];
+            }
           }
         }
         where = where + campo + " Like '---" + this.sqlConfig.searchField + "---'";
@@ -318,7 +336,9 @@ export class ApiService {
       this.sqlConfig.values +
       //");SELECT LAST_INSERT_ID() AS 'Identity'";
       ")";
+
     let data = await this.postRecord();
+
     if (data['success'] == "true") {
       return data;
     } else {
@@ -332,59 +352,57 @@ export class ApiService {
     }
   }
 
+  // 🧠 Función para limpiar valores vacíos del SQL antes de enviar
+  sanitizeSql(sql: string): string {
+    if (!sql || typeof sql !== 'string') return sql;
+  
+    return sql
+      // Reemplaza 'null', "null", null (sin comillas), 'undefined', etc.
+      .replace(/(['"])?\b(null|undefined)\b\1/gi, 'NULL')
+      // Reemplaza también cadenas vacías entre comillas simples o dobles
+      .replace(/''/g, 'NULL')
+      .replace(/""/g, 'NULL');
+  }
+  
+  
+  
+  
+  
   async postRecord(sql?: any, Tipo?: any): Promise<any> {
+    if (!sql) sql = this.sql;
+    
+    sql = this.sanitizeSql(sql); // <-- aplica limpieza aquí//sql = sql.replace(/\+/g, '%2B');
+    
+    if (/UPDATE\s+/i.test(sql) || /SET\s+/i.test(sql)) {
+      sql = sql.replace(/\+/g, '%2B');
+    }if (/UPDATE\s+/i.test(sql) || /SET\s+/i.test(sql)) {
+      sql = sql.replace(/\+/g, '%2B');
+    }
+
     if (!navigator.onLine) {
       Swal.fire('No hay internet, revise la conexión');
       return { success: false, total: 0, Error: 'Sin conexión' };
     }
   
-    let Url = Tipo === 2
-      ? 'https://toxo.work/core/db/eps_execSql2.php?sql='
+    const url = Tipo === 2
+      ? 'https://toxo.work/core/db/eps_execSql_v2.php?sql='
       : this.url;
   
     const sqlQuery = encodeURIComponent(sql || this.sql);
-    const startTime = performance.now();
-  
+    
     try {
-      const response = await fetch(Url, {
-        method: 'POST',
-        cache: 'no-cache',
-        mode: 'cors',
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'POST',
-          'Access-Control-Allow-Headers': 'Content-Type',
-          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-        },
-        body: 'sql=' + sqlQuery,
-      });
-  
-      const endTime = performance.now();
-      const latency = endTime - startTime;
-  
-      // 🕒 Mostrar tiempo de respuesta solo de la red/backend
-      console.log(`⏱️ Tiempo de respuesta del servidor: ${(latency / 1000).toFixed(2)} segundos`);
-  
-      if (!response.ok) {
-        throw new Error(`HTTP error ${response.status}`);
-      }
-  
-      if (latency > 10000) {
-        Swal.fire('Internet muy lento, no responde, revise la conexión');
-        return { success: false, total: 0, Error: 'Conexión lenta' };
-      }
-  
-      const json = await response.json(); // fuera de la medición
-      return json;
-  
-    } catch (error) {
-      console.error("Error en postRecord:", error);
-      return { success: false, total: 0, Error: 'Error en catch' };
+      return await postConControl(url, 'sql=' + sqlQuery, 2, 10000);
+    } catch (error: any) {
+      Swal.fire('Error al conectar con el servidor');
+      console.error("❌ Error en postRecord:", error);
+      return { success: false, total: 0, Error: error.message };
     }
   }
   
   
+  
   async postScript(url?:any,Id?:any){
+    url = this.sanitizeSql(url);
     let data = await fetch(url+'?IdDocument='+Id, {
       method: 'POST',
       cache: 'no-cache',
@@ -413,9 +431,25 @@ export class ApiService {
 
     return data;
   }
+  async obtenerApiHacienda(){
+    if(localStorage.getItem("API")){
+      return localStorage.getItem("API")
+    }else{
+      let sql = 'Select Api From Gen_Empresa where  Id_Empresa = ' + localStorage.getItem("Id_Empresa");
+      let data =  await this.postRecord(sql);
+      localStorage.setItem('Api',data['data'][0]['Api']);
+      return data['data'][0]['Api'];
+    }
+  }
   async aplicarFacturaHacienda(identification: any) {
+    let Api = await this.obtenerApiHacienda();  
+    console.log('Api',Api)
+    let url = 'https://toxo.work/core/php/hacienda2/Conexion_Hacienda.php?IdDocument=';
+    if(Api == '02'){
+      url = 'https://toxo.work/core/php/hacienda44/Conexion_Hacienda.php?IdDocument=';
+    }
     return await fetch(
-      'https://toxo.work/core/php/hacienda2/Conexion_Hacienda.php?IdDocument=' +
+      url +
         identification
     )
       .then((response) => {
@@ -761,5 +795,10 @@ export class ApiService {
     "Djibouti",
     "Zambia",
     "Zimbabue" ];
+  }
+  getUrl(Tipo?: any): string {
+    return Tipo === 2
+      ? 'https://toxo.work/core/db/eps_execSql_v2.php?sql='
+      : this.url;
   }
 }

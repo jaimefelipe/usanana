@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { PlanoService } from './plano.service';
 import { RestaurantOrderService } from '../restaurant-order/restaurant-order.service';
 import { RestaurantInvoiceService } from '../restaurant-invoice/restaurant-invoice.service';
@@ -13,6 +13,7 @@ import { CashierService } from '../../../../../caja/src/app/caja/cashier/cashier
 
 import Swal from 'sweetalert2';
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-plano',
   templateUrl: './plano.component.html',
   styleUrls: ['./plano.component.css']
@@ -29,9 +30,8 @@ export class PlanoComponent implements OnInit {
     private productService:ProductService,
     private invoiceService:InvoiceService,
     private apiService:ApiService,
-    private cashierService:CashierService
-
-    ) { }
+    private cashierService:CashierService, 
+    private cd: ChangeDetectorRef) { }
   RegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
   plano = true;
   Id_Zona = '99';
@@ -42,6 +42,7 @@ export class PlanoComponent implements OnInit {
   hoy = new Date();
   cobro2=false;
   cobro3=false;
+  PantallaLoading1 = false;
   PantallaPlano = true;
   PantallaLista = false;
   PantallaCuentas = false;
@@ -320,7 +321,8 @@ export class PlanoComponent implements OnInit {
       this.PantallaZona = false;
       this.PantallaLogin = false;
       this.log.Usuario = this.NombreSalonero;
-    }else{
+    
+    this.cd.detectChanges();}else{
       this.PantallaLogin = true;
       this.PantallaZona = false;
     }
@@ -333,6 +335,7 @@ export class PlanoComponent implements OnInit {
     }else{
       this.Places = data['data'];
     }
+    this.cd.detectChanges();
   }
   /* Eventos de Pantalla de Login */
   Concat(Numero){
@@ -382,6 +385,7 @@ export class PlanoComponent implements OnInit {
     this.PantallaPlano = false;
     this.PantallaLista = false;
     this.PantallaLoading = false;
+    this.cd.detectChanges(); // 👈 necesario para que se actualice la vista con OnPush
     return true;
   }
 
@@ -412,22 +416,35 @@ export class PlanoComponent implements OnInit {
   CerrarPantallaCrearCuenta(){
     this.PantallaCrearCuenta = false;
   }
-  async CrearCuenta(){
-    //Insertar Registro en ResPedido.
-    this.Pedido.Id_Caja = this.Caja;
-    this.Pedido.Servicio = this.Mesa.Servicio;
-    let data = await this.planoService.NuevaCuenta(this.Pedido);
-    this.Pedido.Id_Pedido =  data['data'][0]['Identity'];
-    this.log.Accion = '1';
-    this.log.Id_Pedido = this.Pedido.Id_Pedido;
-    await this.planoService.InsertLog(this.log);
-    await this.restaurantOrderService.placeOccuped(this.Mesa.Id_Mesa);
-    this.LeerPedidosAbiertosMesa();
-    this.loadPlaces();
-    this.CerrarPantallaCrearCuenta();
-    this.AbrirPantallaInfoCuenta(this.Pedido)
-    //Abrir Pantalla Producto Nuevo
+  async CrearCuenta() {
+    try {
+      this.Pedido.Id_Caja = this.Caja;
+      this.Pedido.Servicio = this.Mesa.Servicio;
+  
+      const data = await this.planoService.NuevaCuenta(this.Pedido);
+      
+      this.Pedido.Id_Pedido = data['Identity'];
+      //Agrega el log
+      this.log.Accion = '1';
+      this.log.Id_Pedido = this.Pedido.Id_Pedido;
+      await this.planoService.InsertLog(this.log);
+      // Pone la mesa en ocupado
+      await this.restaurantOrderService.placeOccuped(this.Mesa.Id_Mesa);
+      
+      await this.LeerPedidosAbiertosMesa();
+      await this.loadPlaces();
+  
+      this.CerrarPantallaCrearCuenta();
+  
+      // 💡 Solo ahora abrimos la pantalla de info
+      await this.AbrirPantallaInfoCuenta(this.Pedido);
+    } catch (error) {
+      console.error('Error al crear cuenta:', error);
+      Swal.fire('Ocurrió un error al crear la cuenta.');
+    }
   }
+  
+  
 
   //Eventos de la pantalla de información de la cuenta
   async AbrirPantallaInfoCuenta(Cuenta){
@@ -442,16 +459,18 @@ export class PlanoComponent implements OnInit {
     this.PantallaInfoCuenta = true;
     this.PantallaLoading = false;
     this.comandaNegativa = false;
-  }
+  
+    this.cd.detectChanges();}
   async CerrarPantallaInfoCuenta(){
     this.PantallaCuentas = true;
     this.PantallaInfoCuenta = false;
     if(this.comandaNegativa){
       await this.imprimirComandaNegativa(this.Pedido.Id_Pedido);
-    }
+    
+    this.cd.detectChanges();}
   }
 
-  async loadOrderProducts(Id_Pedido,Cuenta){
+  async loadOrderProducts(Id_Pedido, Cuenta){
     let products = await this.restaurantOrderService.loadOrderProducts(Id_Pedido);
     if(products['total'] == 0){
       if(Cuenta == 1){
@@ -460,29 +479,29 @@ export class PlanoComponent implements OnInit {
         this.ProductosOrdenNueva = [];
         this.TotalOrdenNueva = 0;
       }
-      
-    }else{
+    } else {
       if(Cuenta == 1){
         this.OrderProducts = products['data'];
-      }else{
+      } else {
         this.ProductosOrdenNueva = products['data'];
       }
-      //Calcular el Total de la Orden
       this.calcularTotal();
-      //Recorrer Cada Producto y Verificar si tiene Componentes.
-      let string = '';
+  
+      // componente adicionales (si aplica)
       for (let Componente of this.OrderProducts){
-        let Componentes = await this.restaurantOrderService.loadPedidoDetalleAlterno(Componente.Id_Pedido_Detalle)
-        if(Componentes['total'] != 0){
-          string = '';
-          for (let comp of Componentes['data']){
-            string = string + comp['Componente'] + ' ' + comp['Sub_Componente'] + ', '
+        if (Componente.TieneComponentes == 1) {
+          let Componentes = await this.restaurantOrderService.loadPedidoDetalleAlterno(Componente.Id_Pedido_Detalle);
+          if (Componentes['total'] != 0){
+            Componente['Componente'] = Componentes['data'].map(x => `${x.Componente} ${x.Sub_Componente}`).join(', ');
           }
-          Componente['Componente'] = string;
         }
       }
     }
+  
+    // 👇 Esto ayuda a actualizar el DOM
+    this.cd.detectChanges();
   }
+  
 
   async SumArticle(Article){
     await this.restaurantOrderService.addProductToProduct(Article.Id_Pedido_Detalle);
@@ -557,7 +576,8 @@ export class PlanoComponent implements OnInit {
       await this.restaurantOrderService.placeFree(this.Mesa.Id_Mesa);
       await this.loadPlaces();
       this.CerrarPantallaCuentas();
-    }
+    
+    this.cd.detectChanges();}
   }
   async imprimirBlueTooth(txt){
     // @ts-ignore-start
@@ -671,52 +691,43 @@ export class PlanoComponent implements OnInit {
   }
   async cambiarMesa(){
     this.PantallaLoading = true;
-    //Determinar el tipo de acción a realizar.
-    // 1. No cambio la información del Detalle.
-    // 1.1 Cambió la mesa ha una cuenta nueva.
-    // 1.2 Cambió la mesa a una cuenta existente.
-    // 2. Cambió la información del detalle
-    // 2.1 Cambiar Detalle ana cuenta Nueva.
-    // 2.2 Cambiar Detalle a una cuenta existente.
-    let cambios = {
-      Id_Zona:this.Pedido.Id_Nueva_Zona,
-      Nombre_Zona:'',
-      Id_Mesa:this.Pedido.Id_Nueva_Mesa,
-      Nombre_Mesa:'',
-      Id_Pedido:this.Pedido.Id_Nuevo_Pedido
-    };
-    if(this.Pedido.Pedido_Alterado == false){
-      // No ha cabiado el detalle
-      if(this.Pedido.Id_Nuevo_Pedido == '-99'){
-        // Crear nuevo pedido en la nueva mesa
-        // Cambiar todos los detalles al nuevo pedido
-        await this.CambiarMesa11(cambios)
-      }else{
-        // Asignar todos los detalles al pedido existente
-        await this.CambiarMesa12();
+    
+    try {
+      let cambios = {
+        Id_Zona:this.Pedido.Id_Nueva_Zona,
+        Nombre_Zona:'',
+        Id_Mesa:this.Pedido.Id_Nueva_Mesa,
+        Nombre_Mesa:'',
+        Id_Pedido:this.Pedido.Id_Nuevo_Pedido
       }
-    }else{
-       // Los detalles fueron alterados
-      if(this.Pedido.Id_Nuevo_Pedido == '-99'){
-        await this.CambiarMesa21();
-        // Crear nuevo pedido en la nueva mesa
-        // Asignar los detalles que sean mayor a cero a esta nueva cuenta
-        // Actualizar las nuevas cantidades al detalle existente
+  
+      if(this.Pedido.Pedido_Alterado == false){
+        if(this.Pedido.Id_Nuevo_Pedido == '-99'){
+          await this.CambiarMesa11(cambios)
+        }else{
+          await this.CambiarMesa12();
+        }
       }else{
-        // Asignar los detalles que sean mayor a cero a al pedido existente
-        // Actualizar las nuevas cantidades al detalle existente
-        await this.CambiarMesa22();
+        if(this.Pedido.Id_Nuevo_Pedido == '-99'){
+          await this.CambiarMesa21();
+        }else{
+          await this.CambiarMesa22();
+        }
       }
+  
+      await this.loadPlaces();
+      await this.LeerPedidosAbiertosMesa();
+      this.cerrarPantallaCambarMesa();
+      this.CerrarPantallaInfoCuenta();
+      Swal.fire('Cliente cambiado de sitio');
+    } catch (error) {
+      console.error('❌ Error en cambiarMesa():', error);
+      Swal.fire('Ocurrió un error al cambiar la mesa');
     }
-    await this.loadPlaces();
-    // Leer las cuentas de la mesa
-    await this.LeerPedidosAbiertosMesa();
-    this.cerrarPantallaCambarMesa();
-    this.CerrarPantallaInfoCuenta();
-    Swal.fire('Cliente cambiado de sitio');
+  
     this.PantallaLoading = false;
-    return false;
   }
+  
   async CambiarMesa22(){
     // Asignar los detalles que sean mayor a cero a al pedido existente
     // Actualizar las nuevas cantidades al detalle existente
@@ -920,50 +931,57 @@ export class PlanoComponent implements OnInit {
     this.PantallaProductos = false;
     this.PantallaInfoCuenta = true;
     this.PantallaLoading = false;
-  }
+  
+    this.cd.detectChanges();}
   SeleccionarCategoria(Categoria){
     this.Id_Categoria = Categoria.Id_Categoria;
     this.loadSubCategories(Categoria.Id_Categoria);
   }
   async loadCategories(search?: any) {
-    let data = await this.categoryService.loadCategories(this.paginacion,search,1);
+    let data = await this.categoryService.loadCategories(this.paginacion, search, 1);
     if (data['total'] == 0) {
       this.Categorias = [];
     } else {
       this.Categorias = data['data'];
       this.Id_Sub_Categoria = this.Categorias[0]['Id_Categoria'];
-      this.loadSubCategories(this.Categorias[0]['Id_Categoria']);
+      await this.loadSubCategories(this.Categorias[0]['Id_Categoria']);
     }
+    this.cd.detectChanges(); // 👈 Aquí
   }
+  
   async loadSubCategories(Id_Categoria) {
-    let data = await this.subCategoryService.loadSubCategoriesByCategoria(Id_Categoria,1);
+    let data = await this.subCategoryService.loadSubCategoriesByCategoria(Id_Categoria, 1);
     if (data['total'] == 0) {
       this.SubCategorias = [];
       await this.LoadArticulosbyCategory(Id_Categoria);
     } else {
       this.SubCategorias = data['data'];
-      await this.LoadArticulosBySubCategory(this.SubCategorias[0].Id_Sub_Categoria)
+      await this.LoadArticulosBySubCategory(this.SubCategorias[0].Id_Sub_Categoria);
     }
+    this.cd.detectChanges(); // 👈 Aquí también
   }
   async SeleccionarSubCategoria(subCategoria){
     this.Id_Sub_Categoria = subCategoria.Id_Sub_Categoria;
     await this.LoadArticulosBySubCategory(subCategoria.Id_Sub_Categoria);
   }
-  async LoadArticulosBySubCategory(Id_Sub_Categoria){
-    let data = await this.productService.loadProductsBySubCategory(Id_Sub_Categoria,this.buscarProducto,1);
+  async LoadArticulosBySubCategory(Id_Sub_Categoria) {
+    let data = await this.productService.loadProductsBySubCategory(Id_Sub_Categoria, this.buscarProducto, 1);
     if (data['total'] == 0) {
       this.Productos = [];
     } else {
       this.Productos = data['data'];
     }
+    this.cd.detectChanges(); // 👈 Aquí también
   }
-  async LoadArticulosbyCategory(Id_Categoria){
-    let data = await this.productService.loadProductsByCategory(Id_Categoria,this.buscarProducto,1);
+  
+  async LoadArticulosbyCategory(Id_Categoria) {
+    let data = await this.productService.loadProductsByCategory(Id_Categoria, this.buscarProducto, 1);
     if (data['total'] == 0) {
       this.Productos = [];
     } else {
       this.Productos = data['data'];
     }
+    this.cd.detectChanges(); // 👈 Aquí también
   }
   search(){
     if(this.SubCategorias.length == 0){
@@ -1021,7 +1039,7 @@ export class PlanoComponent implements OnInit {
     //Article.IVA = Article.Sub_Total - Article.Precio;
     //Article.Total = Article.Sub_Total;
     let data = await this.restaurantOrderService.addProduct(Article,this.Pedido.Id_Pedido);
-    let identity = data["data"][0]["Identity"];
+    let identity = data["Identity"];
 
     //Agregar los Componentes y del Artículo
     for (let ComponenteInterno of this.Componentes){
@@ -1029,7 +1047,7 @@ export class PlanoComponent implements OnInit {
         if(Componente['Selected'] == 1){
           Componente['Id_Pedido_Detalle'] = identity;
           let detalle = await this.restaurantOrderService.addComponente(Componente);
-        }
+          this.cd.detectChanges();}
       }
     }
     //Agregar los Adicionales
@@ -1126,7 +1144,7 @@ export class PlanoComponent implements OnInit {
           this.factura.Plazo_Credito = '0';
 
           let data = await this.invoiceService.insertClient(this.factura);
-          this.factura.Id_Cliente = data["data"][0]["Identity"];
+          this.factura.Id_Cliente = data["Identity"];
         }
       }else{
         this.PantallaLoading = false;
@@ -1197,7 +1215,8 @@ export class PlanoComponent implements OnInit {
     this.cerrarPantallaCambarMesa();
     await this.LeerPedidosAbiertosMesa();
     this.CerrarPantallaInfoCuenta();
-  }
+  
+    this.cd.detectChanges();}
   async validarCuentaParcial(){
     let Parcial = false;
     for (let i = 0; i < this.OrderProducts.length; i++) {
@@ -1262,89 +1281,96 @@ export class PlanoComponent implements OnInit {
       }
     }
   }
-  async facturar(){
+  async facturar() {
     if (!navigator.onLine) {
       Swal.fire('No hay internet, revise la conexion');
       return false;
     }
-    //Validar el Email
-    if(this.factura.Tipo_Documento == '01'){
-      const expression: RegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
-      const result: boolean = expression.test(this.factura.Correo);
-      if(!result){
-        Swal.fire("El formato del correo es incorrecto, debe corregirlo");
-        return false;
-      } 
-      //Eliminar blancos al final y al principio de la cedula
-      this.factura.Numero_Identificacion.trim();
-
-      const regex = /^[0-9]*$/;
-      const onlyNumbers = regex.test(this.factura.Numero_Identificacion); // true
-      if(!onlyNumbers){
-        Swal.fire("El formato de la cedula solo debe tener numeros, debe corregirlo");
-        return false;
-      } 
-    } 
+  
     this.PantallaLoading = true;
-    for (let Orden of this.OrderProducts){
-      Orden.Facturar = Orden.Nueva_Cantidad;
-    }
-    //Validar si es de crédito debe ser por fuerza tiquete electrónico.
-    if(this.factura.Tipo_Documento == '04'){
-      if(this.factura.Condicion_Venta == '02'){
-        Swal.fire('La Condición de Crédito solo puede aplicarse a factura no a tiquete electrónico');
+  
+    try {
+      if(this.factura.Tipo_Documento == '01'){
+        const expression: RegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+        const result: boolean = expression.test(this.factura.Correo);
+        if(!result){
+          Swal.fire("El formato del correo es incorrecto, debe corregirlo");
+          return false;
+        }
+  
+        const regex = /^[0-9]*$/;
+        const onlyNumbers = regex.test(this.factura.Numero_Identificacion);
+        if(!onlyNumbers){
+          Swal.fire("La cédula solo debe tener números");
+          return false;
+        } 
+      }
+  
+      for (let Orden of this.OrderProducts){
+        Orden.Facturar = Orden.Nueva_Cantidad;
+      }
+  
+      if(this.factura.Tipo_Documento == '04' && this.factura.Condicion_Venta == '02'){
+        Swal.fire('La Condición de Crédito solo aplica a facturas, no tiquetes');
         return false;
       }
-    }else{
-      if(this.factura.Condicion_Venta == '02'){
-        //Actualizar el Id del cliente en el pedido
-        await this.planoService.ActualizarIdClientePedido(this.Pedido.Id_Pedido,this.factura.Id_Cliente);
+  
+      if(this.factura.Condicion_Venta == '02' && this.factura.Tipo_Documento !== '04'){
+        await this.planoService.ActualizarIdClientePedido(this.Pedido.Id_Pedido, this.factura.Id_Cliente);
       }
-    }
-    //Validar si no se esta facturando el total Si es así entonces copiar la orden y facturar el monto ajustado
-    await this.validarCuentaParcial();
-    //return false;
-    await this.calcularTotalFactura();
-    //Validar que exista metodo de pago y monto seleccionado
-    if(this.Pedido.Monto_Pagado == 0){
-      this.Pedido.Monto_Pagado = Math.round(this.Pedido.Total);
-    }
-    this.facturando = true;
-    //Actualizar Nombre de Cliente
-    await this.ActualizarDatosOrden();
-    this.cerrarPantallaFacturar();
-    this.CerrarPantallaInfoCuenta();
-    await this.LeerPedidosAbiertosMesa();
-    //Determinar si no hay ordenes abiertas
-    if(this.Pedidos.length == 0){
-      this.CerrarPantallaCuentas();
-      await this.restaurantOrderService.placeFree(this.Mesa.Id_Mesa);
-      this.loadPlaces();
-    }
-    if(this.Pedido.Metodo_Pago != '99'){
-      //Generar Factura
-      await this.generarFacturaElectronica();
-    }else{
-      //Ejecutar interfaz inventario.
-      if(this.factura.Condicion_Venta == '02'){
-        //Generar Cuenta por cobrar
-        await this.apiService.postRecord('Call sp_Res_Crear_CxC(' + this.Pedido.Id_Pedido+ ')' );
+  
+      await this.validarCuentaParcial();
+      await this.calcularTotalFactura();
+  
+      if(this.Pedido.Monto_Pagado == 0){
+        this.Pedido.Monto_Pagado = Math.round(this.Pedido.Total);
       }
-      await this.apiService.postRecord('Call sp_Inv_Movimiento_Pedido_Restaurante(' + this.Pedido.Id_Pedido+ ')' );
-      // Actulizar Saldo de Caja
-      await this.planoService.actualizarSaldoCaja(this.Pedido.Total);
+  
+      this.facturando = true;
+  
+      await this.ActualizarDatosOrden();
+      this.cerrarPantallaFacturar();
+      this.CerrarPantallaInfoCuenta();
+      await this.LeerPedidosAbiertosMesa();
+  
+      if(this.Pedidos.length == 0){
+        this.CerrarPantallaCuentas();
+        await this.restaurantOrderService.placeFree(this.Mesa.Id_Mesa);
+        await this.loadPlaces();
+      }
+  
+      if(this.Pedido.Metodo_Pago != '99'){
+        await this.generarFacturaElectronica();
+      } else {
+        if(this.factura.Condicion_Venta == '02'){
+          await this.apiService.postRecord('Call sp_Res_Crear_CxC(' + this.Pedido.Id_Pedido+ ')' );
+        }
+        await this.apiService.postRecord('Call sp_Inv_Movimiento_Pedido_Restaurante(' + this.Pedido.Id_Pedido+ ')' );
+        await this.planoService.actualizarSaldoCaja(this.Pedido.Total);
+      }
+  
+      const cajaDiaria = {
+        Id_Caja: localStorage.getItem('Id_Caja'),
+        Id_Caja_Diaria: localStorage.getItem('Id_Caja_Diaria'),
+        Id_Pedido: this.Pedido.Id_Pedido
+      }
+      
+      await this.planoService.actualizarCajaPedido(cajaDiaria);
+      this.imprimirTiqueteElectronico();
+      this.cerrarPantallaFacturar();
+      this.PantallaLoading = false;
+      this.cd.detectChanges(); 
+    } catch (error) {
+      console.error("❌ Error al facturar:", error);
+      Swal.fire("Ocurrió un error durante la facturación");
+    } finally {
+      this.PantallaLoading = false;
     }
-    //Agregarle al pedido el numero de caja y Caja diaria al cuál está asociado.
-    let cajaDiaria = {
-      Id_Caja: localStorage.getItem('Id_Caja'),
-      Id_Caja_Diaria: localStorage.getItem('Id_Caja_Diaria'),
-      Id_Pedido:this.Pedido.Id_Pedido
-    }
-    await this.planoService.actualizarCajaPedido(cajaDiaria);
-    this.imprimirTiqueteElectronico();
-    this.PantallaLoading = false;
+  
     return true;
   }
+
+  
   async ActualizarDatosOrden(){
     this.calcularTotal();
     if(this.factura.Nombre  ==''){
@@ -1425,7 +1451,6 @@ export class PlanoComponent implements OnInit {
       await this.apiService.postRecord('Call sp_Inv_Movimiento_Pedido_Restaurante(' + this.Pedido.Id_Pedido+ ')' );
       // Actulizar Saldo de Caja
       await this.planoService.actualizarSaldoCaja(this.Pedido.Total);
-
     }else{
       await this.calcularTotal();
       let Invoice = {
@@ -1446,10 +1471,11 @@ export class PlanoComponent implements OnInit {
         Tipo_Cambio:this.tipoCambio.venta,
         Sistema_Origen:'RES',
         Registro_Origen:this.Pedido.Id_Pedido,
-        Notas: 'Rest-Orden:'+ this.Mesa.Id_Mesa + '-'+this.Pedido.Id_Pedido
+        Notas: 'Rest-Orden:'+ this.Mesa.Id_Mesa + '-'+this.Pedido.Id_Pedido,
+        Id_Caja_Diaria:localStorage.getItem('Id_Caja_Diaria')
       }
       let data = await this.invoiceService.insertHeader(Invoice, this.Caja,this.Exoneracion);
-      Invoice.Id_Factura = data["data"][0]["Identity"];
+      Invoice.Id_Factura = data["Identity"];
       //Actualizar el Id de la factura en el pedido
       await this.restaurantInvoiceService.UpdateIdFactura(Invoice.Id_Factura,this.Pedido.Id_Pedido);
       for (let i = 0; i < this.OrderProducts.length; i++) {
@@ -1461,6 +1487,10 @@ export class PlanoComponent implements OnInit {
       if(this.Regimen !== '3' ){
         this.PantallaLoading = false;
         this.AplicandoFacturaHacienda(Invoice.Id_Factura);
+      }
+      //Si es Efectivo actualizar Saldo de caja
+      if(this.Pedido.Metodo_Pago == '01'){
+        await this.planoService.actualizarSaldoCaja(this.Pedido.Total);
       }
     }
   }
@@ -1675,7 +1705,8 @@ export class PlanoComponent implements OnInit {
     // this.SaveArticle(this.Article);
     this.agregarArticulo(this.Articulo);
     this.PantallaAdicionales = false;
-  }
+  
+    this.cd.detectChanges();}
   closePantallaAdicionales(){
     this.PantallaAdicionales = false;
   }
@@ -1884,10 +1915,10 @@ export class PlanoComponent implements OnInit {
     this.PantallaLoading =true;
     // Cuenta Nuevo
     if(this.Pedido.Id_Nuevo_Pedido == '-99'){
-      //Cuenta No existe
-      
+      //Cuenta No existe 
       await this.CrearPedidoNuevo();
     }
+    
     //Actualizar cada uno de los productos al pedido existente.
     await this.ActualizarProductosAPedidoExistente();
     // Pedido Actual
@@ -1899,6 +1930,8 @@ export class PlanoComponent implements OnInit {
     //Cargar Las cuentas
     await this.LeerPedidosAbiertosMesa(this.Mesa.Id_Mesa);
     this.PantallaLoading = false;
+    this.cd.detectChanges();
+
   }
   async CrearPedidoNuevo(){
     let cuenta = {
@@ -1906,6 +1939,7 @@ export class PlanoComponent implements OnInit {
       Id_Zona: this.Pedido.Id_Nueva_Zona,
       Nombre: this.Pedido.Nombre + '1',
       Servicio:this.Pedido.Servicio,
+      Id_Caja: localStorage.getItem('Id_Caja'),
       Estado:1
     }
     let data = await this.planoService.NuevaCuenta(cuenta);
@@ -2028,5 +2062,25 @@ export class PlanoComponent implements OnInit {
     //Actualizar los Totales del Pedido
     await this.restaurantOrderService.UpdateOrderTotal(Sub_Total,IVA,Total,this.Pedido.Id_Nuevo_Pedido); 
   }
-
+  trackById(index: number, item: any): any {
+    return item.Id_Mesa || item.Id || item.id || index;
+  }
+  getImagenMesa(mesa: any): string {
+    const basePath = '../assets/';
+    let tipo = mesa.Tipo;    // 1 = mesa, 2 = silla
+    let estado = mesa.Estado; // 1 = ocupada, 2 = reservada, 3 = libre
+  
+    if (tipo == 2) {
+      if (estado == 1) return basePath + 'sillaocupada.webp';
+      if (estado == 2) return basePath + 'sillalibre.webp';
+      return basePath + 'sillalibre.webp';
+    } else {
+      if (estado == 1) return basePath + 'mesaocupada.webp';
+      if (estado == 2) return basePath + 'mesalibre.webp';
+      return basePath + 'mesalibre.webp';
+    }
+  }
 }
+
+
+  

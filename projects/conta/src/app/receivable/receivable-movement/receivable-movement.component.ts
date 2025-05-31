@@ -233,7 +233,7 @@ export class ReceivableMovementComponent implements OnInit {
     let data:any;
     if(this.Movement.Id_Movimiento == ""){
       data = await this.receivableMovementService.newMovement(this.Movement);
-      this.Movement.Id_Movimiento = data["data"][0]["Identity"];
+      this.Movement.Id_Movimiento = data["Identity"];
     }else{
       data = await this.receivableMovementService.updateMovement(this.Movement);
     }

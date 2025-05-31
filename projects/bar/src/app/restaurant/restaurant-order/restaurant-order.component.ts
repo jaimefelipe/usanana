@@ -163,7 +163,7 @@ export class RestaurantOrderComponent implements OnInit {
     }
     let data = await this.restaurantOrderService.newOrder(this.Pedido);
     if(data['total'] == 1){
-      this.Pedido.Id_Pedido = data['data'][0]['Identity'];
+      this.Pedido.Id_Pedido = data['Identity'];
     }
   }
   async cancel(pantalla){
@@ -426,7 +426,7 @@ export class RestaurantOrderComponent implements OnInit {
     //seleccionarTipoCuenta
     Article.Total = Article.Precio
     let data = await this.restaurantOrderService.addProduct(Article,this.Pedido.Id_Pedido);
-    let identity = data["data"][0]["Identity"];
+    let identity = data["Identity"];
     //Agregar los Componentes y del Artículo
     for (let ComponenteInterno of this.Componentes){
       for (let Componente of ComponenteInterno){

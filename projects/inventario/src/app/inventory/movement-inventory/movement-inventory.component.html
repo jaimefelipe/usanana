@@ -29,7 +29,7 @@
                 <span *ngIf="Movement.Tipo_Movimiento == '04'" class="text-danger"> Nota Crédito (+) </span>
               </h4>
               <p><b>{{Movement.Nombre }}</b></p>
-              Origen : {{Movement.Sistema_Origen}} - {{Movement.Id_Factura}}
+              Origen : {{Movement.Sistema_Origen}} - {{Movement.Id_Factura}} Creado:  {{Movement.Creado_Por}}
 
               Estado :
               <span *ngIf="Movement.Estado == '0'" class="text-primary"> Registrado</span>

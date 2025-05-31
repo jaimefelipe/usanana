@@ -218,7 +218,7 @@ export class PayableDocumentComponent implements OnInit {
     let data:any;
     if(this.Documento.Id_Documento == ""){
       data = await this.payableDocumentService.newDocument(this.Documento);
-      this.Documento.Id_Documento = data["data"][0]["Identity"];
+      this.Documento.Id_Documento = data["Identity"];
     }else{
       data = await this.payableDocumentService.updateDocument(this.Documento);
     }
@@ -251,11 +251,11 @@ export class PayableDocumentComponent implements OnInit {
   }
   async InsertarDetalle(i){
     let data = await this.payableDocumentService.newDetail(this.Detalles[i],this.Documento.Id_Documento);
-    this.Detalles[i].Id_Documento_Detalle = data["data"][0]["Identity"];
+    this.Detalles[i].Id_Documento_Detalle = data["Identity"];
     if(i > 0){
       this.ListaDetalles = this.ListaDetalles + ',';
     }
-    this.ListaDetalles = this.ListaDetalles + String(data['data'][0]['Identity']);
+    this.ListaDetalles = this.ListaDetalles + String(data['Identity']);
   }
   async UpdateDetalle(i){
     await this.payableDocumentService.UpdateDetail(this.Detalles[i]);

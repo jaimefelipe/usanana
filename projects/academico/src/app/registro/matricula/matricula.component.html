@@ -177,22 +177,17 @@
         </div>
         <form>
           <div class="form-row">
-            <div class="form-group col-12 col-sm-6" *ngFor="let Alumno of Alumnos;let i = index">
+            <div class="form-group col-12" *ngFor="let Alumno of Alumnos;let i = index">
               <div class="card">
                 <a (click)="seleccionarAlumno(Alumno)">
                   <div class="card-body">
-
                     <h4 class="card-title">{{Alumno.Nombre}}</h4>
-
-
                   </div>
                 </a>
               </div>
             </div>
           </div>
         </form>
-
-
       </div>
     </div>
 

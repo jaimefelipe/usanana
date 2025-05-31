@@ -1,0 +1,28 @@
+<form>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+          </div>
+          <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+            placeholder="Buscar">
+          
+        </div>
+      </div>
+    </div>
+    <form>
+      <div class="form-row">
+        <div class="form-group col-12" *ngFor="let materia of MateriasPendientes;let i = index">
+          <a >
+            <div class="card">
+              <div class="card-body">
+                <h4 class="card-title">{{materia.CodigoCurso}} - {{materia.Curso}} </h4>
+                 {{materia.Codigo}} -  {{materia.Carrera}}
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </form>
+  </form>

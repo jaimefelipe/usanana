@@ -5,6 +5,7 @@ import { PeriodoAcademicoComponent } from './periodo-academico/periodo-academico
 import { RegistroRoutingModule } from './registro-routing.module';
 import { GrupoAcademicoComponent } from './grupo-academico/grupo-academico.component';
 import { MatriculaComponent } from './matricula/matricula.component';
+import { ReportesRegistroComponent } from './reportes-registro/reportes-registro.component';
 
 @NgModule({
   imports: [
@@ -12,6 +13,6 @@ import { MatriculaComponent } from './matricula/matricula.component';
     CommonModule,
     RegistroRoutingModule
   ],
-  declarations: [PeriodoAcademicoComponent,GrupoAcademicoComponent,MatriculaComponent]
+  declarations: [PeriodoAcademicoComponent,GrupoAcademicoComponent,MatriculaComponent,ReportesRegistroComponent]
 })
 export class RegistroModule { }

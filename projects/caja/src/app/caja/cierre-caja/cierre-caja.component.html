@@ -52,10 +52,11 @@
     <div class="tab">
         <button [ngClass]='TotalesClass' (click)="activarTotales()" >Cobros</button>
         <button [ngClass]='ProductosClass' (click)="activarProductos()" >Productos</button>
+        <button [ngClass]='ProductosPivoteClass' (click)="activarProductosPrivote()" >Productos Dia</button>
         <button [ngClass]='EntradasClass' (click)="activarEntradas()">Entradas</button>
         <button [ngClass]='SalidasClass' (click)="activarSalidas()">Salidas</button>
     </div>
-
+    <!-- 
     <form [hidden]="!TotalesActivo">
         <div class="form-row">
 
@@ -81,6 +82,53 @@
             </div>
         </div>
     </form>
+-->
+    <form [hidden]="!TotalesActivo">
+      <div class="form-row">
+    
+        <!-- Tabla para informe original -->
+        <div class="form-group col-md-6" *ngIf="esInformeHija()">
+          <label>Cobros según forma de cobro</label>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Forma de Cobro</th>
+                <th class="text-right">Monto</th>
+              </tr>
+            </thead>
+            <tbody *ngFor="let Total of Totales; let i = index">
+              <tr>
+                <th>{{Total.id}}</th>
+                <td>{{Total.Tipo}}</td>
+                <td class="text-right">{{Total.Monto}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+    
+        <!-- Tabla para casa matriz -->
+        <div class="form-group col-md-12" *ngIf="esInformeMatriz()">
+          <label>Consolidado por empresa</label>
+          <table class="table table-bordered table-sm">
+            <thead>
+              <tr>
+                <th>Método</th>
+                <th *ngFor="let columna of columnasMatriz">{{ columna }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let fila of Totales">
+                <td>{{ fila.Metodo }}</td>
+                <td *ngFor="let columna of columnasMatriz" class="text-right">{{ fila[columna] | number:'1.2-2' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+    
+      </div>
+    </form>
+
 
     <form [hidden]="!ProductosActivo">
         <div class="form-row">
@@ -116,6 +164,38 @@
             </div>
         </div>
     </form>
+
+
+  <form [hidden]="!ProductosActivoPivote">
+  
+    <div class="form-row">
+    <div class="form-group col-md-12">
+      Productos Vendidos
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Categoria</th>
+            <th>Producto</th>
+            <th *ngFor="let fecha of fechas">{{ fecha }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of ProductosPivote; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ p.Categoria }}</td>
+            <td>{{ p.Producto }}</td>
+            <td *ngFor="let fecha of fechas" class="text-right">
+              {{ p[fecha] || 0 }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  </form>
+
 
     <form [hidden]="!EntradasActivo">
         <div class="form-row">

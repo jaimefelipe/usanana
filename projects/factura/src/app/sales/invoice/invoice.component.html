@@ -150,8 +150,8 @@
 
     <div [hidden]="POV && Invoice.Tipo_Documento == '04'" class="form-row ">
       <!-- Inicio de Segunda división -->
-      <div class="form-group col-12 col-md-4">
-        <label>Cliente</label>{{Invoice.Actividad_Economica}}
+      <div class="form-group col-12 col-md-3">
+        <label>Cliente</label>
         <div class="input-group">
           <input [disabled]="Invoice.Respuesta_MH !='Registrado'" [(ngModel)]="Invoice.Numero_Identificacion"
             name="Numero_Identificacion" type="input" (blur)='IdValidation()' (keydown)="enterValidation($event)"
@@ -164,10 +164,20 @@
           </div>
         </div>
       </div>
-      <div class="form-group col-md-7">
+      <div class="form-group col-md-6">
         <label>Nombre del Cliente</label>
         <input [disabled]="Invoice.Respuesta_MH !='Registrado'" [(ngModel)]="Invoice.Nombre" name="Nombre" Id="NombreCliente" type="input"
           class="form-control" placeholder="Nobre del Cliente">
+      </div>
+      <div class="col-6 col-md-2">
+        <label>Consecutivo</label>
+        <div class="input-group mb-1">
+          <div class="input-group-prepend">
+            <div class="input-group-text">#</div>
+          </div>
+          <input [(ngModel)]="Invoice.Consecutivo" name="Consecutivo" disabled="true" type="text"
+            class="form-control" placeholder="Id_Factura">
+        </div>
       </div>
 
       <div class="form-group col-md-1">
@@ -182,8 +192,13 @@
           <input [disabled]="Invoice.Respuesta_MH !='Registrado'" id="Correo" [(ngModel)]="Invoice.Correo" name="Correo"
             type="input" class="form-control" placeholder="Correo">
         </div>
+        <div class="form-group col-md-3">
+          <label>Correo</label>
+          <input [disabled]="Invoice.Respuesta_MH !='Registrado'" id="Correo" [(ngModel)]="Invoice.Correo2" name="Correo2"
+            type="input" class="form-control" placeholder="Correo 2">
+        </div>
 
-        <div class="form-group col-6 col-md-3">
+        <div class="form-group col-6 col-md-2">
           <label for="inputPassword4">Tipo Identificacion</label>
           <select [(ngModel)]="Invoice.Codigo_Identificacion" name="Codigo_Identificacion"
           [disabled]="Invoice.Respuesta_MH !='Registrado'" class="form-control">
@@ -208,16 +223,7 @@
           <input [(ngModel)]="Invoice.Plazo_Credito" name="Plazo_Credito"
             [disabled]="Invoice.Respuesta_MH !='Registrado'" type="text" class="form-control" placeholder="Plazo">
         </div>
-        <div class="col-6 col-md-2">
-          <label>Consecutivo</label>
-          <div class="input-group mb-1">
-            <div class="input-group-prepend">
-              <div class="input-group-text">#</div>
-            </div>
-            <input [(ngModel)]="Invoice.Consecutivo" name="Consecutivo" disabled="true" type="text"
-              class="form-control" placeholder="Id_Factura">
-          </div>
-        </div>
+       
        
         <div class="col-12">
           <label>Notas</label>
@@ -372,7 +378,7 @@
             class="btn btn-info" title="Cancela edicion">Tiquete</button>
         </div>
         <div [hidden]="POV" class="form-group col-3 col-md-2">
-          <button *ngIf="Invoice.Respuesta_MH !='Registrado'" (click)="imprimirCotizacion()" type="button"
+          <button *ngIf="Invoice.Respuesta_MH =='Registrado'" (click)="imprimirCotizacion()" type="button"
             class="btn btn-info" title="Cotización">Cotiza</button>
         </div>
         <div class="form-group col-3 col-md-2">

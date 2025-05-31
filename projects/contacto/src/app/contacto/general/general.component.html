@@ -2,7 +2,7 @@
     <div >
         <div class="form-row">
          
-        <div class="form-group col-md-4">
+        <div class="form-group col-md-2">
             <label for="name">Estado</label>
             <!-- [disabled]="Persona.Empleado !='1'"  -->
             <select  [(ngModel)]="Persona.Estado" name="Estado" class="form-control">
@@ -61,7 +61,7 @@
             <input [(ngModel)]="Persona.Posicion" name="Posicion" type="text" placeholder="Posicion" class="form-control">
         </div>
         <!--[hidden]="Persona.Prospecto == '1'" -->
-        <div class="form-group col-md-6">
+        <div class="form-group col-md-2">
             <label for="name">Tipo de Identificacion</label>
             <select [(ngModel)]="Persona.Tipo_Identificacion" name="Tipo_Identificacion" class="form-control">
             <option value='01'>Cedula Fisica</option>
@@ -70,20 +70,50 @@
             <option value='04'>NITE</option>
             </select>
         </div>
-        <div  class="form-group col-md-6">
+        <div  class="form-group col-md-4">
             <label>Identificacion</label>
             <input [(ngModel)]="Persona.Identificacion" name="Identificacion" type="text" placeholder="Identificación"
             class="form-control">
         </div>
-        <div class="form-group col-md-6">
+        <div class="form-group col-md-2">
             <label>Teléfono</label>
             <input [(ngModel)]="Persona.Telefono" name="Telefono" type="text" placeholder="Teléfono"
             class="form-control">
         </div>
-        <div class="form-group col-md-6">
+        <div class="form-group col-md-4">
             <label>Correo</label>
             <input [(ngModel)]="Persona.Correo" name="Correo" type="text" placeholder="Correo" class="form-control">
         </div>
+        <div class="form-group col-md-4">
+          <label>Correo 2</label>
+          <input [(ngModel)]="Persona.Correo2" name="Correo2" type="text" placeholder="Correo 2" class="form-control">
+        </div>
+
+        <div class="form-group col-md-2">
+          <label>Genero</label>
+          <select [(ngModel)]="Persona.Genero" name="Genero" class="form-control">
+              <option value='1'>Masculino</option>
+              <option value='2'>Femenino</option>
+          </select>
+        </div>
+
+        <div class="form-group col-md-2">
+            <label>Estado Civil</label>
+            <select [(ngModel)]="Persona.Estado_Civil" name="Estado_Civil" class="form-control">
+                <option value='1'>Soltero</option>
+                <option value='2'>Casado</option>
+                <option value='3'>Viudo</option>
+                <option value='4'>Divorciado</option>
+                <option value='5'>Union Libre</option>
+            </select>
+        </div>
+        <div class="form-group col-md-4">
+            <label>Nacionalidad</label>
+            <select [(ngModel)]="Persona.Id_Nacionalidad" name="Nacionalidades" class="form-control">
+                <option *ngFor="let nacionalidad of Nacionalidades" value={{nacionalidad.Id_Nacionalidad}}>{{nacionalidad.Nacionalidad}}</option>
+              </select>
+        </div>
+
         <div class="form-group col-md-6">
             <label>Pagina Web</label>
             <input [(ngModel)]="Persona.Pagina_Web" name="Pagina_Web" type="text" placeholder="Pagina_Web" class="form-control">

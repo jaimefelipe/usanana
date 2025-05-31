@@ -14,6 +14,9 @@ import { NotasComponent } from './notas/notas.component';
 import { CobroComponent } from './cobro/cobro.component';
 import { TareasComponent } from './tareas/tareas.component';
 import { RollComponent } from './roll/roll.component';
+import { CarrerasContactoComponent } from './carreras-contacto/carreras-contacto.component';
+import { CursosContactoComponent } from './cursos-contacto/cursos-contacto.component';
+import { CursosPendientesContactoComponent } from './cursos-pendientes-contacto/cursos-pendientes-contacto.component';
 
 
 @NgModule({
@@ -25,6 +28,6 @@ import { RollComponent } from './roll/roll.component';
     FormsModule,
     ContactoRoutingModule
   ],
-  declarations: [ContactoComponent,MarcasComponent, GeneralComponent, DireccionComponent, VentaComponent, ContactosComponent, NotasComponent,CobroComponent,TareasComponent,RollComponent]
+  declarations: [ContactoComponent,MarcasComponent, GeneralComponent, DireccionComponent, VentaComponent, ContactosComponent, NotasComponent,CobroComponent,TareasComponent,RollComponent,CarrerasContactoComponent,CursosContactoComponent,CursosPendientesContactoComponent]
 })
 export class ContactoModule { }

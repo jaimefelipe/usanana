@@ -160,6 +160,7 @@ export class MatriculaComponent implements OnInit {
   }
   async cargarMatriculas(){
     let data = await this.matriculaService.cargarMatriculas(this.paginacion,this.searchField);
+    console.log(data)
     if(data['total'] == 0){
       this.Matriculas = [];
     }else{
@@ -227,7 +228,7 @@ export class MatriculaComponent implements OnInit {
       data = await this.matriculaService.ActualizarMatricual(this.Matricula);
     }
     if(data['success'] == 'true'){
-      this.Matricula.Id_Matricula = data['data'][0]['Identity']
+      this.Matricula.Id_Matricula = data['Identity'];
       this.cargarMatriculas();
       //jaime
       //this.cargarMatriculaDetalle(this.Matricula.Id_Matricula)
@@ -247,7 +248,7 @@ export class MatriculaComponent implements OnInit {
     this.PantallaAlumnos = true;
   }
   async cargarAlumnos(){
-    let data = await this.contactoService.loadPersonas(this.paginacion,this.searchField,4);
+    let data = await this.contactoService.loadPersonas(this.paginacion,this.searchFieldAlumnos,4);
     if(data['total'] == 0){
       this.Alumnos = [];
     }else{

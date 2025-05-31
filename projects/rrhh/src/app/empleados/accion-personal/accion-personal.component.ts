@@ -262,7 +262,7 @@ export class AccionPersonalComponent implements OnInit {
     }
     let data = await this.AccionPersonalService.grabarAccion(this.Accion);
     if(this.Accion.Id_Accion_Personal == ''){
-      this.Accion.Id_Accion_Personal = data['data'][0]['Identity'];
+      this.Accion.Id_Accion_Personal = data['Identity'];;
     }
     Swal.fire({
       title: 'Desea Aplicar la Accion?',

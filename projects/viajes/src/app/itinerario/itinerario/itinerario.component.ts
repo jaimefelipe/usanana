@@ -405,7 +405,7 @@ export class ItinerarioComponent implements OnInit {
     let data = await this.itinerarioService.NuevoItinerario(this.Itinerario);
     if(data['success'] == "true"){
       Swal.fire('Información actualizada');
-      this.Itinerario.Id_Itinerario = data["data"][0]["Identity"];
+      this.Itinerario.Id_Itinerario = data["Identity"];
     }
   }
   async ModificarItinerario(){

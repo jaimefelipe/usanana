@@ -234,9 +234,9 @@ export class CashierComponent implements OnInit {
         Estado:1
       }
       let CajaDiaria = await this.cashierService.crearRegistroDiario(Caja);
-      localStorage.setItem('Id_Caja_Diaria',CajaDiaria['data'][0]['Identity']);
+      localStorage.setItem('Id_Caja_Diaria',CajaDiaria['Identity']);
 
-      let data = await this.cashierService.abrirCaja(this.Caja,localStorage.getItem('Id_Usuario'),CajaDiaria['data'][0]['Identity']);
+      let data = await this.cashierService.abrirCaja(this.Caja,localStorage.getItem('Id_Usuario'),CajaDiaria['Identity']);
       localStorage.setItem('Id_Caja',this.Caja.Id_Caja);
 
 

@@ -97,14 +97,18 @@ export class SignupService {
         Empresa:false
       }
       let empresa = await this.apiService.insertRecord(sqlEmpresa);
+      
       if(empresa['total']==1){
-        this.Id_Empresa = empresa['data'][0]['Identity'];
+        this.Id_Empresa = empresa['Identity'];
         localStorage.setItem("Id_Empresa",this.Id_Empresa)
       }else{
         alert('Problema generando Empresa');
         return false
       }
       return true;
+    }else{
+      this.Id_Empresa = empresaExiste['data'][0]['Id_Empresa'];
+      localStorage.setItem("Id_Empresa",this.Id_Empresa)
     }
     return true;
   }
@@ -124,13 +128,8 @@ export class SignupService {
         Empresa:false
       }
       let sucursal = await this.apiService.insertRecord(sqlSucursal);
-      if(sucursal['total']==1){
-        this.Id_Sucursal = sucursal['data'][0]['Identity'];
-        return sucursal;
-      }else{
-        alert('Problema generando Empresa');
-        return false
-      }
+      this.Id_Sucursal = sucursal['Identity'];
+      return sucursal;
     }else{
       return empresaSucursal;
     }
@@ -142,7 +141,7 @@ export class SignupService {
     if(!this.Id_Sucursal){
       let sql = "SELECT Id_Sucursal from Gen_Sucursal Where Id_Empresa = " + this.Id_Empresa;
       let empresaSucursal = await this.apiService.postRecord(sql);
-      this.Id_Sucursal = empresaSucursal['data'][0]['Id_Sucursal'];
+      this.Id_Sucursal = empresaSucursal['Id_Sucursal'];
     }
     //Generar Caja
     let sql = "SELECT Id_Caja from Ven_Caja Where Id_Empresa = " + this.Id_Empresa;
@@ -156,7 +155,7 @@ export class SignupService {
       }
       let sucursal = await this.apiService.insertRecord(sqlCaja);
       if(sucursal['total']==1){
-        this.Id_Sucursal = sucursal['data'][0]['Identity'];
+        this.Id_Sucursal = sucursal['Identity'];
         return sucursal;
       }else{
         alert('Problema generando Empresa');
@@ -174,29 +173,18 @@ export class SignupService {
       values: "'" + userName + "','" + user.clave1 + "','" + user.nombre + "','" + user.correo + "',1",
       Empresa:false
     }
-    let data = await this.apiService.insertRecord(sqlConf);
-    if(data['total']==1){
-      let Id_Usuario = data['data'][0]['Identity'];
-      this.Id_Usuario = Id_Usuario
-      //Asociar Usuario a Compañia
-      let sqlUsuarioCia = {
-        table:'Seg_Usuario_Empresa',
-        fields: 'Id_Usuario,Id_Empresa,Estado',
-        values: "'" + this.Id_Usuario + "','" + this.Id_Empresa + "',1",
-        Empresa:false
-      }
-      let UsuarioEmpresa = await this.apiService.insertRecord(sqlUsuarioCia);
-      if(UsuarioEmpresa['total']==1){
-        return this.Id_Usuario;
-      }else{
-        alert('Problema asociando usuario a empresa');
-        return false;
-      }
-    }else{
-      alert('Problema generando usuario');
-      return false;
+    let data = await this.apiService.insertRecord(sqlConf);   
+    let Id_Usuario = data['Identity'];
+    this.Id_Usuario = Id_Usuario
+    //Asociar Usuario a Compañia
+    let sqlUsuarioCia = {
+      table:'Seg_Usuario_Empresa',
+      fields: 'Id_Usuario,Id_Empresa,Estado',
+      values: "'" + this.Id_Usuario + "','" + this.Id_Empresa + "',1",
+      Empresa:false
     }
-    return true;
+    let UsuarioEmpresa = await this.apiService.insertRecord(sqlUsuarioCia);
+    return this.Id_Usuario;
   }
   async createUser(user:any){
     // Registro de un usuario Simple del sistema asociado a una compañia de tipo Personal.

@@ -403,7 +403,7 @@ export class CashierMovementComponent implements OnInit {
       this.Movement.Id_Caja = localStorage.getItem('Id_Caja');
       this.Movement.Id_Caja_Diaria = localStorage.getItem('Id_Caja_Diaria');
       let data = await this.cashierMovementService.insertHeader(this.Movement);
-      this.Movement.Id_Movimiento = data["data"][0]["Identity"];
+      this.Movement.Id_Movimiento = data["Identity"];
       for (let i = 0; i < this.Details.length; i++) {
         this.grabarUnDetalleFactura(i);
       }
@@ -510,7 +510,7 @@ export class CashierMovementComponent implements OnInit {
         this.Movement.Metodo_Pago = '01';
         this.Movement.Plazo_Credito = '0';
         let data = await this.invoiceService.insertClient(this.Movement);
-        this.Movement.Id_Cliente = data["data"][0]["Identity"];
+        this.Movement.Id_Cliente = data["Identity"];
         
       }else{
         this.PantallaLoading = false;

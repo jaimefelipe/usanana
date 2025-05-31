@@ -352,7 +352,7 @@ export class AsientoDiarioComponent implements OnInit {
 
     if(this.Asiento.Id_Asiento_Contable_Encabezado ==''){
       let data = await this.asientoDiarioService.insertAsientoEncabezado(this.Asiento);
-      this.Asiento.Id_Asiento_Contable_Encabezado = data["data"][0]["Identity"];
+      this.Asiento.Id_Asiento_Contable_Encabezado = data["Identity"];
     }else{
       await this.asientoDiarioService.updateAsientoEncabezado(this.Asiento);
     }
@@ -381,11 +381,11 @@ export class AsientoDiarioComponent implements OnInit {
   }
   async insertDetalle(indice:any){
     let data = await this.asientoDiarioService.insertAsientoDetalle(this.Detalles[indice]);
-    this.Detalles[indice]['Id_Asiento_Contable_Detalle'] = data["data"][0]["Identity"];
+    this.Detalles[indice]['Id_Asiento_Contable_Detalle'] =  data["Identity"];
     if(indice > 0){
       this.ListaDetalles = this.ListaDetalles + ',';
     }
-    this.ListaDetalles = this.ListaDetalles + String(data['data'][0]['Identity']);
+    this.ListaDetalles = this.ListaDetalles + String(data['Identity']);
   }
   async BorrarDetalles(){
     await this.asientoDiarioService.deleteDetails(this.Asiento.Id_Asiento_Contable_Encabezado,this.ListaDetalles);

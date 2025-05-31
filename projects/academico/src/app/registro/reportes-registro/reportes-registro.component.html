@@ -1,0 +1,34 @@
+<div class="container pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Reportes Contabilidad</h2>
+
+
+  <div class="card-body">
+    <div class="form-row">
+
+      <div class="form-group col-md-12">
+        <label>Seleccionar El Reporte a Generar</label>
+        <select [(ngModel)]="reporte" name="reporte" type="text" class="form-control">
+          <option value='1'>Estudiantes Activos</option>
+          <option value='2'>Estudiantes Inactivos</option>
+          <option value='3'>Candidatos a cursos por abrir</option>
+          <option value='4'>Candidatos a cursos por abrir en excell</option>
+
+        </select>
+      </div>
+
+
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-10">
+
+      </div>
+      <div class="col-md-2">
+        <button (click)="Reporte()" type="button" class="btn btn-primary">Procesar</button>
+      </div>
+    </div>
+
+
+  </div>
+
+</div>

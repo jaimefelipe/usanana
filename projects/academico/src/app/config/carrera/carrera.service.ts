@@ -8,7 +8,7 @@ export class CarreraService {
 
   constructor(private apiService: ApiService) { }
 
-  async cargarCarreras(paginacion,search?,Estado?) {
+  async cargarCarreras(paginacion?,search?,Estado?) {
     let estado = '';
     if(Estado == 1 || Estado == 0){
       estado = 'Estado ='+ Estado;
@@ -119,4 +119,20 @@ export class CarreraService {
     };
     return await this.apiService.updateRecord(sql);
   }
+
+  async leerCarrerasActivas(Id_Persona){
+    let sqlConfig = {
+      table: 'Edu_Carrera_Estudiante',
+      fields: 'Id_Carrera',
+      orderField: '',
+      searchField: '',
+      simple:true,
+      where: 'Estado = 1 and Id_Persona = ' + Id_Persona,
+      Empresa: false
+    };
+
+    return await this.apiService.executeSqlSyn(sqlConfig);
+     //this.leerCursosMatriculados();
+  }
+  
 }

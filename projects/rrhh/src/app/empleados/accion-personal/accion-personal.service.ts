@@ -31,7 +31,7 @@ export class AccionPersonalService {
     if(Accion.Id_Accion_Personal == ""){
     let sql = {
       table: 'Rhh_Accion_Personal',
-      fields: 'Id_Persona,Fecha_Accion,Tipo_Accion,Id_Puesto,Id_Departamento,Salario,Estado,Fecha_Inicio,Fecha_Fin,Jornada,Id_Roll,Nombre_Roll',
+      fields: 'Id_Persona,Fecha_Accion,Tipo_Accion,Id_Puesto,Id_Departamento,Salario,Estado,Fecha_Inicio,Fecha_Fin,Jornada,Id_Roll,Nombre_Roll,Tipo_Contrato',
       values: '\'' + Accion.Id_Persona
       + '\',\'' + Accion.Fecha_Accion
       + '\',\'' + Accion.Tipo_Accion

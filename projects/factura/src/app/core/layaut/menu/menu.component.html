@@ -22,7 +22,7 @@
     but hey, it's pure CSS magic.
     -->
       <ul  [hidden]="!showMenu" id="menu">
-        <a (click)="hideMenu()" [routerLink]="['/']"><li><i class="fa fa-home"></i> Inicio {{ambiente}} 2.5.16</li></a>
+        <a (click)="hideMenu()" [routerLink]="['/']"><li><i class="fa fa-home"></i> Inicio {{ambiente}} 2.5.20</li></a>
         <div [hidden]="!logedIn">
 
           <li [hidden]="!AppVentas" (click)="clickPersonaMenu()" ><a><i class="fa fa-hospital-o"></i>  Contactos <i [ngClass]='personaClass' class="fa fa-cog"></i>  </a></li>
@@ -46,6 +46,7 @@
           <ul [hidden]="!ventasMenu">
             <a (click)="hideMenu()" [hidden]="!AppVentas" [routerLink]="['/cajaventas']"><li><i class="fa fa-credit-card"></i> Cajas</li></a>
             <a (click)="hideMenu()" [hidden]="!AppVentas" [routerLink]="['/cajamovimiento']"><li><i class="fa fa-align-justify"></i> Movimiento de Cajas</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn " [routerLink]="['/cierrecaja']"><li><i class="fa fa-align-justify"></i> Cierre Caja</li></a>
             
             <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/existencias']"><li><i class="fa fa-shopping-basket"></i> Existencias</li></a>
             

@@ -306,7 +306,7 @@ export class TomaFisicaComponent implements OnInit {
     this.TomaFisica.Fecha = this.Fecha.year + '-' + this.Fecha.month + '-' +this.Fecha.day;
     let data = await this.tomaFisicaService.saveTomaFisica(this.TomaFisica);
     if(this.TomaFisica.Id_Toma_Fisica == ''){
-      this.TomaFisica.Id_Toma_Fisica = data["data"][0]["Identity"];
+      this.TomaFisica.Id_Toma_Fisica = data["Identity"];
     }
     let ListaDetalles = '';
     for (let i = 0; i < this.Details.length; i++) {
@@ -329,7 +329,7 @@ export class TomaFisicaComponent implements OnInit {
     Detalle.Id_Toma_Fisica = this.TomaFisica.Id_Toma_Fisica;
     let data = await this.tomaFisicaService.saveTomaFisicaDetalle(Detalle);
     if(Detalle.Id_Toma_Fisica_Detalle == ''){
-      ListaDetalles = ListaDetalles + String(data['data'][0]['Identity']);
+      ListaDetalles = ListaDetalles + String(data['Identity']);
     }else{
       ListaDetalles = ListaDetalles + String(Detalle.Id_Toma_Fisica_Detalle);
     }

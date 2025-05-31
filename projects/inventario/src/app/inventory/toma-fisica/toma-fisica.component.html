@@ -22,7 +22,7 @@
         <div class="card">
           <a (click)="editRecord(Asiento)">
             <div class="card-body">
-              Fecha: <b>{{Asiento.Fecha | date:'d/M/YYY'  }}</b> <!-- | date:'d/M/YYY' -->
+              Fecha: <b>{{Asiento.Fecha | date:'d/M/YYY'  }}</b> <!-- | date:'d/M/YYY' --> Creado: {{Asiento.Creado_Por}}
              Estado :
               <span *ngIf="Asiento.Estado == '0'" class="text-primary"> Registrado</span>
               <span *ngIf="Asiento.Estado == '1'" class="text-warning"> Aplicado</span>

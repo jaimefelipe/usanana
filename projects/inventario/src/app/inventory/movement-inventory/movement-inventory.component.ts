@@ -257,7 +257,6 @@ export class MovementInventoryComponent implements OnInit {
     };
   }
   processProduct(next, stop?) {
-
     if(this.PantallaProductos == true){
       return false;
     }
@@ -276,6 +275,7 @@ export class MovementInventoryComponent implements OnInit {
       }
     }
     if (next === "Codigo_Referencia") {
+      console.log('Llama Calcular Totales')
       this.calcularTotales();
     }
     /*
@@ -302,38 +302,44 @@ export class MovementInventoryComponent implements OnInit {
     element.focus();
   }
   calcularTotales() {
-    if(this.Detalle.Precio >0){
-      // Si es compra es el costo.
-      if(this.Movement.Tipo_Movimiento == '02' || this.Movement.Tipo_Movimiento == '04'){
-        this.Detalle.Sub_Total = this.Detalle.Cantidad * this.Detalle.Precio;
+    if (this.Detalle.Precio > 0) {
+      // Calcular Subtotal e IVA
+      this.Detalle.Sub_Total = this.Detalle.Cantidad * this.Detalle.Precio;
+  
+      if (this.Movement.Tipo_Movimiento == '02' || this.Movement.Tipo_Movimiento == '04') {
         this.Detalle.IVA = 0;
-        this.Detalle.Total = this.Detalle.Sub_Total;
-      }else{
-        this.Detalle.Sub_Total = this.Detalle.Cantidad * this.Detalle.Precio;
+      } else {
         this.Detalle.IVA = (this.Detalle.Sub_Total * this.Detalle.IVAPorcentaje) / 100;
-       
       }
+  
+      this.Detalle.Total = this.Detalle.Sub_Total + this.Detalle.IVA;
+  
+      // Solo agregar si hay un total válido
       if (this.Detalle.Total > 0) {
-        this.Details.push(this.Detalle);
+        this.Details.push({ ...this.Detalle }); // Copiar para evitar referencias
       }
     }
+  
+    // Reiniciar acumulados
     this.Movement.Sub_Total = 0;
     this.Movement.IVA = 0;
     this.Movement.Total = 0;
-    
+  
+    // Sumar totales
     for (let i = 0; i < this.Details.length; i++) {
-      this.Movement.Sub_Total = this.Movement.Sub_Total + parseFloat(this.Details[i]["Sub_Total"]);
-      if(this.Movement.Tipo_Movimiento == '02' || this.Movement.Tipo_Movimiento == '04'){
-        this.Movement.IVA = 0;
-      }else{
-        this.Movement.IVA = this.Movement.IVA + parseFloat(this.Details[i]["IVA"]);
+      this.Movement.Sub_Total += parseFloat(this.Details[i]["Sub_Total"]);
+      if (this.Movement.Tipo_Movimiento !== '02' && this.Movement.Tipo_Movimiento !== '04') {
+        this.Movement.IVA += parseFloat(this.Details[i]["IVA"]);
       }
-      this.Movement.Total = this.Movement.Sub_Total + this.Movement.IVA;
     }
-    this.initDetail();
+  
+    this.Movement.Total = this.Movement.Sub_Total + this.Movement.IVA;
+  
+    this.initDetail(); // limpiar
   }
 
   async obtenerProducto(producto, tipo) {
+    console.log(producto)
     let data = await this.productService.loadProduct(producto); 
     if (data['total'] === 0) {
       data = await this.productService.loadProductLike(producto);
@@ -395,7 +401,7 @@ export class MovementInventoryComponent implements OnInit {
       //Grabar encabezado de la factura
 
       let data = await this.movementInventoryService.insertHeader(this.Movement);
-      this.Movement.Id_Movimiento = data["data"][0]["Identity"];
+      this.Movement.Id_Movimiento = data["Identity"];
       for (let i = 0; i < this.Details.length; i++) {
         this.grabarUnDetalleFactura(i);
       }
@@ -412,7 +418,7 @@ export class MovementInventoryComponent implements OnInit {
           if(i > 0){
             ListaDetalles = ListaDetalles + ',';
           }
-          ListaDetalles = ListaDetalles + String(data['data'][0]['Identity']);
+          ListaDetalles = ListaDetalles + String(data['Identity']);
         }else{
           //3 Actualizar los detalles existentes.
           this.modificarUnDetalleFactura(i);

@@ -233,7 +233,7 @@ export class PayableMovementComponent implements OnInit {
     let data:any;
     if(this.Movement.Id_Movimiento == ""){
       data = await this.payableMovementService.newMovement(this.Movement);
-      this.Movement.Id_Movimiento = data["data"][0]["Identity"];
+      this.Movement.Id_Movimiento = data["Identity"];
     }else{
       data = await this.payableMovementService.updateMovement(this.Movement);
     }

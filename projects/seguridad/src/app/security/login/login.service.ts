@@ -25,7 +25,7 @@ export class LoginService {
       Empresa: false
     };
     let data = await this.apiService.executeSqlSyn(sqlUsuario);
-
+    
     if(!data['total']) return false;
     if(data['total'] == 0){
       return false;
@@ -42,34 +42,49 @@ export class LoginService {
       localStorage.setItem('ToxoSG', user[0].Ventas + '.'+user[0].Compras + '.'+user[0].Inventario + '.'+user[0].CXC + '.'+user[0].CXP + '.'+user[0].CG + '.'+user[0].BA + '.'+user[0].Restaurante + '.'+user[0].Transporte + '.'+user[0].Seguridad + '.'+user[0].Hospedaje + '.'+user[0].Turismo + '.'+user[0].Academico + '.'+user[0].Pov+ '.'+user[0].Proyecto);
       localStorage.removeItem('Id_Caja');
       
-      // obtener numero de caja abierta
+      // obtener numero de caja abierta si es cajero
       let sqlCaja = {
         table:'Ven_Caja',
         fields:'Id_Caja',
         Empresa: true,
-        where:'Estado = 1 and Id_Cajero ='+user[0].Id_Usuario
+        where:'Estado = 1 and Id_Cajero =' + user[0].Id_Usuario
       }
       let dataCaja = await this.apiService.executeSqlSyn(sqlCaja);
+
       if(dataCaja['total'] > 0){
         localStorage.setItem('Id_Caja',dataCaja['data'][0]['Id_Caja']);
       }else{
+        //Leer la ultima Caja ABierta no importa el usuario
+        let sqlCaja = {
+          table:'Ven_Caja',
+          fields:'Id_Caja',
+          Empresa: true,
+          where:'Estado = 1 '
+        }
+
+        dataCaja = await this.apiService.executeSqlSyn(sqlCaja);
+       
         localStorage.removeItem('Id_Caja');
       }
 
       // obtener la Caja Diaria ultima Caja que esta registrada.
-      let sqlCajaDiaria = {
-        table:'Ven_Caja_Diaria',
-        fields:'Id_Caja_Diaria',
-        Empresa: true,
-        where:"Estado = 1 and Id_Caja = "+dataCaja['data'][0]['Id_Caja'],
-        orderDirection: ' DESC ',
-        //+" and Id_Usuario ="+user[0].Id_Usuario
-      }
+      if(dataCaja['total'] > 0){
+        let sqlCajaDiaria = {
+          table:'Ven_Caja_Diaria',
+          fields:'Id_Caja_Diaria',
+          Empresa: true,
+          where:"Estado = 1 and Id_Caja = " + dataCaja['data'][0]['Id_Caja'],
+          orderDirection: ' DESC ',
+          //+" and Id_Usuario ="+user[0].Id_Usuario
+        }
 
-      let dataCajaDiaria = await this.apiService.executeSqlSyn(sqlCajaDiaria);
-      
-      if(dataCajaDiaria['total'] > 0){
-        localStorage.setItem('Id_Caja_Diaria',dataCajaDiaria['data'][0]['Id_Caja_Diaria']);
+        let dataCajaDiaria = await this.apiService.executeSqlSyn(sqlCajaDiaria);
+        
+        if(dataCajaDiaria['total'] > 0){
+          localStorage.setItem('Id_Caja_Diaria',dataCajaDiaria['data'][0]['Id_Caja_Diaria']);
+        }else{
+          localStorage.removeItem('Id_Caja_Diaria');
+        }
       }else{
         localStorage.removeItem('Id_Caja_Diaria');
       }

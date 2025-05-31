@@ -13,7 +13,7 @@ export class TomaFisicaService {
   async loadTomasFisicas(paginacion,search?,Estado?) {
     let sqlConfig = {
       table: 'Inv_Toma_Fisica',
-      fields: 'Id_Toma_Fisica,Fecha,Estado',
+      fields: 'Id_Toma_Fisica,Fecha,Estado,Creado_Por',
       orderField: '',
       searchField: search,
       paginacion: paginacion

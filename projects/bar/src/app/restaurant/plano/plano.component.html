@@ -3,7 +3,7 @@
   <div class="form-row">
     <div class="form-group col-8">
       {{NombreEmpresa}}
-      <button [hidden]="!PantallaPlano" (click)="cambiarPlano(1)" type="button" class="btn btn-outline-primary btn-lg buttonS " title="Cancela edicion">Lista</button>
+      <button [hidden]="!PantallaPlano" (click)="cambiarPlano(1)" type="button" class="btn btn-outline-primary btn-lg buttonS  " title="Cancela edicion">Lista</button>
       <button [hidden]="!PantallaLista" (click)="cambiarPlano(2)" type="button" class="btn btn-outline-success btn-lg buttonS" title="Cancela edicion">Plano</button>
     </div>
     <div class="form-group col-3">
@@ -112,6 +112,7 @@
   </div>
 </div>
 
+<!-- 
 <div [hidden]="!PantallaPlano">
     
     <div  *ngFor="let Place of Places;let i = index">
@@ -127,6 +128,20 @@
             </div>
         </a>
     </div>
+</div>
+
+-->
+
+<div [hidden]="!PantallaPlano" class="plano-container">
+  <div *ngFor="let mesa of Places; trackBy: trackById"
+       class="mesa-box"
+       [ngStyle]="{'top.px': mesa.Arriba, 'left.px': mesa.Derecha}"
+       (click)="MostrarPantallaCuentas(mesa)">
+    <div class="mesa-content">
+      <img [src]="getImagenMesa(mesa)" alt="Mesa" class="mesa-img">
+      <div class="mesa-nombre-overlay">{{ mesa.Nombre }}</div>
+    </div>
+  </div>
 </div>
 
 <!--Pantalla que muestra Las cuentas de la mesa -->
@@ -148,7 +163,7 @@
       </div>
       <div class="form-row">
 
-        <div class="form-group col-12 col-sm-6" *ngFor="let Pedido of Pedidos;let i = index">
+        <div class="form-group col-12 col-sm-6" *ngFor="let Pedido of Pedidos; trackBy: trackById; let i = index">
           <div class="card">
             <a (click)="AbrirPantallaInfoCuenta(Pedido)">
               <div class="card-body m-2 p-2">
@@ -412,7 +427,7 @@
         <div class="form-row">
           <div  class="form-group col-sm-12 bg-secondary pt-3 pl-3">
             <div class="form-row">
-              <div class="form-group col-6" *ngFor="let Categoria of Categorias;let i = index">
+              <div class="form-group col-6" *ngFor="let Categoria of Categorias; trackBy: trackById; let i = index">
                 <div class="card">
                   <a (click)="SeleccionarCategoria(Categoria)">
                     <div class="card-body h-25 p-1">
@@ -425,7 +440,7 @@
           </div>
           <div  class="form-group col-sm-12 bg-info pt-3 pl-3">
             <div class="form-row">
-              <div class="form-group col-6" *ngFor="let Categoria of SubCategorias;let i = index">
+              <div class="form-group col-6" *ngFor="let Categoria of SubCategorias; trackBy: trackById; let i = index">
                 <div class="card">
                   <a (click)="SeleccionarSubCategoria(Categoria)">
                     <div class="card-body h-25 p-1">
@@ -837,7 +852,7 @@
               <div class="form-group col-md-4">
                 
                 <select (change)="LeerMesasPorZona()" [(ngModel)]="Pedido.Id_Nueva_Zona" name="Id_Zona" type="text" class="form-control">
-                  <option value='{{Zone.Id_Zona}}' *ngFor="let Zone of Zonas;let i = index">
+                  <option value='{{Zone.Id_Zona}}' *ngFor="let Zone of Zonas; trackBy: trackById; let i = index">
                     {{Zone.Nombre}}</option>
                 </select>
               </div>
@@ -845,7 +860,7 @@
               <div class="form-group col-md-4">
                 
                 <select (change)="LeerCuentasPorMesa()" [(ngModel)]="Pedido.Id_Nueva_Mesa" name="Id_Mesa" type="text" class="form-control">
-                  <option value='{{Mesa.Id_Mesa}}' *ngFor="let Mesa of MesasZona;let i = index">
+                  <option value='{{Mesa.Id_Mesa}}' *ngFor="let Mesa of MesasZona trackBy: trackById;let i = index">
                     {{Mesa.Nombre}}</option>
                 </select>
               </div>

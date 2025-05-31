@@ -269,7 +269,7 @@ export class RestaurantConsultaPedidoComponent implements OnInit {
         Notas: 'Rest-Orden:'+ this.Mesa.Id_Mesa + '-'+this.Pedido.Id_Pedido
       }
       let data = await this.invoiceService.insertHeader(Invoice, this.Caja,this.Exoneracion);
-      Invoice.Id_Factura = data["data"][0]["Identity"];
+      Invoice.Id_Factura = data["Identity"];
       await this.restaurantConsultaPedidoService.ActualizarFechaPedido(this.Pedido.Creado_El,Invoice.Id_Factura);
       //Actualizar el Id de la factura en el pedido
       await this.restaurantInvoiceService.UpdateIdFactura(Invoice.Id_Factura,this.Pedido.Id_Pedido);

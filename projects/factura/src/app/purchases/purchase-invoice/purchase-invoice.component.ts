@@ -484,7 +484,7 @@ export class PurchaseInvoiceComponent implements OnInit {
     if (this.clienteExiste === false) {
       let data = await this.purchaseInvoiceService.insertClient(this.Invoice);
       this.clienteExiste = true;
-      this.Invoice.Id_Cliente = data['data'][0]['Identity'];
+      this.Invoice.Id_Cliente = data['Identity'];;
     }
     //Validar que todos los registros tengan un Producto asociado
     let continuar = true;
@@ -511,7 +511,7 @@ export class PurchaseInvoiceComponent implements OnInit {
         this.Invoice,
         this.Caja
       );
-      this.Invoice.Id_Factura = data['data'][0]['Identity'];
+      this.Invoice.Id_Factura = data['Identity'];
 
       this.SKU_OK = true;
       for (let i = 0; i < this.Details.length; i++) {
@@ -543,7 +543,7 @@ export class PurchaseInvoiceComponent implements OnInit {
           if(i > 0){
             ListaDetalles = ListaDetalles + ',';
           }
-          ListaDetalles = ListaDetalles + String(data['data'][0]['Identity']);
+          ListaDetalles = ListaDetalles + String(data['Identity']);
         }else{
           //3 Actualizar los detalles existentes.
           await this.modificarUnDetalleFactura(i);

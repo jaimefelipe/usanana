@@ -24,7 +24,7 @@ export class ContactoComponent implements OnInit {
   paginacion = { FirstRow: 1, LastRow: 50, TotalRows: 0 };
 
   Persona = this.resetPersona();
-
+  Academico = true;
   GeneralActivo: boolean = true;
   DireccionActivo: boolean = false;
   VentaActivo: boolean = false;
@@ -33,6 +33,9 @@ export class ContactoComponent implements OnInit {
   CobroActivo: boolean = false;
   TareaActivo: boolean = false;
   RollActivo: boolean = false;
+  CarreraActivo: boolean = false;
+  MatriculaActivo:boolean = false;
+  PendienteActivo:boolean = false;
 
   GeneralClass: string = 'btn-active';
   DireccionClass: string = 'btn-inactive';
@@ -41,6 +44,9 @@ export class ContactoComponent implements OnInit {
   CobroClass: string = 'btn-inactive';
   TareaClass: string = 'btn-inactive';
   RollClass: string = 'btn-inactive';
+  CarreraClass: string = 'btn-inactive';
+  MatriculaClass:string = 'btn-inactive';
+  PendienteClass:string = 'btn-inactive';
 
   SeguridadStr = localStorage.getItem("ToxoSG");
   Seguridad = [];
@@ -51,6 +57,9 @@ export class ContactoComponent implements OnInit {
   BotonNotas = false;
   BotonCobros = false;
   BotonTareas = false;
+  BotonCarreras = true;
+  BotonMatricula = true;
+  BotonPendientes = true;
 
   /**
    * Seguridad
@@ -130,7 +139,11 @@ export class ContactoComponent implements OnInit {
     this.RollClass = 'btn-active';
   }
 
-
+  activarMatricula() {
+    this.resetTabs();
+    this.MatriculaActivo = true;
+    this.MatriculaClass = 'btn-active';
+  }
   activarDireccion() {
     this.resetTabs();
     this.DireccionActivo = true;
@@ -160,11 +173,22 @@ export class ContactoComponent implements OnInit {
     this.TareaActivo = true;
     this.TareaClass = 'btn-active';
   }
+  activarCarrera() {
+    this.resetTabs();
+    this.CarreraActivo = true;
+    this.CarreraClass = 'btn-active';
+  }
+  activarPendiente() {
+    this.resetTabs();
+    this.PendienteActivo = true;
+    this.PendienteClass = 'btn-active';
+  }
+
 
   resetTabs() {
-    this.GeneralActivo = this.DireccionActivo = this.VentaActivo = 
+    this.GeneralActivo = this.DireccionActivo = this.VentaActivo = this.CarreraActivo = this.MatriculaActivo = this.PendienteActivo = 
     this.NotasActivo = this.CobroActivo = this.TareaActivo = this.RollActivo = false;
-    this.GeneralClass = this.DireccionClass = this.VentaClass = 
+    this.GeneralClass = this.DireccionClass = this.VentaClass = this.CarreraClass = this.MatriculaClass = this.PendienteClass = 
     this.NotasClass = this.CobroClass = this.TareaClass = this.RollClass = 'btn-inactive';
   }
   setActiveTab(tab: string) {
@@ -252,5 +276,10 @@ export class ContactoComponent implements OnInit {
     if (event.key === 'Enter') {
       this.search();
     }
+  }
+
+   GenerarBooleta(){
+    let param = this.Persona.Id_Persona + '&e=' + localStorage.getItem('Id_Empresa') + '&u=' + localStorage.getItem('Id_Usuario');
+    window.open('https://toxo.work/reportes/educacion/alumnos/NOTASALUMNO.PHP?id=' + param, '_blank');
   }
 }

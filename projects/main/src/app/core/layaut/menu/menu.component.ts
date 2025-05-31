@@ -69,7 +69,8 @@ export class MenuComponent implements OnInit {
       this.Master = false;
     }
     this.SeguridadStr = localStorage.getItem("ToxoSG");
-    if(this.SeguridadStr == ""){
+    console.log(this.SeguridadStr)
+    if(!this.SeguridadStr){
       this.SeguridadStr = "0.0.0.0.0.0.0.0.0.0.0.0";
     }
 

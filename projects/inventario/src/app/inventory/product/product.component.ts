@@ -433,7 +433,7 @@ export class ProductComponent implements OnInit {
     if(this.Componente.Id_Producto_Componente == ''){
       let data = await this.productService.newComponent(this.Componente);
       if(data['success'] =='true'){
-        this.Componente.Id_Producto_Componente = data["data"][0]["Identity"];
+        this.Componente.Id_Producto_Componente = data["Identity"];
         //await this.agregarSubComponentes();
         await this.loadComponentes();
         await this.updateSubComponentes();
@@ -474,7 +474,7 @@ export class ProductComponent implements OnInit {
     Sub_Componente.Id_Producto_Componente = this.Componente.Id_Producto_Componente
     let data = await this.productService.newSubComponent(Sub_Componente);
     if(data['success'] =='true'){
-      this.Sub_Componentes[Indice].Inv_Producto_Sub_Componente = data["data"][0]["Identity"];
+      this.Sub_Componentes[Indice].Inv_Producto_Sub_Componente = data["Identity"];
     }
   }
   async updateSubCompoente(Sub_Componente,Indice){

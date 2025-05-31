@@ -25,7 +25,7 @@ async leerSemanas(paginacion,search?,Estado?) {
 
   async generarSemana(Semana){
     let data = await await this.apiService.postRecord('Call sp_Rhh_Crear_Semana(' + localStorage.getItem('Id_Empresa') + "," + Semana.Anio + ','+ Semana.Mes + ','+ Semana.Semana + ')' );
-    // return data['data'][0]['Identity'];
+    // return data['Identity'];;
   }
 
   async leerEmpleadosSemana(paginacion,search?,Id_Semana_Roll?) {

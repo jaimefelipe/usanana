@@ -76,6 +76,7 @@ export class InvoiceComponent implements OnInit {
     Codigo_Identificacion: "",
     Numero_Identificacion: "",
     Correo: "",
+    Correo2: "",
     Condicion_Venta: "01",
     Plazo_Credito: "0",
     Metodo_Pago: "1",
@@ -98,7 +99,8 @@ export class InvoiceComponent implements OnInit {
     Clave_Numerica:'',
     Cobro:0,
     Id_Caja_Diaria:localStorage.getItem('Id_Caja_Diaria'),
-    Actividad_Economica:''
+    Actividad_Economica:'',
+    Actividad_Economica_Empresa :''
   };
   Detalle = {
     Codigo_Referencia: "",
@@ -128,6 +130,7 @@ export class InvoiceComponent implements OnInit {
     Nombre: "",
     Telefono: "",
     Correo: "",
+    Correo2: "",
     Identificacion: "",
     Tipo_Identificacion: "",
     Condicion_Venta: "",
@@ -139,6 +142,7 @@ export class InvoiceComponent implements OnInit {
     Nombre_Actividad_Economica:''
   };
   ngOnInit(): void {
+    this.loadActividadEconomica();
     //Validar Configuracion Contable;
     this.LeerParametroIVA()
     if(localStorage.getItem('ToxoPOV') == '1'){
@@ -161,6 +165,9 @@ export class InvoiceComponent implements OnInit {
     }
     this.Seguridad = this.SeguridadStr.split(".");
     if(this.Seguridad[7]==1){this.AppRestaurante=true}
+  }
+  async loadActividadEconomica(){
+    this.Invoice.Actividad_Economica_Empresa =  await this.invoiceService.LoadActividadEconomica();
   }
   async LeerParametroIVA(){
     let data = await this.invoiceService.LoadIVAIncludio();
@@ -418,6 +425,7 @@ export class InvoiceComponent implements OnInit {
     }
 
   }
+  /*
   async calcularTotales() {
     if(this.IvaIncluido == 1){
       this.Detalle.Precio =  this.Detalle.Precio / (1 + (this.Detalle.IVAPorcentaje / 100));
@@ -447,15 +455,50 @@ export class InvoiceComponent implements OnInit {
 
     // Aquí se hace una sola vez, después de sumar todo
     this.Invoice.Total = this.Invoice.Sub_Total + this.Invoice.IVA;
-    /*
+    
     for (let i = 0; i < this.Details.length; i++) {
       //Agregar Validación de Exoneración
       this.Invoice.Sub_Total =
         this.Invoice.Sub_Total + parseFloat(this.Details[i]["Sub_Total"]);
       this.Invoice.IVA = this.Invoice.IVA + parseFloat(this.Details[i]["IVA"]);
       this.Invoice.Total = this.Invoice.Sub_Total + this.Invoice.IVA;
-    }*/
+    }
     this.initDetail()
+  }
+  */
+
+  async calcularTotales() {
+    if(this.IvaIncluido == 1){
+      this.Detalle.Precio = this.Detalle.Precio / (1 + (this.Detalle.IVAPorcentaje / 100));
+      this.Detalle.Precio = parseFloat(parseFloat(this.Detalle.Precio.toString()).toFixed(2));
+    }
+  
+    this.Detalle.Sub_Total = this.Detalle.Cantidad * this.Detalle.Precio;
+    this.Detalle.IVA = (this.Detalle.Sub_Total * this.Detalle.IVAPorcentaje) / 100;
+    this.Detalle.IVA = parseFloat(this.Detalle.IVA.toFixed(2));
+    this.Detalle.Total = this.Detalle.Sub_Total + this.Detalle.IVA;
+  
+    if (this.Detalle.Total > 0) {
+      this.Details.push({ ...this.Detalle }); // hacer copia
+    }
+  
+    await this.procesaAdicionales(); // primero todos los detalles agregados
+  
+    this.recalcularTotalesFactura(); // ahora sí, recalculás
+    this.initDetail(); // por último
+  }
+  
+  recalcularTotalesFactura() {
+    this.Invoice.Sub_Total = 0;
+    this.Invoice.IVA = 0;
+    this.Invoice.Total = 0;
+  
+    for (let i = 0; i < this.Details.length; i++) {
+      this.Invoice.Sub_Total += parseFloat(this.Details[i].Sub_Total);
+      this.Invoice.IVA += parseFloat(this.Details[i].IVA);
+    }
+  
+    this.Invoice.Total = this.Invoice.Sub_Total + this.Invoice.IVA;
   }
 
   async obtenerProducto(producto, tipo) {
@@ -552,13 +595,14 @@ export class InvoiceComponent implements OnInit {
       Swal.fire('Sistema no esta configurado correctamente, Contacte con Soporte Técnico');
       return false;
     }
-    let licencia = await this.loadUserType();
+    if(factura){   
+      let licencia = await this.loadUserType();
 
-    if (licencia != true){
-      Swal.fire("Su licencia esta inactiva, Contacte a Soporte Técnico");
-      return false;
+      if (licencia != true){
+        Swal.fire("Su licencia esta inactiva, Contacte a Soporte Técnico");
+        return false;
+      }
     }
-
 
     this.edit = true;
     window.scrollTo(0, 0);
@@ -602,6 +646,7 @@ export class InvoiceComponent implements OnInit {
         Codigo_Identificacion: "01",
         Numero_Identificacion: "",
         Correo: "",
+        Correo2: "",
         Condicion_Venta: "01",
         Plazo_Credito: "0",
         Metodo_Pago: "01",
@@ -629,7 +674,8 @@ export class InvoiceComponent implements OnInit {
         Clave_Numerica:'',
         Cobro:0,
         Id_Caja_Diaria:localStorage.getItem('Id_Caja_Diaria'),
-        Actividad_Economica:''
+        Actividad_Economica:'',
+        Actividad_Economica_Empresa :''
       };
       if(this.POV){
         this.Invoice.Metodo_Pago = '98'
@@ -645,6 +691,7 @@ export class InvoiceComponent implements OnInit {
         Nombre: "",
         Telefono: "",
         Correo: "",
+        Correo2: "",
         Identificacion: "",
         Tipo_Identificacion: "01",
         Condicion_Venta: "01",
@@ -668,6 +715,8 @@ export class InvoiceComponent implements OnInit {
     }
   }
   async PreAplicarFactura() {
+    this.loadActividadEconomica();
+    console.log(this.Invoice)
     this.PantallaLoading = true;
     if (this.Invoice.Tipo_Documento === "01") {
       if (this.Invoice.Numero_Identificacion === "") {
@@ -696,7 +745,7 @@ export class InvoiceComponent implements OnInit {
     if (this.clienteExiste == false) {
       let data = await this.invoiceService.insertClient(this.Invoice);
       this.clienteExiste = true;
-      this.Invoice.Id_Cliente = data["data"][0]["Identity"];
+      this.Invoice.Id_Cliente = data["Identity"];
     }
     //Validar que todos los registros tengan un Producto asociado
     let continuar = true;
@@ -716,13 +765,14 @@ export class InvoiceComponent implements OnInit {
       //factura nueva, grabar encabezado y detalle
       //Grabar encabezado de la factura
       let data = await this.invoiceService.insertHeader(this.Invoice, this.Caja,this.Exoneracion);
-      this.Invoice.Id_Factura = data["data"][0]["Identity"];
+      this.Invoice.Id_Factura = data["Identity"];
       for (let i = 0; i < this.Details.length; i++) {
         await this.grabarUnDetalleFactura(i);
       }
       await this.aplicarFacturaHacienda();
     } else {
       //actualizar los detalles de la factura
+      
       let data = await this.invoiceService.updateHeader(this.Invoice,this.Caja,this.Exoneracion);
       //Actualizar los detalles
       let ListaDetalles = ''
@@ -734,7 +784,7 @@ export class InvoiceComponent implements OnInit {
           if(i > 0){
             ListaDetalles = ListaDetalles + ',';
           }
-          ListaDetalles = ListaDetalles + String(data['data'][0]['Identity']);
+          ListaDetalles = ListaDetalles + String(data['Identity']);
         }else{
           //3 Actualizar los detalles existentes.
           await this.modificarUnDetalleFactura(i);
@@ -879,6 +929,7 @@ export class InvoiceComponent implements OnInit {
     this.persona.Id_Persona = '';
     this.persona.Nombre = '';
     this.persona.Correo = '';
+    this.persona.Correo2 = "",
     this.persona.Identificacion = '';
     this.PantallaClienteNuevo = true;
     this.persona.Moneda = 'CRC';
@@ -910,12 +961,30 @@ export class InvoiceComponent implements OnInit {
           this.PantallaLoading = false;
           return false;
         }else{
+          
           this.persona.Nombre = persona.nombre;
           this.persona.Tipo_Identificacion = persona.tipoIdentificacion;
-          this.persona.Codigo_Actividad_Economica = persona['actividades'][0]['codigo'];
-          this.persona.Nombre_Actividad_Economica = persona['actividades'][0]['descripcion'];
+          
+          if (persona['actividades'] && persona['actividades'].length > 0) {
+            this.persona.Codigo_Actividad_Economica = persona['actividades'][0]['codigo'];
+            this.persona.Nombre_Actividad_Economica = persona['actividades'][0]['descripcion'];
+          } else {
+            this.persona.Codigo_Actividad_Economica = 'Null'; // O NULL sin comillas si preferís
+            this.persona.Nombre_Actividad_Economica = 'Null';
+          }
+
           this.Invoice.Nombre = this.persona.Nombre;
           this.Invoice.Codigo_Identificacion = persona.tipoIdentificacion;
+          
+          if(persona['actividades'][0]['codigo'] != ''){
+            if (persona['actividades'] && persona['actividades'].length > 0) {
+              this.persona.Codigo_Actividad_Economica = persona['actividades'][0]['codigo'];
+              this.persona.Nombre_Actividad_Economica = persona['actividades'][0]['descripcion'];
+            } else {
+              this.persona.Codigo_Actividad_Economica = 'Null'; // O NULL sin comillas si preferís
+              this.persona.Nombre_Actividad_Economica = 'Null';
+            }
+          }
           if(this.Invoice.Numero_Identificacion.length == 10){
             if(this.Invoice.Codigo_Identificacion == '01'){
               this.Invoice.Codigo_Identificacion = '02';
@@ -954,6 +1023,7 @@ export class InvoiceComponent implements OnInit {
       this.Invoice.Nombre = this.persona.Nombre;
       this.Invoice.Codigo_Identificacion = this.persona.Tipo_Identificacion;
       this.Invoice.Correo = this.persona.Correo;
+      this.Invoice.Correo2 = this.persona.Correo2;
       this.Invoice.Condicion_Venta = this.persona.Condicion_Venta;
       this.Invoice.Plazo_Credito = this.persona.Plazo_Credito;
       this.Invoice.Metodo_Pago = this.persona.Metodo_Pago;
@@ -962,8 +1032,13 @@ export class InvoiceComponent implements OnInit {
       //Si la actividad Economica no existe consultarla en el ministerio de hacienda
       if(this.Invoice.Actividad_Economica === ''){
         let persona = await this.invoiceService.getApiHacienda(this.Invoice.Numero_Identificacion);
-        this.persona.Codigo_Actividad_Economica = persona['actividades'][0]['codigo'];
-        this.persona.Nombre_Actividad_Economica = persona['actividades'][0]['descripcion'];
+        if (persona['actividades'] && persona['actividades'].length > 0) {
+          this.persona.Codigo_Actividad_Economica = persona['actividades'][0]['codigo'];
+          this.persona.Nombre_Actividad_Economica = persona['actividades'][0]['descripcion'];
+        } else {
+          this.persona.Codigo_Actividad_Economica = 'Null'; // O NULL sin comillas si preferís
+          this.persona.Nombre_Actividad_Economica = 'Null';
+        }
         this.Invoice.Actividad_Economica = this.persona.Codigo_Actividad_Economica;
       }
       if (this.Invoice.Moneda === "") {
@@ -1091,7 +1166,7 @@ export class InvoiceComponent implements OnInit {
     //Duplicar ecabezado de factura como si fuera nota de Credito
     let sql = "Insert into Ven_Factura (Id_Empresa,Id_Caja,Id_Cliente,Tipo_Documento,Consecutivo,Nombre,Codigo_Identificacion,Numero_Identificacion,Correo,Condicion_Venta,Plazo_Credito,Metodo_Pago,Moneda,Tipo_Cambio,Descuento,IVA,Sub_Total,Total,Clave_Numerica,Respuesta_MH,Sistema_Origen,Registro_Origen,Creado_El) select Id_Empresa,Id_Caja,Id_Cliente,'03',Consecutivo,Nombre,Codigo_Identificacion,Numero_Identificacion,Correo,Condicion_Venta,Plazo_Credito,Metodo_Pago,Moneda,Tipo_Cambio,Descuento,IVA,Sub_Total,Total,Clave_Numerica,'Registrado','VE'," + this.Invoice.Id_Factura + ",Creado_El from Ven_Factura where Id_Factura =" + this.Invoice.Id_Factura + ";";
     let dataEncabezado = await this.apiService.postRecord(sql);
-    let Identity = dataEncabezado['data']['0']['Identity'];
+    let Identity = dataEncabezado['Identity'];
     //Obtener todos los detalles de la factura;
     let sqlDetalles = "Select Id_Factura_detalle,Id_Empresa,Id_Factura,Id_Producto,Tipo_Codigo,Codigo_Referencia,Descripcion,Unidad_Medida,Cantidad,Precio,Descuento,Detalle_Descuento,Tasa,IVA,Sub_Total,Total from Ven_Factura_Detalle where Id_Factura = " + this.Invoice.Id_Factura;
     let detalles = await this.apiService.postRecord(sqlDetalles);
@@ -1118,6 +1193,7 @@ export class InvoiceComponent implements OnInit {
       let detall = await this.apiService.postRecord(sqlDetail);
     }
     this.search();
+    Swal.fire('Recuerde que la NC que se genero debe editarla, poner las notas del portque se genero y aplicarla para que sea valida');
     this.cancel();
   }
 
@@ -1175,11 +1251,12 @@ export class InvoiceComponent implements OnInit {
     }
     let data = await this.peopleService.savePersona(this.persona);
     if(data['success'] =='true'){
-      this.Invoice.Id_Cliente = data['data'][0]['Identity'];
+      this.Invoice.Id_Cliente = data['Identity'];
       this.Invoice.Numero_Identificacion = this.persona.Identificacion;
       this.Invoice.Nombre = this.persona.Nombre;
       this.Invoice.Codigo_Identificacion = this.persona.Tipo_Identificacion;
       this.Invoice.Correo = this.persona.Correo;
+      this.Invoice.Correo2 = this.persona.Correo2;
       this.Invoice.Condicion_Venta = this.persona.Condicion_Venta;
       this.Invoice.Plazo_Credito = this.persona.Plazo_Credito;
       this.Invoice.Metodo_Pago = this.persona.Metodo_Pago;

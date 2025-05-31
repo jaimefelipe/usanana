@@ -25,7 +25,7 @@
           <a (click)="editRecord(Persona)">
             <div class="card-body">
               <h4 class="card-title">{{paginacion.FirstRow +  i}} - {{Persona.Nombre}}</h4>
-              ID : {{Persona.Identificacion}}, Correo: {{Persona.Correo}} <br>
+              ID : {{Persona.Identificacion}}, Teléfono: {{Persona.Telefono}}, Correo: {{Persona.Correo}} <br>
               Tel: {{Persona.Telefono}} | 
               <span *ngIf="Persona.Prospecto == '1'" class="text-primary"> Prospecto</span>
               <span *ngIf="Persona.Cliente== '1'" class="text-primary"> Cliente</span>
@@ -71,6 +71,9 @@
     <button *ngIf="BotonNotas" [ngClass]='NotasClass' (click)="activarNotas()">Notas</button>
     <button *ngIf="BotonCobros" [ngClass]='CobroClass' (click)="activarCobro()">Cobros</button>
     <button *ngIf="BotonTareas" [ngClass]='TareaClass' (click)="activarTarea()">Tareas</button>
+    <button *ngIf="BotonCarreras" [ngClass]='CarreraClass' (click)="activarCarrera()">Carreras</button>
+    <button *ngIf="BotonMatricula" [ngClass]='MatriculaClass' (click)="activarMatricula()">Matrícula</button>
+    <button *ngIf="BotonPendientes" [ngClass]='PendienteClass' (click)="activarPendiente()">Pendientes</button>
   </div>
 
   <span [hidden]="!edit">
@@ -82,14 +85,21 @@
     <app-notas [hidden]="!NotasActivo" [Persona]="Persona"></app-notas>
     <app-cobro [hidden]="!CobroActivo" [Persona]="Persona"></app-cobro>
     <app-tareas [hidden]="!TareaActivo" [Persona]="Persona"></app-tareas>
+    <app-carreras-contacto [hidden]="!CarreraActivo" [Persona]="Persona"> </app-carreras-contacto>
+    <app-cursos-contacto [hidden]="!MatriculaActivo" [Persona]="Persona"></app-cursos-contacto>
+    <app-cursos-pendientes-contacto [hidden]="!PendienteActivo" [Persona]="Persona"></app-cursos-pendientes-contacto>
   </span>
 
   <div class="form-row">
     <div class="form-group col-md-12">
       <div class="form-row">
-        <div class="form-group col-6 col-md-8">
+        <div class="form-group col-6 col-md-6">
 
         </div>
+        <div class="col-md-2">
+            <button (click)="GenerarBooleta()" type="button" class="btn btn-success">Cert. Notas</button>
+        </div>
+
         <div class="form-group col-3 col-md-2">
           <button (click)="save()" type="button" class="btn btn-success" title="Cancela edicion">Grabar</button>
         </div>

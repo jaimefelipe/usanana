@@ -8,8 +8,8 @@ export class MovementInventoryService {
   constructor(private apiService: ApiService) {}
   async loadMovements(paginacion,search?){
     let sqlConfig = {
-      table: 'Inv_Movimiento',
-      fields: 'Id_Movimiento,Tipo_Movimiento,Id_Factura,Nombre,Moneda,Tipo_Cambio,Total,Sistema_Origen,Estado,Creado_El,Registro_Origen',
+      table: `(SELECT Id_Empresa, Id_Movimiento, Tipo_Movimiento, Id_Factura, Nombre, Moneda, Tipo_Cambio, Total, Sistema_Origen, Estado,  Creado_El, Creado_Por,  Registro_Origen, CASE Tipo_Movimiento WHEN '01' THEN 'Venta'  WHEN '02' THEN 'Compra' WHEN '03' THEN 'Nota de débito (-)' WHEN '04' THEN 'Nota de crédito (+)' ELSE 'Otro' END AS Tipo_Movimiento_Descripcion FROM Inv_Movimiento) AS movimientos`,
+      fields: `Id_Movimiento,Tipo_Movimiento,Id_Factura,Nombre,Moneda,Tipo_Cambio,Total,Sistema_Origen,Estado,Creado_El,Creado_Por,Registro_Origen,Tipo_Movimiento_Descripcion`,
       orderField: '',
       searchField: search,
       paginacion: paginacion
@@ -56,7 +56,7 @@ export class MovementInventoryService {
   }
   async insertHeader(Movement){
     if(!Movement.Id_Factura){
-      Movement.Id_Factura = 0;
+      Movement.Id_Factura = 'NULL';
     }
     if(!Movement.Descuento){
       Movement.Descuento = 0;

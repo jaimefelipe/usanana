@@ -25,20 +25,38 @@
         <a (click)="hideMenu()" [routerLink]="['/']"><li><i class="fa fa-home"></i> Inicio {{ambiente}}</li></a>
         <div [hidden]="!logedIn">
 
-          <li [hidden]="!AppAcademico" (click)="clickAcademicoMenu()" ><a><i class="fa fa-hospital-o"></i>  Configuración <i [ngClass]='AcademicoClass' class="fa fa-cog"></i>  </a></li>
-          <ul [hidden]="!AcademicoMenu" >
-            <a (click)="hideMenu()" [hidden]="!AppVentas" [routerLink]="['/people']"><li><i class="fa fa-credit-card"></i> Contactos </li></a>
+          <li (click)="clickPerfilMenu()" ><a><i class="fa fa-hospital-o"></i>  Configuración <i [ngClass]='ConfigClass' class="fa fa-cog"></i>  </a></li>
+          <ul [hidden]="!perfilMenu" >
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/contactos']"><li><i class="fa fa-credit-card"></i> Contactos </li></a>
             <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/carrera']"><li><i class="fa fa-shopping-bag"></i> Carreras</li></a>
             <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/curso']"><li><i class="fa fa-shopping-basket"></i> Cursos</li></a>
-            <a (click)="hideMenu()" [hidden]="!AppAcademico" [routerLink]="['/repinventario']"><li><i class="fa fa-file"></i> Reportes</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn " [routerLink]="['/categorias']"><li><i class="fa fa-shopping-bag"></i> Categorías</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn " [routerLink]="['/subcategorias']"><li><i class="fa fa-shopping-bag"></i> Sub Categorías</li></a>
+            
           </ul>
 
-          <li (click)="clickRestaurantMenu()" ><a><i class="fa fa-file"></i>  Registro <i [ngClass]='restaurantClass' class="fa fa-cog"></i>  </a></li>
-          <ul [hidden]="!restaurantMenu">
+          <li (click)="clickAcademicoMenu()" ><a><i class="fa fa-file"></i>  Registro <i [ngClass]='AcademicoClass' class="fa fa-cog"></i>  </a></li>
+          <ul [hidden]="!AcademicoMenu">
             <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/periodo']"><li><i class="fa fa-credit-card"></i> Periodo Académico</li></a>
             <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/grupo']"><li><i class="fa fa-align-justify"></i> Grupos</li></a>
             <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/matricula']"><li><i class="fa fa-map-signs"></i> Matrícula</li></a>
-            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/reporteVenta']"><li><i class="fa fa-file"></i> Reportes</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/reportesacademicos']"><li><i class="fa fa-file"></i> Reportes</li></a>
+          </ul>
+
+          <li (click)="clickTesoreriaMenu()" ><a><i class="fa fa-file"></i>  Tesoreria <i [ngClass]='TesoreriaClass' class="fa fa-cog"></i>  </a></li>
+          <ul [hidden]="!TesoreriaMenu">
+            <a (click)="hideMenu()" [hidden]="!logedIn " [routerLink]="['/articulos']"><li><i class="fa fa-shopping-basket"></i> Artículos</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/cobroacademico']"><li><i class="fa fa-credit-card"></i> Cobros</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/ventas']"><li><i class="fa fa-credit-card"></i> Facturas</li></a>
+
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/cuentacxc']"><li><i class="fa fa-credit-card"></i> Cuentas x Cobrar</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/documentocxc']"><li><i class="fa fa-file-o"></i> Documentos x Cobrar</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/movimientocxc']"><li><i class="fa fa-align-justify"></i> Movimientos x Cobrar</li></a>
+          </ul>
+
+          <li (click)="clickProfesorMenu()" ><a><i class="fa fa-file"></i>  Profesor <i [ngClass]='ProfesorClass' class="fa fa-cog"></i>  </a></li>
+          <ul [hidden]="!ProfesorMenu">
+            <a (click)="hideMenu()" [hidden]="!logedIn " [routerLink]="['/grupoprofesor']"><li><i class="fa fa-shopping-basket"></i> Grupos</li></a>
           </ul>
 
         </div>

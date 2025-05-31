@@ -1,0 +1,33 @@
+<form>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+          </div>
+          <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+            placeholder="Buscar">
+          
+        </div>
+      </div>
+    </div>
+    <form>
+      <div class="form-row">
+        <div class="form-group col-12" *ngFor="let Materia of Materias;let i = index">
+          <a >
+            <div class="card">
+              <div class="card-body">
+                <h4 class="card-title">{{Materia.Codigo}} -  {{Materia.Curso}} </h4>
+                {{Materia.Carrera}} - {{Materia.Promedio}} -
+                  <span *ngIf="Materia.Estado == 1"><span class="badge badge-primary">Cursando</span></span>
+                  <span *ngIf="Materia.Estado == 2"><span class="badge badge-success">Aprobado</span></span>
+                  <span *ngIf="Materia.Estado == 3"><span class="badge badge-danger">Reprobado</span></span>
+                  <span *ngIf="Materia.Estado == 4"><span class="badge badge-info">Convalidado</span></span>
+                                        
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </form>
+  </form>

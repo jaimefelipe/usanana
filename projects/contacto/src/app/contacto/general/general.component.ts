@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Output, EventEmitter } from '@angular/core';
 import { ContactoService } from '../contacto/contacto.service';
-
+import { GeneralService  } from './general.service';
 @Component({
   selector: 'app-general',
   templateUrl: './general.component.html',
@@ -17,8 +17,10 @@ export class GeneralComponent implements OnInit {
   searchFieldAgentes = "";
 
   Agentes = [];
+  Nacionalidades = []; 
   constructor(
-    private contactoService:ContactoService
+    private contactoService:ContactoService,
+    private generalService:GeneralService
   ) { }
 
   ngOnInit(): void {
@@ -28,6 +30,7 @@ export class GeneralComponent implements OnInit {
       this.Persona.Prospecto =='0';
     }
     this.Persona.Prospecto = '1';
+    this.leerNacionalidad();
   }
   cancel(){
     this.close.emit(this.Persona);
@@ -55,5 +58,15 @@ export class GeneralComponent implements OnInit {
     };
     let data = await this.contactoService.loadPersonas(paginacion, this.searchFieldAgentes, 7); 
     this.Agentes = data['data'];
+  }
+  async leerNacionalidad() {
+    let data = await this.generalService.leerNacionalidades();
+    if(data['total']>0){
+      this.Nacionalidades = data['data'];
+    }else{
+      this.Nacionalidades  = [];
+    }
+    
+    
   }
 }
