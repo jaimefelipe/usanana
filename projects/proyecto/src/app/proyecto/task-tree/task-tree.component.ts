@@ -2,6 +2,7 @@ import { Component, OnInit,Output,Input,EventEmitter, ViewChild, AfterViewInit  
 import { TaskTreeService } from './task-tree.service';
 import { NodeClickEventArgs } from '@syncfusion/ej2-navigations';
 import { TreeViewComponent } from '@syncfusion/ej2-angular-navigations';
+import { TaskFormService } from '../task-form/task-form.service';
 
 @Component({
   selector: 'app-task-tree',
@@ -20,7 +21,8 @@ export class TaskTreeComponent implements OnInit {
   field:Object;
 
   constructor( 
-    private taskTreeService:TaskTreeService
+    private taskTreeService:TaskTreeService,
+    private taskFormService:TaskFormService
   ) { }
 
   ngOnInit() {
@@ -88,6 +90,7 @@ export class TaskTreeComponent implements OnInit {
   
   updateExistingNode(nodeId: string, newName: string) {
     const updateNodeName = (nodes: any[]) => {
+      if (!Array.isArray(nodes)) return false; // 🚨 Previene el error
       for (let node of nodes) {
         if (node.id === nodeId) {
           node.name = newName;
@@ -167,4 +170,71 @@ export class TaskTreeComponent implements OnInit {
 
     }
 
+    onNodeDragStop(args: any): void {
+      const draggedNodeId = args.draggedNodeData.id; // Nodo que se movió
+      const droppedNodeId = args.droppedNodeData.id; // Nodo destino
+      const dropPosition = args.dropLevel; // o usar args.dropIndex si querés ordenar Nivel jerárquico destino
+      
+      console.log(draggedNodeId);
+      console.log(droppedNodeId);
+      console.log(dropPosition);
+
+      // ⚠️ Validación básica
+      if (!draggedNodeId || !droppedNodeId || draggedNodeId === droppedNodeId) return;
+
+      // 1. Buscar el nodo arrastrado y removerlo de su padre
+      const draggedNode = this.removeNodeById(this.Proyectos, draggedNodeId);
+
+      if (!draggedNode) {
+        console.warn('Nodo arrastrado no encontrado.');
+        return;
+      }
+
+      // 2. Insertar el nodo en el nuevo padre
+      const newParent = this.findNodeById(this.Proyectos, droppedNodeId);
+      if (newParent) {
+        if (!newParent.subChild) newParent.subChild = [];
+        newParent.subChild.push(draggedNode);
+      }
+
+      // 3. Refrescar TreeView
+      (this.treeView.fields as any).dataSource = [...this.Proyectos];
+      this.treeView.refresh();
+      this.generarCodigoNuevo(draggedNodeId,droppedNodeId,dropPosition);
+    }
+    removeNodeById(nodes: any[], nodeId: string): any {
+      for (let i = 0; i < nodes.length; i++) {
+        const node = nodes[i];
+        if (node.id === nodeId) {
+          nodes.splice(i, 1);
+          return node;
+        }
+        if (node.subChild) {
+          const found = this.removeNodeById(node.subChild, nodeId);
+          if (found) return found;
+        }
+      }
+      return null;
+    }
+
+    findNodeById(nodes: any[], nodeId: string): any {
+      for (let node of nodes) {
+        if (node.id === nodeId) return node;
+        if (node.subChild) {
+          const found = this.findNodeById(node.subChild, nodeId);
+          if (found) return found;
+        }
+      }
+      return null;
+    }
+    async generarCodigoNuevo(Origen,Destino,Nivel){
+      let data = await this.taskFormService.getLastProyectId(Destino);
+      let Codigo = data['data'][0]['Codigo'];
+      let CantidadHijos = data['data'][0]['Cantidad_Subproyectos'];
+      let NuevoCodigo = Codigo + '.' + (parseInt(CantidadHijos) + 1);
+      await this.ActualizarCodigoProyecto(Origen,NuevoCodigo,Codigo,Nivel)
+    }
+    async ActualizarCodigoProyecto(Origen,Codigo,Padre,Nivel){
+      await this.taskFormService.updateProyectCode(Origen,Codigo,Padre,Nivel);
+    }
 }

@@ -263,4 +263,15 @@ export class ContactoService {
     };
     return await this.apiService.updateRecord(sql);
   }
+
+    async getPersonaPorNombre(Nombre,Apellido){
+    let sqlConfig = {
+      table: 'Gen_Persona',
+      fields: 'Nombre',
+      orderField: '',
+      searchField: '',
+      where: "Nombre Like '%" + Nombre + " " + Apellido+ "%' or Nombre like '%" + Apellido+ " " + Nombre + "%'"
+    };
+    return await this.apiService.executeSqlSyn(sqlConfig);
+  }
 }

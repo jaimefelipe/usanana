@@ -181,7 +181,8 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let p of ProductosPivote; let i = index">
+          <tr *ngFor="let p of ProductosPivote; let i = index"
+    [ngClass]="getColorPorCategoria(p.Categoria)">
             <td>{{ i + 1 }}</td>
             <td>{{ p.Categoria }}</td>
             <td>{{ p.Producto }}</td>

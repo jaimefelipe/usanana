@@ -128,16 +128,22 @@ export class TaskFormComponent implements OnInit {
     Tiempo_Real:'',
     Portafolio:'',
     Codigo_Portafolio:'',
+    PortafolioArr:'',
     Programa:'',
     Codigo_Programa:'',
+    ProgramaArr:'',
     Proyecto:'',
     Codigo_Proyecto:'',
+    ProyectoArr:'',
     Fase:'',
     Codigo_Fase:'',
+    FaseArr:'',
     Entregable:'',
+    EntregableArr:'',
     Codigo_Entregable:'',
     Tarea:'',
-    Codigo_Tarea:''
+    Codigo_Tarea:'',
+    TareaArr:''
   }
   
   paginacion = {
@@ -339,7 +345,6 @@ export class TaskFormComponent implements OnInit {
       if(!this.Proyecto.Nivel){
         this.Proyecto.Nivel = '0';
       }
-      console.log(this.Proyecto)
       this.CambioNivelEnForm.emit(this.Proyecto.Nivel);
     }else{
       this.inicializarProyecto();
@@ -363,16 +368,16 @@ export class TaskFormComponent implements OnInit {
     }
   }
 
-  async getLastProyectoId(Nivel?){
+  async getLastProyectoId(Id_Proyecto?){
     //obtener el Id el ultimo portafolio para generar uno nuevo
-    if(!Nivel){
-      Nivel = '';
+    if(!Id_Proyecto){
+      Id_Proyecto = '';
     }
-    let data = await this.taskFormService.getLastProyectId(Nivel);
+    let data = await this.taskFormService.getLastProyectId(Id_Proyecto);
     if (data['total'] == 0) {
       this.UltimoCodigo = '0';
     }else{
-      if(Nivel == ''){
+      if(Id_Proyecto == ''){
         this.UltimoCodigo = data['total'];
        // this.CantidadHijos = ;
       }else{
@@ -454,16 +459,22 @@ export class TaskFormComponent implements OnInit {
         Tiempo_Real:'',
         Portafolio:'',
         Codigo_Portafolio:'',
+        PortafolioArr:'',
         Programa:'',
         Codigo_Programa:'',
+        ProgramaArr:'',
         Proyecto:'',
         Codigo_Proyecto:'',
+        ProyectoArr:'',
         Fase:'',
         Codigo_Fase:'',
+        FaseArr:'',
         Entregable:'',
+        EntregableArr:'',
         Codigo_Entregable:'',
         Tarea:'',
-        Codigo_Tarea:''
+        Codigo_Tarea:'',
+        TareaArr:''
       }
     }
     grabar(){
@@ -652,32 +663,58 @@ async agregarSeguimieto(){
     this.PanelBusquedaMiembros = false;
   }
 
-  async leerProyectosHijos(Padre, Nivel) {
+  async leerProyectosHijos(Padre, Nivel,Changing?) {
     let data = await this.taskFormService.leerPortaProyectosHijos(Padre, Nivel);
     if (data['total'] > 0) {
       switch (Nivel) {
         case "1":
           this.Portafolios = data['data'];
-          await this.leerProyectosHijos(this.Proyecto.Portafolio, "2");
+          this.Proyecto.PortafolioArr = this.Portafolios.find(p => p.Nombre === this.Proyecto.Portafolio);
+          if(!Changing){
+            await this.leerProyectosHijos(this.Proyecto.Portafolio, "2");
+          }else{
+             await this.leerProyectosHijos(data['data'][0]['Id_Proyecto'], "2");
+          }
           break;
         case "2":
           this.Programas = data['data'];
-          await this.leerProyectosHijos(this.Proyecto.Programa, "3");
+          this.Proyecto.ProgramaArr = this.Programas.find(p => p.Nombre === this.Proyecto.Programa);
+          if(!Changing){
+            await this.leerProyectosHijos(this.Proyecto.Programa, "3");
+          }else{
+             await this.leerProyectosHijos(data['data'][0]['Id_Proyecto'], "3");
+          }
           break;
         case "3":
           this.Proyectos = data['data'];
-          await this.leerProyectosHijos(this.Proyecto.Proyecto, "4");
+          this.Proyecto.ProyectoArr = this.Proyectos.find(p => p.Nombre === this.Proyecto.Proyecto);
+          if(!Changing){
+            await this.leerProyectosHijos(this.Proyecto.Proyecto, "4");
+          }else{
+             await this.leerProyectosHijos(data['data'][0]['Id_Proyecto'], "4");
+          }
           break;
         case "4":
           this.Fases = data['data'];
-          await this.leerProyectosHijos(this.Proyecto.Fase, "5");
+          this.Proyecto.FaseArr = this.Fases.find(p => p.Nombre === this.Proyecto.Fase);
+          if(!Changing){
+            await this.leerProyectosHijos(this.Proyecto.Fase, "5");
+          }else{
+             await this.leerProyectosHijos(data['data'][0]['Id_Proyecto'], "5");
+          }
           break;  
         case "5":
           this.Entregables = data['data'];
-          await this.leerProyectosHijos(this.Proyecto.Entregable, "6");
+          this.Proyecto.EntregableArr = this.Entregables.find(p => p.Nombre === this.Proyecto.Entregable);
+          if(!Changing){
+           await this.leerProyectosHijos(this.Proyecto.Entregable, "6");
+          }else{
+             await this.leerProyectosHijos(data['data'][0]['Id_Proyecto'], "6");
+          }
           break;
         case "6":
           this.Tareas = data['data'];
+          this.Proyecto.TareaArr = this.Tareas.find(p => p.Nombre === this.Proyecto.Tarea);
           break;
       }
     }else{
@@ -692,7 +729,6 @@ async agregarSeguimieto(){
   }
   cambioTarea(Nivel?){
     this.moverNodoYReestructurar(Nivel)
-
   }
   async moverNodoYReestructurar(Nivel) {
     //1 Hay que saber cual es el nodo actual cual es su padre
@@ -705,38 +741,60 @@ async agregarSeguimieto(){
     switch (Nivel) {
       case 1:
         NuevoPadreId = this.Proyecto.Codigo_Portafolio; 
-        await this.leerProyectosHijos(this.Proyecto.Portafolio, "2");
+        await this.leerProyectosHijos(this.Proyecto.PortafolioArr['Nombre'], "2",1);
         break;
       case 2:
         NuevoPadreId = this.Proyecto.Codigo_Programa; 
-        await this.leerProyectosHijos(this.Proyecto.Programa, "3"); 
+        await this.leerProyectosHijos(this.Proyecto.ProgramaArr['Nombre'], "3",1); 
         break;
       case 3:
         NuevoPadreId = this.Proyecto.Codigo_Proyecto; 
-        await this.leerProyectosHijos(this.Proyecto.Proyecto, "4"); 
+        await this.leerProyectosHijos(this.Proyecto.ProyectoArr['Nombre'], "4",1); 
         break;
       case 4:
         NuevoPadreId = this.Proyecto.Codigo_Fase;
-        await this.leerProyectosHijos(this.Proyecto.Fase, "5"); 
+        await this.leerProyectosHijos(this.Proyecto.FaseArr['Nombre'], "5",1); 
         break;  
       case 5:
         NuevoPadreId = this.Proyecto.Codigo_Entregable;
-        await this.leerProyectosHijos(this.Proyecto.Entregable, "6");
+        await this.leerProyectosHijos(this.Proyecto.EntregableArr['Nombre'], "6",1);
         break;
       case 6:
         NuevoPadreId = this.Proyecto.Codigo_Tarea;
         break;
     }
-    //Generar NuevoCodigoHijo
-    //let data = await this.taskFormService.getLastProyectId(Nivel.toString());
-    //let CantidadHijos = data['data'][0]['Cantidad_Subproyectos'];
-    //let NuevoCodigo = NuevoPadreId + '.' + (parseInt(CantidadHijos) + 1);
-    //console.log(Nivel);
-    //console.log(NuevoPadreId);
-    //console.log(NuevoCodigo);
-    
-    //4 hay que ir regorriendo el array y cambiando el codigo
-
-
+  }
+  async cambiarEstructura(){
+    let Nivel = await this.deterNivelCambio();
+    let ProyectoId = this.Proyecto.TareaArr['Id_Proyecto'];
+    await this.getLastProyectoId(ProyectoId);
+    let codigo = this.UltimoCodigo + '.' + (parseInt(this.CantidadHijos) + 1);
+    this.Proyecto.Padre = this.Proyecto.TareaArr['Codigo'];
+    this.Proyecto.Codigo = codigo; 
+    this.InfoPanel = false;
+    this.grabar()
+    //Construir el codigo del hijo
+  }
+  async deterNivelCambio(){
+    if(this.Proyecto.Portafolio != this.Proyecto.PortafolioArr['Nombre']){
+      return 1;
+    }
+    if(this.Proyecto.Programa != this.Proyecto.ProgramaArr['Nombre']){
+      return 2;
+    }
+    if(this.Proyecto.Proyecto != this.Proyecto.ProyectoArr['Nombre']){
+      return 3;
+    }
+    if(this.Proyecto.Fase != this.Proyecto.FaseArr['Nombre']){
+      return 4;
+    }
+    if(this.Proyecto.Entregable != this.Proyecto.EntregableArr['Nombre']){
+      return 5;
+    }
+    if(this.Proyecto.Tarea != this.Proyecto.TareaArr['Nombre']){
+      return 6;
+    }else{
+      return 7
+    }
   }
 }

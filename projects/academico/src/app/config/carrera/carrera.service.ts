@@ -135,4 +135,12 @@ export class CarreraService {
      //this.leerCursosMatriculados();
   }
   
+  async asignarCarreraEstudiante(Id_Carrera,Id_Persona){
+    let sql = {
+      table: 'Edu_Carrera_Estudiante',
+      fields: 'Id_Persona,Id_Carrera,Estado',
+      values: '\'' + Id_Persona+ '\',\'' + Id_Carrera + '\',1'
+    };
+    return await this.apiService.insertRecord(sql);
+  }
 }

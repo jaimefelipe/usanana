@@ -108,6 +108,7 @@ export class CierreCajaComponent implements OnInit {
     this.ProductosClass = '';
     this.EntradasClass = '';
     this.SalidasClass = '';
+    this.ProductosPivoteClass = "";
   }
   activarProductos(){
     this.ProductosActivo = true;
@@ -119,6 +120,7 @@ export class CierreCajaComponent implements OnInit {
     this.TotalesClass = '';
     this.EntradasClass = '';
     this.SalidasClass = '';
+    this.ProductosPivoteClass = "";
   }
 
   activarProductosPrivote(){
@@ -127,7 +129,8 @@ export class CierreCajaComponent implements OnInit {
     this.TotalesActivo = false;
     this.EntradasActivo = false;
     this.SalidasActivo = false;
-    this.ProductosClass = 'text-success tablinks active';
+    this.ProductosClass =  "";
+    this.ProductosPivoteClass = 'text-success tablinks active';
     this.TotalesClass = '';
     this.EntradasClass = '';
     this.SalidasClass = '';
@@ -143,6 +146,7 @@ export class CierreCajaComponent implements OnInit {
     this.TotalesClass = '';
     this.SalidasClass = '';
     this.EntradasClass = 'text-success tablinks active';
+    this.ProductosPivoteClass = "";
   }
   activarSalidas(){
     this.ProductosActivo = false;
@@ -154,6 +158,7 @@ export class CierreCajaComponent implements OnInit {
     this.TotalesClass = '';
     this.EntradasClass = ''
     this.SalidasClass = 'text-success tablinks active';
+    this.ProductosPivoteClass = "";
   }
   async cargarDatos(){
     this.loading = true;
@@ -196,16 +201,16 @@ export class CierreCajaComponent implements OnInit {
     this.Fin = this.FechaFin.day + '/' + this.FechaFin.month + '/' + this.FechaFin.year;
     let param = '1&e=' + this.Id_Empresa + '&u=' + this.Id_Usuario + '&i=' + this.Inicio + '&f=' + this.Fin + '&c=' + this.Id_Caja + '&cc=' + this.Id_Caja_Diaria;
     let data = await this.apiService.postScript('https://toxo.work/reportes/cajas/productos_cierre_pivot.php',param);
+    
     this.ProductosPivote = data['data'];
+    console.log(this.ProductosActivoPivote)
+    //this.ProductosPivote = data.data;
 
-    this.ProductosPivote = data.data;
-
-    if (this.Productos.length > 0) {
+    if (this.ProductosPivote.length > 0) {
       // Detectar columnas que son fechas (excluyendo 'Categoria' y 'Producto')
-      const keys = Object.keys(this.Productos[0]);
+      const keys = Object.keys(this.ProductosPivote[0]);
       this.fechas = keys.filter(k => !['Categoria', 'Producto'].includes(k));
     }
-
   }
 
 
@@ -246,4 +251,14 @@ export class CierreCajaComponent implements OnInit {
     const keys = Object.keys(this.Totales[0]);
     return keys.filter(k => k !== 'Metodo');
   }
+
+  ultimaCategoria: string = '';
+  getColorPorCategoria(categoria: string): string {
+    if (categoria !== this.ultimaCategoria) {
+      this.ultimaCategoria = categoria;
+      this.colorAlternador = !this.colorAlternador;
+    }
+    return this.colorAlternador ? 'bg-light' : 'bg-white';
+  }
+  private colorAlternador: boolean = false;
 }

@@ -568,7 +568,7 @@
 <div [hidden]="!InfoPanel" class="short-main-modal">
   <div class="modal-content  card">
     <div class="card-header py-1 px-3 h-auto">
-      <h6>Notas {{Proyecto.Nombre}}</h6>
+      <h6>Estructura {{Proyecto.Nombre}}</h6>
     </div>
     <div class="card-body">
 
@@ -579,18 +579,18 @@
             <input disabled="disabled" [(ngModel)]="Proyecto.Portafolio" disabled name="Portafolio" id="Portafolio" type="text"
               class="form-control" placeholder="PortaFolio">
               -->
-              <select (change)="cambioTarea(1)"  [(ngModel)]="Proyecto.Portafolio" name="Id_Sucursal" type="text" class="form-control">
-                <option value='{{Portafolio.Nombre}}' *ngFor="let Portafolio of Portafolios;let i = index">
+              <select (change)="cambioTarea(1)"  [(ngModel)]="Proyecto.PortafolioArr" name="Id_Sucursal" type="text" class="form-control">
+                <option [ngValue]="Portafolio"  value='{{Portafolio.Nombre}}' *ngFor="let Portafolio of Portafolios;let i = index">
                   {{Portafolio.Nombre}}</option>
               </select>
         </div>
       </div>
 
       <div class="form-group row align-items-center  mb-2">
-        <label class="col-sm-2 col-form-label">Programa {{Proyecto.Programa}}</label>
+        <label class="col-sm-2 col-form-label">Programa </label>
         <div class="col-sm-10">
-            <select (change)="cambioTarea(2)"  [(ngModel)]="Proyecto.Programa" name="Id_Sucursal" type="text" class="form-control">
-              <option value='{{Programa.Nombre}}' *ngFor="let Programa of Programas;let i = index">
+            <select (change)="cambioTarea(2)"  [(ngModel)]="Proyecto.ProgramaArr" name="Id_Sucursal" type="text" class="form-control">
+              <option [ngValue]="Programa" value='{{Programa.Nombre}}' *ngFor="let Programa of Programas;let i = index">
                 {{Programa.Nombre}}</option>
             </select>
         </div>
@@ -599,8 +599,8 @@
       <div class="form-group row align-items-center  mb-2">
         <label class="col-sm-2 col-form-label">Proyecto</label>
         <div class="col-sm-10">
-            <select (change)="cambioTarea(3)" [(ngModel)]="Proyecto.Proyecto" name="Id_Sucursal" type="text" class="form-control">
-              <option value='{{Proyecto.Nombre}}' *ngFor="let Proyecto of Proyectos;let i = index">
+            <select (change)="cambioTarea(3)" [(ngModel)]="Proyecto.ProyectoArr" name="Id_Sucursal" type="text" class="form-control">
+              <option [ngValue]="Proyecto" value='{{Proyecto.Nombre}}' *ngFor="let Proyecto of Proyectos;let i = index">
                 {{Proyecto.Nombre}}</option>
             </select>
         </div>
@@ -609,8 +609,8 @@
       <div class="form-group row align-items-center  mb-2">
         <label class="col-sm-2 col-form-label">Fase</label>
         <div class="col-sm-10">
-            <select (change)="cambioTarea(4)"  [(ngModel)]="Proyecto.Fase" name="Id_Sucursal" type="text" class="form-control">
-              <option value='{{Fase.Nombre}}' *ngFor="let Fase of Fases;let i = index">
+            <select (change)="cambioTarea(4)"  [(ngModel)]="Proyecto.FaseArr" name="Id_Sucursal" type="text" class="form-control">
+              <option  [ngValue]="Fase" value='{{Fase.Nombre}}' *ngFor="let Fase of Fases;let i = index">
                 {{Fase.Nombre}}</option>
             </select>
         </div>
@@ -619,8 +619,8 @@
       <div class="form-group row align-items-center  mb-2">
         <label class="col-sm-2 col-form-label">Entregable </label>
         <div class="col-sm-10">
-             <select (change)="cambioTarea(5)"  [(ngModel)]="Proyecto.Entregable" name="Id_Sucursal" type="text" class="form-control">
-              <option value='{{Entregable.Nombre}}' *ngFor="let Entregable of Entregables;let i = index">
+             <select (change)="cambioTarea(5)"  [(ngModel)]="Proyecto.EntregableArr" name="Id_Sucursal" type="text" class="form-control">
+              <option [ngValue]="Entregable" value='{{Entregable.Nombre}}' *ngFor="let Entregable of Entregables;let i = index">
                 {{Entregable.Nombre}}</option>
             </select>
         </div>
@@ -630,8 +630,8 @@
         <label class="col-sm-2 col-form-label">Tarea </label>
         <div class="col-sm-10">
            
-            <select (change)="cambioTarea(6)"   [(ngModel)]="Proyecto.Tarea" name="Id_Sucursal" type="text" class="form-control">
-              <option value='{{Tarea.Nombre}}' *ngFor="let Tarea of Tareas;let i = index">
+            <select (change)="cambioTarea(6)"   [(ngModel)]="Proyecto.TareaArr" name="Id_Sucursal" type="text" class="form-control">
+              <option [ngValue]="Tarea" value='{{Tarea.Nombre}}' *ngFor="let Tarea of Tareas;let i = index">
                 {{Tarea.Nombre}}</option>
             </select>
         </div>
@@ -643,9 +643,10 @@
       <div class="form-group col-md-12 px-0">
         <div class="form-row">
           <div class="form-group col-8 col-md-10">
+            <button (click)="cambiarEstructura()" type="button" class="btn btn-success btn-sm custom-btn"
+              title="Cancela edicion"> Cambiar </button>
           </div>
           <div class="form-group col-2 d-flex justify-content-end">
-           
             <button (click)="cerrarInfoPanel()" type="button" class="btn btn-danger btn-sm custom-btn"
               title="Cancela edicion"> Cerrar </button>
           </div>

@@ -1,0 +1,46 @@
+<div class="container-fluid">
+  <h3><b>Entregas de Actividades</b></h3>
+
+  <!-- Selector de Actividad -->
+  <div class="form-row mb-3">
+    <div class="form-group col-md-8">
+      <label>Actividad</label>
+      <select class="form-control" [(ngModel)]="Filtro.Id_Actividad" (change)="cargarEntregas()">
+        <option *ngFor="let act of Actividades" [value]="act.Id_Actividad">
+          {{ act.Titulo }} ({{ act.Tipo }})
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- Tabla de entregas -->
+  <table class="table table-bordered table-sm">
+    <thead class="thead-light">
+      <tr>
+        <th>Estudiante</th>
+        <th>Archivo</th>
+        <th>Fecha</th>
+        <th>Nota</th>
+        <th>Comentario</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let ent of Entregas">
+        <td>{{ ent.Estudiante }}</td>
+        <td>
+          <a *ngIf="ent.Archivo" [href]="ent.Archivo" target="_blank">Ver archivo</a>
+          <span *ngIf="!ent.Archivo" class="text-muted">Sin archivo</span>
+        </td>
+        <td>{{ ent.Fecha_Entrega | date:'short' }}</td>
+        <td><input type="number" class="form-control form-control-sm" [(ngModel)]="ent.Nota"></td>
+        <td><input type="text" class="form-control form-control-sm" [(ngModel)]="ent.Comentario_Docente"></td>
+        <td>
+          <button class="btn btn-sm btn-success" (click)="guardar(ent)">💾</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

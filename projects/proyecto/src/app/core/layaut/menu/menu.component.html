@@ -27,17 +27,17 @@
 
           <li [hidden]="!AppProyecto" (click)="clickVentasMenu()" ><a><i class="fa fa-credit-card"></i>  Proyectos<i [ngClass]='ventasClass' class="fa fa-cog"></i>  </a></li>
           <ul [hidden]="!AppProyecto">
-            <a (click)="hideMenu()" [routerLink]="['/contactos']"><li><i class="fa fa-address-card-o"></i>  Contactos</li></a>
-            <a (click)="hideMenu()" [routerLink]="['/proyecto']"><li><i class="fa fa-credit-card"></i> Proyectos</li></a>
-            <a (click)="hideMenu()" [routerLink]="['/seguimiento']"><li><i class="fa fa-credit-card"></i> Seguimiento</li></a>
-            <a (click)="hideMenu()" [routerLink]="['/tareas']"><li><i class="fa fa-credit-card"></i> Tareas</li></a>
+            <a (click)="hideMenu()" [routerLink]="['/contacto/contactos']"><li><i class="fa fa-address-card-o"></i>  Contactos</li></a>
+            <a (click)="hideMenu()" [routerLink]="['/proyectos/proyecto']"><li><i class="fa fa-credit-card"></i> Proyectos</li></a>
+            <a (click)="hideMenu()" [routerLink]="['/tareas/seguimiento']"><li><i class="fa fa-credit-card"></i> Seguimiento</li></a>
+            <a (click)="hideMenu()" [routerLink]="['/tareas/tareas']"><li><i class="fa fa-credit-card"></i> Tareas</li></a>
           </ul>
         </div>
 
         <a href="https://api.whatsapp.com/send?phone=50687786649" target="_blank"><li><i class="fa fa-phone"></i> Soporte</li></a>
         <a href="/main" target="_self"><li><i class="fa fa-home"></i> Menú Principal</li></a>
-        <a (click)="hideMenu()" [hidden]="logedIn" [routerLink]="['/login']"><li><i class="fa fa-sign-in"></i> Entrar</li></a>
-        <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/cambiar']"><li><i class="fa fa-key"></i> Cambiar Clave</li></a>
+        <a (click)="hideMenu()" [hidden]="logedIn" [routerLink]="['/seguridad/login']"><li><i class="fa fa-sign-in"></i> Entrar</li></a>
+        <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/seguridad/cambiar']"><li><i class="fa fa-key"></i> Cambiar Clave</li></a>
         <a (click)="hideMenu()" [hidden]="!logedIn" (click)="logOut()" href="#"><li><i class="fa fa-sign-out"></i> Salir</li></a>
         <a (click)="hideMenu()" [hidden]="!logedIn">{{Company}} | {{User}}</a>
       </ul>

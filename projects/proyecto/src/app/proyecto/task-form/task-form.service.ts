@@ -110,6 +110,18 @@ async updateProyecto(Proyecto){
   };
   return await this.apiService.updateRecord(sql,2);
 }
+async updateProyectCode(Id_Proyecto,Codigo,Padre,Nivel){
+  let sql = {
+    table: 'Pro_Proyecto',
+    fields: 'Codigo=\'' + Codigo
+    + '\',Padre=\'' + Padre
+    + '\',Nivel=\''+ Nivel
+    + '\',Tipo=\''+ Nivel
+    + '\'',
+    where: 'Id_Proyecto=' + Id_Proyecto
+  };
+  return await this.apiService.updateRecord(sql,2);
+}
 
 async getLastProyectId(Id_Proyecto){
   let sqlConfig;
@@ -187,7 +199,7 @@ async leerNotas(Id_Proyecto){
       sqlConfig = {
         table: 'Pro_Proyecto',
         fields: 'Id_Proyecto,Nivel,Codigo,Padre,Nombre',
-        where:"Padre = '" + Padre + "' and Nivel =" + Nivel
+        where:"(Padre = '" + Padre + "' or Padre = `'`') and Nivel =" + Nivel
       }
       return await this.apiService.executeSqlSyn(sqlConfig);
     }else{
@@ -195,9 +207,16 @@ async leerNotas(Id_Proyecto){
       sqlConfig = `Select Id_Proyecto,Nivel,Codigo,Padre,Nombre FROM Pro_Proyecto WHERE Padre = ( 
         Select Codigo From Pro_Proyecto where Nombre = '`+Padre+`' and Nivel = `+nivelPadre+` and  Id_Empresa = `+Id_Empresa+`) 
         and Nivel = `+Nivel+` And Id_Empresa = `+Id_Empresa+`;`
-
       return await this.apiService.postRecord(sqlConfig);
     }
-    
+  }
+
+  async leerIdProyecto(Codigo){
+    let sqlConfig = {
+      table: 'Pro_Proyecto',
+      fields: 'Id_Proyecto',
+      where:"Codigo= '" + Codigo + "'"
+    }
+    return await this.apiService.executeSqlSyn(sqlConfig);
   }
 }

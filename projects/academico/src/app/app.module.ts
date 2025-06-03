@@ -16,6 +16,8 @@ import { InventoryModule } from '../../../inventario/src/app/inventory/inventory
 import { SalesModule } from '../../../factura/src/app/sales/sales.module';
 import { ReceivableModule } from '../../../conta/src/app/receivable/receivable.module';
 import { ProfesorModule } from './profesor/profesor.module';
+import { AlumnoModule } from './alumno/alumno.module';
+import { LmsModule } from './lms/lms.module';
 
 @NgModule({
   declarations: [
@@ -34,7 +36,9 @@ import { ProfesorModule } from './profesor/profesor.module';
     InventoryModule,
     SalesModule,
     ReceivableModule,
-    ProfesorModule
+    ProfesorModule,
+    AlumnoModule,
+    LmsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

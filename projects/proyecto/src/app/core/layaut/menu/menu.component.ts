@@ -54,7 +54,7 @@ export class MenuComponent implements OnInit {
     if(localStorage.getItem('isLoggedin') == 'false'){
       let arrlocation = window.location.pathname.split('/');
       if(arrlocation[2] !== 'login'){
-        this.route.navigate(['login']);
+        this.route.navigate(['/seguridad/login']);
       } 
     }
 

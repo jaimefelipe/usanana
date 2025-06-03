@@ -27,7 +27,7 @@ export class TareasMainComponent implements OnInit {
   ItemSeleccionado = 0;
   Empresa = localStorage.getItem("Empresa");
   nombreUsuario = localStorage.getItem('Nombre_Usuario')
-  selectedView = 'calendar';
+  selectedView = 'tareas';
   LastItemSelected:any;
   TareaAtiva:'';
   prompt = '';

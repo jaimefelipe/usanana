@@ -4,11 +4,11 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
-import { ProyectoModule } from './proyecto/proyecto.module';
-import { SecurityModule } from '../../../seguridad/src/app/security/security.module';
-import { GeneralModule } from '../../../main/src/app/general/general.module';
-import { ContactoModule } from '../../../contacto/src/app/contacto/contacto.module';
-import { TareasModule } from './tareas/tareas.module';
+//import { ProyectoModule } from './proyecto/proyecto.module';
+//import { SecurityModule } from '../../../seguridad/src/app/security/security.module';
+//import { GeneralModule } from '../../../main/src/app/general/general.module';
+//import { ContactoModule } from '../../../contacto/src/app/contacto/contacto.module';
+//import { TareasModule } from './tareas/tareas.module';
 
 @NgModule({
   declarations: [	
@@ -18,11 +18,11 @@ import { TareasModule } from './tareas/tareas.module';
     BrowserModule,
     AppRoutingModule,
     CoreModule,
-    ProyectoModule,
-    SecurityModule,
-    TareasModule,
-    GeneralModule,
-    ContactoModule
+    //ProyectoModule,
+    //SecurityModule,
+    //TareasModule,
+    //GeneralModule,
+    //ContactoModule
   ],
   providers: [],
   bootstrap: [AppComponent]

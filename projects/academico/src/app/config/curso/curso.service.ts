@@ -83,4 +83,16 @@ export class CursoService {
       };
       return await this.apiService.executeSqlSyn(sqlConfig);
   }
+
+  async leerCursosPorNivel(Nivel){
+    let sqlConfig = {
+      table: 'Edu_Carrera',
+      fields: 'Id_Carrera, Carrera',
+      orderField: '',
+      searchField: '',
+      simple:true,
+      where: 'Estado = 1 and Nivel = ' + Nivel
+    };
+    return await this.apiService.executeSqlSyn(sqlConfig);
+  }
 }

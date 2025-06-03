@@ -40,8 +40,16 @@
             <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/periodo']"><li><i class="fa fa-credit-card"></i> Periodo Académico</li></a>
             <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/grupo']"><li><i class="fa fa-align-justify"></i> Grupos</li></a>
             <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/matricula']"><li><i class="fa fa-map-signs"></i> Matrícula</li></a>
+
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/aulavirtual']"><li><i class="fa fa-credit-card"></i> Aula Virtual</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/semanacurso']"><li><i class="fa fa-credit-card"></i> Semana Curso</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/actividades']"><li><i class="fa fa-credit-card"></i> Actividades</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/recursos']"><li><i class="fa fa-credit-card"></i> Recursos</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/entregas']"><li><i class="fa fa-credit-card"></i> Entregas</li></a>
+
             <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/reportesacademicos']"><li><i class="fa fa-file"></i> Reportes</li></a>
           </ul>
+
 
           <li (click)="clickTesoreriaMenu()" ><a><i class="fa fa-file"></i>  Tesoreria <i [ngClass]='TesoreriaClass' class="fa fa-cog"></i>  </a></li>
           <ul [hidden]="!TesoreriaMenu">
@@ -57,6 +65,12 @@
           <li (click)="clickProfesorMenu()" ><a><i class="fa fa-file"></i>  Profesor <i [ngClass]='ProfesorClass' class="fa fa-cog"></i>  </a></li>
           <ul [hidden]="!ProfesorMenu">
             <a (click)="hideMenu()" [hidden]="!logedIn " [routerLink]="['/grupoprofesor']"><li><i class="fa fa-shopping-basket"></i> Grupos</li></a>
+          </ul>
+
+          <li (click)="clickAlumnoMenu()" ><a><i class="fa fa-file"></i>  Alumno <i [ngClass]='AlumnoClass' class="fa fa-cog"></i>  </a></li>
+          <ul [hidden]="!AlumnoMenu">
+            <a (click)="hideMenu()" [hidden]="!logedIn " [routerLink]="['/primeringreso']"><li><i class="fa fa-shopping-basket"></i> Perfil</li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn " [routerLink]="['/expedientealumno']"><li><i class="fa fa-shopping-basket"></i> Expediente</li></a>
           </ul>
 
         </div>

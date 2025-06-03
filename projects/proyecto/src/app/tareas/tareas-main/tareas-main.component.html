@@ -33,13 +33,15 @@
 
 <ejs-splitter #horizontal height='70%' width='100%' > 
   <e-panes>
+    <!--
     <e-pane size='50%' [collapsible]='true'>
       <ng-template #content>
         <app-task-kanban [recargar]="nuevaTareaCreada"   (TareaSeleccionadaEnKanban)="tareaSeleccionadaEnList($event)" [ItemSelected]="ItemSeleccionado"></app-task-kanban>
 
       </ng-template>>
     </e-pane>
-    <e-pane size='50%' [collapsible]='true'>
+    -->
+    <e-pane size='100%' [collapsible]='true'>
       <ng-template #content>
         <ng-container [ngSwitch]="selectedView">
           <app-tareas *ngSwitchCase="'tareas'"  (CerrarPanel)="cerrarPanel()" (TareaSeleccionadaEnList)="tareaSeleccionadaEnList($event)" ></app-tareas>
@@ -55,7 +57,7 @@
 
 <ejs-splitter #horizontal height='30%' width='100%' >
   <e-panes>
-    <e-pane size='50%' [collapsible]='true'>
+    <e-pane size='100%' [collapsible]='true'>
       <ng-template #content>
         <div class="voice-recognition-container">
           <textarea rows="4" class="prompt-input" [(ngModel)]="transcript" placeholder="Escribe tu prompt o usa dictado..."></textarea>
@@ -69,12 +71,14 @@
 
       </ng-template>>
     </e-pane>
+    <!--
     <e-pane size='50%' [collapsible]='true'>
       <ng-template #content>
 
 
       </ng-template>>
     </e-pane>
+    -->
   </e-panes>
 </ejs-splitter>
 

@@ -19,5 +19,9 @@ constructor(private apiService: ApiService) {}
       };
       return await this.apiService.executeSqlSyn(sqlConfig);
   }
+  async leerPaises(){
+    let pais = await this.apiService.obtenerPaises();
+    return pais;
+  }
 
 }

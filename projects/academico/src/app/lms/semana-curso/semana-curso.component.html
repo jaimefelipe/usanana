@@ -1,0 +1,71 @@
+<div class="container-fluid">
+  <h3><b>Planificación Semanal del Curso</b></h3>
+
+  <div class="form-row">
+    <div class="form-group col-md-8">
+      <label>Grupo (Aula Virtual)</label>
+      <select class="form-control" [(ngModel)]="Filtro.Id_AulaVirtual" (change)="cargarSemanas()">
+        <option *ngFor="let aula of AulasVirtuales" [value]="aula.Id_AulaVirtual">
+          {{ aula.Curso }} - {{ aula.Grupo }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="form-row">
+    <div class="form-group col-md-2">
+      <label>Semana #</label>
+      <input type="number" class="form-control" [(ngModel)]="Semana.Numero_Semana">
+    </div>
+    <div class="form-group col-md-6">
+      <label>Título</label>
+      <input type="text" class="form-control" [(ngModel)]="Semana.Titulo">
+    </div>
+    <div class="form-group col-md-2">
+      <label>Inicio</label>
+      <input type="date" class="form-control" [(ngModel)]="Semana.Fecha_Inicio">
+    </div>
+    <div class="form-group col-md-2">
+      <label>Límite</label>
+      <input type="date" class="form-control" [(ngModel)]="Semana.Fecha_Limite">
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Ruta de Aprendizaje</label>
+    <textarea class="form-control" rows="4" [(ngModel)]="Semana.RutaAprendizaje"></textarea>
+  </div>
+
+  <div class="form-group text-right">
+    <button class="btn btn-success" (click)="grabar()">Guardar Semana</button>
+    <button class="btn btn-danger ml-2" (click)="cancelar()">Cancelar</button>
+  </div>
+
+  <hr>
+
+  <table class="table table-bordered table-sm">
+    <thead class="thead-light">
+      <tr>
+        <th>Semana</th>
+        <th>Título</th>
+        <th>Inicio</th>
+        <th>Límite</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let sem of Semanas">
+        <td>{{ sem.Numero_Semana }}</td>
+        <td>{{ sem.Titulo }}</td>
+        <td>{{ sem.Fecha_Inicio }}</td>
+        <td>{{ sem.Fecha_Limite }}</td>
+        <td>
+          <button class="btn btn-sm btn-info" (click)="editar(sem)">Editar</button>
+          <button class="btn btn-sm btn-danger ml-1" (click)="eliminar(sem)">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

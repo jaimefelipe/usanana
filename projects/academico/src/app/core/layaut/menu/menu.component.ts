@@ -25,6 +25,7 @@ export class MenuComponent implements OnInit {
   AcademicoMenu = false;
   TesoreriaMenu = false;
   ProfesorMenu = false;
+  AlumnoMenu = false;
 
   deferredPrompt: any;
   showButton = true;
@@ -32,6 +33,7 @@ export class MenuComponent implements OnInit {
   AcademicoClass = 'fa fa-arrow-right';
   TesoreriaClass = 'fa fa-arrow-right';
   ProfesorClass = 'fa fa-arrow-right';
+  AlumnoClass = 'fa fa-arrow-right';
 
   //Obtener los Datos del Usuario
   //Si No hay Datos, Entonces usar menu de ventas.
@@ -100,6 +102,14 @@ export class MenuComponent implements OnInit {
       this.ProfesorClass = 'fa fa-arrow-right';
     }else{
       this.ProfesorClass = 'fa fa-arrow-left';
+    }
+  }
+  clickAlumnoMenu(){
+    this.AlumnoMenu = !this.AlumnoMenu;
+    if(this.AlumnoClass == 'fa fa-arrow-left'){
+      this.AlumnoClass = 'fa fa-arrow-right';
+    }else{
+      this.AlumnoClass = 'fa fa-arrow-left';
     }
   }
  

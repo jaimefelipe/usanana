@@ -1,0 +1,176 @@
+<div [hidden]="!Registrado" class="container">
+
+    <h1>UNIVERSIDAD EVANGELICA DE LAS AMERICAS </h1>
+    <h2>Formulario de Registro Primer Ingreso UNELA</h2>
+    <div>
+        <img src="/assets/unela.png">
+    </div>
+    Proceso de registro para admisión como estudiante de UNELA.
+
+    <h3>Nota</h3>
+    <p>
+        Con el siguiente formulario se realizará el proceso de inscripción ante UNELA, Un funcionario validará la información suministrada en este formulario y si existe alguna disconformidad se comunicará con usted para subsanar la misma
+    </p>
+    <p>
+        Con el siguiente proceso se generará un usuario que le permitirá ingresar al sistema de UNELA por medio del cual podrá consultar su expedente.`
+    </p>
+
+    <form>
+        <div class="card">
+            <div class="card-header">
+                Información Personal del Candidato
+            </div>
+            <div class="card-body">
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label>Nombre del Candidato</label>
+                        <input [(ngModel)]="Persona.Nombre" class="form-control" name="NombreEmpresa" id="NombreEmpresa" type="text" placeholder="Nombre y Apellidos">
+                    </div>
+
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label>País de Residencia</label>
+                        <select [(ngModel)]="Persona.Residencia" name="pais" class="form-control">
+                          <option  *ngFor="let Pais of Paises ; let i = index" value='{{Pais}}'>{{Pais}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label>Nacionalidad</label>
+                        <select [(ngModel)]="Persona.Id_Nacionalidad" name="Id_Empresa" class="form-control">
+                            <option *ngFor="let nacionalidad of Nacionalidades" value={{nacionalidad.Id_Nacionalidad}}>{{nacionalidad.Nacionalidad}}</option>
+                        </select>
+                    </div>
+                </div>
+
+
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label>Tipo</label>
+                        <select [(ngModel)]="Persona.Tipo_Identificacion" name="Tipo_Identificacion" class="form-control">
+                              <option value='01'>Cédula Física</option>
+                              <option value='02'>Cédula Jurídica</option>
+                              <option value='03'>DIMEX</option>
+                              <option value='04'>NITE</option>
+                              <option value='05'>PASAPORTE</option>
+                          </select>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label>Identificacion</label>
+                        <input [(ngModel)]="Persona.Identificacion" class="form-control" name="Identificacion" id="Identificacion" type="text" placeholder="Identificacion">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label>Otro Documento</label>
+                        <input [(ngModel)]="Persona.Otro_Documento" class="form-control" name="Otro_Documento" id="Otro_Documento" type="text" placeholder="Otro_Documento">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label>Teléfono</label>
+                        <input [(ngModel)]="Persona.Telefono" class="form-control" name="Telefono" id="Telefono" type="text" placeholder="Telefono">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label>Correo</label>
+                        <input [(ngModel)]="Persona.Correo" class="form-control" name="Correo" id="Correo" type="text" placeholder="Correo">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label>Apartado</label>
+                        <input [(ngModel)]="Persona.Apartado" class="form-control" name="Apartado" id="Apartado" type="text" placeholder="Apartado">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label>Genero</label>
+                        <select [(ngModel)]="Persona.Genero" name="Genero" class="form-control">
+                              <option value='1'>Masculino</option>
+                              <option value='2'>Femenino</option>
+                          </select>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label>Estado Civil</label>
+                        <select [(ngModel)]="Persona.Estado_Civil" name="Estado_Civil" class="form-control">
+                              <option value='1'>Soltero</option>
+                              <option value='2'>Casado</option>
+                              <option value='3'>Viudo</option>
+                              <option value='4'>Divorciado</option>
+                              <option value='5'>Union Libre</option>
+                          </select>
+                    </div>
+
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label>Dirección</label>
+                        <input [(ngModel)]="Persona.Direccion" class="form-control" name="Direccion" id="Direccion" type="text" placeholder="Dirección">
+                    </div>
+                </div>
+            </div>
+            <div class="card-header">
+                Datos Académicos de Interes
+            </div>
+            <div class="card-body">
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label>Nivel que desea Cursar</label>
+                        <select (change)='leerCursos()' [(ngModel)]="Persona.Nivel" name="Nivel" class="form-control">
+                            <option value='1'>Curso Libre</option>
+                            <option value='2'>Seminario</option>
+                            <option value='3'>Técnico</option>
+                            <option value='4'>Diploma</option>
+                            <option value='5'>Bachillerato</option>
+                            <option value='6'>Licenciatura</option>
+                            <option value='7'>Maestría</option>
+                            <option value='8'>Doctorado</option>
+                            <option value='9'>Especialización</option>
+                            <option value='10'>Certificación</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-8">
+                        <label>Carrera</label>
+                        <select [(ngModel)]="Persona.Carrera" name="Id_Empresa" class="form-control">
+                          <option *ngFor="let carrera of Carreras" value={{carrera.Id_Carrera}}>{{carrera.Carrera}}</option>
+                      </select>
+                    </div>
+
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-10">
+
+                    </div>
+                    <div class="form-group col-md-2">
+                        <button (click)="registrarse()" type="button" class="btn btn-primary">Registrarse</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</div>
+
+<div [hidden]="Registrado" class="container">
+    <h1>UNIVERSIDAD EVANGELICA DE LAS AMERICAS </h1>
+    <h2>Registro Primer Ingreso UNELA</h2>
+    <div>
+        <img src="/assets/unela.png">
+    </div>
+    Proceso de registro para admisión como estudiante de UNELA.
+    <br><br><br>
+    <h3>Usuario Creado</h3>
+    <p>
+        Se ha generado un usuario en el sistema de UNELA donde podrá realizar la actualización de su expediente, Matricula y demás trámites
+    </p>
+    <p>
+        Usuario : {{Persona.Correo}} <br> Clave : password
+    </p>
+    <p>
+        El sistema le solicitará cambiar su clave cuando ingrese por primera vez
+    </p>
+    <p>
+        Bienvenido a Unela.
+    </p>
+    <p>
+        Ingrese al sistema <a href="/login">Sistema de Unela</a>
+        <!-- Ingrese al sistema <a href="http://ibo.jaimebrenes.com/login">Sistema de Unela</a> -->
+    </p>
+</div>
