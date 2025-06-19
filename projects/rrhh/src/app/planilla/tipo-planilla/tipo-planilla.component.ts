@@ -29,7 +29,8 @@ export class TipoPlanillaComponent implements OnInit {
   Tipo = {
     Id_Tipo_Planilla:'',
     Nombre:'',
-    Id_Periodo_Pago:''
+    Id_Periodo_Pago:'',
+    Metodo_Calculo_Salario:''
   }
 
   ngOnInit(): void {
@@ -79,7 +80,8 @@ export class TipoPlanillaComponent implements OnInit {
       this.Tipo = {
         Id_Tipo_Planilla:'',
         Nombre:'',
-        Id_Periodo_Pago:''
+        Id_Periodo_Pago:'',
+        Metodo_Calculo_Salario:''
       }
     }
    }
@@ -97,7 +99,8 @@ export class TipoPlanillaComponent implements OnInit {
       this.Tipo = {
         Id_Tipo_Planilla:'',
         Nombre:'',
-        Id_Periodo_Pago:''
+        Id_Periodo_Pago:'',
+        Metodo_Calculo_Salario:''
       }
     }else{
       this.Tipo = data['data'][0];

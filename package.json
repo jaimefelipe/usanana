@@ -37,6 +37,7 @@
     "@syncfusion/ej2-angular-pivotview": "^28.2.11",
     "@syncfusion/ej2-angular-richtexteditor": "^28.2.6",
     "@syncfusion/ej2-angular-schedule": "^28.2.3",
+    "@syncfusion/ej2-bootstrap-theme": "^29.2.10",
     "@syncfusion/ej2-cldr-data": "^28.2.6",
     "@syncfusion/ej2-icons": "^29.1.33",
     "@toast-ui/calendar": "^2.1.3",

@@ -24,7 +24,7 @@
           <a (click)="editRecord(empleadoTipoPlanilla)">
             <div class="card-body">
 
-              <h4 class="card-title">{{empleadoTipoPlanilla.Tipo_Planilla}}- {{empleadoTipoPlanilla.empleado_Salarial}} </h4>
+              <h4 class="card-title">{{empleadoTipoPlanilla.Tipo_Planilla}}- {{empleadoTipoPlanilla.Empleado}} </h4>
               
             </div>
           </a>
@@ -59,23 +59,23 @@
 
       <div class="form-group col-md-6">
         <label>Tipo Planilla</label>
-        <select [(ngModel)]="empleado_Tipo_Planilla.Id_Tipo_Planilla" name="Id_Tipo_Planilla" type="text" class="form-control">
+        <select [(ngModel)]="Empleado_Tipo_Planilla.Id_Tipo_Planilla" name="Id_Tipo_Planilla" type="text" class="form-control">
           <option value='{{Tipo.Id_Tipo_Planilla}}' *ngFor="let Tipo of Tipos;let i = index">
            {{Tipo.Nombre}}</option>
         </select>
       </div>
 
       <div class="form-group col-md-6">
-        <label>empleado Salarial</label> {{empleado_Tipo_Planilla.Id_empleado_Salarial}}
-        <select [(ngModel)]="empleado_Tipo_Planilla.Id_empleado_Salarial" name="Id_empleado_Salarial" type="text" class="form-control">
-          <option value='{{empleado.Id_empleado_Salarial}}' *ngFor="let empleado of empleados;let i = index">
-             {{empleado.Nombre}}</option>
+        <label>Empleado</label>
+        <select [(ngModel)]="Empleado_Tipo_Planilla.Id_Empleado" name="Id_Empleado" type="text" class="form-control">
+          <option value='{{Empleado.Id_Empleado}}' *ngFor="let Empleado of Empleados;let i = index">
+             {{Empleado.Nombre}}</option>
         </select>
       </div>
 
       <div class="form-group col-md-6">
         <label>Estado</label>
-        <select [(ngModel)]="empleado_Tipo_Planilla.Estado" name="Estado" type="text" class="form-control">
+        <select [(ngModel)]="Empleado_Tipo_Planilla.Estado" name="Estado" type="text" class="form-control">
           <option value='1'>Activo</option>
           <option value='0'>Inactivo</option>
         </select>

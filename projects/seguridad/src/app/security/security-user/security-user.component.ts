@@ -146,7 +146,7 @@ export class SecurityUserComponent implements OnInit {
       }
       //Crear el usuario
       let data = await this.securityUserService.inserUsert(this.Usuario);
-      let Id_Usuario = data['data']['0']['Identity'];
+      let Id_Usuario = data['Identity'];
 
       //Asociar el usuario a la empresa
       await this.securityUserService.AsociarUsuario(Id_Usuario,localStorage.getItem('Id_Empresa'))

@@ -100,14 +100,19 @@ export class UsuarioEmpresaComponent implements OnInit {
         this.UsuarioEmpresa.Numero_Identificacion = usuario.Numero_Identificacion;
       }
     }
-
+    
     if(this.UsuarioEmpresa.Id_Usuario_Empresa == ''){
       let data = this.usuarioEmpresaService.inserUsert(this.UsuarioEmpresa);
     }else{
       let data = this.usuarioEmpresaService.updateUser(this.UsuarioEmpresa);
     }
-    this.cancel();
+    //this.AsosiarUsuario(this.UsuarioEmpresa.Id_Usuario,this.UsuarioEmpresa.Id_Empresa)
+    //this.cancel();
   }
+  async AsosiarUsuario(Id_Usuario,Id_Empresa){
+    let data = await this.usuarioEmpresaService.asociarUsuarioEmpresa(Id_Usuario,Id_Empresa)
+  }
+
   cancel(){
     this.edit = false;
   }

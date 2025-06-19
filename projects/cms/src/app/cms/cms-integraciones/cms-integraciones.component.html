@@ -1,0 +1,84 @@
+<div class="card mt-3">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h5 class="mb-0">Integraciones Externas</h5>
+    <button class="btn btn-primary btn-sm" (click)="nuevaIntegracion()">+ Nueva</button>
+  </div>
+
+  <div class="card-body">
+    <table class="table table-bordered table-hover" *ngIf="Integraciones.length > 0">
+      <thead class="thead-light">
+        <tr>
+          <th>Tipo</th>
+          <th>URL</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let integ of Integraciones">
+          <td>{{ integ.Tipo_Integracion }}</td>
+          <td>{{ integ.Url_Conexion }}</td>
+          <td>
+            <span [class.text-success]="integ.Estado" [class.text-danger]="!integ.Estado">
+              {{ integ.Estado ? 'Activa' : 'Inactiva' }}
+            </span>
+          </td>
+          <td>
+            <button class="btn btn-sm btn-outline-primary mr-1" (click)="editarIntegracion(integ)">Editar</button>
+            <button class="btn btn-sm btn-outline-danger" (click)="eliminar(integ.Id_Integracion)">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="Integraciones.length === 0" class="text-muted">No hay integraciones registradas.</div>
+  </div>
+</div>
+
+<!-- Formulario de edición -->
+<div *ngIf="edit" class="card mt-4">
+  <div class="card-header">
+    <h5>{{ Integracion.Id_Integracion ? 'Editar' : 'Nueva' }} Integración</h5>
+  </div>
+
+  <div class="card-body">
+    <div class="form-row">
+      <div class="form-group col-md-4">
+        <label>Tipo de Integración</label>
+        <select class="form-control" [(ngModel)]="Integracion.Tipo_Integracion">
+          <option *ngFor="let tipo of tipos" [value]="tipo">{{ tipo }}</option>
+        </select>
+      </div>
+
+      <div class="form-group col-md-8">
+        <label>URL de Conexión</label>
+        <input class="form-control" [(ngModel)]="Integracion.Url_Conexion" placeholder="https://..." />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group col-md-8">
+        <label>Token API (opcional)</label>
+        <input class="form-control" [(ngModel)]="Integracion.Token_API" placeholder="Bearer ..." />
+      </div>
+
+      <div class="form-group col-md-4">
+        <label>Estado</label>
+        <select class="form-control" [(ngModel)]="Integracion.Estado">
+          <option [ngValue]="true">Activa</option>
+          <option [ngValue]="false">Inactiva</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Notas (parámetros adicionales)</label>
+      <textarea class="form-control" [(ngModel)]="Integracion.Notas" rows="3"></textarea>
+    </div>
+  </div>
+
+  <div class="card-footer text-right">
+    <button class="btn btn-success mr-2" (click)="grabar()">Grabar</button>
+    <button class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
+  </div>
+</div>

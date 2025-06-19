@@ -1,72 +1,72 @@
+<div [hidden]="edit" class="container-fluid pb-5">
 
-<div [hidden]="edit" class="container pb-5">
-  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
-  <h2>Empleados</h2>
-  <div class="container-fluid">
-    <div class="row">
-      <div class="input-group mb-3">
-        <div class="input-group-prepend">
-          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
-        </div>
-        <input [(ngModel)]="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
-          placeholder="Buscar">
-        <div class="input-group-append">
-          <button class="btn btn-success" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
-              aria-hidden="true"></i></button>
-        </div>
-      </div>
+  <!-- Buscar + botón agregar -->
+  <div class="input-group my-3">
+    <div class="input-group-prepend">
+      <span class="input-group-text"><i class="fa fa-search"></i></span>
+    </div>
+    <input [(ngModel)]="searchField" (blur)="search()" (keydown)="keytab($event)"
+           type="text" class="form-control" placeholder="Buscar {{ tituloSeccion | lowercase }}">
+    <div class="input-group-append">
+      <button class="btn btn-success" type="button" (click)="editRecord('')">
+        <i class="fa fa-plus-circle"></i>
+      </button>
     </div>
   </div>
+
+  <!-- Lista de empleados -->
   <form>
     <div class="form-row">
+      <div class="form-group col-12 col-sm-6" *ngFor="let Persona of Clientes; let i = index">
+        <div class="card shadow-sm mb-3 hover-shadow-sm" (click)="editRecord(Persona)">
+          <div class="card-body">
+            <h5 class="card-title font-weight-bold">
+              {{paginacion.FirstRow + i}} - {{Persona.Nombre}}
+            </h5>
+            <p class="mb-1 text-muted">
+              ID: {{Persona.Identificacion}} | Tel: {{Persona.Telefono}}<br>
+              Correo: {{Persona.Correo}} | Id: {{Persona.Id_Persona}}
+            </p>
+            <div>
+              <span *ngIf="Persona.Prospecto == '1'" class="badge badge-info mr-1">Prospecto</span>
+              <span *ngIf="Persona.Cliente == '1'" class="badge badge-primary mr-1">Cliente</span>
+              <span *ngIf="Persona.Proveedor == '1'" class="badge badge-warning text-white mr-1">Proveedor</span>
+              <span *ngIf="Persona.Emisor == '1'" class="badge badge-dark mr-1">Emisor</span>
+              <span *ngIf="Persona.Empleado == '1'" class="badge badge-success mr-1">Empleado</span>
+              <span *ngIf="Persona.Alumno == '1'" class="badge badge-secondary mr-1">Alumno</span>
+              <span *ngIf="Persona.Profesor == '1'" class="badge badge-light border mr-1">Profesor</span>
 
-      <div class="form-group col-12 col-sm-6" *ngFor="let Persona of Clientes;let i = index">
-        <div class="card">
-          <a (click)="editRecord(Persona)">
-            <div class="card-body">
-              <h4 class="card-title">{{paginacion.FirstRow +  i}} - {{Persona.Nombre}}</h4>
-              ID : {{Persona.Identificacion}}, Correo: {{Persona.Correo}} <br>
-              Tel: {{Persona.Telefono}} | 
-              <span *ngIf="Persona.Prospecto == '1'" class="text-primary"> Prospecto</span>
-              <span *ngIf="Persona.Cliente== '1'" class="text-primary"> Cliente</span>
-              <span *ngIf="Persona.Proveedor== '1'" class="text-primary"> Proveedor</span>
-              <span *ngIf="Persona.Emisor== '1'" class="text-primary"> Emisor</span>
-              <span *ngIf="Persona.Empleado== '1'" class="text-primary"> Empleado</span>
-              <span *ngIf="Persona.Alumno== '1'" class="text-primary"> Alumno</span>
-              <span *ngIf="Persona.Profesor== '1'" class="text-primary"> Profesor</span>
-              
-              <span *ngIf="Persona.Estado== '0'" class="text-success"> Inactivo</span>
-              <span *ngIf="Persona.Estado== '1'" class="text-success"> Activo</span>
-              | Id:{{Persona.Id_Persona}} 
+              <span *ngIf="Persona.Estado == '1'" class="badge badge-info">Activo</span>
+              <span *ngIf="Persona.Estado == '0'" class="badge badge-secondary">Inactivo</span>
             </div>
-          </a>
+          </div>
         </div>
       </div>
     </div>
   </form>
 
+  <!-- Paginación -->
   <div class="container-fluid">
-    <ul class="pagination">
-      <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"
-            aria-hidden="true"></i></a></li>
-      <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"
-            aria-hidden="true"></i></a></li>
-      <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"
-            aria-hidden="true"></i></a></li>
+    <ul class="pagination justify-content-center mt-3">
+      <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"></i></a></li>
     </ul>
   </div>
 </div>
 
-<div [hidden]="!edit" class="container pb-5">
-  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
-  <h2>Empleado</h2> 
-  <div class="tab">
-    <button [ngClass]='GeneralClass' (click)="activarGeneral()" >General</button>
-    <button [ngClass]='DireccionClass' (click)="activarDireccion()">Dirección</button>
-    <!-- <button [ngClass]='ContactoClass' (click)="activarContacto()">Contactos</button> -->
-    <button [ngClass]='RhhClass' (click)="activarRhh()">RRHH</button>
-   
-  </div>
+<div [hidden]="!edit" class="container-fluid pb-5">
+  <ul class="nav nav-tabs mb-3">
+    <li class="nav-item">
+      <a class="nav-link" [class.active]="GeneralActivo" (click)="activarGeneral()">General</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [class.active]="DireccionActivo" (click)="activarDireccion()">Dirección</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [class.active]="RhhActivo" (click)="activarRhh()">RRHH</a>
+    </li>
+  </ul>
   <span [hidden]="!edit">
    
     <app-general [hidden]="!GeneralActivo" [TipoPersona]="1" [Persona]="Persona" (close)="cancel()"></app-general>
@@ -74,12 +74,7 @@
     <app-contactos [hidden]="!ContactosActivo" [Persona]="Persona"></app-contactos>
     <app-rrhh [hidden]="!RhhActivo" [Persona]="Persona"></app-rrhh>
 
-    <!-- 
-    <app-notas [hidden]="!NotasActivo" [Persona]="Persona"></app-notas>
-    <app-venta [hidden]="!VentaActivo" [Persona]="Persona"></app-venta>
-    <app-cobro [hidden]="!CobroActivo" [Persona]="Persona"></app-cobro>
-    <app-tareas-cliente [hidden]="!TareaActivo" [Persona]="Persona"></app-tareas-cliente>
-    -->
+ 
   </span>
 
   <div class="form-row">

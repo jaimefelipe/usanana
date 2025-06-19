@@ -80,7 +80,7 @@ export class AccionPersonalService {
       + '\',Id_Departamento=\'' + Accion.Id_Departamento
       + '\',Salario_Mes=\''+ Accion.Salario
       + '\',Estado=\''+ Accion.Estado
-      + '\',Jornada=\''+ Accion.Tipo_Jornada
+      + '\',Jornada=\''+ Accion.Jornada
       + '\',Id_Roll=\''+ Accion.Id_Roll
       + '\',Nombre_Roll=\''+ Accion.Nombre_Roll
       + '\',Tipo_Contrato=\''+ Accion.Tipo_Contrato

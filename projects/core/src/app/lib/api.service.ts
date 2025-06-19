@@ -142,6 +142,7 @@ export class ApiService {
         } else {
           isFirst = false;
         }
+        /*
         let fieldArray = field.split(' AS ');
         let campo = '';
         if (fieldArray.length > 1) {
@@ -162,7 +163,23 @@ export class ApiService {
             }
           }
         }
-        where = where + campo + " Like '---" + this.sqlConfig.searchField + "---'";
+        */
+       let campo = field.trim();
+
+        // Elimina el alias si hay un "AS" o "as"
+        let regexAlias = /\s+as\s+/i;
+        if (regexAlias.test(campo)) {
+          campo = campo.split(regexAlias)[0].trim();
+        }
+
+        // Si el campo es un CASE, busca el alias después del THEN o END
+        if (campo.trim().toUpperCase().startsWith('CASE')) {
+          campo = ''; // Si deseas excluir CASE del WHERE, déjalo vacío
+        }
+        if (campo !== '') {
+          where = where + campo + " LIKE '%" + this.sqlConfig.searchField + "%'";
+        }
+        //where = where + campo + " Like '---" + this.sqlConfig.searchField + "---'";
       }
       if (fields.length > 1) {
         where = where + ')';

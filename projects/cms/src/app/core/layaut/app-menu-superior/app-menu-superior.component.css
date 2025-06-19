@@ -1,0 +1,8 @@
+.breadcrumb span {
+  font-size: 0.9rem;
+  color: #555;
+}
+.navbar img {
+  display: inline-block;
+  vertical-align: middle;
+}

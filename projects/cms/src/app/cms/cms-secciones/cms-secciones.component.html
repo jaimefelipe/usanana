@@ -1,0 +1,181 @@
+<!-- Lista de secciones -->
+<div [hidden]="edit" class="container-fluid">
+
+  <div class="d-flex justify-content-between align-items-center my-3">
+    <h5 class="mb-0">Secciones de la página</h5>
+    <button class="btn btn-success" (click)="editRecord(null)">
+      <i class="fa fa-plus"></i> Nueva sección
+    </button>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-sm table-hover">
+      <thead class="thead-light">
+        <tr>
+          <th>#</th>
+          <th>Tipo</th>
+          <th>Título</th>
+          <th>Orden</th>
+          <th>Visible</th>
+          <th class="text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let s of Secciones; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ s.Tipo_Seccion }}</td>
+          <td>{{ s.Titulo }}</td>
+          <td>{{ s.Orden }}</td>
+          <td>
+            <span [ngClass]="s.Visible ? 'badge badge-success' : 'badge badge-secondary'">
+              {{ s.Visible ? 'Sí' : 'No' }}
+            </span>
+          </td>
+          <td class="text-center">
+            <button class="btn btn-sm btn-primary mr-2" (click)="editRecord(s)">
+              <i class="fa fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="eliminar(s)">
+              <i class="fa fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="modalSeccion" tabindex="-1" role="dialog" aria-labelledby="tituloSeccion" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      
+      <div class="modal-header">
+        <h5 class="modal-title" id="tituloSeccion">Edición de sección</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- TODO: aquí va el mismo formulario de edición que ya tenés -->
+        <!-- Reutilizás los campos de Titulo, Tipo, Contenido, etc. -->
+        ...
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-success" (click)="grabar()">Grabar</button>
+        <button class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- Formulario de edición -->
+<!-- Formulario de edición -->
+<div [hidden]="!edit" class="modal-main">
+  <div class="modal-content card">
+    
+    <div class="card-header">
+      <h2>Edición de sección</h2>
+    </div>
+
+    <div class="card-body modal-grid">
+      <!-- Fila 1 -->
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="titulo">Título</label>
+          <input id="titulo" class="form-control" [(ngModel)]="Seccion.Titulo">
+        </div>
+
+        <div class="form-group col-md-6">
+          <label for="tipo">Tipo de Sección</label>
+          <select id="tipo" class="form-control" [(ngModel)]="Seccion.Tipo_Seccion">
+            <option *ngFor="let t of tipos" [ngValue]="t">{{ t | titlecase }}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Contenido dinámico -->
+      <div class="form-group">
+        <label for="contenido">Contenido</label>
+
+        <!-- TEXTO -->
+        <textarea *ngIf="Seccion.Tipo_Seccion === 'texto'" class="form-control" [(ngModel)]="Seccion.Contenido" rows="4"></textarea>
+
+        <!-- IMAGEN -->
+        <div *ngIf="Seccion.Tipo_Seccion === 'imagen'">
+          <input class="form-control mb-2" [(ngModel)]="Seccion.Contenido" placeholder="https://ejemplo.com/imagen.jpg" type="url">
+          <img *ngIf="Seccion.Contenido" [src]="Seccion.Contenido" alt="Vista previa" class="img-fluid border rounded">
+        </div>
+
+        <!-- VIDEO -->
+        <div *ngIf="Seccion.Tipo_Seccion === 'video'">
+          <input class="form-control mb-2" [(ngModel)]="Seccion.Contenido" placeholder="https://youtube.com/embed/..." type="url">
+          <div class="embed-responsive embed-responsive-16by9 border rounded" *ngIf="Seccion.Contenido">
+            <iframe class="embed-responsive-item" [src]="Seccion.Contenido | safeUrl" allowfullscreen></iframe>
+          </div>
+        </div>
+
+        <!-- HTML (RichTextEditor) 
+        <ejs-richtexteditor *ngIf="Seccion.Tipo_Seccion === 'html'" [(value)]="Seccion.Contenido" [height]="200"></ejs-richtexteditor>
+        -->
+        <ejs-richtexteditor 
+          *ngIf="Seccion.Tipo_Seccion === 'html'"
+          [(value)]="Seccion.Contenido" 
+          (change)="onChange($event)" 
+          [height]="400"
+          [toolbarSettings]="toolbarOptions">
+        </ejs-richtexteditor>
+
+        <!-- FORMULARIO: múltiples textos -->
+        <div *ngIf="Seccion.Tipo_Seccion === 'formulario'">
+          <div *ngFor="let campo of Seccion.ContenidoCampos; let i = index" class="form-group">
+            <label>Campo {{ i + 1 }}</label>
+            <input class="form-control" [(ngModel)]="Seccion.ContenidoCampos[i]">
+          </div>
+          <button type="button" class="btn btn-outline-primary btn-sm" (click)="agregarCampo()">+ Añadir campo</button>
+        </div>
+      </div>
+
+      <!-- Fila 2 -->
+      <div class="form-row">
+        <div class="form-group col-md-12">
+          <label for="estilo">Estilo Extra (opcional)</label>
+          <textarea  class="form-control" [(ngModel)]="Seccion.Estilo_Extra" rows="4"></textarea>
+        </div>
+
+        <div class="form-group col-md-3">
+          <label for="orden">Orden</label>
+          <input id="orden" class="form-control" type="number" [(ngModel)]="Seccion.Orden">
+        </div>
+
+        <div class="form-group col-md-3 d-flex align-items-center">
+          <div class="form-check mt-4">
+            <input type="checkbox" class="form-check-input" [(ngModel)]="Seccion.Visible" id="visibleCheck">
+            <label class="form-check-label" for="visibleCheck">Visible en la web</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botones -->
+    <div class="card-footer">
+      <div class="form-group col-12">
+        <div class="form-row justify-content-end">
+          <div class="form-group col-4 col-sm-2">
+            <button (click)="grabar()" type="button" class="btn btn-success btn-block">Grabar</button>
+          </div>
+          <div class="form-group col-4 col-sm-2">
+            <button (click)="cancelar()" type="button" class="btn btn-danger btn-block">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

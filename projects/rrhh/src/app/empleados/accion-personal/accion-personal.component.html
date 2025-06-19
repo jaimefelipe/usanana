@@ -35,7 +35,7 @@
               Estado :
               <span *ngIf="Accion.Estado == '0'" class="text-primary"> Registrado</span>
               <span *ngIf="Accion.Estado == '1'" class="text-warning"> Aplicada</span>
-             
+              
 
               <h6>Id:{{Accion.Id_Accion_Personal}}</h6>
             </div>
@@ -143,6 +143,7 @@
               <option value='02'>Nocturna</option>
               <option value='03'>Mixta</option>
               <option value='04'>Destajo</option>
+              <option value='05'>Acumulativa</option>
               </select>
             </div>
 
@@ -167,7 +168,7 @@
             <div class="form-group col-md-3">
               <label>Fecha final</label>
             </div>
-            <div class="form-group col-md-9">
+            <div  class="form-group col-md-9">
               <div class="input-group">
                 <input class="form-control" disabled="disabled" [(ngModel)]="Accion.Fecha_Salida" name="Fecha_Ingreso" placeholder="Fecha Fin" >
                 <div class="input-group-append">
@@ -225,10 +226,11 @@
             <div class="form-group col-md-6">
               <label for="name">Jornada</label>
               <select [disabled]="Accion.Estado === '1' "  [(ngModel)]="Accion.Jornada" name="Jornada" class="form-control">
-              <option value='1'>Diurna</option>
-              <option value='2'>Nocturna</option>
-              <option value='3'>Mixta</option>
-              <option value='4'>Destajo</option>
+                <option value='1'>Diurna</option>
+                <option value='2'>Nocturna</option>
+                <option value='3'>Mixta</option>
+                <option value='4'>Destajo</option>
+                <option value='05'>Acumulativa</option>
               </select>
             </div>
             <div class="form-group col-md-3">
@@ -265,10 +267,10 @@
                 </div>
               </div>
             </div>
-            <div class="form-group col-md-3">
+            <div  [hidden]="!Fecha_Fin"  class="form-group col-md-3">
               <label>Fecha final</label>
             </div>
-            <div class="form-group col-md-9">
+            <div  [hidden]="!Fecha_Fin"  class="form-group col-md-9">
               <div class="input-group">
                 <input [disabled]="Accion.Estado === '1' "  class="form-control" [(ngModel)]="Fecha_Fin" name="Fecha_Fin" placeholder="Fecha Fin" ngbDatepicker
                   #d3="ngbDatepicker">

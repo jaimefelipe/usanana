@@ -52,16 +52,16 @@ export class ConceptoSalarialService {
       let sql = {
         table: 'Pl_Concepto_Salarial',
         fields: 'Nombre=\'' + Periodo.Nombre + '\','
-        + 'Tipo_Concepto=\'' + Periodo.Tipo_Concepto
-        + 'Aplica_Como=\'' + Periodo.Aplica_Como
-        + 'Tipo_Referencia=\'' + Periodo.Tipo_Referencia
-        + 'Tipo_Valor=\'' + Periodo.Tipo_Valor
-        + 'Aplica_Calculos=\'' + Periodo.Aplica_Calculos
-        + 'Estado=\'' + Periodo.Estado
-        + 'Secuencia=\'' + Periodo.Secuencia
-        + 'Valor=\'' + Periodo.Valor
-        + 'Formula=\'' + Periodo.Formula
-        + 'Etiqueta=\'' + Periodo.Etiqueta
+        + 'Tipo_Concepto=\'' + Periodo.Tipo_Concepto + '\','
+        + 'Aplica_Como=\'' + Periodo.Aplica_Como + '\','
+        + 'Tipo_Referencia=\'' + Periodo.Tipo_Referencia + '\','
+        + 'Tipo_Valor=\'' + Periodo.Tipo_Valor + '\','
+        + 'Aplica_Calculos=\'' + Periodo.Aplica_Calculos + '\','
+        + 'Estado=\'' + Periodo.Estado + '\','
+        + 'Secuencia=\'' + Periodo.Secuencia + '\','
+        + 'Valor=\'' + Periodo.Valor+ '\',' 
+        + 'Formula=\'' + Periodo.Formula + '\','
+        + 'Etiqueta=\'' + Periodo.Etiqueta 
          + '\'',
         where: 'Id_Concepto_Salarial=' + Periodo.Id_Concepto_Salarial
       };

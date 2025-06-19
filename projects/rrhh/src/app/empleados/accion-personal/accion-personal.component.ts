@@ -5,6 +5,7 @@ import { DepartamentoService } from '../departamento/departamento.service';
 import { AccionPersonalService } from './accion-personal.service';
 import { RrhhService } from '../rrhh/rrhh.service';
 import { RollService } from '../roll/roll.service';
+import { EmpleadoService } from '../empleados/empleado.service';
 
 import { NgbDateFRParserFormatter } from '../../../../../core/src/app/_services/ngb-date-fr-parser-formatter';
 import { NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
@@ -24,7 +25,8 @@ export class AccionPersonalComponent implements OnInit {
     private departamentoService:DepartamentoService,
     private AccionPersonalService:AccionPersonalService,
     private rrhhService:RrhhService,
-    private rollService:RollService
+    private rollService:RollService,
+    private empleadoService:EmpleadoService
   ) { }
 
   edit = false;
@@ -219,14 +221,21 @@ export class AccionPersonalComponent implements OnInit {
             year: parseInt(fechaInicioArr[0]),
           }
         }
-        if(this.Accion.Fecha_Fin){ 
-          let fechaFinArr = this.Accion.Fecha_Fin.split('-');
-          this.Fecha_Fin = {
-            month: parseInt(fechaFinArr[1]),
-            day: parseInt(fechaFinArr[2]),
-            year: parseInt(fechaFinArr[0]),
+        if(this.Accion.Tipo_Accion == '2' || this.Accion.Tipo_Accion == '3'){
+          if(this.Accion.Fecha_Fin){ 
+            let fechaFinArr = this.Accion.Fecha_Fin.split('-');
+            this.Fecha_Fin = {
+              month: parseInt(fechaFinArr[1]),
+              day: parseInt(fechaFinArr[2]),
+              year: parseInt(fechaFinArr[0]),
+            }
           }
+        }else{
+          this.Accion.Fecha_Salida = '';
+          this.Accion.Fecha_Fin = '';
+          this.Fecha_Fin = null;
         }
+        
       }
     }
     this.edit = true;
@@ -235,8 +244,11 @@ export class AccionPersonalComponent implements OnInit {
     //Fecha
     this.Accion.Fecha_Accion =  this.Fecha_Accion.year + '/' + this.Fecha_Accion.month + '/' + this.Fecha_Accion.day;
     this.Accion.Fecha_Inicio = this.Fecha_Inicio.year + '/' + this.Fecha_Inicio.month + '/' + this.Fecha_Inicio.day;
-    this.Accion.Fecha_Fin = this.Fecha_Fin.year + '/' + this.Fecha_Fin.month + '/' + this.Fecha_Fin.day;
-
+    if(this.Accion.Tipo_Accion == '2' || this.Accion.Tipo_Accion == '3'){
+      this.Accion.Fecha_Fin = this.Fecha_Fin.year + '/' + this.Fecha_Fin.month + '/' + this.Fecha_Fin.day;
+    }else{
+      this.Accion.Fecha_Fin = '';
+    }
     //Validar Informacion
     if(this.Accion.Id_Persona == ''){
       Swal.fire("Seleccione el empleado");
@@ -351,8 +363,16 @@ export class AccionPersonalComponent implements OnInit {
   closePantallaDepartamento(){
     this.PantallaDepartamentos = false;
   }
+  async crearEmpleado(){
+    let data = await this.empleadoService.crearEmpleado(this.Accion.Id_Persona);
+  }
   async aplicarAccion(){
     //Consultar si existe el registro del empleado.
+    let Empleado = await this.empleadoService.empleadoExiste(this.Accion.Id_Persona);
+    if(Empleado['total']==0){
+      //Generar Registro de Empleado
+      await this.crearEmpleado();
+    }
     let Estado = '1';
     //Accion de Nombramiento
     if(this.Accion.Tipo_Accion == '1'){
@@ -362,6 +382,7 @@ export class AccionPersonalComponent implements OnInit {
     if(this.Accion.Tipo_Accion == '2'){
       Estado = '2';
     }
+    this.Accion.Estado = Estado;
     let data = await this.AccionPersonalService.AplicarAccion(this.Accion);
     data = await this.AccionPersonalService.actualizarEstado(this.Accion.Id_Persona,Estado);
     if(this.Accion.Tipo_Accion == '1'){

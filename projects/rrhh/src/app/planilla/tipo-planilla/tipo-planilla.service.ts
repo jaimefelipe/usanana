@@ -14,7 +14,7 @@ export class TipoPlanillaService {
     }
     let sqlConfig = {
       table: 'Pl_Tipo_Planilla',
-      fields: 'Id_Tipo_Planilla,Nombre,Id_Periodo_Pago',
+      fields: 'Id_Tipo_Planilla,Nombre,Id_Periodo_Pago,Metodo_Calculo_Salario',
       searchField: search,
       paginacion: paginacion,
       where:estado
@@ -24,7 +24,7 @@ export class TipoPlanillaService {
   async loadTipo(Id_Tipo_Planilla) {
     let sqlConfig = {
       table: 'Pl_Tipo_Planilla',
-      fields: 'Id_Tipo_Planilla,Nombre,Id_Periodo_Pago',
+      fields: 'Id_Tipo_Planilla,Nombre,Id_Periodo_Pago,Metodo_Calculo_Salario',
       where: 'Id_Tipo_Planilla='+Id_Tipo_Planilla
     }
     return await this.apiService.executeSqlSyn(sqlConfig);
@@ -33,9 +33,10 @@ export class TipoPlanillaService {
     if(Tipo.Id_Tipo_Planilla == ""){
       let sql = {
         table: 'Pl_Tipo_Planilla',
-        fields: 'Nombre,Id_Periodo_Pago',
+        fields: 'Nombre,Id_Periodo_Pago,Metodo_Calculo_Salario',
         values: '\'' + Tipo.Nombre + '\','
         + '\'' + Tipo.Id_Periodo_Pago
+        + '\'' + Tipo.Metodo_Calculo_Salario
         + '\''
       };
       return await this.apiService.insertRecord(sql);
@@ -44,7 +45,8 @@ export class TipoPlanillaService {
         table: 'Pl_Tipo_Planilla',
         fields: 'Nombre=\'' + Tipo.Nombre + '\','
         + 'Id_Periodo_Pago=\'' + Tipo.Id_Periodo_Pago
-         + '\'',
+        + '\',Metodo_Calculo_Salario=\'' + Tipo.Metodo_Calculo_Salario
+        + '\'',
         where: 'Id_Tipo_Planilla=' + Tipo.Id_Tipo_Planilla
       };
       return await this.apiService.updateRecord(sql);

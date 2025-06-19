@@ -45,4 +45,9 @@ async Marcar(Id_Persona,Marca){
   return await this.apiService.insertRecord(sql);
 }
 
+  async generarMarca(Id_Empresa,Id_Persona,Marca,Fecha){
+    let sql = "Insert Rhh_Marca (Id_Empresa,Id_Persona,Marca,Fecha) Values ("+Id_Empresa+","+Id_Persona+','+Marca+",'"+Fecha+"')";
+    return  await this.apiService.postRecord(sql);
+  }
+
 }

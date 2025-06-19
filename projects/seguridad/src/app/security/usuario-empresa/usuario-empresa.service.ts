@@ -44,7 +44,9 @@ constructor(
       //insertar la persona;
       await this.CrearPersonaBasdaUsuario(UsuarioEmpresa.Numero_Identificacion,UsuarioEmpresa.Nombre);
     }
-    return await this.apiService.updateRecord(sql);
+    let data = await this.apiService.updateRecord(sql);
+    await this.asociarUsuarioEmpresa( UsuarioEmpresa.Id_Usuario, UsuarioEmpresa.Id_Empresa); 
+    return data 
   }
   async inserUsert(UsuarioEmpresa){
     let sql = {
@@ -61,7 +63,9 @@ constructor(
       //insertar la persona;
       await this.CrearPersonaBasdaUsuario(UsuarioEmpresa.Numero_Identificacion,UsuarioEmpresa.Nombre);
     }
-    return await this.apiService.insertRecord(sql);
+    let data = await this.apiService.insertRecord(sql);
+    await this.asociarUsuarioEmpresa( UsuarioEmpresa.Id_Usuario, UsuarioEmpresa.Id_Empresa);
+    return data
   }
 
   async cargarEmpresaDeUnUsuario(Id_Usuario) {
@@ -88,5 +92,9 @@ constructor(
       + '\',\'' + Nombre + '\',1'
     };
     return await this.apiService.insertRecord(sql);
+  }
+
+  async asociarUsuarioEmpresa(Id_Usuario,Id_Empresa){
+    let data = await this.apiService.postRecord("Call sp_Seg_Asociar_Usuario_Empresas("+ Id_Usuario + ',' + Id_Empresa+ ","+ localStorage.getItem('Id_Usuario') +  ")" );
   }
 }

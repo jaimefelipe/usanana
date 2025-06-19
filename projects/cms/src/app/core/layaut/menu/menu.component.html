@@ -1,0 +1,71 @@
+<!-- [hidden]="!logedIn" -->
+<nav  role="navigation">
+  <div id="menuToggle">
+    <!--
+    A fake / hidden checkbox is used as click reciever,
+    so you can use the :checked selector on it.
+    -->
+    <input  id="MenuShow" (click)="click()" [checked]="showMenu"  type="checkbox" />
+
+    <!--
+    Some spans to act as a hamburger.
+
+    They are acting like a real hamburger,
+    not that McDonalds stuff.
+    -->
+    <span></span>
+    <span></span>
+    <span></span>
+
+    <!--
+    Too bad the menu has to be inside of the button
+    but hey, it's pure CSS magic.
+    -->
+      <ul  [hidden]="!showMenu" id="menu">
+        <a (click)="hideMenu()" [routerLink]="['/']"><li><i class="fa fa-home"></i> Inicio {{ambiente}} 1.0.2</li></a>
+        <div [hidden]="!logedIn">
+
+
+          <li [hidden]="!AppConfiguracion" (click)="clickPerfilMenu()" ><a><i class="fa fa-cog"></i> Configuración <i [ngClass]='configClass' class="fa fa-cog"></i>  </a></li>
+          <ul [hidden]="!perfilMenu" >
+            <a (click)="hideMenu()" [routerLink]="['/contactos']"><li><i class="fa fa-credit-card"></i> Contactos </li></a>
+            <a (click)="hideMenu()" [routerLink]="['/clientes']"><li><i class="fa fa-credit-card"></i> Clientes </li></a>
+            <a (click)="hideMenu()" [routerLink]="['/departamento']"><li><i class="fa fa-credit-card"></i> Deparamento </li></a>
+            <a (click)="hideMenu()" [routerLink]="['/puesto']"><li><i class="fa fa-credit-card"></i> Puesto </li></a>
+            <a (click)="hideMenu()" [routerLink]="['/localidad']"><li><i class="fa fa-credit-card"></i> Localidad </li></a>
+            <a (click)="hideMenu()" [routerLink]="['/roll']"><li><i class="fa fa-credit-card"></i> Roll </li></a>
+          </ul>
+
+          <li [hidden]="!AppRRHH" (click)="clickrrhhMenu()" ><a><i class="fa fa-cog"></i> RRHH <i [ngClass]='rrhhClass' class="fa fa-cog"></i>  </a></li>
+          <ul [hidden]="!rrhhMenu" >
+            
+            <a (click)="hideMenu()" [routerLink]="['/empleados']"><li><i class="fa fa-credit-card"></i> Empleados </li></a>
+            <a (click)="hideMenu()" [routerLink]="['/accionpersonal']"><li><i class="fa fa-credit-card"></i> Accion Personal </li></a>
+            <a (click)="hideMenu()" [routerLink]="['/programacion']"><li><i class="fa fa-credit-card"></i> Programación </li></a>
+            
+          </ul>
+          <li [hidden]="!AppPL" (click)="clickPLMenu()" ><a><i class="fa fa-cog"></i> Planilla <i [ngClass]='PLClass' class="fa fa-cog"></i>  </a></li>
+
+          <ul [hidden]="!PLMenu" >
+            
+            <a (click)="hideMenu()" [routerLink]="['/periodopago']"><li><i class="fa fa-credit-card"></i> Periodo Pago </li></a>
+            <a (click)="hideMenu()" [routerLink]="['/conceptosalarial']"><li><i class="fa fa-credit-card"></i> Concepto Salarial </li></a>
+            <a (click)="hideMenu()" [routerLink]="['/tipoplanilla']"><li><i class="fa fa-credit-card"></i> Tipo Planilla </li></a>
+            <a (click)="hideMenu()" [routerLink]="['/conceptoplanilla']"><li><i class="fa fa-credit-card"></i> Concepto x Planilla </li></a>
+            <a (click)="hideMenu()" [routerLink]="['/empleadoplanilla']"><li><i class="fa fa-credit-card"></i> Empleado x Planilla </li></a>
+            <a (click)="hideMenu()" [routerLink]="['/reportesplanilla']"><li><i class="fa fa-credit-card"></i> Reportes y Procesos </li></a>
+          </ul>
+
+        </div>
+
+        <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/marcas']"><li><i class="fa fa-clock-o"></i> Marcas</li></a>
+
+        <a href="https://api.whatsapp.com/send?phone=50687786649" target="_blank"><li><i class="fa fa-phone"></i> Soporte</li></a>
+        <a [hidden]="EsAPP" href="/main" target="_self"><li><i class="fa fa-home"></i> Menú Principal</li></a>
+        <a (click)="hideMenu()" [hidden]="logedIn" [routerLink]="['/login']"><li><i class="fa fa-sign-in"></i> Entrar</li></a>
+        <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/cambiar']"><li><i class="fa fa-key"></i> Cambiar Clave</li></a>
+        <a (click)="hideMenu()" [hidden]="!logedIn" (click)="logOut()" href="#"><li><i class="fa fa-sign-out"></i> Salir</li></a>
+        <a (click)="hideMenu()" [hidden]="!logedIn">{{Company}} | {{User}}</a>
+      </ul>
+  </div>
+</nav>

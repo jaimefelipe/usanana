@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { EmpleadoTipoPlanillaService } from './empleado-tipo-planilla.service';
 import { TipoPlanillaService } from '../tipo-planilla/tipo-planilla.service';
 import { ContactoService } from '../../../../../contacto/src/app/contacto/contacto/contacto.service';
+import { EmpleadoService } from '../../empleados/empleados/empleado.service';
 
 @Component({
   selector: 'app-empleado-tipo-planilla',
@@ -13,7 +14,8 @@ export class EmpleadoTipoPlanillaComponent implements OnInit {
    constructor(
       private empleadoTipoPlanillaService:EmpleadoTipoPlanillaService,
       private contactoService:ContactoService,
-      private tipoPlanillaService:TipoPlanillaService
+      private tipoPlanillaService:TipoPlanillaService,
+      private empleadoService:EmpleadoService
     ) { }
   
     edit = false;
@@ -22,7 +24,7 @@ export class EmpleadoTipoPlanillaComponent implements OnInit {
   
     empleadoTipos = [];
     Tipos = [];
-    empleados = [];
+    Empleados = [];
   
     paginacion = {
       FirstRow: 1,
@@ -30,10 +32,10 @@ export class EmpleadoTipoPlanillaComponent implements OnInit {
       TotalRows: 0
     };
   
-    empleado_Tipo_Planilla = {
-      Id_empleado_Tipo_Planilla:'',
+    Empleado_Tipo_Planilla = {
+      Id_Empleado_Tipo_Planilla:'',
       Id_Tipo_Planilla:'',
-      Id_empleado_Salarial:'',
+      Id_Empleado:'',
       Estado:'1'
     }
   
@@ -73,28 +75,28 @@ export class EmpleadoTipoPlanillaComponent implements OnInit {
     async editRecord(empleadoTipo){
       this.edit = true;
       if(empleadoTipo){
-          await this.loadempleadosTipos(empleadoTipo.Id_empleado_Tipo_Planilla);
+          await this.loadempleadosTipos(empleadoTipo.Id_Empleado_Tipo_Planilla);
       }else{
-        this.empleado_Tipo_Planilla = {
-          Id_empleado_Tipo_Planilla:'',
+        this.Empleado_Tipo_Planilla = {
+          Id_Empleado_Tipo_Planilla:'',
           Id_Tipo_Planilla:'',
-          Id_empleado_Salarial:'',
+          Id_Empleado:'',
           Estado:'1'
         }
       }
     }
     
-    async loadempleadoTipoPlanilla(Id_empleado_Tipo_Planilla){
-      let data = await this.empleadoTipoPlanillaService.loadempleadoTIpoPlanilla(Id_empleado_Tipo_Planilla);
+    async loadempleadoTipoPlanilla(Id_Empleado_Tipo_Planilla){
+      let data = await this.empleadoTipoPlanillaService.loadempleadoTIpoPlanilla(Id_Empleado_Tipo_Planilla);
       if(data['total'] == 0){
-        this.empleado_Tipo_Planilla = {
-          Id_empleado_Tipo_Planilla:'',
+        this.Empleado_Tipo_Planilla = {
+          Id_Empleado_Tipo_Planilla:'',
           Id_Tipo_Planilla:'',
-          Id_empleado_Salarial:'',
+          Id_Empleado:'',
           Estado:'1'
         }
       }else{
-        this.empleado_Tipo_Planilla = data['data'][0];
+        this.Empleado_Tipo_Planilla = data['data'][0];
       }
     }
   
@@ -108,7 +110,7 @@ export class EmpleadoTipoPlanillaComponent implements OnInit {
     }
   
     async grabar(){
-      this.empleadoTipoPlanillaService.saveempleadoTipoPlanilla(this.empleado_Tipo_Planilla);
+      this.empleadoTipoPlanillaService.saveempleadoTipoPlanilla(this.Empleado_Tipo_Planilla);
       this.loadempleadosTipos();
       this.cancel();
     }
@@ -123,11 +125,12 @@ export class EmpleadoTipoPlanillaComponent implements OnInit {
         LastRow: 500,
         TotalRows: 0
       };
-      let data = await this.contactoService.loadPersonas(this.paginacion,'',5);
+      //let data = await this.contactoService.loadPersonas(this.paginacion,'',5);
+      let data = await this.empleadoService.leerEmpleados();
       if(data['total'] == 0){
-        this.empleados = [];
+        this.Empleados = [];
       }else{
-        this.empleados = data['data'];
+        this.Empleados = data['data'];
       }
   
     }

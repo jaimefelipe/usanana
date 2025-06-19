@@ -11,7 +11,7 @@ export class RrhhService {
   async leerRRHH(Id_Persona){
     let sqlConfig = {
       table: 'Rhh_Empleado',
-      fields: 'Id_Empleado,Id_Persona,Fecha_Ingreso,Fecha_Salida,Tipo_Contrato,Jornada,Numero_Contrato,Salario_Mes,Salario_Mes,Id_Roll,Nombre_Roll as Roll,Id_Escolaridad,Fecha_Examen_Psicologico,Fecha_Curso_Basico',
+      fields: 'Id_Empleado,Estado,Id_Persona,Fecha_Ingreso,Fecha_Salida,Tipo_Contrato,Jornada,Numero_Contrato,Salario_Mes,Salario_Mes,Id_Roll,Nombre_Roll as Roll,Id_Escolaridad,Fecha_Examen_Psicologico,Fecha_Curso_Basico',
       orderField: '',
       searchField: '',
       where: "Id_Persona = " + Id_Persona

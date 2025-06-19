@@ -1,0 +1,120 @@
+<form>
+  <div class="form-row">
+    <!-- Tipo de Planilla -->
+    <div class="form-group col-md-6">
+      <label>Tipo de Planilla</label>
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <button type="button" (click)="openTipoPlanillaPanel()" class="btn btn-primary">
+            <i class="fa fa-search"></i>
+          </button>
+        </div>
+        <input [(ngModel)]="Planilla.Tipo_Planilla" disabled name="Tipo_Planilla" id="Tipo_Planilla" type="text"
+          class="form-control" placeholder="Tipo Planilla">
+      </div>
+    </div>
+
+    <!-- Descripción -->
+    <div class="form-group col-md-6">
+      <label>Descripción</label>
+      <input [(ngModel)]="Planilla.Nombre" name="Nombre" type="text" placeholder="Descripción" class="form-control">
+    </div>
+
+    <!-- Fecha -->
+    <div class="form-group col-md-3">
+      <label>Fecha</label>
+      <div class="input-group">
+        <input type="date" class="form-control" [(ngModel)]="Planilla.Fecha" name="Fecha">
+        <div class="input-group-append">
+          <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fecha Inicio -->
+    <div class="form-group col-md-3">
+      <label>Fecha Inicio</label>
+      <div class="input-group">
+        <input type="date" class="form-control" [(ngModel)]="Planilla.Fecha_Inicio" name="Fecha_Inicio">
+        <div class="input-group-append">
+          <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fecha Fin -->
+    <div class="form-group col-md-3">
+      <label>Fecha Fin</label>
+      <div class="input-group">
+        <input type="date" class="form-control" [(ngModel)]="Planilla.Fecha_Fin" name="Fecha_Fin">
+        <div class="input-group-append">
+          <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fecha Pago -->
+    <div class="form-group col-md-3">
+      <label>Fecha Pago</label>
+      <div class="input-group">
+        <input type="date" class="form-control" [(ngModel)]="Planilla.Fecha_Pago" name="Fecha_Pago">
+        <div class="input-group-append">
+          <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ultima del Mes -->
+    <div class="form-group col-md-3">
+      <label>Ultima del Mes</label>
+      <select [(ngModel)]="Planilla.Ultima" name="Ultima" class="form-control">
+        <option value="0">No es la Ultima</option>
+        <option value="1">Sí es la Ultima</option>
+      </select>
+    </div>
+
+    <!-- Estado -->
+    <div class="form-group col-md-3">
+      <label>Estado</label>
+      <select [(ngModel)]="Planilla.Estado" name="Estado" class="form-control">
+        <option value="1">Registrada</option>
+        <option value="2">Calculada</option>
+        <option value="3">Aplicada</option>
+      </select>
+    </div>
+  </div>
+</form>
+
+<!--Inicio Pantalla Tipos de Planilla -->
+<div [hidden]="!PantallaTipos" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">Seleccionar Tipo de Planilla</h5>
+      <input class="form-control w-50" placeholder="Buscar..." [(ngModel)]="searchFieldTipos" (blur)="searchTipos()" (keydown)="keytabTipos($event)">
+    </div>
+
+    <div class="card-body modal-grid">
+      <div class="form-row">
+        <div class="form-group col-12 col-sm-6" *ngFor="let Tipo of Tipo_Planilla;let i = index">
+          <a (click)="SeleccionarTipo(Tipo)">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fa fa-clock-o text-primary mr-2"></i>
+                    {{Tipo.Nombre}}
+                  </h5>
+                  <p class="card-text text-muted small ml-4">
+                    {{Tipo.Inicio_Lunes}} - {{Tipo.Fin_Lunes}}
+                  </p>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer d-flex justify-content-end">
+      <button (click)="closePantallaTipos()" class="btn btn-danger">Cancelar</button>
+    </div>
+</div>
+<!--Fin  Pantalla Empleados -->

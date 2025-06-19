@@ -1,0 +1,31 @@
+<nav class="navbar navbar-light bg-light shadow-sm fixed-top px-3">
+  <!-- Botón hamburguesa -->
+  <button class="btn btn-outline-secondary mr-2" (click)="toggleSidebar.emit()">
+    <i class="fa fa-bars"></i>
+  </button>
+
+  <!-- Logo + Breadcrumbs -->
+  <div class="d-flex align-items-center mr-auto">
+    <img src="/assets/toxologo.png" height="30" class="mr-3 align-middle" alt="Salvatec">
+    <div class="d-flex align-items-center">
+      <span class="text-muted small">Inicio</span>
+      <span class="mx-2">/</span>
+      <span class="font-weight-bold small">{{ titulo }}</span>
+    </div>
+  </div>
+
+  <!-- Notificaciones + usuario -->
+  <div class="d-flex align-items-center">
+    <i class="fa fa-bell mr-3"></i>
+    <div class="dropdown">
+      <button class="btn btn-sm btn-outline-dark dropdown-toggle" data-toggle="dropdown">
+        SA
+      </button>
+      <div class="dropdown-menu dropdown-menu-right">
+        <a class="dropdown-item" routerLink="/perfil">Perfil</a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" (click)="logout()">Salir</a>
+      </div>
+    </div>
+  </div>
+</nav>

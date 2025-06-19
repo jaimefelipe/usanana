@@ -9,6 +9,11 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { EmpleadoTipoPlanillaComponent } from './empleado-tipo-planilla/empleado-tipo-planilla.component';
 import { PlReportesComponent } from './pl-reportes/pl-reportes.component';
+import { PlanillaComponent } from './planilla/planilla.component';
+import { PlanillaGeneralComponent } from './planilla-general/planilla-general.component';
+import { MovimientosPlanillaComponent } from './movimientos-planilla/movimientos-planilla.component';
+import { MarcasErroneasComponent } from './marcas-erroneas/marcas-erroneas.component';
+import { CalculoPlanillaComponent } from './calculo-planilla/calculo-planilla.component';
 
 @NgModule({
   imports: [
@@ -23,7 +28,12 @@ import { PlReportesComponent } from './pl-reportes/pl-reportes.component';
     TipoPlanillaComponent,
     ConceptoTipoPlanillaComponent,
     EmpleadoTipoPlanillaComponent,
-    PlReportesComponent
+    PlReportesComponent,
+    PlanillaComponent,
+    PlanillaGeneralComponent,
+    MovimientosPlanillaComponent,
+    MarcasErroneasComponent,
+    CalculoPlanillaComponent
   ]
 })
 export class PlanillaModule { }

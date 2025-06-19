@@ -1,12 +1,11 @@
-<form>
-
+<form> 
   <div >
       <div class="form-row">
       
         <div class="form-group col-md-6">
-          <label>Fecha Contratación</label>
+          <label>Fecha Contratación</label> Id: {{Persona.Id_Empleado}}
           <div class="input-group">
-            <input [disabled]="true"  class="form-control" [(ngModel)]="Persona.Fecha_I" name="Fecha" placeholder="Fecha" ngbDatepicker
+            <input [disabled]="true"  class="form-control" [(ngModel)]="Persona.Fecha_I" name="FechaI" placeholder="Fecha" ngbDatepicker
               #d1="ngbDatepicker">
             <div class="input-group-append">
               <button disabled="disabled" class="btn btn-outline-secondary fa fa-calendar" (click)="d1.toggle()" type="button"></button>
@@ -16,7 +15,7 @@
         <div class="form-group col-md-6">
           <label>Fecha cese Labores</label>
           <div class="input-group">
-            <input [disabled]="true" class="form-control" [(ngModel)]="Persona.Fecha_S" name="Fecha" placeholder="Fecha" ngbDatepicker
+            <input [disabled]="true" class="form-control" [(ngModel)]="Persona.Fecha_S" name="FechaS" placeholder="Fecha" ngbDatepicker
               #d2="ngbDatepicker">
             <div class="input-group-append">
               <button class="btn btn-outline-secondary fa fa-calendar" (click)="d2.toggle()" type="button"></button>
@@ -38,19 +37,20 @@
           <option value='2'>Nocturna</option>
           <option value='3'>Mixta</option>
           <option value='4'>Destajo</option>
+          <option value='5'>Acumulativa</option>
           </select>
         </div>
+
         <div class="form-group col-md-6">
           <label>Roll</label>
-          <div class="form-group col-md-12">
-            <div class="input-group">
-              <div class="input-group-append " >
-                <button type="button" (click)="openRollPanel()" class="form-control btn btn-primary"><i
-                    class="fa fa-search"></i></button>
-              </div>
-              <input [(ngModel)]="Persona.Roll" disabled name="Roll" id="Roll" type="input"
-                class="form-control" placeholder="Roll">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <button type="button" (click)="openRollPanel()" class="btn btn-primary">
+                <i class="fa fa-search"></i>
+              </button>
             </div>
+            <input [(ngModel)]="Persona.Roll" disabled name="Roll" id="Roll" type="input"
+                class="form-control" placeholder="Roll">
           </div>
         </div>
       
@@ -78,9 +78,9 @@
         </div>
       
         <div class="form-group col-md-4">
-          <label>Vencimiento Exámen Psicolágico</label>
+          <label>Vencimiento Exámen</label>
           <div class="input-group">
-            <input  class="form-control" [(ngModel)]="Persona.Fecha_EP" name="Fehca_Examen_Psicologico" placeholder="Fehca_Examen_Psicologico" ngbDatepicker
+            <input  class="form-control" [(ngModel)]="Persona.Fecha_EP" name="Fehca_Examen_Psicologico" placeholder="Vencimiento Exámen" ngbDatepicker
               #d3="ngbDatepicker">
             <div class="input-group-append">
               <button class="btn btn-outline-secondary fa fa-calendar" (click)="d3.toggle()" type="button"></button>
@@ -91,7 +91,7 @@
         <div class="form-group col-md-4">
           <label>Vencimiento Curso</label>
           <div class="input-group">
-            <input  class="form-control" [(ngModel)]="Persona.Fecha_CB" name="Fecha_Curso_Basico" placeholder="Fecha_Curso_Basico" ngbDatepicker
+            <input  class="form-control" [(ngModel)]="Persona.Fecha_CB" name="Fecha_Curso_Basico" placeholder="Vencimiento Curso" ngbDatepicker
               #d4="ngbDatepicker">
             <div class="input-group-append">
               <button class="btn btn-outline-secondary fa fa-calendar" (click)="d4.toggle()" type="button"></button>
@@ -102,7 +102,7 @@
         <div class="form-group col-md-4">
           <label>Vencimiento Carné</label>
           <div class="input-group">
-            <input  class="form-control" [(ngModel)]="Persona.Fecha_CP" name="Fecha_Carnet_Portacion" placeholder="Fecha_Carnet_Portacion" ngbDatepicker
+            <input  class="form-control" [(ngModel)]="Persona.Fecha_CP" name="Fecha_Carnet_Portacion" placeholder="Vencimiento Carné" ngbDatepicker
               #d5="ngbDatepicker">
             <div class="input-group-append">
               <button class="btn btn-outline-secondary fa fa-calendar" (click)="d5.toggle()" type="button"></button>

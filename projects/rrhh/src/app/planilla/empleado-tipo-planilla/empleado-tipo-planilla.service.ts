@@ -15,25 +15,25 @@ export class EmpleadoTipoPlanillaService {
       estado = 'Estado ='+ Estado;
     }
     let sqlConfig = {
-      table: 'Pl_empleado_Tipo_Planilla inner join Pl_empleado_Salarial on Pl_empleado_Tipo_Planilla.Id_empleado_Salarial = Pl_empleado_Salarial.Id_empleado_Salarial Inner Join Pl_Tipo_Planilla on Pl_empleado_Tipo_Planilla.Id_Tipo_Planilla = Pl_Tipo_Planilla.Id_Tipo_Planilla',
-      fields: 'Id_empleado_Tipo_Planilla,Pl_empleado_Tipo_Planilla.Id_Tipo_Planilla,Pl_empleado_Tipo_Planilla.Id_empleado_Salarial,Pl_empleado_Tipo_Planilla.Estado, Pl_empleado_Salarial.Nombre as empleado_Salarial, Pl_Tipo_Planilla.Nombre as Tipo_Planilla',
+      table: 'Pl_Empleado_Tipo_Planilla Inner Join Pl_Tipo_Planilla on Pl_Empleado_Tipo_Planilla.Id_Tipo_Planilla = Pl_Tipo_Planilla.Id_Tipo_Planilla Inner Join Rhh_Empleado on   Pl_Empleado_Tipo_Planilla.Id_Empleado = Rhh_Empleado.Id_Empleado Inner Join Gen_Persona on Gen_Persona.Id_Persona = Rhh_Empleado.Id_Persona',
+      fields: 'Id_Empleado_Tipo_Planilla,Pl_Empleado_Tipo_Planilla.Id_Tipo_Planilla, Pl_Empleado_Tipo_Planilla.Id_Empleado,Pl_Empleado_Tipo_Planilla.Estado,Pl_Tipo_Planilla.Nombre as Tipo_Planilla, Gen_Persona.Nombre as Empleado',
       searchField: search,
       paginacion: paginacion,
       where:estado
     }
     return await this.apiService.executeSqlSyn(sqlConfig);
   }
-  async loadempleadoTIpoPlanilla(Id_empleado_Tipo_Planilla){
+  async loadempleadoTIpoPlanilla(Id_Empleado_Tipo_Planilla){
     let sqlConfig = {
       table: 'Pl_Empleado_Tipo_Planilla',
       fields: 'Id_Empleado_Tipo_Planilla,Id_Tipo_Planilla,Id_Empleado,Estado',
-      where: 'Id_empleado_Tipo_Planilla='+Id_empleado_Tipo_Planilla
+      where: 'Id_Empleado_Tipo_Planilla='+Id_Empleado_Tipo_Planilla
     }
     return await this.apiService.executeSqlSyn(sqlConfig);
   }
 
   async saveempleadoTipoPlanilla(empleadoTipoPlanilla){
-    if(empleadoTipoPlanilla.Id_empleado_Tipo_Planilla == ""){
+    if(empleadoTipoPlanilla.Id_Empleado_Tipo_Planilla == ""){
       let sql = {
         table: 'Pl_Empleado_Tipo_Planilla',
         fields: 'Id_Tipo_Planilla,Id_Empleado,Estado',
@@ -50,7 +50,7 @@ export class EmpleadoTipoPlanillaService {
         + 'Id_Empleado=\'' + empleadoTipoPlanilla.Id_Empleado
         + 'Estado=\'' + empleadoTipoPlanilla.Estado
         + '\'',
-        where: 'Id_Empleado_Tipo_Planilla=' + empleadoTipoPlanilla.Id_Empleado_Tipo_Planilla
+        where: 'Pl_Empleado_Tipo_Planilla=' + empleadoTipoPlanilla.Id_Empleado_Tipo_Planilla
       };
       return await this.apiService.updateRecord(sql);
     }

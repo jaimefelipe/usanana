@@ -7,6 +7,7 @@ import { TipoPlanillaComponent } from './tipo-planilla/tipo-planilla.component';
 import { ConceptoTipoPlanillaComponent } from './concepto-tipo-planilla/concepto-tipo-planilla.component';
 import { EmpleadoTipoPlanillaComponent } from './empleado-tipo-planilla/empleado-tipo-planilla.component';
 import { PlReportesComponent } from './pl-reportes/pl-reportes.component';
+import { PlanillaComponent } from './planilla/planilla.component';
 
 const routes: Routes = [
     {path : 'periodopago', component : PeriodoPagoComponent},
@@ -15,6 +16,7 @@ const routes: Routes = [
     {path : 'conceptoplanilla', component : ConceptoTipoPlanillaComponent},
     {path : 'empleadoplanilla', component : EmpleadoTipoPlanillaComponent},
     {path : 'reportesplanilla', component : PlReportesComponent},
+    {path : 'planilla', component : PlanillaComponent},
   ];
 
 @NgModule({
