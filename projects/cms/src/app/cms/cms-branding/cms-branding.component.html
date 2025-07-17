@@ -61,6 +61,16 @@
       <label class="form-check-label" for="chkBlog">Mostrar blog</label>
     </div>
 
+
+    <div class="form-group">
+      <label>Encabezado (HTML)</label>
+      <ejs-richtexteditor
+        [(value)]="Config.Encabezado_HTML"
+        [height]="250">
+      </ejs-richtexteditor>
+    </div>
+    
+
     <div class="form-group">
       <label>Pie de página (HTML)</label>
       <ejs-richtexteditor

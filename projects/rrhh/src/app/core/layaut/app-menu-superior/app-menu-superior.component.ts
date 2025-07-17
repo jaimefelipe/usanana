@@ -18,6 +18,18 @@ export class AppMenuSuperiorComponent implements OnInit {
     });
   }
   logout(){
-    
+    localStorage.setItem('isLoggedin', 'false');
+    localStorage.removeItem('Id_Empresa');
+    localStorage.removeItem('Id_Usuario');
+    localStorage.removeItem('Nombre_Usuario');
+    localStorage.removeItem('Nombre');
+    localStorage.removeItem('Id_Caja_Diaria');
+    localStorage.removeItem('Id_Caja');
+    localStorage.removeItem('ToxoSG');
+    localStorage.removeItem('ToxoMT');
+    localStorage.removeItem('Empresa');
+
+    const arrlocation = window.location.pathname.split('/');
+    window.location.href = "/"+arrlocation[1]+'/';
   }
 }

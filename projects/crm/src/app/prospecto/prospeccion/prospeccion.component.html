@@ -64,6 +64,7 @@
       <!--<button [ngClass]='DireccionClass' (click)="activarDireccion()">Dirección</button>-->
       <button [ngClass]='NotasClass' (click)="activarNotas()">Notas</button>
       <button [ngClass]='TareaClass' (click)="activarTarea()">Tareas</button>
+      <button [ngClass]="MensajesClass" (click)="activarMensajes()">Mensajes</button>
     </div>
     <span [hidden]="!edit">
       <app-general [hidden]="!GeneralActivo" [Persona]="Persona" (close)="cancel()"></app-general>
@@ -71,6 +72,7 @@
     -->
       <app-notas [hidden]="!NotasActivo" [Persona]="Persona"></app-notas>
       <app-tareas-cliente [hidden]="!TareaActivo" [Persona]="Persona"></app-tareas-cliente>
+      <app-mensajes-whatsapp *ngIf="MensajesActivo" [IdPersona]="Persona.Id_Persona" [NumeroWhatsApp]="Persona.Telefono"> </app-mensajes-whatsapp>
     </span>
 
     <div class="form-row">

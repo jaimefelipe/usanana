@@ -115,10 +115,12 @@
          href="#"
          (click)="logOut()"
          [attr.title]="collapsed ? 'Salir' : null">
-        <i class="fa fa-sign-out"></i>
+        <i class="fa fa-sign-out"></i> 
         <span *ngIf="!collapsed" class="ml-2">Salir</span>
       </a>
     </li>
+
+    <a  [hidden]="logedIn" [routerLink]="['/login']"><li><i class="fa fa-sign-in"></i> Entrar</li></a>
 
     <!-- FOOTER USUARIO -->
     <li class="nav-item mt-4 px-2 text-muted small" *ngIf="logedIn && !collapsed">

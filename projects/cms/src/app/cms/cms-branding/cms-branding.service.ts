@@ -11,7 +11,7 @@ constructor(private apiService: ApiService) {}
   async loadConfiguracion(Id_Empresa: number) {
     const sqlConfig = {
       table: 'Gen_Empresa_Configuracion_Web',
-      fields: 'Id_Configuracion_Web,Logo_Url,Favicon_Url,Color_Primario,Color_Secundario,Color_Texto,Tipografia_Principal,Texto_Bienvenida,Mostrar_Barra_Login,Mostrar_Boton_Contacto,Mostrar_Blog,Pie_Pagina_HTML',
+      fields: 'Id_Configuracion_Web,Logo_Url,Favicon_Url,Color_Primario,Color_Secundario,Color_Texto,Tipografia_Principal,Texto_Bienvenida,Mostrar_Barra_Login,Mostrar_Boton_Contacto,Mostrar_Blog,Encabezado_HTML,Pie_Pagina_HTML',
       where: `Id_Empresa = ${Id_Empresa}`
     };
 
@@ -42,6 +42,7 @@ constructor(private apiService: ApiService) {}
       Mostrar_Barra_Login: true,
       Mostrar_Boton_Contacto: true,
       Mostrar_Blog: false,
+      Encabezado_HTML:'',
       Pie_Pagina_HTML: ''
     };
   }

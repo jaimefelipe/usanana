@@ -8,10 +8,10 @@ export class CmsEmpresaconfigService {
 
 constructor(private apiService: ApiService) {}
 
-  async loadEmpresa(Id_Empresa: number) {
+  async loadEmpresa(Id_Empresa: any) {
     const sqlConfig = {
       table: 'Gen_Empresa',
-      fields: `Id_Empresa, Nombre_Comercial, Dominio_Principal, Sitio_Desde_CMS, Ruta_Archivo_HTML, Tiene_LMS, LMS_Integrado_Web`,
+      fields: `Id_Empresa, Nombre, Dominio_Principal, Sitio_Desde_CMS, Ruta_Archivo_HTML, Tiene_LMS, LMS_Integrado_Web`,
       where: `Id_Empresa = ${Id_Empresa}`
     };
     return await this.apiService.executeSqlSyn(sqlConfig);

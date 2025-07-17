@@ -1,0 +1,154 @@
+<!-- LISTADO DE ACTIVIDADES (Estilo Teams) -->
+<div class="card mt-3 border-0 shadow-sm">
+  <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center py-2">
+    <h6 class="mb-0">
+      <i class="fa fa-tasks mr-2"></i>Actividades de la Semana
+    </h6>
+    <button class="btn btn-light btn-sm" (click)="abrirNuevo()">
+      <i class="fa fa-plus mr-1"></i> Nueva
+    </button>
+  </div>
+  
+  <div class="list-group list-group-flush">
+    <div *ngFor="let a of Actividades" class="list-group-item border-0 py-3">
+      <div class="d-flex align-items-center">
+        <div class="mr-3">
+          <div class="bg-light rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+            <i class="fa fa-file-text text-primary"></i>
+          </div>
+        </div>
+        
+        <div class="flex-grow-1">
+          <h6 class="mb-1">{{ a.Nombre }}</h6>
+          <div class="d-flex text-muted small">
+            <span class="mr-2"><i class="fa fa-clock-o mr-1"></i>{{ a.Fecha_Limite | date:'dd/MM/yy' }}</span>
+            <span class="mr-2"><i class="fa fa-star mr-1"></i>{{ a.Puntaje }} pts</span>
+            <span class="badge badge-info">{{ getTipoText(a.Tipo) }}</span>
+          </div>
+        </div>
+        
+        <div>
+          <button class="btn btn-sm btn-outline-secondary mr-1" (click)="editar(a)">
+            <i class="fa fa-edit"></i>
+          </button>
+          <button class="btn btn-sm btn-outline-danger" (click)="eliminar(a)">
+            <i class="fa fa-trash"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <div *ngIf="Actividades.length === 0" class="list-group-item text-center py-4 text-muted">
+      <i class="fa fa-inbox fa-2x mb-2"></i>
+      <p class="mb-0">No hay actividades asignadas</p>
+    </div>
+  </div>
+</div>
+
+<!-- FORMULARIO DE ACTIVIDAD (Estilo Teams) -->
+<div class="modal fade show d-block" *ngIf="edit" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content border-0">
+      <div class="modal-header bg-primary text-white py-2">
+        <h5 class="modal-title">{{ Actividad.Id_Actividad ? 'Editar' : 'Nueva' }} actividad</h5>
+        <button type="button" class="close text-white" (click)="cancelar()">&times;</button>
+      </div>
+      
+      <div class="modal-body">
+        <form>
+          <!-- Sección 1: Información básica -->
+          <div class="form-group">
+            <label class="font-weight-bold">Título</label>
+            <input [(ngModel)]="Actividad.Nombre" 
+                   name="Nombre" 
+                   class="form-control form-control-lg border-top-0 border-left-0 border-right-0 rounded-0 pl-0" 
+                   placeholder="Escriba el título">
+          </div>
+          
+          <div class="form-group">
+            <label class="font-weight-bold">Instrucciones</label>
+            <textarea [(ngModel)]="Actividad.Instrucciones" 
+                      name="Descripcion" 
+                      class="form-control" 
+                      rows="3"
+                      placeholder="Agregue instrucciones detalladas..."></textarea>
+          </div>
+          
+          <!-- Sección 2: Archivos -->
+          <div class="border-top pt-3 mt-3">
+            <label class="font-weight-bold d-block mb-2">Recursos</label>
+            <div class="custom-file mb-2">
+              <input type="file" class="custom-file-input" id="customFile" (change)="handleFileInput($event)">
+              <label class="custom-file-label" for="customFile">
+                {{ fileToUpload?.name || 'Seleccionar archivo' }}
+              </label>
+            </div>
+            <small class="text-muted">Formatos soportados: PDF, PPT, DOC, XLS (max. 25MB)</small>
+            
+            <div *ngIf="Actividad.URL && !fileToUpload" class="mt-2">
+              <div class="d-flex align-items-center p-2 bg-light rounded">
+                <i class="fa fa-file-pdf-o text-danger fa-2x mr-2"></i>
+                
+                <div class="flex-grow-1">
+                  <a [href]="Actividad.URL" target="_blank" class="font-weight-bold">Archivo adjunto actual</a>
+                  <div class="small text-muted">Haga clic para ver</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Sección 3: Configuración -->
+          <div class="border-top pt-3 mt-3">
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label class="font-weight-bold">Tipo</label>
+                  <select [(ngModel)]="Actividad.Tipo" 
+                          name="Tipo" 
+                          class="form-control">
+                    <option value="">Seleccione tipo</option>
+                    <option value="1">Tarea</option>
+                    <option value="2">Examen</option>
+                    <option value="3">Foro</option>
+                    <option value="4">Presentación</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label class="font-weight-bold">Fecha de entrega</label>
+                  <input type="datetime-local" 
+                         [(ngModel)]="Actividad.Fecha_Limite" 
+                         name="Fecha_Limite" 
+                         class="form-control">
+                </div>
+              </div>
+              
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label class="font-weight-bold">Puntaje</label>
+                  <input type="number" 
+                         [(ngModel)]="Actividad.Puntaje" 
+                         name="Puntaje" 
+                         class="form-control" 
+                         min="0" 
+                         placeholder="0-100">
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      
+      <div class="modal-footer bg-light">
+        <button class="btn btn-primary" (click)="grabar()">
+          <i class="fa fa-save mr-1"></i> Publicar actividad
+        </button>
+        <button class="btn btn-outline-secondary" (click)="cancelar()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

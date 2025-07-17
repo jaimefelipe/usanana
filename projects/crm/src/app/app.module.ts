@@ -16,6 +16,7 @@ import { ClientesComponent } from './clientes/clientes/clientes.component';
 import { CobroComponent } from './clientes/cobro/cobro.component';
 import { TareasClienteComponent } from './clientes/tareas-cliente/tareas-cliente.component';
 import { PresentacionComponent } from './presentacion/presentacion/presentacion.component';
+import { MensajesWhatsappComponent } from './prospecto/mensajes-whatsapp/mensajes-whatsapp.component';
 import { DatePipe } from '@angular/common';
 
 @NgModule({
@@ -26,7 +27,8 @@ import { DatePipe } from '@angular/common';
     ClientesComponent,
     CobroComponent,
     TareasClienteComponent,
-    PresentacionComponent
+    PresentacionComponent,
+    MensajesWhatsappComponent
   ],
   imports: [
     FormsModule,

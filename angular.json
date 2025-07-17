@@ -38,7 +38,15 @@
             ],
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "projects/main/src/styles.css"
+              "projects/cms/src/styles.css",
+              "node_modules/@syncfusion/ej2-base/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-buttons/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-inputs/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-lists/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-navigations/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-popups/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-splitbuttons/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-richtexteditor/styles/bootstrap.css"  
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",

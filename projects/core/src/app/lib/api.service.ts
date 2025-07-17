@@ -17,7 +17,7 @@ export class ApiService {
     //if(window.location.hostname == 'localhost'){
       //this.url = 'http://api.toxo.work/core/db/eps_execSql.php?sql=';
     //}else{
-      this.url = 'https://toxo.work/core/db/eps_execSql_v2.php?sql=';
+      this.url = 'https://toxo.work/core/db/eps_execSql_v21.php?sql=';
     //}
   }
   data = {
@@ -531,6 +531,27 @@ export class ApiService {
       'https://toxo.work/api/mailPaymentNotification/' + Id + '&' + Name
     );
   }
+
+  async loadPublicFile(file: any): Promise<any> {
+    try {
+      const response = await fetch(
+        'https://toxo.work/core/loadFile.php?id=' + 
+        localStorage.getItem('Id_Empresa'),
+        {
+          method: 'POST',
+          body: file,
+        }
+      );
+      
+      // Convertir la respuesta a JSON
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error al subir archivo:', error);
+      return { success: false, message: 'Error en la conexión' };
+    }
+  }
+
   async loadFile(file:any) {
     fetch(
       'https://toxo.work/core/loadP12.php?id=' +

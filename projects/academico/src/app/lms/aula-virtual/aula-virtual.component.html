@@ -1,46 +1,97 @@
-
-
-
-
-<div class="container-fluid">
-  <h3><b>Aula Virtual</b></h3>
-
-  <div class="form-row mt-3">
-    <div class="form-group col-md-8">
-      <label>Grupo</label>
-      <select class="form-control" [(ngModel)]="Aula.Id_Grupo">
-        <option *ngFor="let grupo of Grupos" [value]="grupo.Id_Grupo">
-          {{ grupo.Codigo }} - {{ grupo.Curso }}
-        </option>
-      </select>
+<!-- MODO LISTADO -->
+<div [hidden]="edit" class="container-fluid pb-5">
+  <!-- TÍTULO Y BUSCADOR -->
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+    <h2>Configuración de Aula Virtual</h2>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
+          </div>
+          <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+            placeholder="Buscar">
+          <div class="input-group-append">
+            <button class="btn btn-success" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
+                aria-hidden="true"></i></button>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="form-group col-md-4">
-      <label>Estado</label>
-      <select class="form-control" [(ngModel)]="Aula.Activo">
-        <option [value]="true">Activo</option>
-        <option [value]="false">Inactivo</option>
-      </select>
+  <!-- LISTADO DE AULAS -->
+  <div class="row">
+    <div class="col-md-6 col-lg-4 mb-3" *ngFor="let aula of Aulas; let i = index">
+      <div class="card shadow-sm hover-shadow-sm" (click)="editRecord(aula)">
+        <div class="card-body">
+          <h5 class="card-title font-weight-bold text-primary">
+            {{ aula.Grupo }} - {{ aula.Curso }}
+          </h5>
+          <p class="mb-1">
+            Profesor: <span class="text-muted">{{ aula.Profesor | slice:0:60 }}...</span>
+          </p>
+          <div>
+            <span class="badge" [ngClass]="aula.Activo ? 'badge-success' : 'badge-secondary'">
+              {{ aula.Activo ? 'Activo' : 'Inactivo' }}
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div class="form-group">
-    <label>Bienvenida</label>
-    <textarea class="form-control" rows="5" [(ngModel)]="Aula.Bienvenida"></textarea>
+  <!-- PAGINACIÓN -->
+  <div class="text-center mt-3">
+    <ul class="pagination justify-content-center">
+      <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"></i></a></li>
+    </ul>
   </div>
+</div>
 
-  <div class="form-group">
-    <label>Link Reglamento Educación Virtual</label>
-    <input type="url" class="form-control" [(ngModel)]="Aula.Link_Reglamento" placeholder="https://...">
-  </div>
 
-  <div class="form-group">
-    <label>Link Normas de Etiqueta</label>
-    <input type="url" class="form-control" [(ngModel)]="Aula.Link_Etiqueta" placeholder="https://...">
-  </div>
 
-  <div class="form-group text-right">
-    <button class="btn btn-success" (click)="grabar()">Grabar</button>
-    <button class="btn btn-danger ml-2" (click)="cancelar()">Cancelar</button>
-  </div>
+
+<!-- MODO EDICIÓN -->
+<div [hidden]="!edit" class="container-fluid pb-5">
+  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <h2>Aula Virtual</h2>
+
+  <!-- TABS -->
+  <ul class="nav nav-tabs mb-3">
+  <li class="nav-item">
+    <a class="nav-link" [class.active]="GeneralActivo" (click)="activarGeneral()">General</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" [class.active]="SemanasActivo" (click)="activarSemanas()">Semanas</a>
+  </li>
+  <!-- 
+  <li class="nav-item">
+    <a class="nav-link" [class.active]="ActividadesActivo" (click)="activarActividades()">Actividades</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" [class.active]="EvaluacionesActivo" (click)="activarEvaluaciones()">Evaluaciones</a>
+  </li>
+  -->
+</ul>
+
+  <!-- CONTENIDO TABS -->
+   <app-aula-virtual-general [hidden]="!GeneralActivo" [Aula]="Aula" [Grupos]="Grupos"></app-aula-virtual-general>
+   <app-semana-curso
+  [hidden]="!SemanasActivo"
+  [Aula]="Aula"
+  (editando)="formularioEditando = $event">
+</app-semana-curso>
+
+  <!-- BOTONES -->
+  <div class="d-flex justify-content-end mt-4" *ngIf="!formularioEditando">
+  <button class="btn btn-success mr-2" (click)="grabar()">
+    <i class="fa fa-save mr-1"></i> Grabar
+  </button>
+  <button class="btn btn-danger" (click)="cancelar()">
+    <i class="fa fa-times mr-1"></i> Cancelar
+  </button>
+</div>
+
 </div>

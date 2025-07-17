@@ -14,6 +14,8 @@ export class ProspeccionComponent implements OnInit {
     private contactoService:ContactoService,
     private branchService:BranchService
     ) { }
+  MensajesActivo = false;
+  MensajesClass = '';
 
   edit = false
   GeneralActivo = true;
@@ -121,6 +123,8 @@ export class ProspeccionComponent implements OnInit {
     this.NotasActivo = false;
     this.CobroActivo = false;
     this.TareaActivo = false;
+    this.MensajesActivo = false;
+    this.MensajesClass = '';
 
 
     this.GeneralClass = 'text-success tablinks active';
@@ -133,6 +137,28 @@ export class ProspeccionComponent implements OnInit {
 
   }
 
+activarMensajes() {
+  this.GeneralActivo = false;
+  this.DireccionActivo = false;
+  this.VentaActivo = false;
+  this.CarreraActivo = false;
+  this.ContactosActivo = false;
+  this.NotasActivo = false;
+  this.CobroActivo = false;
+  this.TareaActivo = false;
+  this.MensajesActivo = true;
+
+  this.GeneralClass = '';
+  this.VentaClass = '';
+  this.DireccionClass = '';
+  this.ContactoClass = '';
+  this.NotasClass = '';
+  this.CobroClass = '';
+  this.TareaClass = '';
+  this.MensajesClass = 'text-success tablinks active';
+}
+
+
   activarDireccion(){
     this.GeneralActivo = false;
     this.DireccionActivo = true;
@@ -142,6 +168,9 @@ export class ProspeccionComponent implements OnInit {
     this.NotasActivo = false;
     this.CobroActivo = false;
     this.TareaActivo = false;
+        this.MensajesActivo = false;
+    this.MensajesClass = '';
+
 
     this.GeneralClass = '';
     this.VentaClass = ''
@@ -161,6 +190,9 @@ export class ProspeccionComponent implements OnInit {
     this.NotasActivo = false;
     this.CobroActivo = false;
     this.TareaActivo = false;
+        this.MensajesActivo = false;
+    this.MensajesClass = '';
+
     
     this.GeneralClass = '';
     this.VentaClass = ''
@@ -180,6 +212,9 @@ export class ProspeccionComponent implements OnInit {
     this.NotasActivo = false;
     this.CobroActivo = false;
     this.TareaActivo = false;
+        this.MensajesActivo = false;
+    this.MensajesClass = '';
+
     
     this.GeneralClass = '';
     this.VentaClass = 'text-success tablinks active'
@@ -207,6 +242,9 @@ export class ProspeccionComponent implements OnInit {
     this.NotasClass = 'text-success tablinks active';
     this.CobroClass = '';
     this.TareaClass = '';
+        this.MensajesActivo = false;
+    this.MensajesClass = '';
+
   }
   activarCobro(){
     this.GeneralActivo = false;
@@ -217,6 +255,9 @@ export class ProspeccionComponent implements OnInit {
     this.NotasActivo = false;
     this.CobroActivo = true
     this.TareaActivo = false;
+        this.MensajesActivo = false;
+    this.MensajesClass = '';
+
 
     this.GeneralClass = '';
     this.VentaClass = '';
@@ -236,6 +277,9 @@ export class ProspeccionComponent implements OnInit {
     this.NotasActivo = false;
     this.CobroActivo = false;
     this.TareaActivo = true;
+        this.MensajesActivo = false;
+    this.MensajesClass = '';
+
 
     this.GeneralClass = '';
     this.VentaClass = '';
@@ -321,8 +365,8 @@ export class ProspeccionComponent implements OnInit {
         this.Persona.Moneda = 'CRC';
       }
       //Leer el nombre del Agente
-      let Agente = await this.contactoService.loadPersona(this.Persona.Id_Agente);
-      this.Persona.Nombre_Agente = Agente['data'][0]['Nombre'];
+      //let Agente = await this.contactoService.loadPersona(this.Persona.Id_Agente);
+      //this.Persona.Nombre_Agente = Agente['data'][0]['Nombre'];
     }
    }
    cancel(){

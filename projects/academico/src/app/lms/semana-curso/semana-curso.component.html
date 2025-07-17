@@ -1,51 +1,78 @@
 <div class="container-fluid">
-  <h3><b>Planificación Semanal del Curso</b></h3>
+  <!-- Encabezado -->
+<h3><b>Planificación Semanal del Curso</b></h3>
 
-  <div class="form-row">
-    <div class="form-group col-md-8">
-      <label>Grupo (Aula Virtual)</label>
-      <select class="form-control" [(ngModel)]="Filtro.Id_AulaVirtual" (change)="cargarSemanas()">
-        <option *ngFor="let aula of AulasVirtuales" [value]="aula.Id_AulaVirtual">
-          {{ aula.Curso }} - {{ aula.Grupo }}
-        </option>
-      </select>
+<div *ngIf="!edit" class="form-group text-right">
+  <button class="btn btn-success" (click)="agregar()" [disabled]="!Aula?.Id_AulaVirtual">
+    <i class="fa fa-plus"></i> Agregar Semana
+  </button>
+</div>
+
+  <!-- FORMULARIO (condicional) -->
+  <div *ngIf="edit">
+    <hr>
+    <div class="form-row">
+      <div class="form-group col-md-2">
+        <label>Semana #</label>
+        <input type="number" class="form-control" [(ngModel)]="Semana.Numero_Semana">
+      </div>
+      <div class="form-group col-md-6">
+        <label>Título</label>
+        <input type="text" class="form-control" [(ngModel)]="Semana.Titulo">
+      </div>
+      <div class="form-group col-md-2">
+        <label>Inicio</label>
+        <input type="date" class="form-control" [(ngModel)]="Semana.Fecha_Inicio">
+      </div>
+      <div class="form-group col-md-2">
+        <label>Límite</label>
+        <input type="date" class="form-control" [(ngModel)]="Semana.Fecha_Limite">
+      </div>
     </div>
+
+    <div class="form-group">
+      <label>Ruta de Aprendizaje</label>
+      <textarea class="form-control" rows="4" [(ngModel)]="Semana.RutaAprendizaje"></textarea>
+    </div>
+
+
+ <!-- TABS: Recursos / Actividades / Entregas -->
+    <ul class="nav nav-tabs mb-3">
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="activo === 'recursos'" (click)="activo = 'recursos'">Recursos</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="activo === 'actividades'" (click)="activo = 'actividades'">Actividades</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="activo === 'entregas'" (click)="activo = 'entregas'">Entregas</a>
+      </li>
+    </ul>
+
+  <!-- RECURSOS DE LA SEMANA -->
+  <app-recurso-semana *ngIf="activo === 'recursos'" [Semana]="Semana"></app-recurso-semana>
+  <app-actividad-semana *ngIf="activo === 'actividades'" [Semana]="Semana"></app-actividad-semana>
+    <!--    <app-semana-recurso *ngIf="activo === 'recursos'" [Semana]="Semana"></app-semana-recurso>
+    <app-semana-actividad *ngIf="activo === 'actividades'" [Semana]="Semana"></app-semana-actividad>
+    <app-semana-entrega *ngIf="activo === 'entregas'" [Semana]="Semana"></app-semana-entrega>
+-->
+
+
+
+
+    <div class="form-group text-right">
+      <button class="btn btn-success" (click)="grabar()">
+        <i class="fa fa-save mr-1"></i> Guardar Semana
+      </button>
+      <button class="btn btn-danger ml-2" (click)="cancelar()">
+        <i class="fa fa-times mr-1"></i> Cancelar
+      </button>
+    </div>
+    <hr>
   </div>
 
-  <hr>
-
-  <div class="form-row">
-    <div class="form-group col-md-2">
-      <label>Semana #</label>
-      <input type="number" class="form-control" [(ngModel)]="Semana.Numero_Semana">
-    </div>
-    <div class="form-group col-md-6">
-      <label>Título</label>
-      <input type="text" class="form-control" [(ngModel)]="Semana.Titulo">
-    </div>
-    <div class="form-group col-md-2">
-      <label>Inicio</label>
-      <input type="date" class="form-control" [(ngModel)]="Semana.Fecha_Inicio">
-    </div>
-    <div class="form-group col-md-2">
-      <label>Límite</label>
-      <input type="date" class="form-control" [(ngModel)]="Semana.Fecha_Limite">
-    </div>
-  </div>
-
-  <div class="form-group">
-    <label>Ruta de Aprendizaje</label>
-    <textarea class="form-control" rows="4" [(ngModel)]="Semana.RutaAprendizaje"></textarea>
-  </div>
-
-  <div class="form-group text-right">
-    <button class="btn btn-success" (click)="grabar()">Guardar Semana</button>
-    <button class="btn btn-danger ml-2" (click)="cancelar()">Cancelar</button>
-  </div>
-
-  <hr>
-
-  <table class="table table-bordered table-sm">
+  <!-- GRID DE SEMANAS -->
+  <table [hidden]="edit" class="table table-bordered table-sm">
     <thead class="thead-light">
       <tr>
         <th>Semana</th>
@@ -62,8 +89,9 @@
         <td>{{ sem.Fecha_Inicio }}</td>
         <td>{{ sem.Fecha_Limite }}</td>
         <td>
-          <button class="btn btn-sm btn-info" (click)="editar(sem)">Editar</button>
-          <button class="btn btn-sm btn-danger ml-1" (click)="eliminar(sem)">Eliminar</button>
+          <button class="btn btn-sm btn-info" (click)="editar(sem)">
+            <i class="fa fa-edit"></i> Editar
+          </button>
         </td>
       </tr>
     </tbody>
