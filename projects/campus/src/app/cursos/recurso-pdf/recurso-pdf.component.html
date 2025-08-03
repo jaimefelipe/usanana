@@ -1,0 +1,9 @@
+<div class="recurso-pdf p-3 border rounded bg-white shadow-sm">
+  <ng-container *ngIf="isPdfVisible(); else noPreview">
+    <iframe [src]="getSafeUrl(item.Contenido)" width="100%" height="800px" frameborder="0"></iframe>
+  </ng-container>
+
+  <ng-template #noPreview>
+    <p>No se puede mostrar una vista previa del PDF. <a [href]="item.Contenido" target="_blank">Descargar PDF</a></p>
+  </ng-template>
+</div>

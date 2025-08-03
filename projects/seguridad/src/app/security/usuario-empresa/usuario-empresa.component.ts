@@ -37,7 +37,7 @@ export class UsuarioEmpresaComponent implements OnInit {
     Id_Usuario:'',
     Nombre_Usuario:'',
     Numero_Identificacion:'',
-    Estado:''
+    Estado:'1'
   }
   ngOnInit() {
     this.cargarUsuariosEmpresa();
@@ -87,6 +87,16 @@ export class UsuarioEmpresaComponent implements OnInit {
       if(data['total']==1){
         this.UsuarioEmpresa = data['data'][0];
       }
+    }else{
+      this.UsuarioEmpresa = {
+        Id_Usuario_Empresa:'',
+        Id_Empresa:'',
+        Nombre_Empresa:'',
+        Id_Usuario:'',
+        Nombre_Usuario:'',
+        Numero_Identificacion:'',
+        Estado:'1'
+      }
     }
   }
 
@@ -106,8 +116,18 @@ export class UsuarioEmpresaComponent implements OnInit {
     }else{
       let data = this.usuarioEmpresaService.updateUser(this.UsuarioEmpresa);
     }
-    //this.AsosiarUsuario(this.UsuarioEmpresa.Id_Usuario,this.UsuarioEmpresa.Id_Empresa)
-    //this.cancel();
+    this.AsosiarUsuario(this.UsuarioEmpresa.Id_Usuario,this.UsuarioEmpresa.Id_Empresa)
+    this.cancel();
+    this.UsuarioEmpresa = {
+        Id_Usuario_Empresa:'',
+        Id_Empresa:'',
+        Nombre_Empresa:'',
+        Id_Usuario:'',
+        Nombre_Usuario:'',
+        Numero_Identificacion:'',
+        Estado:'1'
+      }
+       this.cargarUsuariosEmpresa();
   }
   async AsosiarUsuario(Id_Usuario,Id_Empresa){
     let data = await this.usuarioEmpresaService.asociarUsuarioEmpresa(Id_Usuario,Id_Empresa)

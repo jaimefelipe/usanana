@@ -84,7 +84,7 @@ BEGIN
 				SELECT IFNULL(Utilidad,0) INTO v_Porcentaje_Utilidad FROM Inv_Categoria WHERE Id_Categoria = v_Categoria;
 				SET v_Precio_Calculado = v_Nuevo_Costo_Promedio + ((v_Nuevo_Costo_Promedio * v_Porcentaje_Utilidad) / 100);
 				IF v_Precio_Calculado > 0 THEN
-					SET v_Nuevo_Precio = v_Precio_Calculado;
+					SET v_Nuevo_Precio =  Math.round(v_Precio_Calculado) ;
 				END IF;
 			END IF;
 

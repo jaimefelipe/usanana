@@ -46,7 +46,7 @@
                 <a *ngSwitchCase="'4'" [href]="r.URL" target="_blank" class="text-truncate d-block">Descargar PDF</a>
                 <a *ngSwitchCase="'5'" [href]="r.URL" target="_blank" class="text-truncate d-block">Ver presentación</a>
                 <div *ngSwitchCase="'3'" class="video-container">
-                  <iframe width="100%" height="150" [src]="getYoutubeEmbedUrl(r.URL)" frameborder="0" allowfullscreen></iframe>
+                  <iframe width="20px" height="20px" [src]="getYoutubeEmbedUrl(r.URL)" frameborder="0" allowfullscreen></iframe>
                 </div>
                 <div *ngSwitchCase="'1'" [innerHTML]="r.Contenido | slice:0:200" class="text-muted"></div>
               </ng-container>

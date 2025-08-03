@@ -1,4 +1,4 @@
-import { Component, OnInit , Input} from '@angular/core';
+import { Component, OnInit , Input, SimpleChanges} from '@angular/core';
 import { MensajesWhatsappService } from './mensajes-whatsapp.service';
 
 @Component({
@@ -17,11 +17,25 @@ export class MensajesWhatsappComponent implements OnInit {
   constructor(private mensajesService: MensajesWhatsappService) { }
 
   async ngOnInit() {
-    if (this.IdPersona) {
+    //this.CargarMensajes();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log(changes)
+    if (changes['IdPersona'] && changes['IdPersona'].currentValue) {
+        console.log('Leyendo mensajes');
+        this.CargarMensajes();
+    }
+  }
+
+  async CargarMensajes(){
+     if (this.IdPersona) {
       this.cargando = true;
       const result = await this.mensajesService.loadMensajes(this.IdPersona);
       if (result.total > 0) {
         this.Mensajes = result.data;
+      }else{
+        this.Mensajes = [];
       }
       this.cargando = false;
     }

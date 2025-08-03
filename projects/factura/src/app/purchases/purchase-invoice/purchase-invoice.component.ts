@@ -993,7 +993,9 @@ this.Cia_ID.trim()
     } else {
       await this.procesarDetalle(FactuaElectronica['DetalleServicio']['LineaDetalle']);
     }
-    eval('document.getElementById("customFile").value = ""');
+    
+    //eval('document.getElementById("customFile").value = ""');
+    (document.getElementById('customFile') as HTMLInputElement).value = '';
     this.PantallaLoading = false;
     return true;
   }

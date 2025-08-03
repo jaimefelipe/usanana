@@ -70,12 +70,14 @@ export class TareasComponent implements OnInit {
   };
   ngOnInit(): void {
     this.Tareas = [];
-    this.loadTareas();
+    //this.loadTareas();
   }
 
   ngOnChanges(changes: SimpleChanges) {
     //Evento se dispara cuando hay cambios en el padre
-    this.loadTareas();
+    if (changes['Persona'] && !changes['Persona'].currentValue) {
+      this.loadTareas();
+    }
   }
   search(){
 

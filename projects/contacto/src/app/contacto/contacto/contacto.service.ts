@@ -53,9 +53,9 @@ export class ContactoService {
 
     let sqlConfig = {
       table: 'Gen_Persona',
-      fields: 'Id_Persona,Nombre,Telefono,Correo,Correo2,Identificacion,Tipo_Identificacion,Porcentaje_Comision,Porcentaje_Descuento,Otro_Documento,Ultima_Factura,Prospecto,Cliente,Proveedor,Emisor,Empleado,Estado',
-      orderField: 'Nombre',
-      orderDirection: ' ASC',
+      fields: 'Id_Persona,Nombre,Telefono,Correo,Correo2,Identificacion,Tipo_Identificacion,Porcentaje_Comision,Porcentaje_Descuento,Otro_Documento,Ultima_Factura,Prospecto,Cliente,Proveedor,Emisor,Empleado,Estado,Creado_EL,Estado_Prospeccion',
+      orderField: 'Modificado_El',
+      orderDirection: ' DESC',
       where: where,
       searchField: search,
       paginacion: paginacion
@@ -273,5 +273,16 @@ export class ContactoService {
       where: "Nombre Like '%" + Nombre + " " + Apellido+ "%' or Nombre like '%" + Apellido+ " " + Nombre + "%'"
     };
     return await this.apiService.executeSqlSyn(sqlConfig);
+  }
+
+
+  async actualizarEstadoProspeccion(Id_Persona,Estado){
+    let sql = {
+      table: 'Gen_Persona',
+      fields: 'Estado_Prospeccion=\'' + Estado + ",Modificado_El= NOW()"
+      + '\'',
+      where:'Id_Persona='+Id_Persona
+    };
+    return await this.apiService.updateRecord(sql);
   }
 }

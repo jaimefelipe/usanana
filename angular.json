@@ -676,7 +676,28 @@
             ],
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "projects/main/src/styles.css"
+              "projects/main/src/styles.css",
+              "node_modules/@worktile/gantt/styles/index.scss",
+              "node_modules/@syncfusion/ej2-base/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-angular-schedule/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-base/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-buttons/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-calendars/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-dropdowns/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-inputs/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-lists/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-popups/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-navigations/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-angular-schedule/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-layouts/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-angular-kanban/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-splitbuttons/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-grids/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-treegrid/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-gantt/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-richtexteditor/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-angular-pivotview/styles/bootstrap.css",
+              "node_modules/@syncfusion/ej2-icons/styles/bootstrap.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
@@ -688,13 +709,13 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "4mb"
+                  "maximumWarning": "20mb",
+                  "maximumError": "40mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "10kb",
-                  "maximumError": "20kb"
+                  "maximumWarning": "100kb",
+                  "maximumError": "200kb"
                 }
               ],
               "outputHashing": "all"
@@ -1896,6 +1917,111 @@
             ],
             "styles": [
               "projects/cms/src/styles.css"
+            ],
+            "scripts": []
+          }
+        }
+      }
+    },
+    "campus": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "standalone": false
+        },
+        "@schematics/angular:directive": {
+          "standalone": false
+        },
+        "@schematics/angular:pipe": {
+          "standalone": false
+        }
+      },
+      "root": "projects/campus",
+      "sourceRoot": "projects/campus/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:application",
+          "options": {
+            "baseHref": "/campus/",
+            "outputPath": "dist/campus",
+            "index": "projects/campus/src/index.html",
+            "browser": "projects/campus/src/main.ts",
+            "polyfills": [
+              "zone.js"
+            ],
+            "tsConfig": "projects/campus/tsconfig.app.json",
+            "assets": [
+              "projects/campus/src/favicon.ico",
+              "projects/campus/src/assets"
+            ],
+            "styles": [
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "projects/campus/src/bootstrap.min.css",
+              "projects/campus/src/styles.css"
+            ],
+            "scripts": [
+              "node_modules/jquery/dist/jquery.min.js",
+              "node_modules/bootstrap/dist/js/bootstrap.min.js",
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "campus:build:production"
+            },
+            "development": {
+              "buildTarget": "campus:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "buildTarget": "campus:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
+            "tsConfig": "projects/campus/tsconfig.spec.json",
+            "assets": [
+              "projects/campus/src/favicon.ico",
+              "projects/campus/src/assets"
+            ],
+            "styles": [
+              "projects/campus/src/styles.css"
             ],
             "scripts": []
           }

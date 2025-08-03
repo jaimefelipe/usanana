@@ -1,0 +1,53 @@
+.campus-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px;
+  flex-wrap: wrap;
+  padding-top: 15rem;
+  padding-bottom: 6rem;
+  margin-right: auto;
+  margin-left: auto;
+
+  .left-section {
+    position: relative;
+    margin-right: 40px;
+
+    .main-img {
+      width: 400px;
+      height: auto;
+      border-radius: 6px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .top-img {
+      position: absolute;
+      top: -60px;
+      left: -40px;
+      width: 200px;
+      height: auto;
+      border-radius: 6px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+  }
+
+  .right-section {
+    max-width: 400px;
+    width: 100%;
+  }
+
+  input {
+    background: #f5f8fa;
+  }
+}
+
+h2{
+font-size: calc(1.325rem + .9vw);
+
+}
+.pb-3 {
+  padding-bottom: 1rem !important;
+  padding-right: 1rem !important;
+  background-color: #fff !important;
+
+}

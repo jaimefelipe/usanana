@@ -1,5 +1,52 @@
+<header class="navbar navbar-expand-lg navbar-dark bg-light p-2">
+  <div class="container-fluid">
+    
+    <!-- Logo con enlace a inicio -->
+    <a class="navbar-brand" [routerLink]="['/']">
+      <img src="/assets/toxologo.png" width="85px" alt="Logo">
+    </a> 
 
-<div [hidden]="edit" class="container-fluid pb-5">
+    <!-- Título del sistema -->
+    <h6 class="text-primary ml-3 my-0">Gestor de Prospectos </h6>
+    <h6 class="text-secondary ml-3 my-0">{{Empresa}}</h6>
+    
+   
+
+    <!-- Nombre del usuario -->
+    <span class="ml-auto mr-5 text-primary">
+      <i class="fa fa-user-circle"></i> {{ nombreUsuario }}
+    </span>
+
+  </div>
+</header>
+
+
+<!-- ===== KANBAN ===== -->
+<ejs-kanban [hidden]="edit"
+    cssClass="crm-kanban"
+    keyField="Estado_Prospeccion"
+    [columns]="columnas"
+    [dataSource]="Clientes"
+    [cardSettings]="cardSettings"
+    enableTooltip="true"
+    allowEditing="false"
+    (cardClick)="editRecord($event)" 
+    (actionComplete)="onActionComplete($event)">
+
+  <!-- plantilla de tarjeta -->
+  <ng-template #cardSettingsTemplate  let-data>
+    <div class="p-2">
+      {{data.Nombre}}
+      <br><small>📞 {{data.Telefono}}<br>📧 {{data.Correo || '-'}}</small>
+      <div class="mt-1"><span class="badge badge-light">ID {{data.Id_Persona}}</span></div>
+    </div>
+  </ng-template>
+
+</ejs-kanban>
+
+
+<!-- 
+<div [hidden]="!edit" class="container-fluid pb-5">
     <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
     <h2>Prospectos</h2>
     <div class="container-fluid">
@@ -26,7 +73,7 @@
               <div class="card-body">
                 {{paginacion.FirstRow +  i}} - <span class="text-primary"> {{Persona.Nombre}} </span>
                 ID : {{Persona.Identificacion}}, Correo: {{Persona.Correo}} - 
-                Tel: {{Persona.Telefono}} | 
+                Tel: {{Persona.Telefono}} 
                 
                 <span *ngIf="Persona.Estado == '11'" class="text-primary"> Nuevo</span>
                 <span *ngIf="Persona.Estado== '12'" class="text-primary"> Contactado</span>
@@ -36,7 +83,7 @@
                 
                 <span *ngIf="Persona.Estado== '0'" class="text-success"> Inactivo</span>
                 <span *ngIf="Persona.Estado== '1'" class="text-success"> Activo</span>
-                | Id:{{Persona.Id_Persona}} 
+                | Id:{{Persona.Id_Persona}}  | {{Persona.Creado_EL}}
               </div>
             </a>
           </div>
@@ -55,6 +102,8 @@
       </ul>
     </div>
   </div>
+-->
+
 
   <div [hidden]="!edit" class="container-fluid p-5">
     <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>

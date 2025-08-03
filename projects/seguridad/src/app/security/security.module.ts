@@ -14,10 +14,11 @@ import { SecurityAppComponent } from './security-app/security-app.component';
 import { SecurityUserGroupComponent } from './security-user-group/security-user-group.component';
 import { UsuarioEmpresaComponent } from './usuario-empresa/usuario-empresa.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { LoginCampusComponent } from './login-campus/login-campus.component';
 
 
 @NgModule({
-  declarations: [LoginComponent, SignupComponent, ChangeComponent, SecurityUserComponent, SecurityGroupComponent, SecurityAppGroupComponent, SecurityAppComponent, SecurityUserGroupComponent,UsuarioEmpresaComponent],
+  declarations: [LoginComponent, SignupComponent, ChangeComponent, SecurityUserComponent, SecurityGroupComponent, SecurityAppGroupComponent, SecurityAppComponent, SecurityUserGroupComponent,UsuarioEmpresaComponent,LoginCampusComponent],
   imports: [
     CommonModule,
     FormsModule,

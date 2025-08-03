@@ -57,7 +57,8 @@ constructor(private apiService:ApiService) { }
   }
 
   async cargarCursosDisponibles(Id_Persona,Id_Periodo) {
-    let sql = `Select Edu_Grupo.Id_Grupo,Edu_Grupo.Nombre as Grupo,Edu_Grupo.Aula,Edu_Grupo.Dia,Edu_Grupo.Hora,Edu_Grupo.Modalidad, Gen_Persona.Nombre as Profesor,
+   
+   /* let sql = `Select Edu_Grupo.Id_Grupo,Edu_Grupo.Nombre as Grupo,Edu_Grupo.Aula,Edu_Grupo.Dia,Edu_Grupo.Hora,Edu_Grupo.Modalidad, Gen_Persona.Nombre as Profesor,
     Edu_Curso.Codigo,Edu_Curso.Id_Curso, Curso, Edu_Curso_Carrera.Bloque,Edu_Curso_Carrera.Id_Carrera
     From Edu_Grupo
     Inner Join Edu_Curso On Edu_Grupo.Id_Curso = Edu_Curso.Id_Curso
@@ -74,6 +75,37 @@ constructor(private apiService:ApiService) { }
         inner Join Edu_Grupo On Edu_Matricula_Detalle.Id_Grupo = Edu_Grupo.Id_Grupo
         where Id_Persona = `+ Id_Persona + ` and ( Edu_Matricula_Detalle.Estado = 2 or Edu_Matricula_Detalle.Estado = 1 or Edu_Matricula_Detalle.Estado = 4));`;
 
+*/
+    let sql = ` SELECT 
+    g.Id_Grupo,
+    g.Nombre AS Grupo,
+    g.Aula,
+    g.Dia,
+    g.Hora,
+    g.Modalidad,
+    p.Nombre AS Profesor,
+    c.Codigo,
+    c.Id_Curso,
+    c.Curso,
+    cc.Bloque,
+    cc.Id_Carrera
+FROM Edu_Grupo g
+LEFT JOIN Edu_Curso c ON g.Id_Curso = c.Id_Curso
+LEFT JOIN Gen_Persona p ON p.Id_Persona = g.Id_Profesor
+LEFT JOIN Edu_Curso_Carrera cc ON cc.Id_Curso = c.Id_Curso
+LEFT JOIN Edu_Carrera_Estudiante ce ON ce.Id_Carrera = cc.Id_Carrera AND ce.Id_Persona = `+ Id_Persona + `
+WHERE 
+    g.Id_Empresa = ` + localStorage.getItem('Id_Empresa') + `
+    AND g.Estado = 1
+    AND g.Id_Periodo = `+ Id_Periodo + `
+    AND g.Id_Grupo NOT IN (
+        SELECT md.Id_Grupo
+        FROM Edu_Matricula_Detalle md
+        INNER JOIN Edu_Matricula m ON m.Id_Matricula = md.Id_Matricula
+        WHERE m.Id_Persona = `+ Id_Persona + `
+          AND md.Estado IN (1, 2, 4)
+    );`
+    
     return await this.apiService.postRecord(sql);
   }
   async CargarDetalle(Id_Matricula_Detalle){

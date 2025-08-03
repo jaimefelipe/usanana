@@ -1,0 +1,43 @@
+<div class="lms-home">
+  <h2 class="titulo-campus">CAMPUS ACADEMICO</h2>
+  <h1 class="bienvenida">Bienvenido/a {{ nombre }}</h1>
+  <p class="subtitulo">Explora el campus de oportunidades académicas</p>
+
+  
+  <h3 class="seccion">Perfil del Estudiante</h3>
+  <div class="cards">
+    
+    <div class="card">
+      <img src="assets/info-personal.png" alt="Historial académico" />
+      <h4>Mis Datos</h4>
+      <a routerLink="/lms/historial" class="btn btn-warning">Ver historial</a>
+    </div>
+
+    <div class="card">
+      <img src="assets/matricula.png" alt="Matrícula" />
+      <h4>Matrícula</h4>
+      <a routerLink="/lms/matricula" class="btn btn-warning">Matricúlate</a>
+    </div>
+
+    <div class="card">
+      <img src="assets/historial.png" alt="Historial académico" />
+      <h4>Historial</h4>
+      <a routerLink="/lms/historial" class="btn btn-warning">Ver historial</a>
+    </div>
+
+  </div>
+  
+  
+  <h3 class="seccion">Mis Cursos</h3>
+
+  <div class="cards">
+    
+    <div class="card" *ngFor="let curso of cursosActivos">
+      <img src="assets/icons/monitor.svg" alt="Curso" />
+      <h4>{{ curso.Curso }}</h4>
+      <a class="btn btn-warning"  (click)="entrarCurso(curso.Id_Curso, $event)">Entrar</a>
+    </div>
+
+   
+  </div>
+</div>

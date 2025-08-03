@@ -25,12 +25,14 @@ export class NotasComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadNotas();
+   // this.loadNotas();
   }
 
   ngOnChanges(changes: SimpleChanges) {
     //Evento se dispara cuando hay cambios en el padre
-    this.loadNotas();
+    if (changes['Persona'] && !changes['Persona'].currentValue) {
+      this.loadNotas();
+    }
   }
   search(){
 

@@ -1,0 +1,17 @@
+<div *ngIf="esPowerPoint(item.Contenido)">
+  <iframe
+    [src]="getOfficeEmbedUrl(item.Contenido)"
+    width="100%"
+    height="600px"
+    frameborder="0">
+  </iframe>
+</div>
+
+<div *ngIf="!esPowerPoint(item.Contenido)">
+  <iframe
+    [src]="getSafeUrl(item.Contenido)"
+    width="100%"
+    height="600px"
+    frameborder="0">
+  </iframe>
+</div>

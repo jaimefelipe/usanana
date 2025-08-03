@@ -26,7 +26,7 @@ export class CursoService {
   async cargarCurso(Id_Curso){
     let sqlConfig = {
       table: 'Edu_Curso',
-      fields: 'Id_Curso,Codigo,Curso,Descripcion,Requisitos,Estado',
+      fields: 'Id_Curso,Codigo,Curso,Descripcion,Requisitos,Creditos,Estado',
       where: 'Id_Curso='+Id_Curso
     }
     return await this.apiService.executeSqlSyn(sqlConfig);
@@ -35,11 +35,12 @@ export class CursoService {
   async InsertarCurso(Curso){
     let sql = {
       table: 'Edu_Curso',
-      fields: 'Codigo,Curso,Descripcion,Requisitos,Estado',
+      fields: 'Codigo,Curso,Descripcion,Requisitos,Creditos,Estado',
       values: '\'' + Curso.Codigo
       + '\',\'' + Curso.Curso
       + '\',\'' + Curso.Descripcion
       + '\',\'' + Curso.Requisitos
+      + '\',\'' + Curso.Creditos
       + '\',\'' + Curso.Estado + '\''
     };
     return await this.apiService.insertRecord(sql);
@@ -51,6 +52,7 @@ export class CursoService {
       + '\',Curso=\'' + Curso.Curso
       + '\',Descripcion=\'' + Curso.Descripcion
       + '\',Requisitos=\'' + Curso.Requisitos
+      + '\',Creditos=\'' + Curso.Creditos
       + '\',Estado=\''+ Curso.Estado  + '\'',
       where: 'Id_Curso=' + Curso.Id_Curso
     };

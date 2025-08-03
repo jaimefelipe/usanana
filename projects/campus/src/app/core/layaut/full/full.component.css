@@ -1,0 +1,70 @@
+.lms-home {
+  text-align: center;
+  padding: 40px 20px;
+
+  .titulo-campus {
+    color: #ff6600;
+    font-weight: bold;
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+
+  .bienvenida {
+    font-size: 32px;
+    color: #0C2B4B;
+    font-weight: bold;
+    margin: 0;
+  }
+
+  .subtitulo {
+    font-size: 18px;
+    color: #0C2B4B;
+    margin-bottom: 40px;
+  }
+
+  .seccion {
+    font-size: 24px;
+    color: #0C2B4B;
+    margin-bottom: 20px;
+    text-align: left;
+  }
+
+  .cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+
+    .card {
+      background: #fff;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      padding: 20px;
+      width: 250px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      text-align: center;
+
+      img {
+        width: 64px;
+        height: 64px;
+        margin-bottom: 15px;
+      }
+
+      h4 {
+        color: #0C2B4B;
+        font-weight: bold;
+      }
+
+      .nombre-curso {
+        color: #757575;
+        font-size: 14px;
+        margin-bottom: 10px;
+      }
+
+      .btn {
+        font-weight: bold;
+        color: #fff;
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+<div class="logo">
+  <h2><img src="assets/logo.png" width="50px"> USASJ</h2>
+</div>
+
+
+<div class="campus-container">
+  <div class="left-section">
+    <img src="assets/estudiante-docente.png" alt="Docente" class="main-img">
+    <img src="assets/estudiante-terapia.png" alt="Terapia" class="top-img pb-3" width="200 px" height="200 px">
+  </div>
+
+  <div class="right-section">
+    <h6 class="text-warning font-weight-bold">SISTEMA ACADÉMICO</h6>
+    <h2 class="font-weight-bold">Entrar</h2>
+    <form>
+      <input [(ngModel)]="registro.email" (blur)="emailValidation()" name="email" type="email" class="form-control mb-3" placeholder="Correo">
+      <input [(ngModel)]="registro.password" name="password" type="password" class="form-control mb-3" placeholder="Contraseña">
+      <button (click)="onLoggedin()" class="btn btn-warning text-white font-weight-bold w-100 mb-2">Ingresar</button>
+    </form>
+    <small>Click <a href="#">aquí</a> si olvidaste tu contraseña</small>
+  </div>
+</div>

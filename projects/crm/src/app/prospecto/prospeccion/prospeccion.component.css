@@ -66,3 +66,5 @@
   border-top: none;
   }
   
+  .crm-kanban .e-card { border-radius: 0.75rem; }
+.crm-kanban .e-kanban-table { min-width: 280px; }

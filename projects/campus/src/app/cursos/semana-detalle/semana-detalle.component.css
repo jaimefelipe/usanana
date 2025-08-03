@@ -1,0 +1,28 @@
+.semana-detalle {
+  margin-top: 1rem;
+  background: #fefefe;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.semana-detalle h5 {
+  margin-top: 1.5rem;
+  color: #0C2B4B;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.fecha {
+  font-size: 0.85rem;
+  color: #888;
+  margin-left: 0.5rem;
+}

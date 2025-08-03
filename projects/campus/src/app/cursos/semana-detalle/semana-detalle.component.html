@@ -1,0 +1,29 @@
+<div class="semana-detalle">
+ 
+
+    <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-2 w-100">
+       <h4>{{ semana.Titulo }}</h4>
+      <button class="btn btn-warning btn-sm ms-md-auto mt-1 mt-md-0" (click)="seleccionarSemana(semana)">
+      👁 Ver semana
+    </button>
+    </div>
+
+  <section *ngIf="recursos.length">
+    <h5>📘 Recursos</h5>
+    <ul>
+      <li *ngFor="let recurso of recursos">
+           {{ recurso.Titulo }}
+      </li>
+    </ul>
+  </section>
+
+  <section *ngIf="actividades.length">
+    <h5>📝 Actividades</h5>
+    <ul>
+      <li *ngFor="let act of actividades">
+        {{ act.Nombre }}
+      </li>
+    </ul>
+  </section>
+
+</div>

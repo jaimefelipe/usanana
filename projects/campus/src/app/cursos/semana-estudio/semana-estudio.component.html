@@ -1,0 +1,46 @@
+<div class="semana-header text-center">
+  <div class="header-superior d-flex justify-content-between align-items-center">
+    <h2 class="titulo-semana m-0 flex-grow-1 text-center">{{ Semana.Titulo}}</h2>
+    <button class="btn btn-outline-secondary ms-2" (click)="volverAlCurso()">
+      ← Volver al curso
+    </button>
+  </div>
+
+  <p class="descripcion-semana">{{ Semana.RutaAprendizaje }}</p>
+
+  <div class="avance-semana mt-3">
+    <div class="barra-externa">
+      <div class="barra-interna" [style.width.%]="Avance || 0"></div>
+    </div>
+    <small>{{ Avance || 0 }}% completado</small>
+  </div>
+</div>
+
+<div class="semana-estudio-container">
+  <div class="sidebar">
+    <h3>Recursos</h3>
+    <ul>
+      <li *ngFor="let recurso of Recursos" (click)="seleccionarItem(recurso)">
+        📄 {{ recurso.Titulo }}
+      </li>
+    </ul>
+
+    <h3>Actividades</h3>
+    <ul>
+      <li *ngFor="let actividad of Actividades" (click)="seleccionarItem(actividad)">
+        ✅ {{ actividad.Titulo }}
+      </li>
+    </ul>
+  </div>
+
+  <div class="contenido">
+    <ng-container [ngSwitch]="itemSeleccionado?.Tipo">
+      <app-recurso-video *ngSwitchCase="'3'" [item]="itemSeleccionado"></app-recurso-video>
+      <app-recurso-texto *ngSwitchCase="'1'" [item]="itemSeleccionado"></app-recurso-texto>
+      <app-recurso-enlace *ngSwitchCase="'2'" [item]="itemSeleccionado"></app-recurso-enlace>
+      <app-recurso-pdf *ngSwitchCase="'4'" [item]="itemSeleccionado"></app-recurso-pdf>
+      <app-recurso-presentacion *ngSwitchCase="'5'" [item]="itemSeleccionado"></app-recurso-presentacion>
+      <p *ngSwitchDefault>Selecciona un recurso o actividad para comenzar.</p>
+    </ng-container>
+  </div>
+</div>

@@ -1,0 +1,39 @@
+<div class="curso-container">
+  <div class="curso-info">
+    <h2>{{ curso.Curso }}</h2>
+    <p>{{ curso.Descripcion }}</p>
+    <ul>
+      <li><strong>Créditos:</strong> {{ curso.Creditos }}</li>
+      <li><strong>Duración:</strong> {{ curso.Horas }} Horas</li>
+      <li><strong>Modalidad:</strong> Virtual</li>
+    </ul>
+
+    <h3>Documentos importantes</h3>
+    <ul>
+      <li><a href="#">Reglamento académico</a></li>
+      <li><a href="#">Guía del estudiante</a></li>
+      <li><a href="#">Cronograma</a></li>
+    </ul>
+
+    <!-- Botón para volver a todos los cursos -->
+    <button class="btn btn-outline-secondary mt-3" (click)="volverACursos()">
+      🔙 Volver a cursos
+    </button>
+  </div>
+
+  <div class="curso-semanas">
+    <h3>Contenido del curso</h3>
+    <ul>
+      <li *ngFor="let semana of semanas" (click)="seleccionarSemana(semana)" [class.activa]="semanaSeleccionada?.Id_Semana === semana.Id_Semana">
+         
+          {{ semana.Titulo }}
+         
+      </li>
+    </ul>
+
+    <app-semana-detalle *ngIf="semanaSeleccionada" [semana]="semanaSeleccionada"></app-semana-detalle>
+    <!-- Botón para volver a la lista de semanas -->
+    
+  </div>
+    
+</div>

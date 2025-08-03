@@ -1,0 +1,120 @@
+.semana-estudio-container {
+  display: flex;
+  gap: 1rem;
+
+  .sidebar {
+    width: 250px;
+    border-right: 1px solid #ccc;
+    padding: 1rem;
+  }
+
+  .contenido {
+    flex: 1;
+    padding: 1rem;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+
+    li {
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 6px;
+
+      &:hover {
+        background: #f0f0f0;
+      }
+    }
+  }
+}
+
+.semana-header {
+  margin-bottom: 1rem;
+}
+
+.semana-estudio-container {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.sidebar {
+  width: 280px;
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.sidebar li {
+  padding: 0.4rem 0;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.sidebar li:hover {
+  background-color: #e2e6ea;
+  border-radius: 4px;
+}
+
+.contenido {
+  flex: 1;
+  padding: 1rem;
+  border: 1px solid #e2e6ea;
+  border-radius: 8px;
+  background-color: white;
+  min-height: 300px;
+}
+
+.mensaje-seleccion {
+  font-style: italic;
+  color: #6c757d;
+  padding: 2rem;
+  text-align: center;
+}
+.semana-header {
+  margin-bottom: 2rem;
+}
+
+.header-superior {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.titulo-semana {
+  flex-grow: 1;
+  font-size: 1.8rem;
+  color: #002b5b;
+}
+
+.descripcion-semana {
+  font-size: 1.1rem;
+  color: #555;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+.avance-semana {
+  width: 60%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.barra-externa {
+  background-color: #e9ecef;
+  border-radius: 999px;
+  overflow: hidden;
+  height: 12px;
+  margin-bottom: 0.3rem;
+}
+
+.barra-interna {
+  background-color: #ffc107;
+  height: 100%;
+  transition: width 0.5s ease;
+}

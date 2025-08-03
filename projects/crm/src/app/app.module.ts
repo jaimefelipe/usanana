@@ -19,6 +19,8 @@ import { PresentacionComponent } from './presentacion/presentacion/presentacion.
 import { MensajesWhatsappComponent } from './prospecto/mensajes-whatsapp/mensajes-whatsapp.component';
 import { DatePipe } from '@angular/common';
 
+import { KanbanModule } from '@syncfusion/ej2-angular-kanban';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -37,7 +39,8 @@ import { DatePipe } from '@angular/common';
     NgbModule,
     CoreModule,
     ContactoModule,
-    SecurityModule
+    SecurityModule,
+    KanbanModule
   ],
   providers: [DatePipe],
   bootstrap: [AppComponent]

@@ -1,0 +1,32 @@
+<div class="card">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h4>{{ actividad.Titulo }}</h4>
+    <span *ngIf="actividad.Puntaje">Puntaje: {{ actividad.Puntaje }}</span>
+  </div>
+
+  <div class="card-body">
+    <h5>Instrucciones:</h5>
+    <p>{{ actividad.Instrucciones }}</p>
+
+    <ng-container *ngIf="actividad.Recurso">
+      <h6>Recurso:</h6>
+      <!--
+      <app-recurso [item]="actividad.Recurso"></app-recurso>
+      -->
+    </ng-container>
+
+    <!-- Solo para tareas, exámenes o presentaciones -->
+    <ng-container *ngIf="actividad.Tipo !== 'Foro'">
+      <h6>Entregar archivo:</h6>
+      <input type="file" (change)="onFileSelected($event)" accept=".pdf,.doc,.docx,.ppt,.pptx" />
+      <button class="btn btn-primary mt-2" (click)="entregar()">Entregar</button>
+    </ng-container>
+
+    <!-- Solo para foro -->
+    <ng-container *ngIf="actividad.Tipo === 'Foro'">
+      <!--
+      <app-foro [IdActividad]="actividad.Id_Actividad" [IdPersona]="IdPersona"></app-foro>
+      -->
+    </ng-container>
+  </div>
+</div>

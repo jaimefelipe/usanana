@@ -98,7 +98,7 @@ export class SignupService {
       }
       let empresa = await this.apiService.insertRecord(sqlEmpresa);
       
-      if(empresa['total']==1){
+      if(empresa['Identity']){
         this.Id_Empresa = empresa['Identity'];
         localStorage.setItem("Id_Empresa",this.Id_Empresa)
       }else{
@@ -154,11 +154,11 @@ export class SignupService {
         Empresa:false
       }
       let sucursal = await this.apiService.insertRecord(sqlCaja);
-      if(sucursal['total']==1){
+      if(sucursal['Identity']){
         this.Id_Sucursal = sucursal['Identity'];
         return sucursal;
       }else{
-        alert('Problema generando Empresa');
+        alert('Problema generando Sucursal');
         return false
       }
     }

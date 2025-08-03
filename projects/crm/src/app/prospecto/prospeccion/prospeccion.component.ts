@@ -1,19 +1,46 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,ViewChild, TemplateRef,ChangeDetectorRef  } from '@angular/core';
 import { ContactoService } from '../../../../../contacto/src/app/contacto/contacto/contacto.service';
 import { BranchService } from '../../../../../main/src/app/general/branch/branch.service';
+import { ActionEventArgs, CardSettingsModel,KanbanComponent, CardClickEventArgs, } from '@syncfusion/ej2-angular-kanban';
+import { Prospecto } from './prospecto.model';
+
 import Swal from 'sweetalert2';
 
-@Component({
+@Component({ 
   selector: 'app-prospeccion',
   templateUrl: './prospeccion.component.html',
   styleUrls: ['./prospeccion.component.css']
 })
 export class ProspeccionComponent implements OnInit {
-
+  @ViewChild('kanbanObj') kanbanObj!: KanbanComponent;
+  @ViewChild('cardSettingsTemplate', { static: false }) cardTemplate!: TemplateRef<any>; 
+  
   constructor(
     private contactoService:ContactoService,
-    private branchService:BranchService
+    private branchService:BranchService,
+    private cd: ChangeDetectorRef
     ) { }
+    Empresa = localStorage.getItem('Empresa');
+    nombreUsuario = localStorage.getItem('Nombre_Usuario');
+/* ───────── Kanban ───────── */
+  columnas = [
+    { headerText: 'Saludo',           keyField: 'P1' },
+    { headerText: 'Info general',     keyField: 'P2' },
+    { headerText: 'Datos parciales',  keyField: 'P3' },
+    { headerText: 'Info específica',  keyField: 'P4' },
+    { headerText: 'Solicita agente',  keyField: 'P5' },
+    { headerText: 'Cita programada',  keyField: 'P6' },
+    { headerText: 'Cotización',       keyField: 'P7' },
+    { headerText: 'Seguimiento',      keyField: 'P8' },
+    { headerText: 'Descartado',       keyField: 'P9' }
+  ];
+
+  public  cardSettings: CardSettingsModel = {
+    headerField : 'Id_Persona',
+    contentField: 'Nombre',
+    template    : null,
+  };
+
   MensajesActivo = false;
   MensajesClass = '';
 
@@ -86,13 +113,18 @@ export class ProspeccionComponent implements OnInit {
     Declaracion:'',
     Precio:'',
     Id_Agente:'',
-    Nombre_Agente:''
+    Nombre_Agente:'',
+    Estado_Prospeccion:''
   }
 
   ngOnInit(): void {
     this.loadPersonas();
-    this.loadProvinces();
+    //this.loadProvinces();
   }
+  ngAfterViewInit() {
+      // Convierte el TemplateRef en una función compatible con Syncfusion
+      this.cardSettings.template = () => this.cardTemplate;
+    }
   ChangePage(action){
     if (action == 0) {
       this.paginacion.FirstRow = 1;
@@ -113,6 +145,10 @@ export class ProspeccionComponent implements OnInit {
     }
     this.loadPersonas();
   }
+
+onKanbanAction(e){
+
+}
 
   activarGeneral(){
     this.GeneralActivo = true;
@@ -307,11 +343,15 @@ activarMensajes() {
       this.Clientes = data.data;
     }
   }
-  async editRecord(Persona){
+  async editRecord(event: CardClickEventArgs) {
+    let Persona = event.data as any; 
+    this.cd.detectChanges();
+
     this.edit = true;
     if(Persona){
       this.Persona.Id_Persona = Persona.Id_Persona;
       this.Persona.Prospecto = '1';
+      this.Persona = { ...this.Persona };
       this.loadPersona();
     }else{
       this.Persona = {
@@ -351,7 +391,8 @@ activarMensajes() {
         Declaracion:'',
         Precio:'',
         Id_Agente:'',
-        Nombre_Agente:''
+        Nombre_Agente:'',
+        Estado_Prospeccion:''
       }
     }
   }
@@ -364,9 +405,6 @@ activarMensajes() {
       if(this.Persona.Moneda == ''){
         this.Persona.Moneda = 'CRC';
       }
-      //Leer el nombre del Agente
-      //let Agente = await this.contactoService.loadPersona(this.Persona.Id_Agente);
-      //this.Persona.Nombre_Agente = Agente['data'][0]['Nombre'];
     }
    }
    cancel(){
@@ -378,6 +416,7 @@ activarMensajes() {
       return false;
     }
     //this.Persona.Fecha_Ingreso = this.Fecha.day + '-' + this.Fecha.month + '-' + this.Fecha.year;
+    console.log('Gravando Persona')
     let data = await this.contactoService.savePersona(this.Persona);
     if(data['success'] =='true'){
       Swal.fire('Contacto grabado correctamente');
@@ -420,5 +459,13 @@ activarMensajes() {
   }
   async cantonChange() {
     await this.loadDistrict(this.Persona.Provincia, this.Persona.Canton);
+  }
+  onActionComplete(event: any) {
+    if (event.requestType === 'cardChanged') {
+        const updatedCard = event.changedRecords[0]; // Tarjeta movida
+        this.contactoService.actualizarEstadoProspeccion(updatedCard.Id_Persona,updatedCard.Estado_Prospeccion)
+        //this.updateCardStatus(updatedCard.Id, updatedCard.Status);
+        //Cambiar Fechas reales en estado de las tareas;
+    }
   }
 }
