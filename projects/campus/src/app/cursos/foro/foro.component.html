@@ -1,0 +1,31 @@
+<div class="foro-container p-3 border rounded bg-white">
+
+  <!-- 📝 Título e instrucciones -->
+  <div class="mb-4">
+    <h5 class="text-dark font-weight-bold">🗣️ {{ foro?.Titulo || 'Participa en el foro' }}</h5>
+    <p class="text-secondary small mb-0">{{ foro?.Descripcion }}</p>
+  </div>
+
+  <!-- 💬 Mensajes existentes -->
+  <div class="foro-mensajes mb-4">
+    <div class="foro-mensaje border-left border-warning pl-3 py-2 mb-3" *ngFor="let m of mensajes">
+      <div class="font-weight-bold text-primary">{{ m.Nombre }}</div>
+      <div class="text-dark">{{ m.Mensaje }}</div>
+      <small class="text-muted">{{ m.Fecha | date:'dd/MM/yyyy hh:mm a' }}</small>
+    </div>
+  </div>
+
+  <!-- ✍️ Participación en una línea -->
+  <div class="foro-input d-flex align-items-start">
+    <textarea [(ngModel)]="nuevoMensaje"
+              class="form-control mr-2"
+              rows="2"
+              placeholder="Escribe tu participación..."></textarea>
+
+    <button class="btn btn-warning text-dark font-weight-bold" (click)="enviarMensaje()">
+      <i class="fa fa-paper-plane mr-1"></i> Enviar
+    </button>
+  </div>
+
+
+</div>

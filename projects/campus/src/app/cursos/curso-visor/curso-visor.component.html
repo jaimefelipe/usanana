@@ -1,39 +1,104 @@
-<div class="curso-container">
-  <div class="curso-info">
-    <h2>{{ curso.Curso }}</h2>
-    <p>{{ curso.Descripcion }}</p>
-    <ul>
-      <li><strong>Créditos:</strong> {{ curso.Creditos }}</li>
-      <li><strong>Duración:</strong> {{ curso.Horas }} Horas</li>
-      <li><strong>Modalidad:</strong> Virtual</li>
-    </ul>
+<div class="curso-page">
 
-    <h3>Documentos importantes</h3>
-    <ul>
-      <li><a href="#">Reglamento académico</a></li>
-      <li><a href="#">Guía del estudiante</a></li>
-      <li><a href="#">Cronograma</a></li>
-    </ul>
+  <!-- HERO / CABECERA DEL CURSO -->
+  <section class="curso-hero">
+    <!-- Columna izquierda: título + bienvenida -->
+    <div class="curso-hero-main">
+      <h1 class="curso-titulo">{{ curso.Curso }}</h1>
 
-    <!-- Botón para volver a todos los cursos -->
-    <button class="btn btn-outline-secondary mt-3" (click)="volverACursos()">
-      🔙 Volver a cursos
-    </button>
-  </div>
+      <!-- si tienes un subtítulo fijo podrías ponerlo aquí -->
+      <!-- <p class="curso-subtitulo">Curso avanzado de Doctorado</p> -->
 
-  <div class="curso-semanas">
-    <h3>Contenido del curso</h3>
-    <ul>
-      <li *ngFor="let semana of semanas" (click)="seleccionarSemana(semana)" [class.activa]="semanaSeleccionada?.Id_Semana === semana.Id_Semana">
-         
-          {{ semana.Titulo }}
-         
-      </li>
-    </ul>
+      <div class="curso-bienvenida-card">
+        <p class="texto-bienvenida">
+          {{ curso.Bienvenida }}
+        </p>
+      </div>
+    </div>
 
-    <app-semana-detalle *ngIf="semanaSeleccionada" [semana]="semanaSeleccionada"></app-semana-detalle>
-    <!-- Botón para volver a la lista de semanas -->
-    
-  </div>
-    
+    <!-- Columna derecha: profesor + meta + docs -->
+    <aside class="curso-hero-side">
+      <div class="prof-card">
+        <div class="prof-avatar">
+          <!-- si luego tienes foto del profe puedes usar <img [src]="curso.FotoProfesor"> -->
+          <span class="prof-iniciales">
+            {{ curso.Nombre?.charAt(0) }}
+          </span>
+        </div>
+        <div class="prof-info">
+          <p class="prof-label">Profesor/a del curso</p>
+          <p class="prof-nombre">{{ curso.Nombre }}</p>
+          <!-- <a class="prof-email" href="mailto:...">correo@ejemplo.com</a> -->
+        </div>
+      </div>
+
+      <div class="curso-meta">
+        <div class="meta-item">
+          <span class="meta-label">Créditos</span>
+          <span class="meta-value">{{ curso.Creditos }}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Modalidad</span>
+          <span class="meta-badge">Virtual</span>
+        </div>
+      </div>
+
+      <div class="docs-panel">
+        <h3 class="docs-title">Documentos importantes</h3>
+        <ul class="docs-list">
+          <li>
+            <a href="/reglamentos/Reglamento_Academico.pdf" target="_blank">
+              Reglamento académico
+            </a>
+          </li>
+          <li>
+            <a href="/reglamentos/Reglamento_de_Evaluacion.pdf" target="_blank">
+              Reglamento de evaluación
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <button class="btn-volver" (click)="volverACursos()">
+        🔙 Volver a cursos
+      </button>
+    </aside>
+  </section>
+
+  <!-- CONTENIDO DEL CURSO EN DOS PANELES -->
+  <section class="curso-contenido">
+    <h2 class="titulo-bloque">Contenido del curso</h2>
+
+    <div class="curso-layout">
+      <!-- PANEL IZQUIERDO: SEMANAS -->
+      <aside class="panel panel-semanas">
+        <ul class="semanas-list">
+          <li
+            *ngFor="let semana of semanas"
+            (click)="seleccionarSemana(semana)"
+            [class.activa]="semanaSeleccionada?.Id_Semana === semana.Id_Semana"
+          >
+            <div class="semana-chip">
+              <span class="semana-numero">Semana {{ semana.Numero_Semana }}</span>
+              <span class="semana-titulo">{{ semana.Titulo }}</span>
+            </div>
+          </li>
+        </ul>
+      </aside>
+
+      <!-- PANEL DERECHO: DETALLE -->
+      <main class="panel panel-detalle">
+        <ng-container *ngIf="semanaSeleccionada; else placeholderSemana">
+          <app-semana-detalle [semana]="semanaSeleccionada"></app-semana-detalle>
+        </ng-container>
+
+        <ng-template #placeholderSemana>
+          <div class="placeholder">
+            <h3>Selecciona una semana</h3>
+            <p>Haz clic en una semana de la lista de la izquierda para ver sus recursos y actividades.</p>
+          </div>
+        </ng-template>
+      </main>
+    </div>
+  </section>
 </div>

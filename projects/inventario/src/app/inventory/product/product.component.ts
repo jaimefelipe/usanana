@@ -210,7 +210,7 @@ export class ProductComponent implements OnInit {
       this.nuevo = false;
       let data = await this.productService.loadArticle(articulo.Id_Producto);
       this.Articulo = data['data'][0];
-      this.Articulo.FotoSrc = "https://toxo.work/img/"+localStorage.getItem("Id_Empresa")+'/'+this.Articulo.Foto;
+      this.Articulo.FotoSrc = "https://usantana.com/img/"+localStorage.getItem("Id_Empresa")+'/'+this.Articulo.Foto;
       //Leer Los Componentes del artículo
       await this.loadComponentes();
       this.loadCategories();
@@ -542,7 +542,7 @@ export class ProductComponent implements OnInit {
     const formData = new FormData();
     formData.append('file', this.fileData);
     this.Articulo.Foto = this.fileData.name;
-    this.Articulo.FotoSrc = "https://toxo.work/img/"+localStorage.getItem("Id_Empresa")+'/'+this.Articulo.Foto;
+    this.Articulo.FotoSrc = "https://usantana.com/img/"+localStorage.getItem("Id_Empresa")+'/'+this.Articulo.Foto;
     await this.productService.loadFile(formData);
     fileInput.target.value = '';
     return true;

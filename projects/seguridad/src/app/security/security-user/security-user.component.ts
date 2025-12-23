@@ -12,6 +12,7 @@ export class SecurityUserComponent implements OnInit {
   constructor(
     private securityUserService:SecurityUserService
   ) { }
+  Academico = false;
   Master = localStorage.getItem("ToxoMT");
   Users = [];
   searchField = ""
@@ -49,6 +50,12 @@ export class SecurityUserComponent implements OnInit {
   }
   edit = false;
   ngOnInit(): void {
+    const path = window.location.pathname;                 // ej: /academico/usuario
+    const [modulo] = path.split('/').filter(Boolean);      // -> "academico"
+    if(modulo === 'academico'){
+      this.Academico = true;
+    }
+
     this.loadUsers();
     if(this.Master !=='1'){
       this.Master = '0';

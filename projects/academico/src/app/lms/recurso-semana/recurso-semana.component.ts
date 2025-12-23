@@ -143,7 +143,8 @@ export class RecursoSemanaComponent implements OnInit {
           // Verificar respuesta del servidor
           if (resp && resp.success === true) {
             // Limpiar espacios en la URL
-            this.Recurso.URL = resp.url.replace(/\s/g, '');
+            //this.Recurso.URL = resp.url.replace(/\s/g, '');
+            this.Recurso.URL = encodeURI(resp.url);
           } else {
             const errorMsg = resp?.message || 'Error desconocido al subir archivo';
             Swal.fire(errorMsg);

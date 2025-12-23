@@ -89,7 +89,7 @@ export class LoginService {
         localStorage.removeItem('Id_Caja_Diaria');
       }
 
-      this.apiService.postScript('https://toxo.work/core/php/hacienda2/consultar_hacienda.php',1);
+      this.apiService.postScript('https://usantana.com/core/php/hacienda2/consultar_hacienda.php',1);
       return true;
     }
   }

@@ -14,7 +14,7 @@ constructor(
     let sqlConfig = {
         table: 'Lms_SemanaCurso',
         fields: 'Titulo,RutaAprendizaje,Fecha_Inicio,Fecha_Limite',
-        where: 'Id_Semana = ' + Id_Semana
+        where: 'Id_Semana = ' + Id_Semana 
     }
     return await this.apiService.executeSqlSyn(sqlConfig);
   }
@@ -23,7 +23,8 @@ constructor(
     let sqlConfig = {
         table: 'Lms_Recurso',
         fields: 'Id_Recurso,Titulo,Tipo,IF(Tipo = 1, Contenido, Url) AS Contenido',
-        where: 'Id_Semana = ' + Id_Semana
+        orderDirection: ' ASC ',
+        where: 'Id_Semana = ' + Id_Semana + ' and Estado = 1'
     }
     return await this.apiService.executeSqlSyn(sqlConfig);
   }
@@ -31,8 +32,9 @@ constructor(
   async leerActividadesSemana(Id_Semana){
     let sqlConfig = {
         table: 'Lms_Actividad',
-        fields: 'Id_Actividad,Nombre,Tipo',
-        where: 'Id_Semana = ' + Id_Semana
+        fields: 'Id_Actividad,Nombre,Tipo,Instrucciones,Fecha_Limite,Puntaje,Url',
+        orderDirection: ' ASC ',
+        where: 'Id_Semana = ' + Id_Semana + ' and Estado = 1'
     }
     return await this.apiService.executeSqlSyn(sqlConfig);
   }

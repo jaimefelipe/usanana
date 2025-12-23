@@ -16,10 +16,10 @@ export class RecursoPresentacionComponent implements OnInit {
   }
 
   getOfficeEmbedUrl(url: string): SafeResourceUrl {
-    const officeUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent("https://toxo.work/"+url)}`;
+    const officeUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent("https://usantana.com/"+url)}`;
     return this.sanitizer.bypassSecurityTrustResourceUrl(officeUrl);
   }
   getSafeUrl(url: string): SafeResourceUrl {
-    return this.sanitizer.bypassSecurityTrustResourceUrl("https://toxo.work/"+ url);
+    return this.sanitizer.bypassSecurityTrustResourceUrl("https://usantana.com/"+ url);
   }
 }

@@ -76,6 +76,8 @@
         <label>Código</label>
         <input [(ngModel)]="Carrera.Codigo" name="Codigo" type="text" placeholder="Codigo" class="form-control">
       </div>
+
+
       <div class="form-group col-md-4">
         <label>Nivel</label>
         <select [(ngModel)]="Carrera.Nivel" name="Nivel" type="text" class="form-control">
@@ -90,6 +92,27 @@
           <option value='9'>Doctorado</option>
         </select>
       </div>
+      <div class="form-group col-md-4">
+        <label>Facultad</label>
+        <select [(ngModel)]="Carrera.Id_Facultad" name="Facultad" type="text" class="form-control">
+          <option value='1'>FACULTAD DE EDUCACIÓN Y HUMANIDADES DIGITALES</option>
+          <option value='2'>FACULTAD DE TEOLOGÍA COMPARADA Y ESTUDIOS INTERRELIGIOSOS</option>
+          <option value='3'>FACULTAD DE CIENCIAS ECONÓMICAS Y GESTIÓN ORGANIZACIONAL </option>
+          <option value='4'>FACULTAD DE SABERES INTEGRATIVOS Y BIENESTAR HUMANO </option>
+        </select>
+      </div>
+      <div class="form-group col-md-4">
+        <label>Escuela</label>
+        <select [(ngModel)]="Carrera.Id_Escuela" name="Escuela" type="text" class="form-control">
+          <option value='1'>Escuela de Educación y Mediación Digital</option>
+          <option value='2'>Escuela de Estudios Teológicos y Diálogo Inter-Epistémico</option> 
+          <option value='3'>Escuela de Teología Aplicada y Liderazgo Intercultural</option> 
+          <option value='3'>Escuela de Administración</option> 
+          <option value='4'>Escuela de Administración del Bienestar</option> 
+        </select>
+      </div>
+
+
       <div class="form-group col-md-4">
         <label>Estado</label>
         <select [(ngModel)]="Carrera.Estado" name="Estado" type="text" class="form-control">

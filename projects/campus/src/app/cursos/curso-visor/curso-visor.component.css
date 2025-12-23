@@ -1,51 +1,289 @@
-.curso-container {
-  display: flex;
-  flex-wrap: wrap;
+.curso-page {
+  max-width: 95%;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* ===== HERO SUPERIOR ===== */
+
+.curso-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 2.2fr) minmax(260px, 1.3fr);
   gap: 2rem;
-  padding: 1rem;
+  margin-bottom: 2rem;
 }
 
-.curso-info {
-  flex: 1 1 40%;
-  background: #f8f8f8;
-  padding: 1rem;
-  border-radius: 8px;
+.curso-titulo {
+  margin: 0 0 0.75rem;
+  font-size: 1.8rem;
+  font-weight: 600;
 }
 
-.curso-semanas {
-  flex: 1 1 50%;
+.curso-subtitulo {
+  margin: 0 0 1rem;
+  color: #6b7280;
 }
 
-.curso-semanas ul {
-  list-style: none;
-  padding: 0;
+.curso-bienvenida-card {
+  border-radius: 10px;
+  border: 1px solid #facc15;
+  background: #fffbeb;
+  padding: 1rem 1.25rem;
+  max-height: 260px;
+  overflow-y: auto;
 }
 
-.curso-semanas li {
-  padding: 0.75rem;
-  margin-bottom: 0.5rem;
-  background: #eef1f5;
-  border-radius: 4px;
+.texto-bienvenida {
+  margin: 0;
+  white-space: pre-line;
+  line-height: 1.6;
+  color: #374151;
+}
+
+/* Columna derecha del hero */
+
+.curso-hero-side {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Tarjeta del profesor */
+
+.prof-card {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+}
+
+.prof-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #0f766e, #0ea5e9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.prof-iniciales {
+  transform: translateY(1px);
+}
+
+.prof-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.prof-label {
+  margin: 0;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #6b7280;
+}
+
+.prof-nombre {
+  margin: 0.1rem 0 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Meta del curso (créditos, modalidad) */
+
+.curso-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.meta-item {
+  background: #f9fafb;
+  border-radius: 10px;
+  padding: 0.5rem 0.75rem;
+}
+
+.meta-label {
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #6b7280;
+  margin-bottom: 0.15rem;
+}
+
+.meta-value {
+  font-weight: 600;
+  color: #111827;
+}
+
+.meta-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.16rem 0.75rem;
+  border-radius: 999px;
+  background: #e0fce0;
+  color: #166534;
+  font-weight: 600;
+  font-size: 0.78rem;
+}
+
+/* Documentos importantes */
+
+.docs-panel {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06);
+}
+
+.docs-title {
+  margin: 0 0 0.4rem;
+  font-size: 0.95rem;
+}
+
+.docs-list {
+  margin: 0;
+  padding-left: 1rem;
+}
+
+.docs-list li {
+  margin-bottom: 0.2rem;
+}
+
+.docs-list a {
+  color: #2563eb;
+  text-decoration: none;
+}
+.docs-list a:hover {
+  text-decoration: underline;
+}
+
+/* Botón volver */
+
+.btn-volver {
+  align-self: flex-start;
+  margin-top: 0.25rem;
+  border: 1px solid #d1d5db;
+  background: #f9fafb;
+  padding: 0.45rem 0.95rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
   cursor: pointer;
-  transition: background 0.3s;
+}
+.btn-volver:hover {
+  background: #e5e7eb;
 }
 
-.curso-semanas li.activa {
-  background: #dbe7ff;
-  font-weight: bold;
+/* ===== CONTENIDO DEL CURSO (DOS PANELES) ===== */
+
+.curso-contenido {
+  padding: 0 0.25rem;
 }
 
-.curso-semanas ul {
+.titulo-bloque {
+  margin: 0 0 0.75rem;
+  font-size: 1.2rem;
+}
+
+.curso-layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.panel {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05);
+  padding: 1rem;
+}
+
+/* Lista de semanas como chips */
+
+.semanas-list {
   list-style: none;
+  margin: 0;
   padding: 0;
+  max-height: 500px;
+  overflow-y: auto;
 }
 
-.curso-semanas li {
-  background-color: #f5f6f8;
-  margin-bottom: 8px;
-  border-radius: 6px;
+.semanas-list li {
+  margin-bottom: 0.5rem;
 }
 
-.curso-semanas li.activa {
-  background-color: #dbe6ff;
+.semana-chip {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 10px;
+  background: #f9fafb;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background 0.2s, border-color 0.2s, transform 0.05s;
+}
+
+.semanas-list li:hover .semana-chip {
+  background: #f3f4ff;
+  border-color: #e0e7ff;
+  transform: translateY(-1px);
+}
+
+.semana-numero {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #6b7280;
+}
+
+.semana-titulo {
+  font-size: 0.9rem;
+  color: #111827;
+}
+
+/* Semana activa */
+
+.semanas-list li.activa .semana-chip {
+  background: #e0ecff;
+  border-color: #2563eb;
+}
+
+/* Panel derecho */
+
+.panel-detalle {
+  min-height: 320px;
+}
+
+.placeholder {
+  text-align: center;
+  color: #6b7280;
+  padding: 2rem 1rem;
+}
+
+/* ===== Responsive ===== */
+
+@media (max-width: 992px) {
+  .curso-hero {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .curso-layout {
+    grid-template-columns: 1fr;
+  }
 }

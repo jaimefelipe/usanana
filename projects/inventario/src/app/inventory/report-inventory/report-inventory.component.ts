@@ -38,22 +38,22 @@ export class ReportInventoryComponent implements OnInit {
     this.Fin = this.FechaFin.day + '/' + this.FechaFin.month + '/' + this.FechaFin.year;
     let param = '1&e=' + this.Id_Empresa + '&u=' + this.Id_Usuario + '&i=' + this.Inicio + '&f=' + this.Fin;
     if(this.reporte == "1"){
-      window.open('https://toxo.work/reportes/inventario/inv-existencia-costo.php?id=' + param, '_blank');
+      window.open('https://usantana.com/reportes/inventario/inv-existencia-costo.php?id=' + param, '_blank');
     }
     if(this.reporte == "2"){
-      window.open('https://toxo.work/reportes/inventario/inv-minimos-maximos.php?id=' + param, '_blank');
+      window.open('https://usantana.com/reportes/inventario/inv-minimos-maximos.php?id=' + param, '_blank');
     }
     if(this.reporte == "3"){
-      window.open('https://toxo.work/reportes/inventario/inv-movimientos.php?id=' + param, '_blank');
+      window.open('https://usantana.com/reportes/inventario/inv-movimientos.php?id=' + param, '_blank');
     }
     if(this.reporte == "4"){
-      window.open('https://toxo.work/reportes/inventario/inv-existencia-costo-xls.php?id=' + param, '_blank');
+      window.open('https://usantana.com/reportes/inventario/inv-existencia-costo-xls.php?id=' + param, '_blank');
     }
     if(this.reporte == "5"){
-      window.open('https://toxo.work/reportes/inventario/inv-movimientos-xls.php?id=' + param, '_blank');
+      window.open('https://usantana.com/reportes/inventario/inv-movimientos-xls.php?id=' + param, '_blank');
     }
     if(this.reporte == "6"){
-      window.open('https://toxo.work/reportes/inventario/bar-code.php?id=' + param, '_blank');
+      window.open('https://usantana.com/reportes/inventario/bar-code.php?id=' + param, '_blank');
     }
     if(this.reporte == "7"){
       this.apiService.postRecord(

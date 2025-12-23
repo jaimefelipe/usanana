@@ -1105,60 +1105,60 @@ export class InvoiceComponent implements OnInit {
       await this.aplicarFactura();
     }
     let Id_Empresa = localStorage.getItem('Id_Empresa');
-    window.open('https://toxo.work/core/php/hacienda2/cotizacion.php?Id='+this.Invoice.Id_Factura);
+    window.open('https://usantana.com/core/php/hacienda2/cotizacion.php?Id='+this.Invoice.Id_Factura);
   }
   imprimirFactura(){
     let Id_Empresa = localStorage.getItem('Id_Empresa');
     if(this.Invoice.Tipo_Documento == '01'){
       if(this.TipoArchivo == 1){
-        window.open('https://toxo.work/public/'+Id_Empresa+'/Comprobantes-FE/PDF-FE/'+this.Invoice.Clave_Numerica+".pdf");
+        window.open('https://usantana.com/public/'+Id_Empresa+'/Comprobantes-FE/PDF-FE/'+this.Invoice.Clave_Numerica+".pdf");
       }
       if(this.TipoArchivo == 2){
-        window.open('https://toxo.work/public/'+Id_Empresa+'/Comprobantes-FE/XML-Firmado/'+this.Invoice.Clave_Numerica+".xml");
+        window.open('https://usantana.com/public/'+Id_Empresa+'/Comprobantes-FE/XML-Firmado/'+this.Invoice.Clave_Numerica+".xml");
       }
       if(this.TipoArchivo == 3){
-        window.open('https://toxo.work/public/'+Id_Empresa+'/Comprobantes-FE/XML-DGT/'+this.Invoice.Clave_Numerica+"-DGT.xml");
+        window.open('https://usantana.com/public/'+Id_Empresa+'/Comprobantes-FE/XML-DGT/'+this.Invoice.Clave_Numerica+"-DGT.xml");
       }
 
     }
     if(this.Invoice.Tipo_Documento == '02'){
       if(this.TipoArchivo == 1){
-        window.open('https://toxo.work/public/'+Id_Empresa+'/Comprobantes-ND/PDF-ND/'+this.Invoice.Clave_Numerica+".pdf");
+        window.open('https://usantana.com/public/'+Id_Empresa+'/Comprobantes-ND/PDF-ND/'+this.Invoice.Clave_Numerica+".pdf");
       }
       if(this.TipoArchivo == 2){
-        window.open('https://toxo.work/public/'+Id_Empresa+'/Comprobantes-ND/XML-Firmado/'+this.Invoice.Clave_Numerica+".xml");
+        window.open('https://usantana.com/public/'+Id_Empresa+'/Comprobantes-ND/XML-Firmado/'+this.Invoice.Clave_Numerica+".xml");
       }
       if(this.TipoArchivo == 3){
-        window.open('https://toxo.work/public/'+Id_Empresa+'/Comprobantes-ND/XML-DGT/'+this.Invoice.Clave_Numerica+"-DGT.xml");
+        window.open('https://usantana.com/public/'+Id_Empresa+'/Comprobantes-ND/XML-DGT/'+this.Invoice.Clave_Numerica+"-DGT.xml");
       }
     }
     if(this.Invoice.Tipo_Documento == '03'){
       if(this.TipoArchivo == 1){
-        window.open('https://toxo.work/public/'+Id_Empresa+'/Comprobantes-NC/PDF-NC/'+this.Invoice.Clave_Numerica+".pdf");
+        window.open('https://usantana.com/public/'+Id_Empresa+'/Comprobantes-NC/PDF-NC/'+this.Invoice.Clave_Numerica+".pdf");
       }
       if(this.TipoArchivo == 2){
-        window.open('https://toxo.work/public/'+Id_Empresa+'/Comprobantes-NC/XML-Firmado/'+this.Invoice.Clave_Numerica+".xml");
+        window.open('https://usantana.com/public/'+Id_Empresa+'/Comprobantes-NC/XML-Firmado/'+this.Invoice.Clave_Numerica+".xml");
       }
       if(this.TipoArchivo == 3){
-        window.open('https://toxo.work/public/'+Id_Empresa+'/Comprobantes-NC/XML-DGT/'+this.Invoice.Clave_Numerica+"-DGT.xml");
+        window.open('https://usantana.com/public/'+Id_Empresa+'/Comprobantes-NC/XML-DGT/'+this.Invoice.Clave_Numerica+"-DGT.xml");
       }
 
     }
     if(this.Invoice.Tipo_Documento == '04'){
       if(this.TipoArchivo == 1){
-        window.open('https://toxo.work/public/'+Id_Empresa+'/Comprobantes-TE/PDF-TE/'+this.Invoice.Clave_Numerica+".pdf");
+        window.open('https://usantana.com/public/'+Id_Empresa+'/Comprobantes-TE/PDF-TE/'+this.Invoice.Clave_Numerica+".pdf");
       }
       if(this.TipoArchivo == 2){
-        window.open('https://toxo.work/public/'+Id_Empresa+'/Comprobantes-TE/XML-Firmado/'+this.Invoice.Clave_Numerica+".xml");
+        window.open('https://usantana.com/public/'+Id_Empresa+'/Comprobantes-TE/XML-Firmado/'+this.Invoice.Clave_Numerica+".xml");
       }
       if(this.TipoArchivo == 3){
-        window.open('https://toxo.work/public/'+Id_Empresa+'/Comprobantes-TE/XML-DGT/'+this.Invoice.Clave_Numerica+"-DGT.xml");
+        window.open('https://usantana.com/public/'+Id_Empresa+'/Comprobantes-TE/XML-DGT/'+this.Invoice.Clave_Numerica+"-DGT.xml");
       }
     }
   }
   imprimirTiquete(){
     //if(localStorage.getItem('TTC') == '1'){
-      window.open('https://toxo.work/reportes/factura/tiquete-caja.php?IdDocument='+this.Invoice.Id_Factura);
+      window.open('https://usantana.com/reportes/factura/tiquete-caja.php?IdDocument='+this.Invoice.Id_Factura);
     //}
 
   }

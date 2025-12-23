@@ -56,6 +56,11 @@ export class SecurityUserService {
     return await this.apiService.executeSqlSyn(sqlConfig);
   }
   async updateUser(Usuario){
+    if(Usuario.Tipo_Usuario == '1'){
+      Usuario.Master = 1;
+    }else{
+     Usuario.Master = 0;
+    }
     let sql = {
       table: 'Seg_Usuario',
       fields: 'Nombre=\'' + Usuario.Nombre
@@ -79,6 +84,7 @@ export class SecurityUserService {
       + '\',Estado=\''+ Usuario.Estado
       + '\',Pov=\''+ Usuario.Pov
       + '\',Proyecto=\''+ Usuario.Proyecto
+      + '\',Master=\''+ Usuario.Master
       + '\',Numero_Identificacion=\''+ Usuario.Numero_Identificacion
       + '\'',
       where: 'Id_Usuario=' + Usuario.Id_Usuario
@@ -182,7 +188,9 @@ export class SecurityUserService {
   //1 validar si persona existe
   async ValidarPersonaExiste(Numero_Identificacion){
     let sql = "Select Id_Persona from Gen_Persona where Identificacion = '" + Numero_Identificacion +"' and Id_Empresa = "+ localStorage.getItem('Id_Empresa');
-    return await this.apiService.postRecord(sql);
+    let data =  await this.apiService.postRecord(sql);
+    console.log(data)
+    return data;
   }
   async CrearPersonaBasdaUsuario(Identificacion,Nombre){
     let sql = {

@@ -1,0 +1,21 @@
+<div [hidden]="edit" class="container pb-5">
+  <h2>Matrícula</h2>
+  <form>
+    <div class="form-row">
+
+      <div class="form-group col-12 col-sm-6" *ngFor="let Matricula of Matriculas;let i = index">
+        <div class="card">
+          <a (click)="editRecord(Matricula)">
+            <div class="card-body">
+
+              <h4 class="card-title">{{Matricula.Codigo}}-{{Matricula.Curso}},{{Matricula.Creditos}}</h4>
+
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  
+</div>

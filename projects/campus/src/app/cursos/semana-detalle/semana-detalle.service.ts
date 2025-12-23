@@ -14,7 +14,7 @@ export class SemanaDetalleService {
     let sqlConfig = {
         table: 'Lms_Recurso',
         fields: 'Id_Recurso,Titulo',
-        where: 'Id_Semana = ' + Id_Semana
+        where: 'Id_Semana = ' + Id_Semana + ' and Estado = 1'
     }
     return await this.apiService.executeSqlSyn(sqlConfig);
   }
@@ -23,7 +23,7 @@ export class SemanaDetalleService {
     let sqlConfig = {
         table: 'Lms_Actividad',
         fields: 'Id_Actividad,Nombre',
-        where: 'Id_Semana = ' + Id_Semana
+        where: 'Id_Semana = ' + Id_Semana + ' and Estado = 1'
     }
     return await this.apiService.executeSqlSyn(sqlConfig);
   }

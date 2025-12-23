@@ -38,7 +38,6 @@
             ],
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "projects/cms/src/styles.css",
               "node_modules/@syncfusion/ej2-base/styles/bootstrap.css",
               "node_modules/@syncfusion/ej2-buttons/styles/bootstrap.css",
               "node_modules/@syncfusion/ej2-inputs/styles/bootstrap.css",
@@ -1971,13 +1970,13 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "5000kb",
+                  "maximumError": "10mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumWarning": "20kb",
+                  "maximumError": "40kb"
                 }
               ],
               "outputHashing": "all"

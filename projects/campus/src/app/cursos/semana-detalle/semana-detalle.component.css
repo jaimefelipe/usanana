@@ -26,3 +26,10 @@ li {
   color: #888;
   margin-left: 0.5rem;
 }
+
+.texto-enter {
+  margin: 0;
+  white-space: pre-line;
+  line-height: 1.6;
+  color: #374151;
+}

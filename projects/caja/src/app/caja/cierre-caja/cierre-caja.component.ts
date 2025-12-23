@@ -177,7 +177,7 @@ export class CierreCajaComponent implements OnInit {
     this.Inicio = this.FechaInicio.day + '/' + this.FechaInicio.month + '/' + this.FechaInicio.year;
     this.Fin = this.FechaFin.day + '/' + this.FechaFin.month + '/' + this.FechaFin.year;
     let param = '1&e=' + this.Id_Empresa + '&u=' + this.Id_Usuario + '&i=' + this.Inicio + '&f=' + this.Fin + '&c=' + this.Id_Caja + '&cc=' + this.Id_Caja_Diaria;
-    let data = await this.apiService.postScript('https://toxo.work/reportes/cajas/totales-cierre2.php',param);
+    let data = await this.apiService.postScript('https://usantana.com/reportes/cajas/totales-cierre2.php',param);
     this.Totales = data['data'];
   }
 
@@ -189,7 +189,7 @@ export class CierreCajaComponent implements OnInit {
     this.Inicio = this.FechaInicio.day + '/' + this.FechaInicio.month + '/' + this.FechaInicio.year;
     this.Fin = this.FechaFin.day + '/' + this.FechaFin.month + '/' + this.FechaFin.year;
     let param = '1&e=' + this.Id_Empresa + '&u=' + this.Id_Usuario + '&i=' + this.Inicio + '&f=' + this.Fin + '&c=' + this.Id_Caja + '&cc=' + this.Id_Caja_Diaria;
-    let data = await this.apiService.postScript('https://toxo.work/reportes/cajas/productos-cierre.php',param);
+    let data = await this.apiService.postScript('https://usantana.com/reportes/cajas/productos-cierre.php',param);
     this.Productos = data['data'];
   }
   async cargarProductosPivote(){
@@ -200,7 +200,7 @@ export class CierreCajaComponent implements OnInit {
     this.Inicio = this.FechaInicio.day + '/' + this.FechaInicio.month + '/' + this.FechaInicio.year;
     this.Fin = this.FechaFin.day + '/' + this.FechaFin.month + '/' + this.FechaFin.year;
     let param = '1&e=' + this.Id_Empresa + '&u=' + this.Id_Usuario + '&i=' + this.Inicio + '&f=' + this.Fin + '&c=' + this.Id_Caja + '&cc=' + this.Id_Caja_Diaria;
-    let data = await this.apiService.postScript('https://toxo.work/reportes/cajas/productos_cierre_pivot.php',param);
+    let data = await this.apiService.postScript('https://usantana.com/reportes/cajas/productos_cierre_pivot.php',param);
     
     this.ProductosPivote = data['data'];
     console.log(this.ProductosActivoPivote)
@@ -223,7 +223,7 @@ export class CierreCajaComponent implements OnInit {
     this.Inicio = this.FechaInicio.day + '/' + this.FechaInicio.month + '/' + this.FechaInicio.year;
     this.Fin = this.FechaFin.day + '/' + this.FechaFin.month + '/' + this.FechaFin.year;
     let param = '1&e=' + this.Id_Empresa + '&u=' + this.Id_Usuario + '&i=' + this.Inicio + '&f=' + this.Fin + '&c=' + this.Id_Caja + '&cc=' + this.Id_Caja_Diaria;
-    let data = await this.apiService.postScript('https://toxo.work/reportes/cajas/entradas-cierre.php',param);
+    let data = await this.apiService.postScript('https://usantana.com/reportes/cajas/entradas-cierre.php',param);
     this.Entradas = data['data'];
   }
   async cargarSalidasCierre(){
@@ -234,7 +234,7 @@ export class CierreCajaComponent implements OnInit {
     this.Inicio = this.FechaInicio.day + '/' + this.FechaInicio.month + '/' + this.FechaInicio.year;
     this.Fin = this.FechaFin.day + '/' + this.FechaFin.month + '/' + this.FechaFin.year;
     let param = '1&e=' + this.Id_Empresa + '&u=' + this.Id_Usuario + '&i=' + this.Inicio + '&f=' + this.Fin + '&c=' + this.Id_Caja + '&cc=' + this.Id_Caja_Diaria;
-    let data = await this.apiService.postScript('https://toxo.work/reportes/cajas/salidas-cierre.php',param);
+    let data = await this.apiService.postScript('https://usantana.com/reportes/cajas/salidas-cierre.php',param);
     this.Salidas = data['data'];
   }
   esInformeHija(): boolean {

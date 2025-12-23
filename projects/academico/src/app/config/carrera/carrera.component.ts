@@ -48,7 +48,9 @@ export class CarreraComponent implements OnInit {
     Duracion:'',
     Creditos:'',
     Estado:'',
-    Nivel:''
+    Nivel:'',
+    Id_Facultad:'',
+    Id_Escuela:''
   }
   paginacion = {
     FirstRow: 1,
@@ -171,7 +173,9 @@ export class CarreraComponent implements OnInit {
         Duracion:'',
         Creditos:'',
         Estado:'',
-        Nivel:''
+        Nivel:'',
+        Id_Facultad:'',
+        Id_Escuela:''
       }
     }
   }

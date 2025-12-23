@@ -32,10 +32,11 @@ export class SemanaEstudioComponent implements OnInit {
   }
   
   itemSeleccionado: ItemSemana | null = null;
+  actividadSeleccionada: any = null;
 
   seleccionarItem(item: ItemSemana) {
     this.itemSeleccionado = item;
-    console.log(this.itemSeleccionado)
+    this.actividadSeleccionada = null;
   }
 
   async LeerRecursos(){
@@ -53,5 +54,9 @@ export class SemanaEstudioComponent implements OnInit {
   }
   volverAlCurso(){
      history.back();
+  }
+  seleccionarActividad(actividad: any) {
+    this.itemSeleccionado = null;
+    this.actividadSeleccionada = actividad;
   }
 }

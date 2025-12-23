@@ -13,7 +13,7 @@ constructor(private apiService: ApiService) {}
       table: 'Lms_AulaVirtual AV INNER JOIN Edu_Grupo G ON AV.Id_Grupo = G.Id_Grupo',
       fields: 'AV.Id_AulaVirtual, G.Curso, G.Codigo as Grupo',
       where: 'AV.Activo = 1',
-      order: 'G.Curso ASC'
+      orderField: 'G.Curso ASC'
     };
     return await this.apiService.executeSqlSyn(sql);
   }
@@ -23,7 +23,9 @@ constructor(private apiService: ApiService) {}
       table: 'Lms_SemanaCurso',
       fields: 'Id_Semana,Numero_Semana,Titulo,RutaAprendizaje,Fecha_Inicio,Fecha_Limite',
       where: `Id_AulaVirtual = ${Id_AulaVirtual}`,
-      order: 'Numero_Semana ASC'
+      orderField: 'Numero_Semana',
+      orderDirection: ' ASC '
+
     };
     return await this.apiService.executeSqlSyn(sql);
   }
@@ -39,7 +41,7 @@ constructor(private apiService: ApiService) {}
     } else {
       const update = {
         table: 'Lms_SemanaCurso',
-        values: `
+        fields: `
           Numero_Semana = '${semana.Numero_Semana}',
           Titulo = '${semana.Titulo}',
           RutaAprendizaje = '${semana.RutaAprendizaje}',

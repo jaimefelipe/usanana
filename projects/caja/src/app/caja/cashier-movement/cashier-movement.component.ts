@@ -443,7 +443,7 @@ export class CashierMovementComponent implements OnInit {
   }
   imprimirFactura(){
     let Id_Empresa = localStorage.getItem('Id_Empresa');
-    window.open('https://toxo.work/reportes/inventario/inv-comprobante.php?id='+this.Movement.Id_Movimiento);
+    window.open('https://usantana.com/reportes/inventario/inv-comprobante.php?id='+this.Movement.Id_Movimiento);
   }
   async preAplicarMovimiento(){
     //Si el movimiento es de resta averiguar el saldo, si el saldo es inferior al movimiento no aplicar

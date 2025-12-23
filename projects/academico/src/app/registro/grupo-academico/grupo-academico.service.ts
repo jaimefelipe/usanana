@@ -14,7 +14,7 @@ export class GrupoAcademicoService {
     }
     let sqlConfig = {
       table: 'Edu_Grupo Edu_Grupo left join Edu_Curso on Edu_Grupo.Id_Curso = Edu_Curso.Id_Curso left Join Gen_Persona on Edu_Grupo.Id_Profesor = Gen_Persona.Id_Persona left Join Edu_Periodo_Academico on Edu_Grupo.Id_Periodo = Edu_Periodo_Academico.Id_Periodo_Academico left join Gen_Sucursal on Edu_Grupo.Id_Sucursal =  Gen_Sucursal.Id_Sucursal',
-      fields: 'Id_Grupo,Edu_Grupo.Nombre,Aula,Dia,Hora,Modalidad,Edu_Grupo.Estado,Edu_Curso.Curso,Gen_Persona.Nombre as Profesor, Edu_Periodo_Academico.Bloque,Edu_Periodo_Academico.Anio, Gen_Sucursal.Nombre as Sucursal',
+      fields: 'Id_Grupo,Edu_Grupo.Nombre,Aula,Dia,Hora,Modalidad,Edu_Grupo.Estado,Edu_Curso.Curso,Gen_Persona.Nombre as Profesor, Edu_Periodo_Academico.Bloque,Edu_Periodo_Academico.Anio, Gen_Sucursal.Nombre as Sucursal, Edu_Curso.Codigo',
       searchField: search,
       paginacion: paginacion,
       where:estado

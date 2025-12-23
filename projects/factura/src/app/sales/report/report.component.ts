@@ -59,25 +59,25 @@ export class ReportComponent implements OnInit {
     this.Fin = this.FechaFin.day + '/' + this.FechaFin.month + '/' + this.FechaFin.year;
     let param = '1&e=' + this.Id_Empresa + '&u=' + this.Id_Usuario + '&i=' + this.Inicio + '&f=' + this.Fin + '&c=' + Id_Caja + '&cc=' + this.Id_Caja_Diaria;
     if(this.reporte == "1"){
-      window.open('https://toxo.work/reportes/factura/reporte-facturacion.php?id=' + param, '_blank');
+      window.open('https://usantana.com/reportes/factura/reporte-facturacion.php?id=' + param, '_blank');
     }
     if(this.reporte == "2"){
-      window.open('https://toxo.work/reportes/cajas/cierre-diario.php?id=' + param, '_blank');
+      window.open('https://usantana.com/reportes/cajas/cierre-diario.php?id=' + param, '_blank');
     }
     if(this.reporte == "3"){
-      window.open('https://toxo.work/reportes/factura/reporte-productos-vendidos.php?id=' + param, '_blank');
+      window.open('https://usantana.com/reportes/factura/reporte-productos-vendidos.php?id=' + param, '_blank');
     }
     if(this.reporte == "4"){
       this.FacturaMasiva();
     }
     if(this.reporte == "5"){
-      window.open('https://toxo.work/reportes/factura/reporte-facturacion-venta-xls.php?id=' + param, '_blank');
+      window.open('https://usantana.com/reportes/factura/reporte-facturacion-venta-xls.php?id=' + param, '_blank');
     }
     if(this.reporte == "6"){
-      window.open('https://toxo.work/reportes/factura/reporte-facturacion-xls.php?id=' + param, '_blank');
+      window.open('https://usantana.com/reportes/factura/reporte-facturacion-xls.php?id=' + param, '_blank');
     }
     if(this.reporte == "7"){
-      window.open('https://toxo.work/core/php/hacienda2/consultar_hacienda.php', '_blank');
+      window.open('https://usantana.com/core/php/hacienda2/consultar_hacienda.php', '_blank');
     }
   }
   async FacturaMasiva(){

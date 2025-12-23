@@ -1,32 +1,91 @@
 <div class="card">
   <div class="card-header d-flex justify-content-between align-items-center">
-    <h4>{{ actividad.Titulo }}</h4>
+    <h4>{{ actividad.Nombre }}</h4>
     <span *ngIf="actividad.Puntaje">Puntaje: {{ actividad.Puntaje }}</span>
   </div>
 
   <div class="card-body">
     <h5>Instrucciones:</h5>
-    <p>{{ actividad.Instrucciones }}</p>
+    <p class="formatoA">{{ actividad.Instrucciones }}</p>
 
-    <ng-container *ngIf="actividad.Recurso">
+    <ng-container *ngIf="actividad.Url">
       <h6>Recurso:</h6>
       <!--
       <app-recurso [item]="actividad.Recurso"></app-recurso>
       -->
-    </ng-container>
+      <div class="card p-3 mt-3 bg-light d-flex align-items-center" style="max-width: 400px;">
+        <a [href]="actividad.Url" target="_blank" download class="text-decoration-none d-flex align-items-center">
+          <i class="fa fa-file-pdf-o text-danger fa-2x mr-2" ></i>
+          <div>
+            <div class="fw-bold text-primary">Archivo adjunto actual</div>
+            <small class="text-muted">Haga clic para descargar</small>
+          </div>
+        </a>
+      </div>
 
+
+    </ng-container>
+  </div>
+   <div class="card-header d-flex justify-content-between align-items-center">
+      <h4>Entregas</h4>
+    </div>
+  <div class="card-body">
+
+  
     <!-- Solo para tareas, exámenes o presentaciones -->
-    <ng-container *ngIf="actividad.Tipo !== 'Foro'">
-      <h6>Entregar archivo:</h6>
-      <input type="file" (change)="onFileSelected($event)" accept=".pdf,.doc,.docx,.ppt,.pptx" />
-      <button class="btn btn-primary mt-2" (click)="entregar()">Entregar</button>
-    </ng-container>
+    <ng-container *ngIf="actividad.Tipo !== '3'">
 
-    <!-- Solo para foro -->
-    <ng-container *ngIf="actividad.Tipo === 'Foro'">
+      <label class="font-weight-bold d-block mt-3">Entregar archivo:</label>
       <!--
-      <app-foro [IdActividad]="actividad.Id_Actividad" [IdPersona]="IdPersona"></app-foro>
+     <div class="form-group">
+        <label for="comentario">Comentario o respuesta</label>
+        <textarea [(ngModel)]="actividad.Comentario" class="form-control" rows="3"
+          placeholder="Escribe tu respuesta..."></textarea>
+      </div>
       -->
+
+     <div class="d-flex align-items-stretch mt-2">
+      <!-- Input archivo -->
+      <input type="file" class="form-control" (change)="handleFileInput($event)" />
+
+      <!-- Botón de envío con altura completa -->
+      <button class="btn btn-warning d-flex align-items-center px-3" (click)="enviarActividad()" style="white-space: nowrap;">
+        <i class="fa fa-paper-plane me-1"></i> Enviar
+      </button>
+
+    </div>
+
+    <div *ngIf="participacion?.length > 0" class="border rounded bg-light p-3 mt-3">
+        <h6 class="mb-3 text-dark fw-bold">Entregas realizadas:</h6>
+
+        <div *ngFor="let p of participacion; let i = index" class="mb-3 border-bottom pb-2">
+          <div class="d-flex align-items-center mb-1">
+            <i class="fa fa-file-alt text-secondary me-2"></i>
+            <strong>Archivo {{ i + 1 }}:</strong>
+            <a [href]="'https://usantana.com' + p.Url" target="_blank" class="ms-2 text-decoration-underline text-primary">
+              {{ obtenerNombreArchivo(p.Url) }}
+            </a>
+          </div>
+
+          <div *ngIf="p.Nota" class="mb-1">
+            <strong>Nota:</strong>
+            <span class="badge bg-success ms-2">{{ p.Nota }}</span>
+          </div>
+
+          <div *ngIf="p.Comentario_Docente">
+            <strong>Comentario:</strong>
+            <p class="mt-1 mb-0 text-muted">{{ p.Comentario_Docente }}</p>
+          </div>
+        </div>
+      </div>
+   
+
+
+    </ng-container>
+    
+    <!-- Solo para foro -->
+    <ng-container *ngIf="actividad.Tipo === '3'">
+      <app-foro [IdActividad]="actividad.Id_Actividad" ></app-foro>
     </ng-container>
   </div>
 </div>

@@ -16,7 +16,6 @@ export class MenuComponent implements OnInit {
     private route:Router
   ) { }
   ambiente = '';
-  logedIn = false;
   showMenu = false;
   Company = localStorage.getItem("Id_Empresa");
   User = localStorage.getItem("Nombre_Usuario");
@@ -38,6 +37,7 @@ export class MenuComponent implements OnInit {
   AppPersona = false;
   AppPOV = false;
   AppProyecto = false;
+  LogedIn = false;
 
   UserMenu = [];
   ventasMenu = false;
@@ -56,8 +56,14 @@ export class MenuComponent implements OnInit {
     if(localStorage.getItem('isLoggedin') == 'false'){
       let arrlocation = window.location.pathname.split('/');
       if(arrlocation[2] !== 'login'){
-        this.route.navigate(['/seguridad/login']);
-      } 
+        //Si es primer ingreso no necesita hacer login
+        if(arrlocation[2] !== 'primeringreso'){
+          this.route.navigate(['/login']);
+          this.LogedIn = true;
+        }
+      } else{
+        this.LogedIn = false;
+      }
     }
 
     if(localStorage.getItem('ambiente') == 'Dev'){
@@ -77,7 +83,7 @@ export class MenuComponent implements OnInit {
     }
     this.Seguridad = this.SeguridadStr.split(".");
     if(localStorage.getItem('isLoggedin') == "true") {
-      this.logedIn = true;
+      this.LogedIn = true;
     }
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
@@ -178,4 +184,5 @@ export class MenuComponent implements OnInit {
       this.AppPOV
     }
   }
+
 }

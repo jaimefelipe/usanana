@@ -14,16 +14,16 @@ export class ReportesRegistroComponent implements OnInit {
   Reporte(){
     let param = '1&e=' + localStorage.getItem('Id_Empresa') + '&u=' + localStorage.getItem('Id_Usuario');
     if(this.reporte == "1"){
-      window.open('https://toxo.work/reportes/educacion/alumnos/activos.php?id=' + param, '_blank');
+      window.open('https://usantana.com/reportes/educacion/alumnos/activos.php?id=' + param, '_blank');
     }
     if(this.reporte == "2"){
-      window.open('https://toxo.work/reportes/educacion/alumnos/inactivos.php?id=' + param, '_blank');
+      window.open('https://usantana.com/reportes/educacion/alumnos/inactivos.php?id=' + param, '_blank');
     }
     if(this.reporte == "3"){
-      window.open('https://toxo.work/reportes/educacion/alumnos/candidatos.php?id=' + param, '_blank');
+      window.open('https://usantana.com/reportes/educacion/alumnos/candidatos.php?id=' + param, '_blank');
     }
     if(this.reporte == "4"){
-      window.open('https://toxo.work/reportes/educacion/alumnos/candidatos_excell.php?id=' + param, '_blank');
+      window.open('https://usantana.com/reportes/educacion/alumnos/candidatos_excell.php?id=' + param, '_blank');
     }
   }
 }

@@ -15,7 +15,7 @@ export class RecursoPdfComponent implements OnInit {
   ngOnInit() {
   }
   getSafeUrl(url: string): SafeResourceUrl {
-    return this.sanitizer.bypassSecurityTrustResourceUrl("https://toxo.work/"+ url);
+    return this.sanitizer.bypassSecurityTrustResourceUrl("https://usantana.com/"+ url);
   }
 
   isPdfVisible(): boolean {

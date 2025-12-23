@@ -280,6 +280,6 @@ export class ContactoComponent implements OnInit {
 
    GenerarBooleta(){
     let param = this.Persona.Id_Persona + '&e=' + localStorage.getItem('Id_Empresa') + '&u=' + localStorage.getItem('Id_Usuario');
-    window.open('https://toxo.work/reportes/educacion/alumnos/NOTASALUMNO.PHP?id=' + param, '_blank');
+    window.open('https://usantana.com/reportes/educacion/alumnos/NOTASALUMNO.PHP?id=' + param, '_blank');
   }
 }

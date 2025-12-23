@@ -3,11 +3,17 @@
 
     <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-2 w-100">
        <h4>{{ semana.Titulo }}</h4>
+       
       <button class="btn btn-warning btn-sm ms-md-auto mt-1 mt-md-0" (click)="seleccionarSemana(semana)">
       👁 Ver semana
     </button>
-    </div>
 
+     
+  </div>
+  <p class="texto-enter my-3">
+    {{semana.RutaAprendizaje}}
+  </p>
+ 
   <section *ngIf="recursos.length">
     <h5>📘 Recursos</h5>
     <ul>

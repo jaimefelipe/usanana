@@ -22,11 +22,13 @@
     but hey, it's pure CSS magic.
     -->
       <ul  [hidden]="!showMenu" id="menu">
-        <a (click)="hideMenu()" [routerLink]="['/']"><li><i class="fa fa-home"></i> Inicio {{ambiente}}</li></a>
+        <a (click)="hideMenu()" [routerLink]="['/']"><li><i class="fa fa-home"></i> Inicio 2.1</li></a>
         <div [hidden]="!logedIn">
 
           <li (click)="clickPerfilMenu()" ><a><i class="fa fa-hospital-o"></i>  Configuración <i [ngClass]='ConfigClass' class="fa fa-cog"></i>  </a></li>
           <ul [hidden]="!perfilMenu" >
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/perfil']"><li><i class="fa fa-credit-card"></i> Perfil </li></a>
+            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/usuario']"><li><i class="fa fa-credit-card"></i> Usuarios </li></a>
             <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/contactos']"><li><i class="fa fa-credit-card"></i> Contactos </li></a>
             <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/carrera']"><li><i class="fa fa-shopping-bag"></i> Carreras</li></a>
             <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/curso']"><li><i class="fa fa-shopping-basket"></i> Cursos</li></a>

@@ -45,9 +45,9 @@
                 <a *ngSwitchCase="'2'" [href]="r.URL" target="_blank" class="text-truncate d-block">{{ r.URL }}</a>
                 <a *ngSwitchCase="'4'" [href]="r.URL" target="_blank" class="text-truncate d-block">Descargar PDF</a>
                 <a *ngSwitchCase="'5'" [href]="r.URL" target="_blank" class="text-truncate d-block">Ver presentación</a>
-                <div *ngSwitchCase="'3'" class="video-container">
-                  <iframe width="20px" height="20px" [src]="getYoutubeEmbedUrl(r.URL)" frameborder="0" allowfullscreen></iframe>
-                </div>
+                <a *ngSwitchCase="'3'" [href]="r.URL" target="_blank" class="text-truncate d-flex align-items-center">
+                <i class="fas fa-video text-danger mr-2"></i> {{ r.Nombre || 'Ver video' }}
+              </a>
                 <div *ngSwitchCase="'1'" [innerHTML]="r.Contenido | slice:0:200" class="text-muted"></div>
               </ng-container>
             </div>

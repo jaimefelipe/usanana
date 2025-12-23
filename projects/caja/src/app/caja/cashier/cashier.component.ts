@@ -280,10 +280,10 @@ export class CashierComponent implements OnInit {
       if(localStorage.getItem('ToxoUT') == '1' ){
         if(window.location.pathname == '/bar/cajaventas' ){
           let Param = 'e='+localStorage.getItem("Id_Empresa") + "&i="+Inicio+"&f="+Inicio+"&c="+this.Caja.Id_Caja+"&cc="+localStorage.getItem('Id_Caja_Diaria')
-           window.open('https://toxo.work/reportes/bar/reporte-ventas.php?Id=1' + Param, '_blank');
+           window.open('https://usantana.com/reportes/bar/reporte-ventas.php?Id=1' + Param, '_blank');
         }else{
           let param = '1&e=' + localStorage.getItem("Id_Empresa") + '&u=' + localStorage.getItem("Id_Usuario") + '&i=' + Inicio + '&f=' + Inicio + '&c=' + localStorage.getItem('Id_Caja') + '&cc=' + localStorage.getItem('Id_Caja_Diaria');
-          window.open('https://toxo.work/reportes/cajas/cierre-diario.php?id=' + param, '_blank');
+          window.open('https://usantana.com/reportes/cajas/cierre-diario.php?id=' + param, '_blank');
         }
       }
 

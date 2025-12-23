@@ -22,7 +22,7 @@ export class CursoComponent implements OnInit {
     Descripcion:'',
     Requisitos:'',
     Creditos:'',
-    Estado:''
+    Estado:'1'
   }
   paginacion = {
     FirstRow: 1,
@@ -86,7 +86,7 @@ export class CursoComponent implements OnInit {
         Descripcion:'',
         Requisitos:'',
         Creditos:'',
-        Estado:''
+        Estado:'1'
       }
     }
   }

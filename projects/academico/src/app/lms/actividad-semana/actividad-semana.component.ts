@@ -98,8 +98,8 @@ export class ActividadSemanaComponent implements OnInit {
   }
   async grabar() {
     // Validar campos requeridos
-    if (!this.Actividad.Nombre || !this.Actividad.Tipo || !this.Actividad.Fecha_Limite) {
-      Swal.fire('Complete todos los campos requeridos');
+    if (!this.Actividad.Nombre || !this.Actividad.Tipo ) {
+      Swal.fire('Complete todos los campos Nombre, y tipo de actividad');
       return;
     }
 
@@ -117,7 +117,8 @@ export class ActividadSemanaComponent implements OnInit {
         const resp = await this.actividadService.subirArchivo(formData);
         
         if (resp && resp.success) {
-          this.Actividad.URL = resp.url.replace(/\s/g, '');
+          //this.Actividad.URL = resp.url.replace(/\s/g, '');
+          this.Actividad.URL = encodeURI(resp.url);
         } else {
           const errorMsg = resp?.message || 'Error al subir archivo';
           Swal.fire(errorMsg);
@@ -137,9 +138,24 @@ export class ActividadSemanaComponent implements OnInit {
         resultado = await this.actividadService.actualizarActividad(this.Actividad);
       } else {
         resultado = await this.actividadService.crearActividad(this.Actividad);
+        
       }
 
       if (resultado && resultado.success) {
+        // Si es foro, Generar el Foro. 
+        if (!this.Actividad.Id_Actividad) {
+          if (this.Actividad.Tipo === '3') {
+            const nuevoForo = {
+              Id_Actividad: resultado['identity'],  // generado justo después de guardar actividad
+              Id_Semana: this.Actividad.Id_Semana,
+              Id_Grupo: localStorage.getItem('Id_Grupo'),
+              Titulo: this.Actividad.Nombre,
+              Descripcion: this.Actividad.Instrucciones
+            };
+            await this.actividadService.InsertarFoto(nuevoForo);
+            
+          }
+        }
         Swal.fire('Actividad guardada');
         await this.cargarActividades();
         this.cancelar();

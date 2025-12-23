@@ -10,12 +10,12 @@ constructor(private apiService:ApiService) { }
 
 async cargarGrupos(paginacion,search?) {
     let sqlConfig = {
-      table: 'Edu_Grupo Inner Join Edu_Curso on Edu_Grupo.Id_Curso = Edu_Curso.Id_Curso inner Join Edu_Periodo_Academico On Edu_Grupo.Id_Periodo = Edu_Periodo_Academico.Id_Periodo_Academico inner Join Gen_Sucursal on Edu_Grupo.Id_Sucursal = Gen_Sucursal.Id_Sucursal',
+      table: 'Edu_Grupo Inner Join Edu_Curso on Edu_Grupo.Id_Curso = Edu_Curso.Id_Curso inner Join Edu_Periodo_Academico On Edu_Grupo.Id_Periodo = Edu_Periodo_Academico.Id_Periodo_Academico inner Join Gen_Sucursal on Edu_Grupo.Id_Sucursal = Gen_Sucursal.Id_Sucursal inner Join Gen_Persona on Edu_Grupo.Id_Profesor = Gen_Persona.Id_Persona',
       fields: 'Id_Grupo,Aula,Id_Periodo,Dia,Hora,Edu_Grupo.Estado,Modalidad,Edu_Curso.Codigo, Edu_Curso.Curso,Edu_Periodo_Academico.Periodo,Gen_Sucursal.Nombre',
       orderField: '',
       searchField: '',
       simple:true,
-      where: 'Edu_Grupo.Estado = 1 and Id_Profesor = ' + localStorage.getItem('Id_Usuario')
+      where: 'Edu_Grupo.Estado = 1 and Gen_Persona.Id_Usuario = ' + localStorage.getItem('Id_Usuario')
     }
     return await this.apiService.executeSqlSyn(sqlConfig);
   }

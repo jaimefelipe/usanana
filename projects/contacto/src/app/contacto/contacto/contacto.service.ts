@@ -62,13 +62,17 @@ export class ContactoService {
     }
     return await this.apiService.executeSqlSyn(sqlConfig);
   }
-  async loadPersona(Id_Persona){
+  async loadPersona(Id_Persona,Id_Usuario?){
+    let where =  "Id_Persona = " + Id_Persona
+    if(Id_Usuario){
+      where = "Id_Usuario = " + Id_Usuario
+    }
     let sqlConfig = {
       table: 'Gen_Persona',
-      fields: 'Id_Persona,Nombre,Telefono,Correo,Correo2,Identificacion,Tipo_Identificacion,Porcentaje_Comision,Porcentaje_Descuento,Cliente,Proveedor,Alumno,Profesor,Estado,Otro_Documento,Condicion_Venta,Plazo_Credito,Metodo_Pago,Fecha_Ingreso,Porcentaje_Descuento,Moneda,Ultima_Factura,Contabilidad,FacturaElectronica,PuntoVenta,Restaurante,Asesoria,Declaracion,Precio,Provincia,Canton,Distrito,Barrio,Direccion,Empleado,PresentacionA,PresentacionB,Codigo_Proveedor,Direccion,Prospecto,Origen,Posicion,Id_Agente,Id_Usuario,Nombre_Usuario,Codigo_Actividad_Economica,Nombre_Actividad_Economica',
+      fields: 'Id_Persona,Nombre,Telefono,Correo,Correo2,Identificacion,Tipo_Identificacion,Porcentaje_Comision,Porcentaje_Descuento,Cliente,Proveedor,Alumno,Profesor,Estado,Otro_Documento,Condicion_Venta,Plazo_Credito,Metodo_Pago,Fecha_Ingreso,Porcentaje_Descuento,Moneda,Ultima_Factura,Contabilidad,FacturaElectronica,PuntoVenta,Restaurante,Asesoria,Declaracion,Precio,Provincia,Canton,Distrito,Barrio,Direccion,Empleado,PresentacionA,PresentacionB,Codigo_Proveedor,Direccion,Prospecto,Origen,Posicion,Id_Agente,Id_Usuario,Nombre_Usuario,Codigo_Actividad_Economica,Nombre_Actividad_Economica,Nota,Estado_Prospeccion,Genero,Id_Nacionalidad,Estado_Civil,Residencia',
       orderField: '',
       searchField: '',
-      where: "Id_Persona = " + Id_Persona
+      where: where
     }
     return await this.apiService.executeSqlSyn(sqlConfig);
   }
@@ -175,6 +179,12 @@ export class ContactoService {
         + '\',Nombre_Usuario=\''+ Persona.Nombre_Usuario
         + '\',Codigo_Actividad_Economica=\''+ Persona.Codigo_Actividad_Economica
         + '\',Nombre_Actividad_Economica=\''+ Persona.Nombre_Actividad_Economica
+        + '\',Nota=\''+ Persona.Nota
+        + '\',Estado_Prospeccion=\''+ Persona.Estado_Prospeccion
+        + '\',Genero=\''+ Persona.Genero
+        + '\',Estado_Civil=\''+ Persona.Estado_Civil
+        + '\',Id_Nacionalidad=\''+ Persona.Id_Nacionalidad
+        + '\',Residencia=\''+ Persona.Residencia
         + '\'',
         where: 'Id_Persona=' + Persona.Id_Persona
       };
@@ -285,4 +295,15 @@ export class ContactoService {
     };
     return await this.apiService.updateRecord(sql);
   }
+
+  async updateUsuarioEnPersona(Id_Usuario,Id_Persona){
+    let sql = {
+      table: 'Gen_Persona',
+      fields: 'Id_Usuario=\'' + Id_Usuario
+      + '\'',
+      where:'Id_Persona='+Id_Persona
+    };
+    return await this.apiService.updateRecord(sql);
+  }
+
 }

@@ -89,7 +89,7 @@ export class GrupoProfesorComponent implements OnInit {
   GenerarActa(){
     let param = this.Id_Grupo  + '&e=' + localStorage.getItem('Id_Empresa') + '&u=' + localStorage.getItem('Id_Usuario');
      //window.open('http://ibo.jaimebrenes.com:/reportes/educacion/grupos/acta.php?id=' + param, '_blank');
-     window.open('https://toxo.work/reportes/educacion/grupos/acta.php?id=' + param, '_blank');
+     window.open('https://usantana.com/reportes/educacion/grupos/acta.php?id=' + param, '_blank');
   }
   CerrarPantallaGrupo(){
     this.edit = false;

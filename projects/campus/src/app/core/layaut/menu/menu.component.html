@@ -9,19 +9,21 @@
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <div class="navbar-nav ms-auto p-4 p-lg-0">
                 <a href="/" class="nav-item nav-link active">INICIO</a>
-                <a href="carreras.php" class="nav-item nav-link">CARRERAS</a>
-                <a href="courses.html" class="nav-item nav-link">MATRICULA</a>
-                <a href="acercade.php" class="nav-item nav-link">ACERCA DE</a>
+                <a href="/carreras.php" class="nav-item nav-link">CARRERAS</a>
+                <a href="/courses.html" class="nav-item nav-link">MATRICULA</a>
+                <a href="/acercade.php" class="nav-item nav-link">ACERCA DE</a>
                 <div class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">ESTUDIANTES <span class="ms-1">&#x25BC;</span> <!-- ▼ --></a>
                     <div class="dropdown-menu bg-light m-0">
-                        <a href="feature.html" class="dropdown-item">Reglamentos</a>
-                        <a href="appointment.html" class="dropdown-item">Biblioteca</a>
-                        <a href="login.php" class="dropdown-item">Sistema</a>
+                        <a href="/reglamentos.php" class="dropdown-item">Reglamentos</a>
+                        <a href="/biblioteca.php" class="dropdown-item">Biblioteca</a>
+                        <a href="/campus/login" class="dropdown-item">Sistema</a>
+                        <a [hidden]="!LogedIn" (click)="logOut()" href="#"><li><i class="fa fa-sign-out"></i> Salir</li></a>
+
                     </div>
                 </div>
                 <a href="contact.html" class="nav-item nav-link">CONTACTO</a>
-            </div>
+            </div> 
            
         </div>
     </nav>

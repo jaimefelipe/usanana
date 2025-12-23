@@ -470,7 +470,7 @@ export class MovementInventoryComponent implements OnInit {
   }
   imprimirFactura(){
     let Id_Empresa = localStorage.getItem('Id_Empresa');
-    window.open('https://toxo.work/reportes/inventario/inv-comprobante.php?id='+this.Movement.Id_Movimiento);
+    window.open('https://usantana.com/reportes/inventario/inv-comprobante.php?id='+this.Movement.Id_Movimiento);
   }
   async searchProduct(){
     //this.(this.searchFieldProduct);

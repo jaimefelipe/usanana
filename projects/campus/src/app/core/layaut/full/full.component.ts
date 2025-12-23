@@ -20,7 +20,13 @@ export class FullComponent implements OnInit {
   cursosActivos = [];
 
   ngOnInit() {
-    this.CargarCursosUsuario();
+    //Determinar si ya se hizo login si no se ha hecho ir a la pantalla de login
+    if(localStorage.getItem("isLoggedin") == 'true'){
+      this.CargarCursosUsuario();
+    }else{
+      this.route.navigate(['/login']);
+    }
+    
   }
   async CargarCursosUsuario(){
     let data = await this.fullService.CargarCursosUsuario();

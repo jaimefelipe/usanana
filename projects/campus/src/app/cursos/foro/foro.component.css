@@ -1,0 +1,18 @@
+.foro-container {
+  background-color: #fdfdfd;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.foro-mensaje {
+  background-color: #fffefa;
+  border-radius: 6px;
+}
+
+.foro-input textarea {
+  resize: none;
+}
+
+.foro-input textarea {
+  resize: none;
+  min-height: 50px;
+}

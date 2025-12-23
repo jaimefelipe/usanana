@@ -67,7 +67,7 @@ export class AccountantReportComponent implements OnInit {
       this.Fin = this.FechaFin.day + '/' + this.FechaFin.month + '/' + this.FechaFin.year;
       let param = '1&e=' + this.Id_Empresa + '&u=' + this.Id_Usuario + '&i=' + this.Inicio + '&f=' + this.Fin;
       if(this.reporte == "1"){
-        window.open('https://toxo.work/reportes/contabilidad/cge-reporte-iva.php?id=' + param, '_blank');
+        window.open('https://usantana.com/reportes/contabilidad/cge-reporte-iva.php?id=' + param, '_blank');
       }
     }
     if(this.reporte =='2'){
@@ -261,27 +261,27 @@ export class AccountantReportComponent implements OnInit {
   }
   async balanceComprobacion(Mes:any,Anio:any,Informe){
     if(Informe == 1){
-      window.open('https://toxo.work/reportes/contabilidad/cge-balance-comprobacion.php?id='+localStorage.getItem('Id_Empresa')+'&m='+Mes+'&a='+Anio+'&p='+this.Id_Periodo,'_blank')
+      window.open('https://usantana.com/reportes/contabilidad/cge-balance-comprobacion.php?id='+localStorage.getItem('Id_Empresa')+'&m='+Mes+'&a='+Anio+'&p='+this.Id_Periodo,'_blank')
     }else{
-      window.open('https://toxo.work/reportes/contabilidad/cge-balance-comprobacion2.php?id='+localStorage.getItem('Id_Empresa')+'&m='+Mes+'&a='+Anio+'&p='+this.Id_Periodo,'_blank')
+      window.open('https://usantana.com/reportes/contabilidad/cge-balance-comprobacion2.php?id='+localStorage.getItem('Id_Empresa')+'&m='+Mes+'&a='+Anio+'&p='+this.Id_Periodo,'_blank')
     }
   }
   async estadoResultados(Mes:any,Anio:any){
-    window.open('https://toxo.work/reportes/contabilidad/cge-estado-resultados.php?id='+localStorage.getItem('Id_Empresa')+'&m='+Mes+'&a='+Anio+'&p='+this.Id_Periodo+'&cc='+this.Id_Centro_Costo,'_blank')
+    window.open('https://usantana.com/reportes/contabilidad/cge-estado-resultados.php?id='+localStorage.getItem('Id_Empresa')+'&m='+Mes+'&a='+Anio+'&p='+this.Id_Periodo+'&cc='+this.Id_Centro_Costo,'_blank')
   }
   async estadoResultados2(Mes:any,Anio:any){
-    window.open('https://toxo.work/reportes/contabilidad/cge-estado-resultados2.php?id='+localStorage.getItem('Id_Empresa')+'&m='+Mes+'&a='+Anio+'&p='+this.Id_Periodo+'&cc='+this.Id_Centro_Costo,'_blank')
+    window.open('https://usantana.com/reportes/contabilidad/cge-estado-resultados2.php?id='+localStorage.getItem('Id_Empresa')+'&m='+Mes+'&a='+Anio+'&p='+this.Id_Periodo+'&cc='+this.Id_Centro_Costo,'_blank')
   }
   async estadoSituacion(Mes:any,Anio:any){
-    window.open('https://toxo.work/reportes/contabilidad/cge-estado-situacion.php?id='+localStorage.getItem('Id_Empresa')+'&m='+Mes+'&a='+Anio+'&p='+this.Id_Periodo,'_blank')
+    window.open('https://usantana.com/reportes/contabilidad/cge-estado-situacion.php?id='+localStorage.getItem('Id_Empresa')+'&m='+Mes+'&a='+Anio+'&p='+this.Id_Periodo,'_blank')
   }
   async catalogo(){
-    window.open('https://toxo.work/reportes/contabilidad/cge-catalogo.php?id='+localStorage.getItem('Id_Empresa'),'_blank')
+    window.open('https://usantana.com/reportes/contabilidad/cge-catalogo.php?id='+localStorage.getItem('Id_Empresa'),'_blank')
   }
   async movimientosCuenta(Mes:any,Anio:any){
-    window.open('https://toxo.work/reportes/contabilidad/cge-mov-cta.php?id='+localStorage.getItem('Id_Empresa')+'&m='+Mes+'&a='+Anio,'_blank')
+    window.open('https://usantana.com/reportes/contabilidad/cge-mov-cta.php?id='+localStorage.getItem('Id_Empresa')+'&m='+Mes+'&a='+Anio,'_blank')
   }
   async balanceMensual(Mes:any,Anio:any){
-    window.open('https://toxo.work/reportes/contabilidad/cge-balance-mensual-xls.php?id='+localStorage.getItem('Id_Empresa')+'&m='+Mes+'&a='+Anio+'&p='+this.Id_Periodo,'_blank')
+    window.open('https://usantana.com/reportes/contabilidad/cge-balance-mensual-xls.php?id='+localStorage.getItem('Id_Empresa')+'&m='+Mes+'&a='+Anio+'&p='+this.Id_Periodo,'_blank')
   }
 }

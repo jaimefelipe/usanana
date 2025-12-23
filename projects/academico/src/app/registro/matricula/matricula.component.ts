@@ -302,6 +302,6 @@ export class MatriculaComponent implements OnInit {
   GenerarBooleta(){
     let param = this.Matricula.Id_Matricula + '&e=' + localStorage.getItem('Id_Empresa') + '&u=' + localStorage.getItem('Id_Usuario');
     //window.open('http://ibo.jaimebrenes.com:/reportes/educacion/matricula/Boleta_Matricula.php?id=' + param, '_blank');
-    window.open('https://toxo.work/reportes/educacion/matricula/Boleta_Matricula.php?id=' + param, '_blank');
+    window.open('https://usantana.com/reportes/educacion/matricula/Boleta_Matricula.php?id=' + param, '_blank');
   }
 }

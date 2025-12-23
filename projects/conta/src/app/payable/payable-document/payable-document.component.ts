@@ -438,6 +438,6 @@ export class PayableDocumentComponent implements OnInit {
     return true;
   }
   imprimir(){
-    window.open('https://toxo.work/reportes/cobrar/cxc-documento.php?id='+this.Documento.Id_Documento,'_blank')
+    window.open('https://usantana.com/reportes/cobrar/cxc-documento.php?id='+this.Documento.Id_Documento,'_blank')
   }
 }

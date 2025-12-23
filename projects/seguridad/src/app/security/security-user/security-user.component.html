@@ -78,10 +78,12 @@
         <label>Clave</label>
         <input [(ngModel)]="Usuario.Clave" name="Clave" type="text" placeholder="Clave" class="form-control">
       </div>
+      <span [hidden]="Academico">
       <div [hidden]="Master=='0'" class="form-group col-md-4">
         <label>Salonero</label>
         <input [(ngModel)]="Usuario.Salonero" name="Salonero" type="text" placeholder="Salonero" class="form-control">
       </div>
+      </span>
       <div class="form-group col-md-4">
         <label>Tipo de Usuario</label>
         <select [(ngModel)]="Usuario.Tipo_Usuario" name="Tipo_Usuario" type="text" class="form-control">
@@ -99,118 +101,8 @@
           <option value='0'>Inactivo</option>
         </select>
       </div>
-      <div class="form-group col-md-2">
-        <label>Ventas</label>
-        <select [(ngModel)]="Usuario.Ventas" name="Ventas" type="text" class="form-control">
-          <option value='1'>Con Acceso</option>
-          <option value='0'>Sin Acceso</option>
-        </select>
-      </div>
-      <div class="form-group col-md-2">
-        <label>Punto Venta</label>
-        <select [(ngModel)]="Usuario.Pov" name="Pov" type="text" class="form-control">
-          <option value='1'>Con Acceso</option>
-          <option value='0'>Sin Acceso</option>
-        </select>
-      </div>
-      <div class="form-group col-md-2">
-        <label>Compras</label>
-        <select [(ngModel)]="Usuario.Compras" name="Compras" type="text" class="form-control">
-          <option value='1'>Con Acceso</option>
-          <option value='0'>Sin Acceso</option>
-        </select>
-      </div>
-      <div class="form-group col-md-2">
-        <label>Inventario</label>
-        <select [(ngModel)]="Usuario.Inventario" name="Inventario" type="text" class="form-control">
-          <option value='1'>Con Acceso</option>
-          <option value='0'>Sin Acceso</option>
-        </select>
-      </div>
-      <div class="form-group col-md-2">
-        <label>CXC</label>
-        <select [(ngModel)]="Usuario.CXC" name="CXC" type="text" class="form-control">
-          <option value='1'>Con Acceso</option>
-          <option value='0'>Sin Acceso</option>
-        </select>
-      </div>
-      <div class="form-group col-md-2">
-        <label>CXP</label>
-        <select [(ngModel)]="Usuario.CXP" name="CXP" type="text" class="form-control">
-          <option value='1'>Con Acceso</option>
-          <option value='0'>Sin Acceso</option>
-        </select>
-      </div>
-      <div class="form-group col-md-2">
-        <label>Contabilidad</label>
-        <select [(ngModel)]="Usuario.CG" name="CG" type="text" class="form-control">
-          <option value='1'>Con Acceso</option>
-          <option value='0'>Sin Acceso</option>
-        </select>
-      </div>
-      <div class="form-group col-md-2">
-        <label>Bancos</label>
-        <select [(ngModel)]="Usuario.BA" name="BA" type="text" class="form-control">
-          <option value='1'>Con Acceso</option>
-          <option value='0'>Sin Acceso</option>
-        </select>
-      </div>
-      <div class="form-group col-md-2">
-        <label>Restaurante</label>
-        <select [(ngModel)]="Usuario.Restaurante" name="Restaurante" type="text" class="form-control">
-          <option value='1'>Con Acceso</option>
-          <option value='0'>Sin Acceso</option>
-        </select>
-      </div>
-      <div class="form-group col-md-2">
-        <label>Seguridad</label>
-        <select [(ngModel)]="Usuario.Seguridad" name="Seguridad" type="text" class="form-control">
-          <option value='1'>Con Acceso</option>
-          <option value='0'>Sin Acceso</option>
-        </select>
-      </div>
-      <div class="form-group col-md-2">
-        <label>Transporte</label>
-        <select [(ngModel)]="Usuario.Transporte" name="Transporte" type="text" class="form-control">
-          <option value='1'>Con Acceso</option>
-          <option value='0'>Sin Acceso</option>
-        </select>
-      </div>
-      <div class="form-group col-md-2">
-        <label>Hospedaje</label>
-        <select [(ngModel)]="Usuario.Hospedaje" name="Hospedaje" type="text" class="form-control">
-          <option value='1'>Con Acceso</option>
-          <option value='0'>Sin Acceso</option>
-        </select>
-      </div>
-      <div class="form-group col-md-2">
-        <label>Turismo</label>
-        <select [(ngModel)]="Usuario.Turismo" name="Turismo" type="text" class="form-control">
-          <option value='1'>Con Acceso</option>
-          <option value='0'>Sin Acceso</option>
-        </select>
-      </div>
-      <div class="form-group col-md-2">
-        <label>Académico</label>
-        <select [(ngModel)]="Usuario.Academico" name="Academico" type="text" class="form-control">
-          <option value='1'>Con Acceso</option>
-          <option value='0'>Sin Acceso</option>
-        </select>
-      </div>
-      <div class="form-group col-md-2">
-        <label>Proyectos</label>
-        <select [(ngModel)]="Usuario.Proyecto" name="Proyecto" type="text" class="form-control">
-          <option value='1'>Con Acceso</option>
-          <option value='0'>Sin Acceso</option>
-        </select>
-      </div>
-      <div class="form-group col-md-2">
-        <label>CRM</label>
-        <select [(ngModel)]="Usuario.CRM" name="CRM" type="text" class="form-control">
-          <option value='1'>Con Acceso</option>
-          <option value='0'>Sin Acceso</option>
-        </select>
-      </div>
+      
+      
 
 
 

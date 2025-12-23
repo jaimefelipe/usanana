@@ -93,6 +93,7 @@ constructor(private aulaService: AulaVirtualService, private grupoService: Grupo
     this.activarGeneral();
     if (aula) {
       this.Aula = { ...aula };
+      localStorage.setItem('Id_Grupo',this.Aula.Id_Grupo)
     } else {
       this.Aula = {
         Id_AulaVirtual: '',

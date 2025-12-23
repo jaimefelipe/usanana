@@ -20,6 +20,12 @@ export class RollComponent implements OnInit {
   Usuarios = [];
   
   ngOnInit() {
+    const path = window.location.pathname;                 // ej: /academico/usuario
+    const [modulo] = path.split('/').filter(Boolean); 
+    if(modulo === 'academico'){
+      this.Academico = true;
+    }
+
   }
   searchUsuario(){
     this.leerUsuarios(this.searchFieldUsuario);

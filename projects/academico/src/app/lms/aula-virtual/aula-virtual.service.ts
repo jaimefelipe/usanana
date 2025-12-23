@@ -12,7 +12,7 @@ export class AulaVirtualService {
   async getAulas(paginacion: any, filtro: string = '') {
   const sqlConfig: any = {
     table: 'Lms_AulaVirtual inner Join Edu_Grupo on Lms_AulaVirtual.Id_Grupo =  Edu_Grupo.Id_Grupo inner Join Edu_Curso on Edu_Grupo.Id_Curso = Edu_Curso.Id_Curso inner Join Gen_Persona on Edu_Grupo.Id_Profesor = Gen_Persona.Id_Persona',
-    fields: 'Id_AulaVirtual,Lms_AulaVirtual.Id_Grupo,Bienvenida, Edu_Grupo.Nombre as Grupo, Gen_Persona.Nombre as Profesor,Lms_AulaVirtual.Activo,Edu_Curso.Curso ',
+    fields: 'Id_AulaVirtual,Lms_AulaVirtual.Id_Grupo,Bienvenida, Edu_Grupo.Nombre as Grupo, Gen_Persona.Nombre as Profesor,Lms_AulaVirtual.Activo,Edu_Curso.Curso,Edu_Curso.Codigo',
     order: 'Lms_AulaVirtual.Id_AulaVirtual desc',
     limit: paginacion.LastRow,
     offset: paginacion.FirstRow - 1
@@ -40,7 +40,7 @@ export class AulaVirtualService {
       // UPDATE
       const sql = {
         table: 'Lms_AulaVirtual',
-        values:
+        fields:
           `Id_Grupo = '${aula.Id_Grupo}', ` +
           `Bienvenida = '${aula.Bienvenida}', ` +
           `Link_Reglamento = '${aula.Link_Reglamento}', ` +
@@ -50,6 +50,7 @@ export class AulaVirtualService {
           (userId ? `, Modificado_Por = '${userId}'` : ''),
         where: `Id_AulaVirtual = ${aula.Id_AulaVirtual}`
       };
+      console.log(sql);
       return await this.apiService.updateRecord(sql);
     }
   }

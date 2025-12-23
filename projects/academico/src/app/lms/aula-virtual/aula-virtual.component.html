@@ -25,7 +25,7 @@
       <div class="card shadow-sm hover-shadow-sm" (click)="editRecord(aula)">
         <div class="card-body">
           <h5 class="card-title font-weight-bold text-primary">
-            {{ aula.Grupo }} - {{ aula.Curso }}
+            {{ aula.Grupo }} - {{ aula.Codigo}} - {{ aula.Curso }}
           </h5>
           <p class="mb-1">
             Profesor: <span class="text-muted">{{ aula.Profesor | slice:0:60 }}...</span>

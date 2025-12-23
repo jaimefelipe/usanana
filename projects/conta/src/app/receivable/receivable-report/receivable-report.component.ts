@@ -85,14 +85,14 @@ export class ReceivableReportComponent implements OnInit {
     let param = this.Id_Empresa;
 
     if(this.reporte == "1"){
-      window.open('https://toxo.work/reportes/cobrar/cxc-resumen-cuentas.php?id=' + param, '_blank');
+      window.open('https://usantana.com/reportes/cobrar/cxc-resumen-cuentas.php?id=' + param, '_blank');
     }
     if(this.reporte == "2"){
-      window.open('https://toxo.work/reportes/cobrar/cxc-detalle-cuentas.php?id=' + param, '_blank');
+      window.open('https://usantana.com/reportes/cobrar/cxc-detalle-cuentas.php?id=' + param, '_blank');
     }
     if(this.reporte == "3"){
       param = param + "&c="+this.Id_Cuenta;
-      window.open('https://toxo.work/reportes/cobrar/cxc-estado-cuenta.php?id=' + param, '_blank');
+      window.open('https://usantana.com/reportes/cobrar/cxc-estado-cuenta.php?id=' + param, '_blank');
     }
 
   }

@@ -732,21 +732,21 @@ export class PurchaseInvoiceComponent implements OnInit {
     let Id_Empresa = localStorage.getItem('Id_Empresa');
     if (this.Invoice.Tipo_Documento == '01') {
       window.open(
-        'https://toxo.work/public/' +
+        'https://usantana.com/public/' +
           Id_Empresa +
           '/Comprobantes-FE/PDF-FE/' +
           this.Invoice.Consecutivo +
           '.pdf'
       );
       window.open(
-        'https://toxo.work/public/' +
+        'https://usantana.com/public/' +
           Id_Empresa +
           '/Comprobantes-FE/XML-DGT/' +
           this.Invoice.Consecutivo +
           '-DGT.xml'
       );
       window.open(
-        'https://toxo.work/public/' +
+        'https://usantana.com/public/' +
           Id_Empresa +
           '/Comprobantes-FE/XML-Firmado/' +
           this.Invoice.Consecutivo +
@@ -755,7 +755,7 @@ export class PurchaseInvoiceComponent implements OnInit {
     }
     if (this.Invoice.Tipo_Documento == '02') {
       window.open(
-        'https://toxo.work/public/' +
+        'https://usantana.com/public/' +
           Id_Empresa +
           '/Comprobantes-ND/PDF-ND/' +
           this.Invoice.Consecutivo +
@@ -764,21 +764,21 @@ export class PurchaseInvoiceComponent implements OnInit {
     }
     if (this.Invoice.Tipo_Documento == '03') {
       window.open(
-        'https://toxo.work/public/' +
+        'https://usantana.com/public/' +
           Id_Empresa +
           '/Comprobantes-NC/PDF-NC/' +
           this.Invoice.Consecutivo +
           '.pdf'
       );
       window.open(
-        'https://toxo.work/public/' +
+        'https://usantana.com/public/' +
           Id_Empresa +
           '/Comprobantes-NC/XML-DGT/' +
           this.Invoice.Consecutivo +
           '-DGT.xml'
       );
       window.open(
-        'https://toxo.work/public/' +
+        'https://usantana.com/public/' +
           Id_Empresa +
           '/Comprobantes-NC/XML-Firmado/' +
           this.Invoice.Consecutivo +
@@ -787,21 +787,21 @@ export class PurchaseInvoiceComponent implements OnInit {
     }
     if (this.Invoice.Tipo_Documento == '04') {
       window.open(
-        'https://toxo.work/public/' +
+        'https://usantana.com/public/' +
           Id_Empresa +
           '/Comprobantes-TE/PDF-TE/' +
           this.Invoice.Consecutivo +
           '.pdf'
       );
       window.open(
-        'https://toxo.work/public/' +
+        'https://usantana.com/public/' +
           Id_Empresa +
           '/Comprobantes-TE/XML-DGT/' +
           this.Invoice.Consecutivo +
           '-DGT.xml'
       );
       window.open(
-        'https://toxo.work/public/' +
+        'https://usantana.com/public/' +
           Id_Empresa +
           '/Comprobantes-TE/XML-Firmado/' +
           this.Invoice.Consecutivo +

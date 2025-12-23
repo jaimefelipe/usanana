@@ -27,8 +27,8 @@
 
     <h3>Actividades</h3>
     <ul>
-      <li *ngFor="let actividad of Actividades" (click)="seleccionarItem(actividad)">
-        ✅ {{ actividad.Titulo }}
+      <li *ngFor="let actividad of Actividades" (click)="seleccionarActividad(actividad)">
+        ✅ {{ actividad.Nombre }}
       </li>
     </ul>
   </div>
@@ -40,7 +40,10 @@
       <app-recurso-enlace *ngSwitchCase="'2'" [item]="itemSeleccionado"></app-recurso-enlace>
       <app-recurso-pdf *ngSwitchCase="'4'" [item]="itemSeleccionado"></app-recurso-pdf>
       <app-recurso-presentacion *ngSwitchCase="'5'" [item]="itemSeleccionado"></app-recurso-presentacion>
-      <p *ngSwitchDefault>Selecciona un recurso o actividad para comenzar.</p>
+      
+    </ng-container>
+    <ng-container *ngIf="actividadSeleccionada">
+      <app-actividad-alumno  [actividad]="actividadSeleccionada"></app-actividad-alumno>
     </ng-container>
   </div>
 </div>

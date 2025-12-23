@@ -19,7 +19,8 @@ export class CursoVisorComponent implements OnInit {
     Curso:'',
     Descripcion:'',
     Horas:'',
-    Nombre:''
+    Nombre:'',
+    Bienvenida:''
   };
   semanas: any[] = [];
   semanaSeleccionada: any = null;
@@ -37,9 +38,14 @@ export class CursoVisorComponent implements OnInit {
       let data = await this.cursoVisorService.leerCurso();
       this.curso = data['data'][0];
   }
-  async leerSemanas(){
+  async leerSemanas() {
     let data = await this.cursoVisorService.leerSemanas();
     this.semanas = data['data'];
+
+    // Seleccionar la primera semana automáticamente
+    if (this.semanas && this.semanas.length > 0 && !this.semanaSeleccionada) {
+      this.semanaSeleccionada = this.semanas[0];
+    }
   }
 
   volverACursos() {

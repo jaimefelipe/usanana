@@ -26,7 +26,7 @@ export class CarreraService {
   async cargarCarrera(Id_Carrera){
     let sqlConfig = {
       table: 'Edu_Carrera',
-      fields: 'Id_Carrera,Codigo,Carrera,Descripcion,Requisito,Duracion,Nivel,Estado',
+      fields: 'Id_Carrera,Codigo,Carrera,Descripcion,Requisito,Duracion,Nivel,Estado,Id_Facultad,Id_Escuela',
       where: 'Id_Carrera='+Id_Carrera
     }
     return await this.apiService.executeSqlSyn(sqlConfig);
@@ -35,14 +35,17 @@ export class CarreraService {
   async InsertarCarrera(Carrera){
     let sql = {
       table: 'Edu_Carrera',
-      fields: 'Codigo,Carrera,Descripcion,Requisito,Duracion,Nivel,Estado',
+      fields: 'Codigo,Carrera,Descripcion,Requisito,Duracion,Nivel,Estado,Id_Facultad,Id_Escuela',
       values: '\'' + Carrera.Codigo
       + '\',\'' + Carrera.Carrera
       + '\',\'' + Carrera.Descripcion
       + '\',\'' + Carrera.Requisito
       + '\',\'' + Carrera.Duracion
       + '\',\'' + Carrera.Nivel
-      + '\',\'' + Carrera.Estado + '\''
+      + '\',\'' + Carrera.Estado 
+      + '\',\'' + Carrera.Id_Facultad
+      + '\',\'' + Carrera.Id_Escuela
+      + '\''
     };
     return await this.apiService.insertRecord(sql);
   }
@@ -55,7 +58,10 @@ export class CarreraService {
       + '\',Requisito=\'' + Carrera.Requisito
       + '\',Duracion=\'' + Carrera.Duracion
       + '\',Nivel=\'' + Carrera.Nivel
-      + '\',Estado=\''+ Carrera.Estado  + '\'',
+      + '\',Estado=\''+ Carrera.Estado
+      + '\',Id_Facultad=\'' + Carrera.Id_Facultad
+      + '\',Id_Escuela=\'' + Carrera.Id_Escuela  
+      + '\'',
       where: 'Id_Carrera=' + Carrera.Id_Carrera
     };
     return await this.apiService.updateRecord(sql);
@@ -83,7 +89,7 @@ export class CarreraService {
   }
 
   async cargarCursosDisponibles(paginacion,search?,Estado?) {
-    let estado = ' Edu_Curso_Carrera.id_curso IS NULL '
+    let estado = ' Edu_Curso_Carrera.Id_curso IS NULL '
     if(Estado == 1 || Estado == 0){
       estado = ' and Estado ='+ Estado;
     }

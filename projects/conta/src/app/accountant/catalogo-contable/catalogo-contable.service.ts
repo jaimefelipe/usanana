@@ -11,7 +11,7 @@ export class CatalogoContableService {
 
   async loadCatalogo(){
     return await fetch(
-      'https://toxo.work/reportes/contabilidad/cge_catalgo_contable.php?sql=' + localStorage.getItem('Id_Empresa'))
+      'https://usantana.com/reportes/contabilidad/cge_catalgo_contable.php?sql=' + localStorage.getItem('Id_Empresa'))
       .then((response) => {
         if (!response.ok) {
           return JSON.parse('{success: "false",total: "0", eror:"Error desconocido"}');

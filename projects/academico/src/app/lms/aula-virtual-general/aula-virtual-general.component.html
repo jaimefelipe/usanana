@@ -4,7 +4,7 @@
       <label for="grupo"><strong>Grupo</strong></label>
       <select class="form-control" id="grupo" [(ngModel)]="Aula.Id_Grupo" name="grupo" required>
         <option *ngFor="let grupo of Grupos" [value]="grupo.Id_Grupo">
-          {{ grupo.Nombre }} - {{ grupo.Curso }}
+          {{ grupo.Nombre }} - {{ grupo.Codigo }} - {{ grupo.Curso }}
         </option>
       </select>
     </div>
@@ -20,16 +20,10 @@
 
   <div class="form-group">
     <label for="bienvenida"><strong>Mensaje de Bienvenida</strong></label>
-    <textarea class="form-control" id="bienvenida" [(ngModel)]="Aula.Bienvenida" rows="4" placeholder="Bienvenida del curso..."></textarea>
+    <textarea class="form-control" id="bienvenida" [(ngModel)]="Aula.Bienvenida" rows="20" placeholder="Bienvenida del curso..."></textarea>
   </div>
 
-  <div class="form-group">
-    <label for="reglamento"><strong>Link al Reglamento de Educación Virtual</strong></label>
-    <input type="url" class="form-control" id="reglamento" [(ngModel)]="Aula.Link_Reglamento" placeholder="https://...">
-  </div>
 
-  <div class="form-group">
-    <label for="etiqueta"><strong>Link a Normas de Etiqueta</strong></label>
-    <input type="url" class="form-control" id="etiqueta" [(ngModel)]="Aula.Link_Etiqueta" placeholder="https://...">
-  </div>
+
+
 </div>

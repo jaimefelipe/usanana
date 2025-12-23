@@ -11,8 +11,9 @@ constructor( private apiService:ApiService) { }
     const sqlConfig = {
       table: 'Lms_Recurso',
       fields: 'Id_Recurso, Id_Semana, Titulo, Tipo, URL,Contenido',
-      where: 'Id_Semana = ' + Id_Semana,
-      orderField: 'Id_Recurso'
+      where: 'Id_Semana = ' + Id_Semana + ' and Estado = 1',
+      orderField: 'Id_Recurso',
+      orderDirection: ' ASC '
     };
     return await this.apiService.executeSqlSyn(sqlConfig).then(r => r.data || []);
   }
@@ -39,10 +40,11 @@ constructor( private apiService:ApiService) { }
 
   async eliminarRecurso(Id_Recurso: string) {
     const sql = {
-      table: 'Lms_Recurso',
-      where: 'Id_Recurso=' + Id_Recurso
-    };
-    //return await this.apiService.deleteRecord(sql);
+        table: 'Lms_Recurso',
+        fields: `Estado='0'`,
+        where: `Id_Recurso=${Id_Recurso}`
+      };
+      return await this.apiService.updateRecord(sql);
   }
 
   async subirArchivo(file){

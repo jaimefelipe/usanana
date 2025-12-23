@@ -1,6 +1,13 @@
-<div class="recurso-enlace p-3 border rounded bg-white shadow-sm text-center">
+<!-- <div class="recurso-enlace p-3 border rounded bg-white shadow-sm text-center">
   <p>Haz clic en el siguiente enlace para acceder al recurso:</p>
   <a [href]="item.Contenido" target="_blank" class="btn btn-primary">
     Abrir enlace
   </a>
 </div>
+-->
+<div class="recurso-pdf p-3 border rounded bg-white shadow-sm">
+  <ng-container>
+    <iframe loading="lazy" [src]="item.Contenido | safeUrl " width="100%" height="800px" frameborder="0" allowfullscreen="allowfullscreen" allow="fullscreen"></iframe>
+  </ng-container>
+</div> 
+

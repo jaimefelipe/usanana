@@ -396,6 +396,6 @@ export class AsientoDiarioComponent implements OnInit {
   }
   imprimirAsiento(){
     //window.open('http://ibo.jaimebrenes.com/reportes/contabilidad/cge-asiento-diario.php?id='+this.Asiento.Id_Asiento_Contable_Encabezado,'_blank')
-    window.open('https://toxo.work/reportes/contabilidad/cge-asiento-diario.php?id='+this.Asiento.Id_Asiento_Contable_Encabezado,'_blank')
+    window.open('https://usantana.com/reportes/contabilidad/cge-asiento-diario.php?id='+this.Asiento.Id_Asiento_Contable_Encabezado,'_blank')
   }
 }
