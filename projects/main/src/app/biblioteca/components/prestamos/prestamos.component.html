@@ -1,0 +1,33 @@
+<div class="prestamos">
+  <h3>Préstamos</h3>
+  <table class="table table-hover align-middle">
+    <thead>
+      <tr>
+        <th>Libro</th>
+        <th>Categoría</th>
+        <th>Usuario</th>
+        <th>Fecha préstamo</th>
+        <th>Vence</th>
+        <th>Renovaciones</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let prestamo of prestamos">
+        <td>{{ prestamo.titulo }}</td>
+        <td>{{ prestamo.categoria }}</td>
+        <td>{{ prestamo.usuario }}</td>
+        <td>{{ prestamo.fechaPrestamo }}</td>
+        <td>{{ prestamo.fechaVencimiento }}</td>
+        <td>{{ prestamo.renovaciones }}</td>
+        <td>
+          <span class="badge" [ngClass]="{
+            'bg-success': prestamo.estado === 'activo',
+            'bg-danger': prestamo.estado === 'vencido',
+            'bg-secondary': prestamo.estado === 'devuelto'
+          }">{{ prestamo.estado | titlecase }}</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

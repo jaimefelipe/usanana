@@ -1,0 +1,25 @@
+<div class="usuarios-biblioteca">
+  <h3>Usuarios de biblioteca</h3>
+  <table class="table align-middle">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Préstamos activos</th>
+        <th>Multas pendientes</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let usuario of usuarios">
+        <td>{{ usuario.nombre }}</td>
+        <td>{{ usuario.prestamosActivos }}</td>
+        <td>{{ usuario.multasPendientes }}</td>
+        <td>
+          <span class="badge" [ngClass]="usuario.bloqueado ? 'bg-danger' : 'bg-success'">
+            {{ usuario.bloqueado ? 'Bloqueado' : 'Habilitado' }}
+          </span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

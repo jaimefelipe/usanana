@@ -1,0 +1,10 @@
+<div class="libro-detalle" *ngIf="libro; else noData">
+  <h3>{{ libro.titulo }}</h3>
+  <p class="text-muted">{{ libro.autor }} • ISBN {{ libro.isbn }}</p>
+  <p><strong>Categoría:</strong> {{ libro.categoria }}</p>
+  <p><strong>Estado:</strong> {{ libro.estado | titlecase }}</p>
+</div>
+
+<ng-template #noData>
+  <p>No se encontró el libro solicitado.</p>
+</ng-template>
