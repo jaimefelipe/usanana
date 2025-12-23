@@ -18,6 +18,7 @@
         <th>ISBN</th>
         <th>Categoría</th>
         <th>Estado</th>
+        <th class="text-end">Acciones</th>
       </tr>
     </thead>
     <tbody>
@@ -34,6 +35,12 @@
             'bg-danger': libro.estado === 'perdido'
           }">{{ libro.estado | titlecase }}</span>
         </td>
+        <td class="text-end">
+          <a class="btn btn-link btn-sm" [routerLink]="['/biblioteca/catalogo', libro.id]">Ver detalle</a>
+        </td>
+      </tr>
+      <tr *ngIf="librosFiltrados.length === 0">
+        <td colspan="6" class="text-center text-muted">No se encontraron libros con los filtros actuales.</td>
       </tr>
     </tbody>
   </table>

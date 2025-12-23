@@ -4,6 +4,7 @@
     <thead>
       <tr>
         <th>Libro</th>
+        <th>Categoría</th>
         <th>Usuario</th>
         <th>Posición</th>
         <th>Estado</th>
@@ -11,15 +12,20 @@
     </thead>
     <tbody>
       <tr *ngFor="let reserva of reservas">
-        <td>{{ reserva.libroId }}</td>
+        <td>{{ reserva.titulo }}</td>
+        <td>{{ reserva.categoria }}</td>
         <td>{{ reserva.usuario }}</td>
         <td>#{{ reserva.posicion }}</td>
         <td>
           <span class="badge" [ngClass]="{
             'bg-info text-dark': reserva.estado === 'activa',
-            'bg-success': reserva.estado === 'atendida'
+            'bg-success': reserva.estado === 'atendida',
+            'bg-secondary': reserva.estado === 'liberada'
           }">{{ reserva.estado | titlecase }}</span>
         </td>
+      </tr>
+      <tr *ngIf="reservas.length === 0">
+        <td colspan="5" class="text-center text-muted">No hay reservas registradas.</td>
       </tr>
     </tbody>
   </table>

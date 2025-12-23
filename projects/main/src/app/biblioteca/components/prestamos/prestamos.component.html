@@ -4,6 +4,7 @@
     <thead>
       <tr>
         <th>Libro</th>
+        <th>Categoría</th>
         <th>Usuario</th>
         <th>Fecha préstamo</th>
         <th>Vence</th>
@@ -13,7 +14,8 @@
     </thead>
     <tbody>
       <tr *ngFor="let prestamo of prestamos">
-        <td>{{ prestamo.libroId }}</td>
+        <td>{{ prestamo.titulo }}</td>
+        <td>{{ prestamo.categoria }}</td>
         <td>{{ prestamo.usuario }}</td>
         <td>{{ prestamo.fechaPrestamo }}</td>
         <td>{{ prestamo.fechaVencimiento }}</td>
