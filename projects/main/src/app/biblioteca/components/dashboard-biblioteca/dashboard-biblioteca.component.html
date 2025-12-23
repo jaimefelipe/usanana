@@ -1,0 +1,23 @@
+<div class="biblioteca-dashboard">
+  <h2>Gestión de Biblioteca</h2>
+  <p class="text-muted">Resumen operativo del día</p>
+
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <span class="kpi-label">Libros disponibles</span>
+      <strong class="kpi-value">{{ librosDisponibles }}</strong>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">Préstamos activos</span>
+      <strong class="kpi-value">{{ prestamosActivos }}</strong>
+    </div>
+    <div class="kpi-card warning">
+      <span class="kpi-label">Préstamos vencidos</span>
+      <strong class="kpi-value">{{ prestamosVencidos }}</strong>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">Reservas activas</span>
+      <strong class="kpi-value">{{ reservasActivas }}</strong>
+    </div>
+  </div>
+</div>

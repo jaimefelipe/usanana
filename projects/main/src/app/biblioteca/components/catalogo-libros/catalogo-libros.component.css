@@ -1,0 +1,15 @@
+.catalogo-libros {
+  padding: 1rem;
+}
+
+.filters {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.filters .form-control,
+.filters .form-select {
+  max-width: 240px;
+}

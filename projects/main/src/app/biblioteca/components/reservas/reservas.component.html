@@ -1,0 +1,26 @@
+<div class="reservas">
+  <h3>Reservas</h3>
+  <table class="table table-striped align-middle">
+    <thead>
+      <tr>
+        <th>Libro</th>
+        <th>Usuario</th>
+        <th>Posición</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let reserva of reservas">
+        <td>{{ reserva.libroId }}</td>
+        <td>{{ reserva.usuario }}</td>
+        <td>#{{ reserva.posicion }}</td>
+        <td>
+          <span class="badge" [ngClass]="{
+            'bg-info text-dark': reserva.estado === 'activa',
+            'bg-success': reserva.estado === 'atendida'
+          }">{{ reserva.estado | titlecase }}</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
