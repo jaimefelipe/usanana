@@ -1,0 +1,48 @@
+.opac-shell {
+  min-height: 100vh;
+  background: #f8f9fb;
+}
+
+.opac-header {
+  background: #0b1320;
+  color: #fff;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.brand-title {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.brand-subtitle {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.opac-nav {
+  display: flex;
+  gap: 16px;
+}
+
+.opac-nav a {
+  color: #dbe4ff;
+  text-decoration: none;
+}
+
+.opac-nav a.active {
+  color: #fff;
+  font-weight: 600;
+}
+
+.opac-content {
+  padding: 24px;
+}

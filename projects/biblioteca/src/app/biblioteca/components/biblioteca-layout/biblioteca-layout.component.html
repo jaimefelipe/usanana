@@ -1,0 +1,275 @@
+<nav class="app-topbar fixed-top">
+  <div class="topbar-left">
+    <button type="button" class="btn btn-icon d-lg-none" (click)="toggleMenu()" aria-label="Toggle menu">
+      <span class="MenuIcon"></span>
+    </button>
+    <img src="assets/logo.svg" height="30" class="brand-logo" alt="Biblioteca">
+    <span class="brand-name">Biblioteca</span>
+  </div>
+  <div class="topbar-right">
+    <a class="btn btn-ghost" href="/main" title="Menu principal">
+      <span class="MenuIcon"></span>
+    </a>
+    <a class="btn btn-ghost" [routerLink]="['/opac']" title="OPAC">
+      <span class="SoporteIcon"></span>
+    </a>
+    <button type="button" class="btn btn-avatar">BU</button>
+  </div>
+</nav>
+
+<div class="sidebar-overlay" [class.is-visible]="isMobileView && !menuColapsado" (click)="closeMenu()"></div>
+
+<div class="wrapper">
+  <nav class="sidebar p-2"
+       [class.collapsed]="menuColapsado"
+       [class.is-open]="isMobileView && !menuColapsado"
+       [class.is-mobile]="isMobileView"
+       (click)="onNavClick($event)"
+       role="navigation"
+       aria-label="Sidebar biblioteca">
+    <ul class="nav flex-column">
+      <li class="nav-item sidebar-header" *ngIf="isMobileView">
+        <div class="d-flex align-items-center justify-content-between">
+          <img src="assets/logo.svg" height="26" class="sidebar-logo" alt="Biblioteca">
+          <button type="button" class="sidebar-toggle" (click)="toggleMenu()" aria-label="Cerrar menu">
+            <span class="openIcon"></span>
+          </button>
+        </div>
+      </li>
+
+      <li class="nav-item pt-2 w-100" *ngIf="!isMobileView">
+        <a class="nav-link text-grey d-flex align-items-center justify-content-end w-100"
+           (click)="toggleMenu()"
+           role="button"
+           [attr.aria-expanded]="!menuColapsado">
+          <span class="openIcon" [class.is-collapsed]="menuColapsado"></span>
+        </a>
+      </li>
+
+      <li class="nav-item pt-2">
+        <a class="nav-link text-grey d-flex align-items-center"
+           [routerLink]="['/']"
+           routerLinkActive="active"
+           [routerLinkActiveOptions]="{ exact: true }"
+           [attr.title]="menuColapsado ? 'Inicio' : null">
+          <span class="homeIcon"></span>
+          <span class="ms-2 nav-text">Inicio</span>
+        </a>
+      </li>
+
+      <li class="nav-item" *ngIf="!logedIn">
+        <a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/login']">
+          <span class="MenuIcon"></span>
+          <span class="ms-2 nav-text">Entrar</span>
+        </a>
+      </li>
+
+      <ng-container *ngIf="logedIn">
+      <li class="nav-item">
+        <a class="nav-link text-grey d-flex align-items-center"
+           href="#"
+           data-toggle="menu"
+           (click)="toggleSection($event, 'operacion')"
+           [attr.aria-expanded]="sectionState.operacion && !menuColapsado"
+           [attr.title]="menuColapsado ? 'Operacion' : null">
+          <span class="InventarioIcon"></span>
+          <span class="ms-2 flex-grow-1 nav-text">Operacion</span>
+          <span class="ms-auto menu-chevron nav-text">{{ sectionChevron('operacion') }}</span>
+        </a>
+        <ul class="nav flex-column ms-3" *ngIf="sectionState.operacion && !menuColapsado">
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/catalogo']" routerLinkActive="active">- Catalogo</a></li>
+          <!--<li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/prestamos']" routerLinkActive="active">- Prestamos</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/reservas']" routerLinkActive="active">- Reservas</a></li>
+        --><li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/usuarios']" routerLinkActive="active">- Usuarios biblioteca</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/reportes']" routerLinkActive="active">- Reportes</a></li>
+        </ul>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link text-grey d-flex align-items-center"
+           href="#"
+           data-toggle="menu"
+           (click)="toggleSection($event, 'catalogacion')"
+           [attr.aria-expanded]="sectionState.catalogacion && !menuColapsado"
+           [attr.title]="menuColapsado ? 'Catalogacion' : null">
+          <span class="InventarioIcon"></span>
+          <span class="ms-2 flex-grow-1 nav-text">Catalogacion</span>
+          <span class="ms-auto menu-chevron nav-text">{{ sectionChevron('catalogacion') }}</span>
+        </a>
+        <ul class="nav flex-column ms-3" *ngIf="sectionState.catalogacion && !menuColapsado">
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/categorias']" routerLinkActive="active">- Categorias</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/editoriales']" routerLinkActive="active">- Editoriales</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/autores']" routerLinkActive="active">- Autores</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/tipos-material']" routerLinkActive="active">- Tipos material</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/ejemplares']" routerLinkActive="active">- Ejemplares</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/tesis']" routerLinkActive="active">- Tesis</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/marc-registros']" routerLinkActive="active">- MARC registros</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/marc-campos']" routerLinkActive="active">- MARC campos</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/marc-subcampos']" routerLinkActive="active">- MARC subcampos</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/marc-diccionario']" routerLinkActive="active">- MARC diccionario</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/marc-catalogacion']" routerLinkActive="active">- Catalogación MARC</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/autoridades']" routerLinkActive="active">- Autoridades</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/autoridad-campos']" routerLinkActive="active">- Autoridad campos</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/autoridad-subcampos']" routerLinkActive="active">- Autoridad subcampos</a></li>
+        </ul>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link text-grey d-flex align-items-center"
+           href="#"
+           data-toggle="menu"
+           (click)="toggleSection($event, 'circulacion')"
+           [attr.aria-expanded]="sectionState.circulacion && !menuColapsado"
+           [attr.title]="menuColapsado ? 'Circulacion' : null">
+          <span class="VentasIcon"></span>
+          <span class="ms-2 flex-grow-1 nav-text">Circulacion</span>
+          <span class="ms-auto menu-chevron nav-text">{{ sectionChevron('circulacion') }}</span>
+        </a>
+        <ul class="nav flex-column ms-3" *ngIf="sectionState.circulacion && !menuColapsado">
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/politicas-prestamo']" routerLinkActive="active">- Politicas de prestamo</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/multas']" routerLinkActive="active">- Multas</a></li>
+        </ul>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link text-grey d-flex align-items-center"
+           href="#"
+           data-toggle="menu"
+           (click)="toggleSection($event, 'seriales')"
+           [attr.aria-expanded]="sectionState.seriales && !menuColapsado"
+           [attr.title]="menuColapsado ? 'Seriales' : null">
+          <span class="ComprasIcon"></span>
+          <span class="ms-2 flex-grow-1 nav-text">Seriales</span>
+          <span class="ms-auto menu-chevron nav-text">{{ sectionChevron('seriales') }}</span>
+        </a>
+        <ul class="nav flex-column ms-3" *ngIf="sectionState.seriales && !menuColapsado">
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/seriales']" routerLinkActive="active">- Seriales</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/suscripciones']" routerLinkActive="active">- Suscripciones</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/serial-numeros']" routerLinkActive="active">- Numeros</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/serial-recepciones']" routerLinkActive="active">- Recepciones</a></li>
+        </ul>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link text-grey d-flex align-items-center"
+           href="#"
+           data-toggle="menu"
+           (click)="toggleSection($event, 'adquisiciones')"
+           [attr.aria-expanded]="sectionState.adquisiciones && !menuColapsado"
+           [attr.title]="menuColapsado ? 'Adquisiciones' : null">
+          <span class="ComprasIcon"></span>
+          <span class="ms-2 flex-grow-1 nav-text">Adquisiciones</span>
+          <span class="ms-auto menu-chevron nav-text">{{ sectionChevron('adquisiciones') }}</span>
+        </a>
+        <ul class="nav flex-column ms-3" *ngIf="sectionState.adquisiciones && !menuColapsado">
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/proveedores']" routerLinkActive="active">- Proveedores</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/presupuestos']" routerLinkActive="active">- Presupuestos</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/ordenes-compra']" routerLinkActive="active">- Ordenes de compra</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/ordenes-compra-detalle']" routerLinkActive="active">- Detalle ordenes</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/facturas-compra']" routerLinkActive="active">- Facturas</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/cotizaciones']" routerLinkActive="active">- Cotizaciones</a></li>
+        </ul>
+      </li>
+      <!-- 
+      <li class="nav-item">
+        <a class="nav-link text-grey d-flex align-items-center"
+           href="#"
+           data-toggle="menu"
+           (click)="toggleSection($event, 'administracion')"
+           [attr.aria-expanded]="sectionState.administracion && !menuColapsado"
+           [attr.title]="menuColapsado ? 'Administracion' : null">
+          <span class="SoporteIcon"></span>
+          <span class="ms-2 flex-grow-1 nav-text">Administracion</span>
+          <span class="ms-auto menu-chevron nav-text">{{ sectionChevron('administracion') }}</span>
+        </a>
+        <ul class="nav flex-column ms-3" *ngIf="sectionState.administracion && !menuColapsado">
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/roles']" routerLinkActive="active">- Roles</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/permisos']" routerLinkActive="active">- Permisos</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/roles-permisos']" routerLinkActive="active">- Roles permisos</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/usuarios-roles']" routerLinkActive="active">- Usuarios roles</a></li>
+        </ul>
+      </li>
+      -->
+      
+      <li class="nav-item">
+        <a class="nav-link text-grey d-flex align-items-center"
+           href="#"
+           data-toggle="menu"
+           (click)="toggleSection($event, 'integraciones')"
+           [attr.aria-expanded]="sectionState.integraciones && !menuColapsado"
+           [attr.title]="menuColapsado ? 'Integraciones' : null">
+          <span class="SoporteIcon"></span>
+          <span class="ms-2 flex-grow-1 nav-text">Integraciones</span>
+          <span class="ms-auto menu-chevron nav-text">{{ sectionChevron('integraciones') }}</span>
+        </a>
+        <ul class="nav flex-column ms-3" *ngIf="sectionState.integraciones && !menuColapsado">
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/integraciones']" routerLinkActive="active">- Protocolos</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/sedes']" routerLinkActive="active">- Sedes</a></li>
+        </ul>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link text-grey d-flex align-items-center"
+           href="#"
+           data-toggle="menu"
+           (click)="toggleSection($event, 'opac')"
+           [attr.aria-expanded]="sectionState.opac && !menuColapsado"
+           [attr.title]="menuColapsado ? 'OPAC social' : null">
+          <span class="CobrarIcon"></span>
+          <span class="ms-2 flex-grow-1 nav-text">OPAC social</span>
+          <span class="ms-auto menu-chevron nav-text">{{ sectionChevron('opac') }}</span>
+        </a>
+        <ul class="nav flex-column ms-3" *ngIf="sectionState.opac && !menuColapsado">
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/opac-comentarios']" routerLinkActive="active">- Comentarios</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/opac-etiquetas']" routerLinkActive="active">- Etiquetas</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/opac-listas']" routerLinkActive="active">- Listas</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/opac-lista-items']" routerLinkActive="active">- Lista items</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/opac-historial']" routerLinkActive="active">- Historial</a></li>
+        </ul>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link text-grey d-flex align-items-center"
+           href="#"
+           data-toggle="menu"
+           (click)="toggleSection($event, 'general')"
+           [attr.aria-expanded]="sectionState.general && !menuColapsado"
+           [attr.title]="menuColapsado ? 'General' : null">
+          <span class="SoporteIcon"></span>
+          <span class="ms-2 flex-grow-1 nav-text">General</span>
+          <span class="ms-auto menu-chevron nav-text">{{ sectionChevron('general') }}</span>
+        </a>
+        <ul class="nav flex-column ms-3" *ngIf="sectionState.general && !menuColapsado">
+          <li><a class="nav-link text-grey d-flex align-items-center" href="/contacto/">- Contactos</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" href="/seguridad/">- Usuarios del sistema</a></li>
+        </ul>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/cambiar']">
+          <span class="MenuIcon"></span>
+          <span class="ms-2 nav-text">Cambiar clave</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link text-grey d-flex align-items-center"
+           href="#"
+           (click)="logOut()"
+           [attr.title]="menuColapsado ? 'Salir' : null">
+          <span class="SalirIcon"></span>
+          <span class="ms-2 nav-text">Salir</span>
+        </a>
+      </li>
+
+      <li class="nav-item mt-4 px-2 text-muted small" *ngIf="!menuColapsado">
+        {{ Company }} | {{ User }}
+      </li>
+      </ng-container>
+    </ul>
+  </nav>
+
+  <main class="main-content" [class.is-collapsed]="menuColapsado">
+    <router-outlet></router-outlet>
+  </main>
+</div>

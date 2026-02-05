@@ -14,7 +14,7 @@
     </div>
   </div>
   <form>
-    <div class="form-row">
+    <div class="form-row page-grid">
       <div class="form-group col-12 col-sm-12" *ngFor="let Tarea of Tareas;let i = index">
         <div class="card">
           <a (click)="editRecord(Tarea)">
@@ -186,7 +186,7 @@
           class="form-control" placeholder="Buscar">
       </div>
       <div class="card-body modal-grid">
-        <div class="form-row">
+        <div class="form-row page-grid">
           <div class="form-group col-12 col-sm-6" *ngFor="let Beneficiario of Personas;let i = index">
             <a (click)="SeleccionarPersona(Beneficiario)">
               <div class="card">

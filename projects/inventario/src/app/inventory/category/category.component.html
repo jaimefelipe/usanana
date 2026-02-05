@@ -1,5 +1,5 @@
-<div [hidden]="edit" class="container pb-5">
-  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+<div [hidden]="edit" class="container-fluid pb-5">
+  
   <h2>Categorías de Productos</h2>
   <div class="container-fluid">
     <div class="row">
@@ -17,7 +17,7 @@
     </div>
   </div>
   <form>
-    <div class="form-row">
+    <div class="form-row page-grid">
 
       <div class="form-group col-12 col-sm-6" *ngFor="let Category of Categories;let i = index">
         <div class="card">
@@ -56,8 +56,8 @@
   Form de Edición
 -->
 
-<div [hidden]="!edit" class="container pb-5">
-  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+<div [hidden]="!edit" class="container-fluid pb-5">
+  
   <h2>Categorías de Productos</h2>
 
   <form>
@@ -198,7 +198,7 @@
         class="form-control" placeholder="Buscar">
     </div>
     <div class="card-body modal-grid">
-      <div class="form-row">
+      <div class="form-row page-grid">
         <div class="form-group col-12 col-sm-6" *ngFor="let Account of Accounts;let i = index">
           <a (click)="selectAccount(Account)">
             <div class="card">

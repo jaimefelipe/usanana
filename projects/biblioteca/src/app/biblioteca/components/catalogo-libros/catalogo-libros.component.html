@@ -1,0 +1,154 @@
+<div [hidden]="edit" class="container-fluid pb-5 catalogo-libros">
+  <div class="page-toolbar">
+    <div>
+      <h2 class="page-title">Catalogo de libros</h2>
+      <div class="page-subtitle">Consulta rapida del estado de la coleccion.</div>
+    </div>
+    <div class="input-group page-search">
+      <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+      <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text"
+        class="form-control" placeholder="Buscar">
+      <button class="btn btn-success" type="button" (click)="nuevo()"><i class="fa fa-plus-circle"
+          aria-hidden="true"></i></button>
+    </div>
+  </div>
+
+  <div class="data-entry row g-2 align-items-end">
+    <div class="col-lg-3 col-md-6">
+      <label>Estado</label>
+      <select class="form-select" [(ngModel)]="estado">
+        <option value="todos">Todos</option>
+        <option value="disponible">Disponibles</option>
+        <option value="prestado">Prestados</option>
+        <option value="reservado">Reservados</option>
+        <option value="perdido">Perdidos</option>
+        <option value="mantenimiento">Mantenimiento</option>
+      </select>
+    </div>
+    <div class="col-lg-4 col-md-6">
+      <label>Tipo material</label>
+      <select class="form-select" [(ngModel)]="tipoMaterialFiltro">
+        <option value="todos">Tipos material</option>
+        <option *ngFor="let tipo of tiposMaterial" [value]="tipo.id">{{ tipo.nombre }}</option>
+      </select>
+    </div>
+    <div class="col-lg-5 col-md-6">
+      <label>Categoria</label>
+      <select class="form-select" [(ngModel)]="categoriaFiltro">
+        <option value="todos">Categorias</option>
+        <option *ngFor="let categoria of categorias" [value]="categoria.id">{{ categoria.nombre }}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="row g-4 page-grid">
+    <div class="form-group col-12 col-sm-6" *ngFor="let libro of librosFiltrados">
+      <div class="card h-100">
+        <a class="page-card-link" (click)="editar(libro)">
+          <div class="card-body">
+            <h4 class="card-title">{{ libro.titulo }}</h4>
+            {{ libro.autores || libro.autor || '-' }} | {{ libro.isbn || '-' }}<br />
+            {{ libro.categoria || '-' }} | {{ libro.tipoMaterial || '-' }}<br />
+            Estado: {{ libro.estado | titlecase }}
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div [hidden]="!edit" class="container-fluid pb-5 catalogo-libros">
+  <h2>Libro</h2>
+  <form class="page-form">
+    <div class="page-form-card">
+      <h5>{{ esEdicion ? 'Editar libro' : 'Nuevo libro' }}</h5>
+      <div class="row g-3">
+        <div class="col-md-8">
+          <label class="form-label">Titulo</label>
+          <input class="form-control" [(ngModel)]="libro.titulo" name="titulo" />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">ISBN</label>
+          <input class="form-control" [(ngModel)]="libro.isbn" name="isbn" />
+        </div>
+
+        <div class="col-md-8">
+          <label class="form-label">Subtitulo</label>
+          <input class="form-control" [(ngModel)]="libro.subtitulo" name="subtitulo" />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">ISSN</label>
+          <input class="form-control" [(ngModel)]="libro.issn" name="issn" />
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Tipo material</label>
+          <select class="form-select" [(ngModel)]="libro.tipoMaterialId" name="tipoMaterialId">
+            <option [ngValue]="undefined">Seleccione...</option>
+            <option *ngFor="let t of tiposMaterial" [ngValue]="t.id">{{ t.nombre }}</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Categoria</label>
+          <select class="form-select" [(ngModel)]="libro.categoriaId" name="categoriaId">
+            <option [ngValue]="undefined">Seleccione...</option>
+            <option *ngFor="let c of categorias" [ngValue]="c.id">{{ c.nombre }}</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Editorial</label>
+          <select class="form-select" [(ngModel)]="libro.editorialId" name="editorialId">
+            <option [ngValue]="undefined">Seleccione...</option>
+            <option *ngFor="let e of editoriales" [ngValue]="e.id">{{ e.nombre }}</option>
+          </select>
+        </div>
+
+        <div class="col-12">
+          <label class="form-label">Autores</label>
+          <select class="form-select autores-select" multiple [(ngModel)]="libro.autoresIds" name="autoresIds">
+            <option *ngFor="let a of autores" [ngValue]="a.id">{{ a.nombre }}</option>
+          </select>
+          <div class="form-text" *ngIf="autores.length === 0">No hay autores registrados.</div>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Idioma</label>
+          <input class="form-control" [(ngModel)]="libro.idioma" name="idioma" />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Ano publicacion</label>
+          <input type="number" class="form-control" [(ngModel)]="libro.anioPublicacion" name="anioPublicacion" />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Edicion</label>
+          <input class="form-control" [(ngModel)]="libro.edicion" name="edicion" />
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">DOI</label>
+          <input class="form-control" [(ngModel)]="libro.doi" name="doi" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">URL publica</label>
+          <input class="form-control" [(ngModel)]="libro.urlPublica" name="urlPublica" />
+        </div>
+
+        <div class="col-12">
+          <label class="form-label">Descripcion</label>
+          <textarea class="form-control" rows="3" [(ngModel)]="libro.descripcion" name="descripcion"></textarea>
+        </div>
+        <div class="col-12">
+          <label class="form-label">Palabras clave</label>
+          <input class="form-control" [(ngModel)]="libro.palabrasClave" name="palabrasClave" />
+        </div>
+
+        <div class="col-12">
+          <div class="page-actions d-flex gap-2 justify-content-end">
+            <button class="btn btn-success" type="button" (click)="guardar()">Grabar</button>
+            <button class="btn btn-danger" type="button" (click)="cancelar()">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

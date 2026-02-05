@@ -1,5 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Router } from '@angular/router';
 import { ApiService } from '../../../../../../core/src/app/lib/api.service';
+
+type SectionKey = 'config' | 'registro' | 'tesoreria' | 'profesor' | 'alumno';
 
 @Component({
   selector: 'app-menu',
@@ -9,11 +12,15 @@ import { ApiService } from '../../../../../../core/src/app/lib/api.service';
 export class MenuComponent implements OnInit {
 
   constructor(
-    private apiService: ApiService
+    private apiService: ApiService,
+    private router: Router
   ) { }
+  @Input() collapsed = false;
+  @Input() mobile = false;
+  @Output() toggleSidebar = new EventEmitter<void>();
+
   ambiente = '';
   logedIn = false;
-  showMenu = false;
   Company = localStorage.getItem("Id_Empresa");
   User = localStorage.getItem("Nombre_Usuario");
   SeguridadStr = localStorage.getItem("ToxoSG");
@@ -21,25 +28,32 @@ export class MenuComponent implements OnInit {
   Seguridad = [];
   
   UserMenu = [];
-  perfilMenu = false;
-  AcademicoMenu = false;
-  TesoreriaMenu = false;
-  ProfesorMenu = false;
-  AlumnoMenu = false;
+  sectionState: Record<SectionKey, boolean> = {
+    config: false,
+    registro: false,
+    tesoreria: false,
+    profesor: false,
+    alumno: false
+  };
 
   deferredPrompt: any;
   showButton = true;
-  ConfigClass = 'fa fa-arrow-right';
-  AcademicoClass = 'fa fa-arrow-right';
-  TesoreriaClass = 'fa fa-arrow-right';
-  ProfesorClass = 'fa fa-arrow-right';
-  AlumnoClass = 'fa fa-arrow-right';
 
   //Obtener los Datos del Usuario
   //Si No hay Datos, Entonces usar menu de ventas.
 
 
   ngOnInit(): void {
+    const isLoggedIn = localStorage.getItem('isLoggedin') === 'true';
+    if (!isLoggedIn) {
+      const pathParts = window.location.pathname.split('/');
+      const currentRoute = pathParts[2] || '';
+      const allowedRoutes = new Set(['login', 'signup', 'cambiar', 'primeringreso']);
+      if (!allowedRoutes.has(currentRoute)) {
+        this.router.navigate(['/login']);
+        return;
+      }
+    }
     if(localStorage.getItem('ambiente') == 'Dev'){
       this.ambiente = 'Mantenimiento';
     }else{
@@ -65,51 +79,23 @@ export class MenuComponent implements OnInit {
     });
 
   }
-  hideMenu(){
-    this.showMenu = false;
-  }
-  click(){
-    this.showMenu = !this.showMenu;
+  toggleSection(event: Event, key: SectionKey) {
+    event.preventDefault();
+    this.sectionState[key] = !this.sectionState[key];
   }
 
-  clickPerfilMenu(){
-    this.perfilMenu = !this.perfilMenu;
-    if(this.ConfigClass == 'fa fa-arrow-left'){
-      this.ConfigClass = 'fa fa-arrow-right';
-    }else{
-      this.ConfigClass = 'fa fa-arrow-left';
-    }
+  chevron(open: boolean): string {
+    return open ? 'v' : '>';
   }
-  clickAcademicoMenu(){
-    this.AcademicoMenu = !this.AcademicoMenu;
-    if(this.AcademicoClass == 'fa fa-arrow-left'){
-      this.AcademicoClass = 'fa fa-arrow-right';
-    }else{
-      this.AcademicoClass = 'fa fa-arrow-left';
-    }
-  }
-  clickTesoreriaMenu(){
-    this.TesoreriaMenu = !this.TesoreriaMenu;
-    if(this.TesoreriaClass == 'fa fa-arrow-left'){
-      this.TesoreriaClass = 'fa fa-arrow-right';
-    }else{
-      this.TesoreriaClass = 'fa fa-arrow-left';
-    }
-  }
-  clickProfesorMenu(){
-    this.ProfesorMenu = !this.ProfesorMenu;
-    if(this.ProfesorClass == 'fa fa-arrow-left'){
-      this.ProfesorClass = 'fa fa-arrow-right';
-    }else{
-      this.ProfesorClass = 'fa fa-arrow-left';
-    }
-  }
-  clickAlumnoMenu(){
-    this.AlumnoMenu = !this.AlumnoMenu;
-    if(this.AlumnoClass == 'fa fa-arrow-left'){
-      this.AlumnoClass = 'fa fa-arrow-right';
-    }else{
-      this.AlumnoClass = 'fa fa-arrow-left';
+
+  onNavClick(event: Event): void {
+    if (!this.mobile) return;
+    const target = event.target as HTMLElement | null;
+    if (!target) return;
+    const isToggle = target.closest('[data-toggle="menu"]');
+    const link = target.closest('a');
+    if (link && !isToggle) {
+      this.toggleSidebar.emit();
     }
   }
  

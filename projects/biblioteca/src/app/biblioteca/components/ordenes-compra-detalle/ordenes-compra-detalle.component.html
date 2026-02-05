@@ -1,0 +1,68 @@
+<div [hidden]="edit" class="container-fluid pb-5">
+  <div class="page-toolbar">
+    <div>
+      <h2 class="page-title">Detalle de ordenes</h2>
+    </div>
+    <div class="input-group page-search">
+      <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+      <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text"
+        class="form-control" placeholder="Buscar">
+      <button class="btn btn-success" type="button" (click)="nuevo()"><i class="fa fa-plus-circle"
+          aria-hidden="true"></i></button>
+    </div>
+  </div>
+
+  <form>
+    <div class="row g-4 page-grid">
+      <div class="form-group col-12 col-sm-6" *ngFor="let item of detalles | bibliotecaSearch: searchField">
+        <div class="card h-100">
+          <a class="page-card-link" (click)="editar(item)">
+            <div class="card-body">
+              <h4 class="card-title">{{ item.descripcion }}</h4>
+              Orden: {{ item.ordenCompraId }}<br />
+              Subtotal: {{ item.subtotal }}
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div [hidden]="!edit" class="container-fluid pb-5">
+  <h2>Detalle de orden</h2>
+  <form class="page-form">
+    <div class="page-form-card">
+      <h5>{{ esEdicion ? 'Editar detalle' : 'Nuevo detalle' }}</h5>
+      <div class="mb-2">
+        <label class="form-label">Orden</label>
+        <select class="form-select" [(ngModel)]="detalle.ordenCompraId" name="ordenCompraId">
+          <option [ngValue]="0">Seleccione...</option>
+          <option *ngFor="let orden of ordenes" [ngValue]="orden.id">
+            {{ orden.id }} - {{ orden.proveedorNombre || orden.proveedorId }}
+          </option>
+        </select>
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Descripcion</label>
+        <input class="form-control" [(ngModel)]="detalle.descripcion" name="descripcion" />
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Cantidad</label>
+        <input type="number" class="form-control" [(ngModel)]="detalle.cantidad" name="cantidad" />
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Costo unitario</label>
+        <input type="number" class="form-control" [(ngModel)]="detalle.costoUnitario" name="costoUnitario" />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Subtotal</label>
+        <input type="number" class="form-control" [(ngModel)]="detalle.subtotal" name="subtotal" readonly />
+      </div>
+      <div class="page-actions d-flex gap-2">
+        <button class="btn btn-success" type="button" (click)="guardar()">Grabar</button>
+        <button class="btn btn-danger" type="button" (click)="cancelar()">Cancelar</button>
+      </div>
+    </div>
+  </form>
+</div>

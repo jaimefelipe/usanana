@@ -1,0 +1,10 @@
+<app-app-menu-superior (toggleSidebar)="toggleMenu()"></app-app-menu-superior>
+
+<div class="sidebar-overlay" [class.is-visible]="isMobileView && !menuColapsado" (click)="closeMenu()"></div>
+
+<div class="wrapper">
+  <app-app-menu [collapsed]="menuColapsado" [mobile]="isMobileView" (toggleSidebar)="toggleMenu()"></app-app-menu>
+  <main class="main-content" [class.is-collapsed]="menuColapsado">
+    <router-outlet></router-outlet>
+  </main>
+</div>

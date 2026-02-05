@@ -4,13 +4,14 @@ import { PeriodoAcademicoComponent } from './periodo-academico/periodo-academico
 import { GrupoAcademicoComponent } from './grupo-academico/grupo-academico.component';
 import { MatriculaComponent } from './matricula/matricula.component';
 import { ReportesRegistroComponent } from './reportes-registro/reportes-registro.component';
+import { AcademicoAuthGuard } from '../core/guards/academico-auth.guard';
 
 
 const routes: Routes = [
-  { path: 'periodo', component: PeriodoAcademicoComponent},
-  { path: 'grupo', component: GrupoAcademicoComponent},
-  { path: 'matricula', component: MatriculaComponent},
-  { path: 'reportesacademicos', component: ReportesRegistroComponent},
+  { path: 'periodo', component: PeriodoAcademicoComponent, canActivate: [AcademicoAuthGuard]},
+  { path: 'grupo', component: GrupoAcademicoComponent, canActivate: [AcademicoAuthGuard]},
+  { path: 'matricula', component: MatriculaComponent, canActivate: [AcademicoAuthGuard]},
+  { path: 'reportesacademicos', component: ReportesRegistroComponent, canActivate: [AcademicoAuthGuard]},
   
 ];
 

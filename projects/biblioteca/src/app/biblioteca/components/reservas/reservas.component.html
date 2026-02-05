@@ -1,0 +1,29 @@
+<div class="container-fluid pb-5">
+  <div class="page-toolbar">
+    <div>
+      <h2 class="page-title">Reservas</h2>
+      <div class="page-subtitle">Cola de espera y asignaciones pendientes.</div>
+    </div>
+    <div class="input-group page-search">
+      <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+      <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text"
+        class="form-control" placeholder="Buscar">
+    </div>
+  </div>
+
+  <div class="row g-4 page-grid">
+    <div class="form-group col-12 col-sm-6" *ngFor="let reserva of reservas | bibliotecaSearch: searchField">
+      <div class="card h-100">
+        <div class="card-body">
+          <h4 class="card-title">{{ reserva.titulo }}</h4>
+          Usuario: {{ reserva.usuario }} · Posicion: #{{ reserva.posicion }}<br />
+          Estado: {{ reserva.estado | titlecase }}
+          <div class="mt-2">
+            <button class="btn btn-link btn-sm" (click)="atender(reserva)" [disabled]="reserva.estado !== 'activa'">Atender</button>
+            <button class="btn btn-link btn-sm text-danger" (click)="cancelar(reserva)" [disabled]="reserva.estado === 'cancelada'">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

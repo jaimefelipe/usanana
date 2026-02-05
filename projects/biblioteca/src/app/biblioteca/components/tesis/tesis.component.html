@@ -1,0 +1,74 @@
+<div [hidden]="edit" class="container-fluid pb-5">
+  <div class="page-toolbar">
+    <div>
+      <h2 class="page-title">Tesis</h2>
+    </div>
+    <div class="input-group page-search">
+      <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+      <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text"
+        class="form-control" placeholder="Buscar">
+      <button class="btn btn-success" type="button" (click)="nuevo()"><i class="fa fa-plus-circle"
+          aria-hidden="true"></i></button>
+    </div>
+  </div>
+
+  <form>
+    <div class="row g-4 page-grid">
+      <div class="form-group col-12 col-sm-6" *ngFor="let item of tesis | bibliotecaSearch: searchField">
+        <div class="card h-100">
+          <a class="page-card-link" (click)="editar(item)">
+            <div class="card-body">
+              <h4 class="card-title">Libro {{ item.libroId }}</h4>
+              Universidad: {{ item.universidad || '-' }}<br />
+              Defensa: {{ item.fechaDefensa || '-' }}
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div [hidden]="!edit" class="container-fluid pb-5">
+  <h2>Tesis</h2>
+  <form class="page-form">
+    <div class="page-form-card">
+      <h5>{{ esEdicion ? 'Editar tesis' : 'Nueva tesis' }}</h5>
+      <div class="mb-2">
+        <label class="form-label">Libro</label>
+        <select class="form-select" [(ngModel)]="registro.libroId" name="libroId">
+          <option [ngValue]="0">Seleccione...</option>
+          <option *ngFor="let libro of libros" [ngValue]="libro.id">{{ libro.titulo }}</option>
+        </select>
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Universidad</label>
+        <input class="form-control" [(ngModel)]="registro.universidad" name="universidad" />
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Facultad</label>
+        <input class="form-control" [(ngModel)]="registro.facultad" name="facultad" />
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Carrera</label>
+        <input class="form-control" [(ngModel)]="registro.carrera" name="carrera" />
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Tutor</label>
+        <input class="form-control" [(ngModel)]="registro.tutor" name="tutor" />
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Autor institucional</label>
+        <input class="form-control" [(ngModel)]="registro.autorInstitucional" name="autorInstitucional" />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Fecha defensa</label>
+        <input type="date" class="form-control" [(ngModel)]="registro.fechaDefensa" name="fechaDefensa" />
+      </div>
+      <div class="page-actions d-flex gap-2">
+        <button class="btn btn-success" type="button" (click)="guardar()">Grabar</button>
+        <button class="btn btn-danger" type="button" (click)="cancelar()">Cancelar</button>
+      </div>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,8 @@
+.catalogo-libros .data-entry .form-control,
+.catalogo-libros .data-entry .form-select {
+  width: 100%;
+}
+
+.catalogo-libros .autores-select {
+  min-height: 140px;
+}

@@ -1,0 +1,76 @@
+<div [hidden]="edit" class="container-fluid pb-5">
+  <div class="page-toolbar">
+    <div>
+      <h2 class="page-title">Multas</h2>
+    </div>
+    <div class="input-group page-search">
+      <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+      <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text"
+        class="form-control" placeholder="Buscar">
+      <button class="btn btn-success" type="button" (click)="nuevo()"><i class="fa fa-plus-circle"
+          aria-hidden="true"></i></button>
+    </div>
+  </div>
+
+  <form>
+    <div class="row g-4 page-grid">
+      <div class="form-group col-12 col-sm-6" *ngFor="let item of multas | bibliotecaSearch: searchField">
+        <div class="card h-100">
+          <a class="page-card-link" (click)="editar(item)">
+            <div class="card-body">
+              <h4 class="card-title">{{ item.usuarioNombre || item.usuarioId }}</h4>
+              Monto: {{ item.monto }} · Saldo: {{ item.saldo }}<br />
+              Estado: {{ item.estado }}
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div [hidden]="!edit" class="container-fluid pb-5">
+  <h2>Multa</h2>
+  <form class="page-form">
+    <div class="page-form-card">
+      <h5>{{ esEdicion ? 'Editar multa' : 'Nueva multa' }}</h5>
+      <div class="mb-2">
+        <label class="form-label">Usuario</label>
+        <select class="form-select" [(ngModel)]="multa.usuarioId" name="usuarioId">
+          <option [ngValue]="0">Seleccione...</option>
+          <option *ngFor="let usuario of usuarios" [ngValue]="usuario.id">{{ usuario.nombre }}</option>
+        </select>
+      </div>
+      <div class="row g-2">
+        <div class="col-6">
+          <label class="form-label">Monto</label>
+          <input type="number" class="form-control" [(ngModel)]="multa.monto" name="monto" />
+        </div>
+        <div class="col-6">
+          <label class="form-label">Saldo</label>
+          <input type="number" class="form-control" [(ngModel)]="multa.saldo" name="saldo" />
+        </div>
+      </div>
+      <div class="mb-2 mt-2">
+        <label class="form-label">Motivo</label>
+        <input class="form-control" [(ngModel)]="multa.motivo" name="motivo" />
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Estado</label>
+        <select class="form-select" [(ngModel)]="multa.estado" name="estado">
+          <option value="pendiente">Pendiente</option>
+          <option value="pagada">Pagada</option>
+          <option value="condonada">Condonada</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Fecha pago</label>
+        <input type="date" class="form-control" [(ngModel)]="multa.fechaPago" name="fechaPago" />
+      </div>
+      <div class="page-actions d-flex gap-2">
+        <button class="btn btn-success" type="button" (click)="guardar()">Grabar</button>
+        <button class="btn btn-danger" type="button" (click)="cancelar()">Cancelar</button>
+      </div>
+    </div>
+  </form>
+</div>

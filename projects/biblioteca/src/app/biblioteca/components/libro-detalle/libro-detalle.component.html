@@ -1,0 +1,44 @@
+<div class="libro-detalle" *ngIf="libro; else noData">
+  <div class="page-toolbar">
+    <div>
+      <h2 class="page-title">{{ libro.titulo }}</h2>
+      <div class="page-subtitle" *ngIf="libro.subtitulo">{{ libro.subtitulo }}</div>
+      <div class="text-muted">{{ libro.autores || libro.autor }} | ISBN {{ libro.isbn }}</div>
+    </div>
+    <a class="btn btn-outline-primary" [routerLink]="['/catalogo', libro.id, 'editar']">Editar</a>
+  </div>
+
+  <div class="page-form-card">
+    <div class="row g-3">
+      <div class="col-md-6"><strong>Tipo material:</strong> {{ libro.tipoMaterial || 'No definido' }}</div>
+      <div class="col-md-6"><strong>Categoria:</strong> {{ libro.categoria }}</div>
+      <div class="col-md-6"><strong>Editorial:</strong> {{ libro.editorial || 'No definido' }}</div>
+      <div class="col-md-6"><strong>Idioma:</strong> {{ libro.idioma || 'No definido' }}</div>
+      <div class="col-md-6"><strong>Ano publicacion:</strong> {{ libro.anioPublicacion || 'No definido' }}</div>
+      <div class="col-md-6"><strong>Edicion:</strong> {{ libro.edicion || 'No definido' }}</div>
+      <div class="col-md-6"><strong>ISSN:</strong> {{ libro.issn || 'No definido' }}</div>
+      <div class="col-md-6"><strong>DOI:</strong> {{ libro.doi || 'No definido' }}</div>
+      <div class="col-12">
+        <strong>URL publica:</strong>
+        <span *ngIf="libro.urlPublica; else sinUrl">
+          <a [href]="libro.urlPublica" target="_blank" rel="noopener">{{ libro.urlPublica }}</a>
+        </span>
+      </div>
+      <div class="col-12"><strong>Estado:</strong> {{ libro.estado | titlecase }}</div>
+      <div class="col-12" *ngIf="libro.descripcion">
+        <strong>Descripcion:</strong>
+        <p class="mb-0">{{ libro.descripcion }}</p>
+      </div>
+      <div class="col-12" *ngIf="libro.palabrasClave">
+        <strong>Palabras clave:</strong>
+        <p class="mb-0">{{ libro.palabrasClave }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #sinUrl>No definido</ng-template>
+
+<ng-template #noData>
+  <p>No se encontro el libro solicitado.</p>
+</ng-template>

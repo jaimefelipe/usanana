@@ -1,0 +1,76 @@
+<div [hidden]="edit" class="container-fluid pb-5">
+  <div class="page-toolbar">
+    <div>
+      <h2 class="page-title">Suscripciones</h2>
+    </div>
+    <div class="input-group page-search">
+      <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+      <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text"
+        class="form-control" placeholder="Buscar">
+      <button class="btn btn-success" type="button" (click)="nuevo()"><i class="fa fa-plus-circle"
+          aria-hidden="true"></i></button>
+    </div>
+  </div>
+
+  <form>
+    <div class="row g-4 page-grid">
+      <div class="form-group col-12 col-sm-6" *ngFor="let item of suscripciones | bibliotecaSearch: searchField">
+        <div class="card h-100">
+          <a class="page-card-link" (click)="editar(item)">
+            <div class="card-body">
+              <h4 class="card-title">Serial {{ item.serialId }}</h4>
+              Proveedor: {{ item.proveedor || '-' }}<br />
+              Estado: {{ item.estado }}
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div [hidden]="!edit" class="container-fluid pb-5">
+  <h2>Suscripcion</h2>
+  <form class="page-form">
+    <div class="page-form-card">
+      <h5>{{ esEdicion ? 'Editar suscripcion' : 'Nueva suscripcion' }}</h5>
+      <div class="mb-2">
+        <label class="form-label">Serial</label>
+        <select class="form-select" [(ngModel)]="suscripcion.serialId" name="serialId">
+          <option [ngValue]="0">Seleccione...</option>
+          <option *ngFor="let serial of seriales" [ngValue]="serial.id">{{ serial.libroTitulo || serial.libroId }}</option>
+        </select>
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Proveedor</label>
+        <input class="form-control" [(ngModel)]="suscripcion.proveedor" name="proveedor" />
+      </div>
+      <div class="row g-2">
+        <div class="col-6">
+          <label class="form-label">Fecha inicio</label>
+          <input type="date" class="form-control" [(ngModel)]="suscripcion.fechaInicio" name="fechaInicio" />
+        </div>
+        <div class="col-6">
+          <label class="form-label">Fecha fin</label>
+          <input type="date" class="form-control" [(ngModel)]="suscripcion.fechaFin" name="fechaFin" />
+        </div>
+      </div>
+      <div class="mb-2 mt-2">
+        <label class="form-label">Frecuencia</label>
+        <input class="form-control" [(ngModel)]="suscripcion.frecuencia" name="frecuencia" />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Estado</label>
+        <select class="form-select" [(ngModel)]="suscripcion.estado" name="estado">
+          <option value="activa">Activa</option>
+          <option value="inactiva">Inactiva</option>
+          <option value="suspendida">Suspendida</option>
+        </select>
+      </div>
+      <div class="page-actions d-flex gap-2">
+        <button class="btn btn-success" type="button" (click)="guardar()">Grabar</button>
+        <button class="btn btn-danger" type="button" (click)="cancelar()">Cancelar</button>
+      </div>
+    </div>
+  </form>
+</div>

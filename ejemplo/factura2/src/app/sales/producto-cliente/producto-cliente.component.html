@@ -1,0 +1,237 @@
+<div [hidden]="edit" class="container-fluid pb-5">
+  <div class="page-toolbar">
+    <div>
+      <h2 class="page-title">Productos por Cliente</h2>
+      <div class="page-subtitle">Relacion de contratos y productos</div>
+    </div>
+    <div class="input-group page-search">
+      <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+      <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab1($event)" type="text"
+        class="form-control" placeholder="Buscar">
+      <button class="btn btn-primary" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
+          aria-hidden="true"></i></button>
+    </div>
+  </div>
+  <form>
+    <div class="row g-4 page-grid">
+      <div class="form-group col-12 col-sm-6" *ngFor="let Product of Productos_Cliente;let i = index">
+        <div class="card">
+          <a class="page-card-link" (click)="editRecord(Product)">
+            <div class="card-body">
+              Contrato: {{Product.Otro_Documento}}
+              <p><b>{{Product.Nombre}},Ced:{{Product.Identificacion}}</b></p>
+              <p>Tel:{{Product.Telefono}}, Email:{{Product.Correo}}</p>
+              Estado :
+              <span *ngIf="Product.Estado == ''" class="text-primary"> Registrado</span>
+              <span *ngIf="Product.Estado == '1'" class="text-warning"> Activo</span>
+              <span *ngIf="Product.Estado == '2'" class="text-success"> Inactivo</span>
+              <span *ngIf="Product.Estado == '3'" class="text-danger"> Suspendido</span>
+              <h6>Id:{{Product.Id_Persona}}</h6>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="container-fluid">
+    <ul class="pagination">
+      <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"
+            aria-hidden="true"></i></a></li>
+    </ul>
+  </div>
+</div>
+
+<!--
+ Inicio Form de Edicion
+-->
+
+<div [hidden]="!edit" class="container-fluid pb-5">
+  <form class="page-form">
+    <div class="page-form-card">
+      <h2 class="page-title mb-3">Productos por Cliente</h2>
+
+      <div class="row g-3">
+        <div class="form-group col-12">
+          <label>Cliente</label>
+          <div class="input-group">
+            <input [(ngModel)]="Cliente_Producto.Nombre_Persona" disabled name="NombreCliente" id="NombreCliente"
+              type="input" class="form-control" placeholder="Cliente">
+            <button type="button" (click)="openClientePanel(1)" class="btn btn-primary"><i
+                class="fa fa-search"></i></button>
+          </div>
+        </div>
+
+        <!-- Inicio de Inclusion de Productos -->
+        <div class="form-group col-12">
+          <label>Producto</label>
+          <div class="input-group">
+            <input [(ngModel)]="Cliente_Producto.Nombre_Producto" disabled name="NombreCliente" id="NombreCliente"
+              type="input" class="form-control" placeholder="Producto">
+            <button type="button" (click)="openProductoPanel()" class="btn btn-primary"><i
+                class="fa fa-search"></i></button>
+            <button type="button" (click)="addDetail()" class="btn btn-success"><i
+                class="fa fa-plus-circle"></i></button>
+          </div>
+        </div>
+        <!-- Fin de Inclusion de Productos -->
+
+        <!-- Inicio Lista de Detalles -->
+        <div class="row g-3 d-none d-md-block data-header">
+          <div class="row g-3">
+            <div class="form-group col-md-2 m-1">
+              Codigo
+            </div>
+            <div class="form-group col-12 col-md-8 m-1">
+              Descripcion
+            </div>
+            <div class="form-group col-12 col-md-1 m-1">
+              Accion
+            </div>
+          </div>
+        </div>
+        <div class="row g-3 table table-striped table-hover table-dark table-bordered data-table">
+          <div class="form-group col-12">
+            <div class="row g-3" *ngFor="let Detail of Clientes_Producto;let indice = index">
+              <div class="form-group col-12 col-md-2 m-1">
+                {{Detail.Id_Producto}}
+              </div>
+              <div class="form-group col-12 col-md-7 m-1">
+                {{Detail.Nombre_Producto | slice:0:40}}
+              </div>
+
+              <div class="form-group col-12 col-md-2 m-1">
+                <span *ngIf="Detail.Estado == '1'">
+                  <button class="btn btn-success btn-sm"
+                    style="min-width: 0px;margin-right: 5px;padding: 0rem 0.31rem;" type="button"
+                    (click)="disableProducto(indice)"><i class="fa fa-check" aria-hidden="true"></i></button>
+                </span>
+                <span *ngIf="Detail.Estado == '0'">
+                  <button class="btn btn-secondary btn-sm"
+                    style="min-width: 0px;margin-right: 5px;padding: 0rem 0.31rem;" type="button"
+                    (click)="enableProduct(indice)"><i class="fa fa-circle-thin" aria-hidden="true"></i></button>
+                </span>
+
+                <span style="display: inline-block;">
+                  <button type="button" class="btn btn-danger btn-sm"
+                    style="min-width: 0px;margin-right: 5px;padding: 0rem 0.31rem;"
+                    (click)="remove_Detalle(indice)"><i class="fa fa-trash" aria-hidden="true"
+                      title="Borrar Linea"></i></button>
+                </span>
+                <button type="button" class="btn btn-primary btn-sm"
+                  style="min-width: 0px;margin-right: 5px;padding: 0rem 0.31rem;"
+                  (click)="edit_Detalle(indice)"><i class="fa fa-edit" aria-hidden="true"
+                    title="Editar Linea"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Fin Lista de Detalles -->
+
+        <div class="form-group col-12">
+          <div class="row g-3 page-actions">
+            <div class="form-group col-12 col-md-8"></div>
+            <div class="form-group col-12 col-md-2">
+              <button (click)="grabar()" type="button" class="btn btn-success w-100"
+                title="Cancela edicion">Grabar</button>
+            </div>
+            <div class="form-group col-12 col-md-2">
+              <button (click)="cancel()" type="button" class="btn btn-danger w-100"
+                title="Cancela edicion">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<!-- Fin Form de Edicion -->
+
+<!--Inicio Pantalla Clientes -->
+
+<div [hidden]="!PantallaClientes" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Seleccionar Cliente</h2>
+      <input [(ngModel)]="searchFieldClientes" (blur)="searchClientes()" (keydown)="keytabClientes($event)" type="text"
+        class="form-control" placeholder="Buscar">
+    </div>
+    <div class="card-body modal-grid">
+      <div class="row g-3">
+        <div class="form-group col-12 col-sm-6" *ngFor="let Account of Clientes;let i = index">
+          <a (click)="SeleccionarCliente(Account)">
+            <div class="card">
+              <div class="card-body">
+                Contrato:{{Account.Otro_Documento}}
+                <h5>{{Account.Nombre}}</h5>
+                Id:{{Account.Identificacion}}, Tel:{{Account.Telefono}}
+                Estado :
+                <span *ngIf="Account.Estado == '1'" class="text-success"> Activo</span>
+                <span *ngIf="Account.Estado == '2'" class="text-warning"> Inactivo</span>
+                <span *ngIf="Account.Estado == '3'" class="text-warning"> Suspendido</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="row g-3">
+          <div class="form-group col-8 col-md-10"></div>
+          <div class="form-group col-2">
+            <button (click)="closePantallaClientes()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--Fin  Pantalla Clientes -->
+
+<!-- Inicio Pantalla Productos -->
+<div [hidden]="!PantallaProductos" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Seleccionar Articulo</h2>
+      <input [(ngModel)]="searchFieldProduct" (blur)="searchProduct()" (keydown)="keytabProduct($event)" type="text"
+        class="form-control" placeholder="Buscar">
+    </div>
+    <div class="card-body modal-grid">
+      <div class="row g-3">
+        <div class="form-group col-12 col-sm-6" *ngFor="let Product of Productos;let i = index">
+          <a (click)="SeleccionarProducto(Product)">
+            <div class="card">
+              <div class="card-body">
+                {{Product.SKU}}
+                <h4 class="card-title">{{Product.Descripcion}} </h4>
+                <p><b>{{Product.Nombre }}</b></p>
+                Precio : {{Product.Precio|currency: ' '}} Moneda: {{Product.Moneda}}
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="row g-3">
+          <div class="form-group col-8 col-md-10"></div>
+          <div class="form-group col-2">
+            <button (click)="closePantallaProductos()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Fin Pantalla Productos -->

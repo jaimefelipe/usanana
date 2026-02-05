@@ -1,5 +1,5 @@
-<div [hidden]="edit" class="container pb-5">
-  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+<div [hidden]="edit" class="container-fluid pb-5">
+  
   <h2>Facturas Herroneas </h2>
   <div class="container-fluid">
     <div class="row">
@@ -16,7 +16,7 @@
     </div>
   </div>
   <form>
-    <div class="form-row">
+    <div class="form-row page-grid">
       <div class="form-group col-12 col-sm-6" *ngFor="let Product of Invoices;let i = index">
         <div class="card">
           <div class="card-body">
@@ -54,8 +54,8 @@
   </div>
 </div>
 
-<div [hidden]="!edit" class="container pb-5">
-  <a [routerLink]="['/']" ><img src="/assets/toxologo.png" width="85px"></a>
+<div [hidden]="!edit" class="container-fluid pb-5">
+  
   <h2>Categorías de Productos</h2>
 
   <form>

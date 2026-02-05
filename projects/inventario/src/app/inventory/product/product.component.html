@@ -1,5 +1,5 @@
-<div [hidden]="edit" class="container pb-5">
-  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+<div [hidden]="edit" class="container-fluid pb-5">
+  
   <div class="input-group mb-3">
     <div class="input-group-prepend">
       <h2>Artículos &nbsp;</h2>
@@ -29,7 +29,7 @@
     </div>
   </div>
   <form>
-    <div class="form-row">
+    <div class="form-row page-grid">
 
       <div class="form-group col-12 col-sm-6" *ngFor="let Product of Articulos;let i = index">
         <div class="card">
@@ -65,8 +65,8 @@
   Form de Edición
 -->
 
-<div [hidden]="!edit" class="container pb-5">
-  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+<div [hidden]="!edit" class="container-fluid pb-5">
+  
   <h2>Artículo</h2>
 
   <form>
@@ -277,7 +277,7 @@
           <h3>Componentes</h3>
         </div>
       </div>
-      <div class="collapse show form-row col-md-12" id="GeneralData">
+      <div class="collapse show form-row col-md-12 page-grid" id="GeneralData">
         <div class="form-group col-12 col-sm-6" *ngFor="let Componete of Componentes;let i = index">
           <div class="card">
             <a (click)="EditComponete(Componete)">
@@ -378,7 +378,7 @@
           </select>
         </div>
       </div>
-      <div class="form-row">
+      <div class="form-row page-grid">
         <div class="form-group col-md-12">
           <label>Partes</label>
           <input [(ngModel)]="Componente.Parte" (keydown)="addParte($event)" class="form-control" name="Parte" id="Parte" type="text"
@@ -425,7 +425,7 @@
           placeholder="Buscar">
     </div>
     <div class="card-body modal-grid">
-      <div class="form-row">
+      <div class="form-row page-grid">
         <div class="form-group col-12 col-sm-6" *ngFor="let Articulo of Articulos;let i = index">
           <a (click)="seleccionarProducto(Articulo)">
             <div class="card">

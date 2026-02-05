@@ -1,0 +1,49 @@
+<div class="biblioteca-dashboard">
+  <div class="page-toolbar">
+    <div>
+      <h2 class="page-title">Gestion de Biblioteca</h2>
+      <div class="page-subtitle">Resumen operativo del dia.</div>
+    </div>
+  </div>
+
+  <div class="row g-4 page-grid">
+    <div class="col-md-6 col-xl-3">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="text-muted">Libros disponibles</div>
+          <div class="kpi-value">{{ librosDisponibles }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="text-muted">Prestamos activos</div>
+          <div class="kpi-value">{{ prestamosActivos }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+      <div class="card h-100 border-warning">
+        <div class="card-body">
+          <div class="text-muted">Prestamos vencidos</div>
+          <div class="kpi-value">{{ prestamosVencidos }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="text-muted">Reservas activas</div>
+          <div class="kpi-value">{{ reservasActivas }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="quick-links">
+    <a class="btn btn-outline-primary" [routerLink]="['/catalogo']">Ir al catalogo</a>
+    <a class="btn btn-outline-primary" [routerLink]="['/prestamos']">Ver prestamos</a>
+    <a class="btn btn-outline-primary" [routerLink]="['/reservas']">Gestionar reservas</a>
+  </div>
+</div>

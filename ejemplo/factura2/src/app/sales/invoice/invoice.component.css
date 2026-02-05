@@ -1,0 +1,339 @@
+.invoice-search {
+  width: min(520px, 100%);
+}
+
+.invoice-grid {
+  margin-top: 8px;
+}
+
+.invoice-card-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.invoice-card .card-body {
+  padding: 18px;
+}
+
+.invoice-line {
+  margin-bottom: 6px;
+  color: var(--ui-muted);
+  font-size: 0.95rem;
+}
+
+.invoice-line b {
+  color: var(--ui-text);
+}
+
+.invoice-error {
+  margin-top: 8px;
+  font-size: 0.9rem;
+}
+
+.invoice-id {
+  margin-top: 10px;
+}
+
+.invoice-client-group .form-control {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.invoice-client-group .btn {
+  border-radius: 0;
+  width: 44px;
+  padding: 0;
+}
+
+.invoice-client-group .btn:last-child {
+  border-top-right-radius: var(--ui-radius-sm);
+  border-bottom-right-radius: var(--ui-radius-sm);
+}
+
+.invoice-detail-header {
+  margin-bottom: 10px;
+  --bs-gutter-x: 0;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.invoice-detail-header .form-group {
+  white-space: nowrap;
+  font-size: 0.95rem;
+}
+
+.invoice-detail-table {
+  margin-top: 6px;
+  padding-top: 6px;
+  --bs-gutter-x: 0;
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.invoice-totals {
+  margin-top: 12px;
+}
+
+.invoice-total-field .input-group-text {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  min-width: 92px;
+  justify-content: center;
+}
+
+.invoice-total-field .currency {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  display: flex;
+  align-items: center;
+  border-left: 0;
+}
+
+.invoice-actions {
+  margin-top: 14px;
+}
+
+.invoice-actions .btn,
+.invoice-actions .form-control,
+.invoice-actions .input-group-text {
+  height: 44px;
+}
+
+.invoice-action-group .form-control {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.invoice-action-group .btn {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-left: 0;
+}
+
+@media (max-width: 575.98px) {
+  .invoice-form-card {
+    padding: 14px;
+  }
+
+  .invoice-form-header {
+    gap: 8px;
+  }
+
+  .invoice-top-row .col-6,
+  .invoice-top-row .col-12 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  .invoice-top-row .input-group,
+  .invoice-top-row .form-control,
+  .invoice-top-row .form-select {
+    width: 100%;
+  }
+
+  .invoice-top-row .input-group {
+    flex-wrap: nowrap;
+    align-items: stretch;
+  }
+
+  .invoice-top-row .input-group-text,
+  .invoice-top-row .btn {
+    flex: 0 0 44px;
+    padding: 0;
+  }
+
+  .invoice-top-row .form-control {
+    min-width: 0;
+  }
+
+  .invoice-product-bar {
+    padding: 10px;
+  }
+
+  .invoice-totals .form-group {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  .invoice-actions .form-group {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  .invoice-actions .btn,
+  .invoice-actions .form-control,
+  .invoice-actions .input-group {
+    width: 100%;
+  }
+
+  .invoice-action-group {
+    flex-wrap: nowrap;
+  }
+}
+
+.invoice-form-header {
+  margin-bottom: 4px;
+}
+
+.invoice-form-header .invoice-top-row {
+  margin: 0;
+}
+
+.invoice-form-header .col {
+  padding-left: 0;
+}
+
+.invoice-top-row .input-group-text,
+.invoice-top-row .form-control,
+.invoice-top-row .btn {
+  border-radius: 0;
+}
+
+.invoice-top-row .input-group .form-control:first-child,
+.invoice-top-row .input-group .input-group-text:first-child {
+  border-top-left-radius: var(--ui-radius-sm);
+  border-bottom-left-radius: var(--ui-radius-sm);
+}
+
+.invoice-top-row .input-group .form-control:last-child,
+.invoice-top-row .input-group .btn:last-child {
+  border-top-right-radius: var(--ui-radius-sm);
+  border-bottom-right-radius: var(--ui-radius-sm);
+}
+
+.invoice-top-row .input-group-text {
+  border-right: 0;
+  background: #f3f4f6;
+}
+
+.invoice-top-row .input-group .form-control + .input-group-text,
+.invoice-top-row .input-group .form-control + .btn,
+.invoice-top-row .input-group-text + .form-control {
+  border-left: 0;
+}
+
+.invoice-type-group .btn {
+  border-left: 0;
+}
+
+.invoice-type-group .form-control {
+  flex: 1 1 auto;
+}
+
+.invoice-type-group {
+  max-width: 220px;
+}
+
+@media (min-width: 1200px) {
+  .invoice-type-group {
+    flex: 0 0 200px;
+    max-width: 200px;
+  }
+}
+
+.invoice-detail-header .row.g-3 {
+  margin-bottom: 8px;
+}
+
+.invoice-detail-table .row.g-3 {
+  margin-top: 0;
+}
+
+.invoice-product-bar {
+  --bs-gutter-x: 12px;
+  margin: 8px 0 0;
+  padding: 8px 12px 12px;
+  background: #143a68;
+  border-radius: var(--ui-radius-md);
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+  box-sizing: border-box;
+}
+
+.invoice-product-bar label {
+  display: block;
+  margin: 0 0 6px;
+  line-height: 1.3;
+  color: #e6f2ff;
+}
+
+.invoice-product-bar .form-group {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.invoice-consecutive-group .input-group-text {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: 0;
+}
+
+.invoice-consecutive-group .form-control {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.invoice-form-card .btn.btn-info {
+  height: 44px;
+  min-width: 44px;
+  padding: 0 12px;
+  background: #143a68 !important;
+  border-color: #143a68 !important;
+  color: #fff !important;
+}
+
+.invoice-form-card .btn.btn-info:hover,
+.invoice-form-card .btn.btn-info:focus {
+  background: #102f55 !important;
+  border-color: #102f55 !important;
+  color: #fff !important;
+}
+
+.invoice-product-bar .form-control,
+.invoice-product-bar .input-group-text,
+.invoice-product-bar .btn {
+  border-radius: var(--ui-radius-sm);
+}
+
+.invoice-product-bar .input-group .form-control {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.invoice-product-bar .input-group .btn {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-left: 0;
+}
+
+
+.invoice-form {
+  margin-top: 12px;
+}
+
+.invoice-form-card {
+  background: var(--ui-surface);
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius-lg);
+  padding: 18px;
+  box-shadow: var(--ui-shadow-sm);
+}
+
+.invoice-form-card label {
+  font-weight: 600;
+  color: var(--ui-text);
+}
+
+.invoice-form-card .input-group-text {
+  background: #f3f4f6;
+}
+
+.invoice-form-card textarea.form-control {
+  min-height: 96px;
+}

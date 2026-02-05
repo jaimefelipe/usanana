@@ -1,0 +1,76 @@
+<div [hidden]="edit" class="container-fluid pb-5">
+  <div class="page-toolbar">
+    <div>
+      <h2 class="page-title">Integraciones</h2>
+    </div>
+    <div class="input-group page-search">
+      <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+      <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text"
+        class="form-control" placeholder="Buscar">
+      <button class="btn btn-success" type="button" (click)="nuevo()"><i class="fa fa-plus-circle"
+          aria-hidden="true"></i></button>
+    </div>
+  </div>
+
+  <form>
+    <div class="row g-4 page-grid">
+      <div class="form-group col-12 col-sm-6" *ngFor="let item of integraciones | bibliotecaSearch: searchField">
+        <div class="card h-100">
+          <a class="page-card-link" (click)="editar(item)">
+            <div class="card-body">
+              <h4 class="card-title">{{ item.tipo }}</h4>
+              Endpoint: {{ item.endpoint }}<br />
+              Estado: {{ item.estado }}
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div [hidden]="!edit" class="container-fluid pb-5">
+  <h2>Integracion</h2>
+  <form class="page-form">
+    <div class="page-form-card">
+      <h5>{{ esEdicion ? 'Editar integracion' : 'Nueva integracion' }}</h5>
+      <div class="mb-2">
+        <label class="form-label">Tipo</label>
+        <select class="form-select" [(ngModel)]="integracion.tipo" name="tipo">
+          <option *ngFor="let tipo of tipos" [value]="tipo">{{ tipo }}</option>
+        </select>
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Endpoint</label>
+        <input class="form-control" [(ngModel)]="integracion.endpoint" name="endpoint" />
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Usuario</label>
+        <input class="form-control" [(ngModel)]="integracion.usuario" name="usuario" />
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Clave</label>
+        <input class="form-control" [(ngModel)]="integracion.clave" name="clave" />
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Puerto</label>
+        <input type="number" class="form-control" [(ngModel)]="integracion.puerto" name="puerto" />
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Estado</label>
+        <select class="form-select" [(ngModel)]="integracion.estado" name="estado">
+          <option value="activo">Activo</option>
+          <option value="inactivo">Inactivo</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Notas</label>
+        <textarea class="form-control" rows="2" [(ngModel)]="integracion.notas" name="notas"></textarea>
+      </div>
+      <div class="page-actions d-flex gap-2">
+        <button class="btn btn-success" type="button" (click)="guardar()">Grabar</button>
+        <button class="btn btn-danger" type="button" (click)="cancelar()">Cancelar</button>
+      </div>
+    </div>
+  </form>
+</div>

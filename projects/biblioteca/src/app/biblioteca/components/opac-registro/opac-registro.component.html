@@ -1,0 +1,33 @@
+<div class="opac-registro">
+  <h2>Registro de usuario</h2>
+  <div class="card">
+    <div class="card-body">
+      <div class="mb-2">
+        <label class="form-label">Nombre</label>
+        <input class="form-control" [(ngModel)]="usuario.nombre" name="nombre" />
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Email</label>
+        <input class="form-control" [(ngModel)]="usuario.email" name="email" />
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Telefono</label>
+        <input class="form-control" [(ngModel)]="usuario.telefono" name="telefono" />
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Codigo universitario</label>
+        <input class="form-control" [(ngModel)]="usuario.codigoUniversitario" name="codigoUniversitario" />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Tipo usuario</label>
+        <select class="form-select" [(ngModel)]="usuario.tipoUsuario" name="tipoUsuario">
+          <option value="alumno">Alumno</option>
+          <option value="docente">Docente</option>
+          <option value="administrativo">Administrativo</option>
+          <option value="externo">Externo</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" (click)="registrar()">Registrar</button>
+    </div>
+  </div>
+</div>

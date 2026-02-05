@@ -112,7 +112,7 @@ export class PrimerIngresoComponent implements OnInit {
       //Persona existe
       Swal.fire({
         title: "Ya Existe un Candidato Inscrito con el nombre " + persona['data'][0]['Nombre'],
-        text: "Si son sus datos por favor contacte a UNELA vía telefónica",
+        text: "Si son sus datos por favor contacte vía telefónica",
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',

@@ -1,27 +1,20 @@
-<div [hidden]="edit" class="container pb-5">
-  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
-  <h2>Cobros</h2>
-  <div class="container-fluid">
-    <div class="row">
-      <div class="input-group mb-3">
-        <div class="input-group-prepend">
-          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
-        </div>
-        <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
-          placeholder="Buscar">
-        <div class="input-group-append">
-          <button class="btn btn-success" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
-              aria-hidden="true"></i></button>
-        </div>
-      </div>
-    </div>
+<div [hidden]="edit" class="container-fluid pb-5">
+  <div class="page-toolbar">
+  <h2 class="page-title">Cobros</h2>
+  <div class="input-group page-search">
+    <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+    <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+      placeholder="Buscar">
+    <button class="btn btn-success" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
+        aria-hidden="true"></i></button>
+  </div>
   </div>
   <form>
-    <div class="form-row">
+    <div class="row g-4 page-grid">
 
       <div class="form-group col-12 col-sm-6" *ngFor="let Cobro of Cobros;let i = index">
-        <div class="card">
-          <a (click)="editRecord(Cobro)">
+        <div class="card h-100">
+          <a class="page-card-link" (click)="editRecord(Cobro)">
             <div class="card-body">
               <h4 class="card-title">{{Cobro.Nombre}}</h4>
               {{Cobro.Id_Cobro}}, {{Cobro.Id_Producto}}
@@ -70,8 +63,7 @@
     Form de Edición
   -->
   
-  <div [hidden]="!edit" class="container pb-5">
-    <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <div [hidden]="!edit" class="container-fluid pb-5">
     <h2>Cobro Academico</h2>
   
     <form>
@@ -159,10 +151,10 @@
         class="form-control" placeholder="Buscar">
     </div>
     <div class="card-body modal-grid">
-      <div class="form-row">
+    <div class="row g-4 page-grid">
         <div class="form-group col-12 col-sm-6" *ngFor="let Product of Productos;let i = index">
-          <a (click)="SeleccionarProducto(Product)">
-            <div class="card">
+          <a class="page-card-link" (click)="SeleccionarProducto(Product)">
+            <div class="card h-100">
               <div class="card-body">
                 {{Product.SKU}}
                 <h4 class="card-title">{{Product.Descripcion}} </h4>
@@ -189,3 +181,5 @@
     </div>
   </div>
 </div>
+
+

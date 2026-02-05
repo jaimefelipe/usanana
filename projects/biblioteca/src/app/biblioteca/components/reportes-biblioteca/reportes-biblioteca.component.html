@@ -1,0 +1,51 @@
+<div class="reportes-biblioteca">
+  <div class="page-toolbar">
+    <div>
+      <h2 class="page-title">Reportes</h2>
+      <div class="page-subtitle">Indicadores rapidos de uso y circulacion.</div>
+    </div>
+  </div>
+
+  <div class="row g-4 page-grid">
+    <div class="col-md-6 col-xl-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5>{{ resumen.libros }}</h5>
+          <span class="text-muted">Coleccion registrada</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-xl-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5>{{ resumen.prestamos }}</h5>
+          <span class="text-muted">Prestamos vigentes</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-xl-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5>{{ resumen.reservas }}</h5>
+          <span class="text-muted">Cola de espera</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-xl-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5>{{ resumen.multas }}</h5>
+          <span class="text-muted">Pendientes de pago</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-xl-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5>{{ resumen.usuarios }}</h5>
+          <span class="text-muted">Usuarios activos</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

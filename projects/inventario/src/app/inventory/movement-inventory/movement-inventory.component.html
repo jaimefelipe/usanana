@@ -1,5 +1,5 @@
-<div [hidden]="edit" class="container pb-5">
-  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+<div [hidden]="edit" class="container-fluid pb-5">
+  
   <h2>Movimientos de Inventario</h2>
   <div class="container-fluid">
     <div class="row">
@@ -17,7 +17,7 @@
     </div>
   </div>
   <form>
-    <div class="form-row">
+    <div class="form-row page-grid">
       <div class="form-group col-12 col-sm-6" *ngFor="let Movement of Movements;let i = index">
         <div class="card">
           <a (click)="editRecord(Movement)">
@@ -58,8 +58,8 @@
   Form de Edición
 -->
 
-<div [hidden]="!edit" class="container pb-5">
-  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+<div [hidden]="!edit" class="container-fluid pb-5">
+  
   <h2>Movimiento de Inventario</h2>
 
   <form>
@@ -281,7 +281,7 @@
         class="form-control" placeholder="Buscar">
     </div>
     <div class="card-body modal-grid">
-      <div class="form-row">
+      <div class="form-row page-grid">
         <div class="form-group col-12 col-sm-6" *ngFor="let Product of registros;let i = index">
           <a (click)="Seleccionar(Product)">
             <div class="card">

@@ -2,3 +2,32 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+/* Card grids */
+.page-grid {
+  margin-top: 8px;
+  row-gap: 1rem;
+}
+
+.page-grid > [class^="col-"],
+.page-grid > [class*=" col-"] {
+  display: flex;
+}
+
+.page-grid > [class^="col-"] > *,
+.page-grid > [class*=" col-"] > * {
+  width: 100%;
+}
+
+.page-grid .page-card-link {
+  display: flex;
+  flex: 1 1 auto;
+}
+
+.page-grid .page-card-link .card,
+.page-grid .card {
+  width: 100%;
+  flex: 1 1 auto;
+}
+

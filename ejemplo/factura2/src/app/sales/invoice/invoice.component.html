@@ -1,0 +1,685 @@
+<div [hidden]="edit" class="container-fluid pb-5">
+
+  <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-3">
+    <div>
+      <h2 class="mb-1">Facturas de Venta</h2>
+      <div class="text-muted small">Resumen de documentos recientes</div>
+    </div>
+    <div class="input-group invoice-search">
+      <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+      <input [(ngModel)]="searchField" (blur)="search()" (keydown)="keytab1($event)" type="text" class="form-control"
+        placeholder="Buscar">
+      <button class="btn btn-primary" type="button" (click)="editRecord('')">
+        <i class="fa fa-plus-circle" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="row g-4 invoice-grid">
+    <div class="col-12 col-md-6 col-xl-4" *ngFor="let Product of Invoices;let i = index">
+      <div class="card invoice-card h-100">
+        <a class="invoice-card-link" (click)="editRecord(Product)">
+          <div class="card-body">
+
+            <div class="d-flex align-items-start justify-content-between gap-2">
+              <h4 class="card-title mb-1">
+                <span *ngIf="Product.Tipo_Documento == '01'" class="text-primary"> FA</span>
+                <span *ngIf="Product.Tipo_Documento == '04'" class="text-success"> TE</span>
+                <span *ngIf="Product.Tipo_Documento == '02'" class="text-info"> ND</span>
+                <span *ngIf="Product.Tipo_Documento == '03'" class="text-success"> NC</span>
+                # {{Product.Consecutivo}}
+              </h4>
+              <span class="text-muted small">{{Product.Creado_El}}</span>
+            </div>
+
+            <p class="invoice-line">Nombre: <b>{{Product.Nombre }}</b> Monto: {{Product.Total}}</p>
+            <div class="invoice-line">
+              Condicion:
+              <span *ngIf="Product.Condicion_Venta == '01'" class="text-primary"> Contado</span>
+              <span *ngIf="Product.Condicion_Venta == '02'" class="text-primary"> Credito</span>
+              Moneda: {{Product.Moneda}}
+            </div>
+            <div class="invoice-line">
+              Tipo:
+              <span *ngIf="Product.Tipo_Documento == '01'" class="text-primary"> Factura</span>
+              <span *ngIf="Product.Tipo_Documento == '04'" class="text-success"> Tiquete electronico</span>
+              <span *ngIf="Product.Tipo_Documento == '02'" class="text-info"> Nota de debito</span>
+              <span *ngIf="Product.Tipo_Documento == '03'" class="text-success"> Nota de credito</span>
+            </div>
+            <div class="invoice-line">
+              Metodo Pago:
+              <span *ngIf="Product.Metodo_Pago == '01'" class="text-primary"> Efectivo</span>
+              <span *ngIf="Product.Metodo_Pago == '02'" class="text-primary"> Tarjeta de Credito</span>
+              <span *ngIf="Product.Metodo_Pago == '03'" class="text-primary"> Cheque</span>
+              <span *ngIf="Product.Metodo_Pago == '04'" class="text-primary"> Transferencia/Deposito Bancario</span>
+              <span *ngIf="Product.Metodo_Pago == '05'" class="text-primary"> Sinpe Movil</span>
+              <span *ngIf="Product.Metodo_Pago == '06'" class="text-primary"> Registrado</span>
+              <span *ngIf="Product.Metodo_Pago == '98'" class="text-primary"> Otro - Efectivo</span>
+            </div>
+            <div class="invoice-line">
+              Estado:
+              <span *ngIf="Product.Respuesta_MH == 'Registrado'" class="text-primary"> Registrado</span>
+              <span *ngIf="Product.Respuesta_MH == 'procesando'" class="text-warning"> Procesando</span>
+              <span *ngIf="Product.Respuesta_MH == 'aceptado'" class="text-success"> Aceptado</span>
+              <span *ngIf="Product.Respuesta_MH == 'aplicado'" class="text-success"> Aplicado</span>
+              <span *ngIf="Product.Respuesta_MH == 'rechazado'" class="text-danger"> Rechazado</span>
+              <span *ngIf="Product.Respuesta_MH == 'Contingenc'" class="text-danger"> Contingencia</span>
+            </div>
+
+            <div *ngIf="Product.Respuesta_MH == 'rechazado'" class="invoice-error text-danger">
+              {{Product.Error_MH}}
+            </div>
+            <div class="invoice-id text-muted small">Id: {{Product.Id_Factura}}</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+    <ul class="pagination">
+      <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"
+            aria-hidden="true"></i></a></li>
+    </ul>
+  </div>
+</div>
+
+<!--
+  Form de Edición
+-->
+
+<div [hidden]="!edit" class="container-fluid pb-5">
+  <form class="invoice-form">
+    <div class="invoice-form-card">
+    <div class="row g-3 align-items-center invoice-form-header">
+      <div class="col">
+          <div class="row g-3 invoice-top-row">
+            <!-- Inicio de Primera divisi?n -->
+            <div class="input-group col-12 col-md-3 col-xl-2 pb-2 pt-1 invoice-type-group">
+              <select [(ngModel)]="Invoice.Tipo_Documento" name="Tipo_Documento" type="text"
+                [disabled]="Invoice.Respuesta_MH !='Registrado'" class="form-control">
+                <option value='01'>Factura</option>
+                <option value='04'>Tiquete electr?nico</option>
+                <option value='02'>Nota de d?bito</option>
+                <option value='03'>Nota de cr?dito</option>
+              </select>
+              <div class="input-group-append">
+                <button type="button" data-bs-toggle="collapse" data-bs-target="#GeneralData" class="btn btn-primary"><i
+                    class="fa fa-bars"></i></button>
+              </div>
+            </div>
+            <div class="col-12 col-md-9">
+              <div class="row g-3 collapse show p-1" id="GeneralData">
+                <div class="form-group col-6 col-md-3">
+                  <select [(ngModel)]="Invoice.Moneda" name="Moneda" [disabled]="Invoice.Respuesta_MH !='Registrado'"
+                    class="form-control">
+                    <option value='CRC'>Colones</option>
+                    <option value='USD'>D?lares</option>
+                  </select>
+                </div>
+                <div class="col-6 col-md-3">
+                  <div class="input-group mb-1">
+                    <div class="input-group-prepend">
+                      <div class="input-group-text">#</div>
+                    </div>
+                    <input [(ngModel)]="Invoice.Tipo_Cambio" name="Tipo_Cambio" disabled="true" type="text"
+                      class="form-control" placeholder="Tipo Cambio">
+                  </div>
+                </div>
+
+                <div class="col-6 col-md-3">
+                  <select [disabled]="Invoice.Respuesta_MH !='Registrado'" [(ngModel)]="Invoice.Metodo_Pago " name="Metodo_Pago"
+                    id="Metodo_Pago" class="form-control">
+                    <option value='01'>Efectivo</option>
+                    <option value='02'>Tarjeta de Credito</option>
+                    <option value='06'>Sinpe M?vil</option>
+                    <option value='03'>Cheque</option>
+                    <option value='04'>Transferencia/Deposito Bancario</option>
+                    <option value='05'>Recaudo Tercero</option>
+                    <option value='98'>Otro - Efectivo </option>
+                  </select>
+                </div>
+                <div class="col-6 col-md-3">
+                  <div class="input-group mb-1">
+                    <div class="input-group-prepend">
+                      <div class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i></div>
+                    </div>
+                    <input [(ngModel)]="Invoice.Creado_El" class="form-control" placeholder="Fecha" [disabled]="Invoice.Respuesta_MH !='Registrado'"
+                      name="Fecha">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Fin de Primera divisi?n -->
+          </div>
+        </div>
+      </div>
+
+<div [hidden]="POV && Invoice.Tipo_Documento == '04'" class="row g-3 ">
+      <!-- Inicio de Segunda división -->
+      <div class="form-group col-12 col-md-3">
+        <label>Cliente</label>
+        <div class="input-group invoice-client-group">
+          <input [disabled]="Invoice.Respuesta_MH !='Registrado'" [(ngModel)]="Invoice.Numero_Identificacion"
+            name="Numero_Identificacion" type="input" (blur)='IdValidation()' (keydown)="enterValidation($event)"
+            class="form-control" placeholder="Identificacion">
+          <div class="input-group-append">
+            <button type="button" (click)="ClienteNuevo()" class="btn btn-success"><i
+              class="fa fa-plus-circle"></i></button>
+            <button type="button" data-bs-toggle="collapse" data-bs-target="#GeneralData2" class="btn btn-primary"><i
+                class="fa fa-bars"></i></button>
+          </div>
+        </div>
+      </div>
+      <div class="form-group col-md-6">
+        <label>Nombre del Cliente</label>
+        <input [disabled]="Invoice.Respuesta_MH !='Registrado'" [(ngModel)]="Invoice.Nombre" name="Nombre" Id="NombreCliente" type="input"
+          class="form-control" placeholder="Nobre del Cliente">
+      </div>
+      <div class="col-6 col-md-2">
+        <label>Consecutivo</label>
+        <div class="input-group mb-1 invoice-consecutive-group">
+          <div class="input-group-prepend">
+            <div class="input-group-text">#</div>
+          </div>
+          <input [(ngModel)]="Invoice.Consecutivo" name="Consecutivo" disabled="true" type="text"
+            class="form-control" placeholder="Id_Factura">
+        </div>
+      </div>
+
+      <div class="form-group col-md-1">
+        <label>Exoneración</label>
+        <button *ngIf="Invoice.Respuesta_MH =='Registrado'" (click)="exoneracion()" type="button"
+            class="btn btn-info" title="Cotización">Exo</button>
+        </div>
+      <div class="row g-3 col-12 collapse show p-1" id="GeneralData2">
+
+        <div class="form-group col-md-3">
+          <label>Correo</label>
+          <input [disabled]="Invoice.Respuesta_MH !='Registrado'" id="Correo" [(ngModel)]="Invoice.Correo" name="Correo"
+            type="input" class="form-control" placeholder="Correo">
+        </div>
+        <div class="form-group col-md-3">
+          <label>Correo</label>
+          <input [disabled]="Invoice.Respuesta_MH !='Registrado'" id="Correo" [(ngModel)]="Invoice.Correo2" name="Correo2"
+            type="input" class="form-control" placeholder="Correo 2">
+        </div>
+
+        <div class="form-group col-6 col-md-2">
+          <label for="inputPassword4">Tipo Identificacion</label>
+          <select [(ngModel)]="Invoice.Codigo_Identificacion" name="Codigo_Identificacion"
+          [disabled]="Invoice.Respuesta_MH !='Registrado'" class="form-control">
+            <option value='01'>Cédula Física</option>
+            <option value='02'>Cédula Juridica</option>
+            <option value='03'>Dimex</option>
+            <option value='04'>NITE</option>
+          </select>
+        </div>
+
+        <div class="col-6 col-md-2">
+          <label>Condicion de venta</label>
+          <select [(ngModel)]="Invoice.Condicion_Venta" name="Condicion_Venta"
+            [disabled]="Invoice.Respuesta_MH !='Registrado'" class="form-control">
+            <option value='01'>Contado</option>
+            <option value='02'>Credito</option>
+            <option value='03'>Consignacion</option>
+          </select>
+        </div>
+        <div class="col-6 col-md-2">
+          <label>Plazo</label>
+          <input [(ngModel)]="Invoice.Plazo_Credito" name="Plazo_Credito"
+            [disabled]="Invoice.Respuesta_MH !='Registrado'" type="text" class="form-control" placeholder="Plazo">
+        </div>
+       
+       
+        <div class="col-12">
+          <label>Notas</label>
+          <textarea class="form-control" [(ngModel)]="Invoice.Notas" name="Notas"></textarea>
+        </div>
+      </div>
+    </div> <!-- Fin de Segunda división -->
+
+    </div>
+    <!-- Inicio de Inclusión de Productos -->
+    <div [hidden]="Invoice.Respuesta_MH !='Registrado'" class="row g-3 invoice-product-bar">
+      <div class="form-group col-12 col-md-3">
+        <label>Artículo</label>
+
+        <div class="input-group">
+          <input [disabled]="Invoice.Respuesta_MH !='Registrado'" [(ngModel)]="Detalle.SKU"
+          name="SKU" id="SKU" type="input" class="form-control" placeholder="Código"
+          (blur)="processProduct('Descripcion')" (keydown)="keytab($event,'Descripcion')">
+          <div class="input-group-append">
+            <button type="button" (click)="obtenerProducto('',1)" class="btn btn-primary"><i
+                class="fa fa-search"></i></button>
+          </div>
+        </div>
+      </div>
+      <div class="form-group col-12 col-md-3">
+        <label>Descripcion</label>
+        <input [disabled]="Invoice.Respuesta_MH !='Registrado'" [(ngModel)]="Detalle.Descripcion" name="Descripcion"
+          id="Descripcion" type="input" class="form-control" placeholder="Descripción"
+          (keydown)="keytab($event,'Cantidad')"> <!-- (blur)="processProduct('Cantidad')" -->
+      </div>
+      <div class="form-group col-12 col-md-3">
+        <label>Cantidad</label>
+        <input [disabled]="Invoice.Respuesta_MH !='Registrado'" [(ngModel)]="Detalle.Cantidad" name="Cantidad"
+          id="Cantidad" type="number" class="form-control" placeholder="Cantidad" (blur)="processProduct('Precio')"
+          (keydown)="keytab($event,'Precio')">
+      </div>
+      <div class="form-group col-12 col-md-3">
+        <label>Precio</label>
+        <input [disabled]="Invoice.Respuesta_MH !='Registrado'" [(ngModel)]="Detalle.Precio" name="Precio" id="Precio"
+          type="number" class="form-control" placeholder="Precio" (blur)="processProduct('SKU')"
+          (keydown)="keytab($event,'SKU')">
+      </div>
+    </div>
+    <!-- Fin de Inclusión de Productos -->
+
+    <!-- Inicio Lista de Detalles -->
+    <div class="row g-3 d-none d-md-block invoice-detail-header">
+      <div class="row g-3">
+        <div class="form-group col-12 col-md-1 m-1">
+          Código
+        </div>
+        <div class="form-group col-12 col-md-2 m-1">
+          Descripción
+        </div>
+        <div class="form-group col-12 col-md-1 m-1">
+          Cantidad
+        </div>
+        <div class="form-group col-12 col-md-2 m-1">
+          Precio
+        </div>
+        <div class="form-group col-12 col-md-2 m-1">
+          Sub Total
+        </div>
+        <div class="form-group col-12 col-md-2 m-1">
+          Total
+        </div>
+        <div class="form-group col-12 col-md-1 m-1">
+          Acción
+        </div>
+      </div>
+    </div>
+    <div class="row g-3 table table-striped table-hover table-dark table-bordered invoice-detail-table">
+      <div class="form-group col-12">
+        <div class="row g-3" *ngFor="let Detail of Details;let indice = index">
+          <div class="form-group col-12 col-md-1 m-1">
+            {{Detail.SKU}}
+          </div>
+          <div class="form-group col-12 col-md-2 m-1">
+            {{Detail.Descripcion | slice:0:40}}
+          </div>
+          <div class="form-group col-12 col-md-1 m-1">
+            {{Detail.Cantidad | currency:' '}}
+          </div>
+          <div class="form-group col-12 col-md-2 m-1">
+            {{Detail.Precio | number:'1.2-2'}}
+          </div>
+          <div class="form-group col-12 col-md-2 m-1">
+            {{Detail.Sub_Total | number:'1.2-2'}}
+          </div>
+          <div class="form-group col-12 col-md-2 m-1">
+            {{Detail.Total | number:'1.2-2'}}
+          </div>
+          <div class="form-group col-12 col-md-1 m-1">
+            <span *ngIf="Detail.Adicional != 1" style="display: inline-block;">
+              <button [disabled]="Invoice.Respuesta_MH !='Registrado'" type="button" class="btn btn-danger btn-sm"
+                style="min-width: 0px;margin-right: 5px;padding: 0rem 0.31rem;"
+                (click)="removeVen_Factura_Detalle(indice)"><i class="fa fa-trash" aria-hidden="true"
+                  title="Borrar Linea"></i></button>
+            </span>
+            <button *ngIf="Detail.Adicional != 1" [disabled]="Invoice.Respuesta_MH !='Registrado'" type="button" class="btn btn-info btn-sm"
+              style="min-width: 0px;margin-right: 5px;padding: 0rem 0.31rem;"
+              (click)="editVen_Factura_Detalle(indice)"><i class="fa fa-edit" aria-hidden="true"
+                title="Editar Linea"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Fin Lista de Detalles -->
+    <!-- Inicio de Totales -->
+    <div class="row g-3 invoice-totals">
+
+      <div class="form-group col-12 col-md-4">
+        <div class="input-group invoice-total-field">
+          <div class="input-group-prepend">
+            <span class="input-group-text fw">Sub Total</span>
+          </div>
+          <label class="form-control currency">{{Invoice.Sub_Total  | number:'1.2-2'}}</label>
+        </div>
+      </div>
+      <div class="form-group col-12 col-md-4">
+        <div class="input-group invoice-total-field">
+          <div class="input-group-prepend">
+            <span class="input-group-text fw">IVA</span>
+          </div>
+          <label class="form-control currency">{{Invoice.IVA | number:'1.2-2'}}</label>
+        </div>
+      </div>
+      <div class="form-group col-12 col-md-4">
+        <div class="input-group invoice-total-field">
+          <div class="input-group-prepend">
+            <span class="input-group-text fw">Total</span>
+          </div>
+          <label class="form-control currency">{{Invoice.Total | number:'1.2-2'}}</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Find de Totales -->
+
+    <div class="form-group col-md-12">
+      <div class="row g-3 invoice-actions">
+        <div class="form-group col-3 col-md-2">
+          <div class="input-group invoice-action-group">
+            <select [(ngModel)]="TipoArchivo" name="TipoArchivo" type="text"
+            *ngIf="Invoice.Respuesta_MH !='Registrado'" class="form-control">
+              <option value='1'>PDF</option>
+              <option value='2'>XML</option>
+              <option value='3'>Respueta</option>
+            </select>
+            <div class="input-group-append">
+              <button *ngIf="Invoice.Respuesta_MH !='Registrado'" (click)="imprimirFactura()" type="button"
+            class="btn btn-primary" title="Cancela edicion">Bajar</button>
+            </div>
+          </div>
+
+        </div>
+        <div class="form-group col-3 col-md-2">
+          <button *ngIf="Invoice.Respuesta_MH !='Registrado'" (click)="imprimirTiquete()" type="button"
+            class="btn btn-info" title="Cancela edicion">Tiquete</button>
+        </div>
+        <div [hidden]="POV" class="form-group col-3 col-md-2">
+          <button *ngIf="Invoice.Respuesta_MH =='Registrado'" (click)="imprimirCotizacion()" type="button"
+            class="btn btn-info" title="Cotización">Cotiza</button>
+        </div>
+        <div class="form-group col-3 col-md-2">
+          <button *ngIf="Invoice.Respuesta_MH =='aceptado' || Invoice.Respuesta_MH =='aplicado' && Invoice.Tipo_Documento != '03'" (click)="AnularFactura()"
+            type="button" class="btn btn-danger" title="Anular Factura">NC</button>
+        </div>
+        <div *ngIf="Invoice.Respuesta_MH !='Registrado'" class="form-group col-3 col-md-1">
+          <button *ngIf="Invoice.Respuesta_MH =='Contingenc' && Invoice.Tipo_Documento != '03'" (click)="AnularFactura()"
+            type="button" class="btn btn-danger" title="Anular Factura">NC</button>
+        </div>
+        <div *ngIf="Invoice.Respuesta_MH =='Registrado'" class="form-group col-3 col-md-2">
+          <button [disabled]="Invoice.Respuesta_MH !='Registrado'" (click)="aplicarFactura()" type="button"
+            class="btn btn-success" title="Cancela edicion">Grabar</button>
+        </div>
+        <div class="form-group col-3 col-md-2">
+          <button (click)="cancel()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+  </form><!-- End of form -->
+</div>
+
+<div [hidden]="!PantallaProductos" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Seleccionar Artículo</h2>
+      <input [(ngModel)]="searchFieldProduct"  (keydown)="keytabProduct($event)" type="text"
+        class="form-control" placeholder="Buscar">
+    </div>
+    <div class="card-body modal-grid">
+      <div class="row g-3">
+        <div class="form-group col-12 col-sm-6" *ngFor="let Product of registros;let i = index">
+          <a (click)="Seleccionar(Product)">
+            <div class="card">
+              <div class="card-body">
+                {{Product.SKU}}
+                <h4 class="card-title">{{Product.Descripcion}} </h4>
+                <p><b>{{Product.Nombre }}</b></p>
+                Precio : {{Product.Precio|currency: ' '}} Moneda: {{Product.Moneda}}
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="row g-3">
+          <div class="form-group col-8 col-md-10">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="closeModal()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div [hidden]="!PantallaLoading" class="modal-main">
+
+  <div class="modal-content  card">
+    <h1>
+      Procesando.....
+    </h1>
+  </div>
+</div>
+
+<div [hidden]="!PantallaExoneracion" class="modal-main">
+
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Exónerar Factura</h2>
+    </div>
+    <div class="card-body modal-grid">
+      <div class="row g-3">
+        <div class="form-group col-md-4">
+          <label>Tipo de Documento</label>
+          <input [(ngModel)]="Exoneracion.Exo_Numero_Documento" name="Exo_Numero_Documento" type="text" placeholder="Exo_Numero_Documento"
+          class="form-control">
+        </div>
+
+        <div class="form-group col-md-8">
+          <label>NombreInstitucion</label>
+          <input [(ngModel)]="Exoneracion.Exo_Nombre_Institucion" name="NombreInstitucion" type="text" placeholder="NombreInstitucion"
+          class="form-control">
+        </div>
+      </div>
+      <div class="row g-3">
+        <div class="form-group col-md-4">
+          <label>Fecha Emision</label>
+          <input [(ngModel)]="Exoneracion.Exo_Fecha_Emision" name="Exo_Fecha_Emision" type="text" placeholder="Exo_Fecha_Emision"
+          class="form-control">
+        </div>
+
+        <div class="form-group col-md-8">
+          <label>Porcentaje Exoneracion</label>
+          <input [(ngModel)]="Exoneracion.Exo_Porcentaje" name="Exo_Porcentaje" type="text" placeholder="Exo_Porcentaje"
+          class="form-control">
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="row g-3">
+          <div class="form-group col-8 col-md-8">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="exonerar()" type="button" class="btn btn-primary"
+              title="Cancela edicion">Exonerar</button>
+          </div>
+          <div class="form-group col-2">
+            <button (click)="closeExoneracion()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div [hidden]="!PantallaClienteNuevo" class="modal-main">
+
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Crear Cliente</h2>
+    </div>
+    <div class="card-body row g-3">
+      <div class="form-group col-md-12">
+        <label>Nombre</label>
+        <input [(ngModel)]="persona.Nombre" name="Nombre" type="text" placeholder="Nombre" class="form-control">
+      </div>
+      <div class="form-group col-md-6">
+        <label for="name">Tipo de Identificacion</label>
+        <select [(ngModel)]="persona.Tipo_Identificacion" name="Tipo_Identificacion" class="form-control">
+          <option value='01'>Cedula Fisica</option>
+          <option value='02'>Cedula Juridica</option>
+          <option value='03'>Dimex</option>
+          <option value='04'>NITE</option>
+        </select>
+      </div>
+      <div class="form-group col-md-6">
+        <label>Identificacion</label>
+        <input [(ngModel)]="persona.Identificacion" name="Identificacion" type="text" placeholder="Identificación"
+          class="form-control">
+      </div>
+      <div class="form-group col-md-6">
+        <label>Teléfono</label>
+        <input [(ngModel)]="persona.Telefono" name="Telefono" type="text" placeholder="Teléfono"
+          class="form-control">
+      </div>
+      <div class="form-group col-md-6">
+        <label>Correo</label>
+        <input [(ngModel)]="persona.Correo" name="Correo" type="text" placeholder="Correo" class="form-control">
+      </div>
+      <div class="form-group col-md-6">
+        <label for="name">Moneda </label>
+        <select [(ngModel)]="persona.Moneda" name="Moneda" class="form-control">
+          <option value='CRC'>Colones</option>
+          <option value='USD'>Dólares</option>
+        </select>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="name">Condición de Venta </label>
+        <select [(ngModel)]="persona.Condicion_Venta" name="Condicion_Venta" class="form-control">
+          <option value='01'>Contado</option>
+          <option value='02'>Crédito</option>
+          <option value='03'>Consignacion</option>
+        </select>
+      </div>
+      <div class="form-group col-md-4">
+        <label for="name">Plazo de Cédito </label>
+        <input [(ngModel)]="persona.Plazo_Credito" placeholder="Plazo del cédito" name="Plazo_Credito" type="text" class="form-control">
+      </div>
+      <div class="form-group col-md-4">
+        <label for="name">Metodo de Págo</label>
+        <select [(ngModel)]="persona.Metodo_Pago"  name="Metodo_Pago" class="form-control">
+          <option value='01'>Efectivo</option>
+          <option value='98'>Otro - Efectivo </option>
+          <option value='02'>Tarjeta de Credito</option>
+          <option value='06'>Sinpe Móvil</option>
+          <option value='03'>Cheque</option>
+          <option value='04'>Transferencia/Deposito Bancario</option>
+          <option value='05'>Recaudo Tercero</option>
+        </select>
+      </div>
+      <div class="form-group col-md-4">
+        <label for="name">Codigo de Actividad Economica </label>
+        <input [(ngModel)]="persona.Codigo_Actividad_Economica" placeholder="Codigo Activdad Economica" name="Codigo_Actividad_Economica" type="text" class="form-control">
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="row g-3">
+          <div class="form-group col-8 col-md-8">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="crearCliente()" type="button" class="btn btn-primary"
+              title="Cancela edicion">Crear</button>
+          </div>
+          <div class="form-group col-2">
+            <button (click)="cerrarPantallaClienteNuevo()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div [hidden]="!PantallaCobro" class="modal-main">
+
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Cobro de Factura</h2>
+    </div>
+    <div class="card-body row g-3">
+
+      <div class="form-group col-12 col-md-6">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text fw">Medio</span>
+          </div>
+          <select [disabled]="Invoice.Respuesta_MH !='Registrado'" [(ngModel)]="Invoice.Metodo_Pago " name="Metodo_Pago"
+          id="Metodo_Pago" class="form-control">
+          <option value='98'>Otro - Efectivo </option>
+          <option value='01'>Efectivo</option>
+          <option value='02'>Tarjeta de Credito</option>
+          <option value='06'>Sinpe Móvil</option>
+          <option value='03'>Cheque</option>
+          <option value='04'>Transferencia/Deposito Bancario</option>
+          <option value='05'>Recaudo Tercero</option>
+        </select>
+        </div>
+      </div>
+
+      <div class="form-group col-12 col-md-6">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text fw">Total</span>
+          </div>
+          <label class="form-control currency">{{Invoice.Total| currency:' '}}</label>
+        </div>
+      </div>
+      <div class="form-group col-12 col-md-6">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text fw">Paga Con</span>
+          </div>
+          <input [(ngModel)]="Invoice.Cobro" placeholder="Cobro" name="Cobro" id="Cobro" type="text" class="form-control">
+        </div>
+      </div>
+      <div class="form-group col-12 col-md-6">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text fw">Vuelto</span>
+          </div>
+          <label class="form-control currency">{{ Invoice.Total - Invoice.Cobro  | currency:' '}}</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="row g-3">
+          <div class="form-group col-8 col-md-8">
+          </div>
+          <div class="form-group col-2">
+            <button (click)="aplicarCobro()" type="button" class="btn btn-primary"
+              title="Cancela edicion">Aplicar</button>
+          </div>
+          <div class="form-group col-2">
+            <button (click)="CerrarPantallaCobro()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

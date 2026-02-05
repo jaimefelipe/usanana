@@ -1,0 +1,576 @@
+<div [hidden]="edit" class="container-fluid pb-5">
+  <div class="page-toolbar">
+    <div>
+      <h2 class="page-title">Facturas de Compra</h2>
+      <div class="page-subtitle">Listado de documentos de compra</div>
+    </div>
+    <div class="input-group page-search">
+      <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+      <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab1($event)" type="text"
+        class="form-control" placeholder="Buscar">
+      <button class="btn btn-primary" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
+          aria-hidden="true"></i></button>
+    </div>
+  </div>
+  <form>
+    <div class="row g-4 page-grid">
+      <div class="form-group col-12 col-sm-6" *ngFor="let Product of Invoices;let i = index">
+        <div class="card">
+          <a class="page-card-link" (click)="editRecord(Product)">
+            <div class="card-body">
+              <h4 class="card-title"> {{Product.Id_Factura}}# {{Product.Consecutivo}} - {{Product.Fecha}} </h4>
+              {{Product.Clave_Numerica}}
+              <p><b>{{Product.Nombre }}</b></p>
+              <p>Monto: {{Product.Sub_Total}}, Iva:{{Product.IVA}}</p>
+              Tipo :
+              <span *ngIf="Product.Tipo_Documento == '01'" class="text-primary"> Factura</span>
+              <span *ngIf="Product.Tipo_Documento == '04'" class="text-success"> Tiquete electronico</span>
+              <span *ngIf="Product.Tipo_Documento == '02'" class="text-info"> Nota de debito</span>
+              <span *ngIf="Product.Tipo_Documento == '03'" class="text-success"> Nota de credito</span>
+              Estado :
+              <span *ngIf="Product.Respuesta_MH == 'Registrado'" class="text-primary"> Registrado</span>
+              <span *ngIf="Product.Respuesta_MH == 'Recibido'" class="text-warning"> Recibido</span>
+              <span *ngIf="Product.Respuesta_MH == 'aceptado'" class="text-success"> Aceptado</span>
+              <span *ngIf="Product.Respuesta_MH == 'rechazado'" class="text-danger"> Rechazado</span>
+              <span *ngIf="Product.Respuesta_MH == 'rechazado'"> {{Product.Error_MH}}</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="container-fluid">
+    <ul class="pagination">
+      <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"
+            aria-hidden="true"></i></a></li>
+    </ul>
+  </div>
+</div>
+
+<!--
+  Form de Edicion
+-->
+
+<div [hidden]="!edit" class="container-fluid pb-5">
+  <form class="page-form">
+    <div class="page-form-card">
+      <h2 class="page-title mb-3">Factura</h2>
+
+      <div class="row g-3">
+        <!-- Inicio de Primera division -->
+        <div class="form-group col-12 col-md-3">
+          <select [(ngModel)]="Factura_Inventario" name="Factura_Inventario" class="form-control">
+            <option value='1'>Afecta Inventario</option>
+            <option value='2'>No Afecta Inventario</option>
+          </select>
+        </div>
+        <div class="form-group col-12 col-md-9">
+          <label>Archivo</label>
+          <input (change)="LoadFile($event)" type="file" class="form-control" id="customFile">
+        </div>
+
+        <div class="form-group col-12 col-md-3">
+          <div class="input-group">
+            <select [(ngModel)]="Invoice.Tipo_Documento" name="Tipo_Documento" type="text"
+              [disabled]="Invoice.Respuesta_MH !='Registrado'" class="form-control">
+              <option value='01'>Factura</option>
+              <option value='04'>Tiquete electronico</option>
+              <option value='02'>Nota de debito</option>
+              <option value='03'>Nota de credito</option>
+            </select>
+            <button type="button" data-bs-toggle="collapse" data-bs-target="#GeneralData" class="btn btn-primary"><i
+                class="fa fa-bars"></i></button>
+          </div>
+        </div>
+        <div class="form-group col-12 col-md-9">
+          <div class="row g-3 collapse show" id="GeneralData">
+            <div class="form-group col-6 col-md-3">
+              <select [(ngModel)]="Invoice.Moneda" name="Moneda" [disabled]="Invoice.Respuesta_MH !='Registrado'"
+                class="form-control">
+                <option value='CRC'>Colones</option>
+                <option value='USD'>Dolares</option>
+              </select>
+            </div>
+            <div class="form-group col-6 col-md-3">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text">#</div>
+                </div>
+                <input [(ngModel)]="Invoice.Tipo_Cambio" name="Tipo_Cambio" disabled="true" type="text"
+                  class="form-control" placeholder="Tipo Cambio">
+              </div>
+            </div>
+
+            <div class="form-group col-6 col-md-3">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text">#</div>
+                </div>
+                <input [(ngModel)]="Invoice.Consecutivo" name="Consecutivo" disabled="true" type="text"
+                  class="form-control" placeholder="Id_Factura">
+              </div>
+            </div>
+            <div class="form-group col-6 col-md-3">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i></div>
+                </div>
+                <input [(ngModel)]="Invoice.Fecha" class="form-control" placeholder="Fecha" name="Fecha">
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Fin de Primera division -->
+
+        <!-- Inicio de Segunda division -->
+        <div class="form-group col-12 col-md-4">
+          <label>Proveedor</label>
+          <div class="input-group">
+            <input [disabled]="Invoice.Respuesta_MH !='Registrado'" [(ngModel)]="Invoice.Numero_Identificacion"
+              name="Numero_Identificacion" type="input" (blur)='IdValidation()' (keydown)="enterValidation($event)"
+              class="form-control" placeholder="Identificacion">
+            <button type="button" data-bs-toggle="collapse" data-bs-target="#GeneralData2" class="btn btn-primary"><i
+                class="fa fa-bars"></i></button>
+          </div>
+        </div>
+        <div class="form-group col-12 col-md-8">
+          <label>Nombre del Proveedor</label>
+          <input [disabled]="Invoice.Respuesta_MH !='Registrado'" [(ngModel)]="Invoice.Nombre" name="Nombre" type="input"
+            class="form-control" placeholder="Nombre del Proveedor">
+        </div>
+
+        <div class="row g-3 col-12 collapse show" id="GeneralData2">
+          <div class="form-group col-12 col-md-3">
+            <label>Correo</label>
+            <input [disabled]="Invoice.Respuesta_MH !='Registrado'" id="Correo" [(ngModel)]="Invoice.Correo"
+              name="Correo" type="input" class="form-control" placeholder="Correo">
+          </div>
+
+          <div class="form-group col-12 col-md-3">
+            <label for="inputPassword4">Tipo Identificacion</label>
+            <select [(ngModel)]="Invoice.Codigo_Identificacion" name="Codigo_Identificacion"
+              [disabled]="Invoice.Codigo_Identificacion !=''" class="form-control">
+              <option value='01'>Cedula Fisica</option>
+              <option value='02'>Cedula Juridica</option>
+              <option value='03'>Dimex</option>
+              <option value='04'>NITE</option>
+            </select>
+          </div>
+
+          <div class="form-group col-12 col-md-2">
+            <label>Condicion de venta</label>
+            <select [(ngModel)]="Invoice.Condicion_Venta" name="Condicion_Venta"
+              [disabled]="Invoice.Respuesta_MH !='Registrado'" class="form-control">
+              <option value='01'>Contado</option>
+              <option value='02'>Credito</option>
+              <option value='03'>Consignacion</option>
+            </select>
+          </div>
+          <div class="form-group col-12 col-md-2">
+            <label>Plazo</label>
+            <input [(ngModel)]="Invoice.Plazo_Credito" name="Plazo_Credito"
+              [disabled]="Invoice.Respuesta_MH !='Registrado'" type="text" class="form-control" placeholder="Plazo">
+          </div>
+          <div class="form-group col-12 col-md-2">
+            <label>Medio de pago</label>
+            <select [disabled]="Invoice.Respuesta_MH !='Registrado'" [(ngModel)]="Invoice.Metodo_Pago " name="Metodo_Pago"
+              id="Metodo_Pago" class="form-control">
+              <option value='01'>Efectivo</option>
+              <option value='02'>Tarjeta de Credito</option>
+              <option value='03'>Cheque</option>
+              <option value='04'>Transferencia/Deposito Bancario</option>
+              <option value='05'>Recaudo Tercero</option>
+            </select>
+          </div>
+          <div class="form-group col-12">
+            <label>Notas</label>
+            <textarea class="form-control" [(ngModel)]="Invoice.Notas" name="Notas"></textarea>
+          </div>
+        </div>
+        <!-- Fin de Segunda division -->
+
+        <!-- Inicio de Inclusion de Productos -->
+        <div [hidden]="Invoice.Respuesta_MH !='Registrado'" class="row g-3 data-entry">
+          <div class="form-group col-12 col-md-3">
+            <label>Articulo</label>
+
+            <div *ngIf="Factura_Inventario == '2'" class="input-group">
+              <input [disabled]="Invoice.Respuesta_MH !='Registrado'" [(ngModel)]="Detalle.Codigo_Referencia"
+                name="Codigo_Referencia" id="Codigo_Referencia" type="input" class="form-control" placeholder="Codigo"
+                (blur)="processProduct('Descripcion')" (keydown)="keytab($event,'Descripcion')">
+
+              <div class="input-group-append">
+                <button type="button" (click)="obtenerProducto('',1)" class="btn btn-primary"><i
+                    class="fa fa-search"></i></button>
+              </div>
+            </div>
+
+            <div *ngIf="Factura_Inventario == '1'" class="input-group">
+              <input [disabled]="Invoice.Respuesta_MH !='Registrado'" [(ngModel)]="Detalle.SKU" name="SKU" id="SKU"
+                type="input" class="form-control" placeholder="Codigo" (blur)="processProduct('Descripcion')"
+                (keydown)="keytab($event,'Descripcion')">
+
+              <div class="input-group-append">
+                <button type="button" (click)="obtenerProducto('',1)" class="btn btn-primary"><i
+                    class="fa fa-search"></i></button>
+              </div>
+            </div>
+          </div>
+          <div class="form-group col-12 col-md-2">
+            <label>Codigo Proveedor</label>
+            <input [disabled]="Invoice.Respuesta_MH !='Registrado'" disabled [(ngModel)]="Detalle.Codigo_Proveedor"
+              name="Codigo_Proveedor" id="Codigo_Proveedor" type="input" class="form-control" placeholder="Codigo">
+          </div>
+          <div class="form-group col-12 col-md-2">
+            <label>Descripcion</label>
+            <input [disabled]="Invoice.Respuesta_MH !='Registrado'" [(ngModel)]="Detalle.Descripcion" name="Descripcion"
+              id="Descripcion" type="input" class="form-control" placeholder="Descripcion"
+              (blur)="processProduct('Cantidad')" (keydown)="keytab($event,'Cantidad')">
+          </div>
+          <div class="form-group col-12 col-md-2">
+            <label>Cantidad</label>
+            <input [disabled]="Invoice.Respuesta_MH !='Registrado'" [(ngModel)]="Detalle.Cantidad" name="Cantidad"
+              id="Cantidad" type="input" class="form-control" placeholder="Cantidad" (blur)="processProduct('Precio')"
+              (keydown)="keytab($event,'Precio')">
+          </div>
+          <div class="form-group col-12 col-md-3">
+            <label>Precio</label>
+            <input [disabled]="Invoice.Respuesta_MH !='Registrado'" [(ngModel)]="Detalle.Precio" name="Precio" id="Precio"
+              type="input" class="form-control" placeholder="Precio" (blur)="processProduct('SKU')"
+              (keydown)="keytab($event,'SKU')">
+          </div>
+        </div>
+        <!-- Fin de Inclusion de Productos -->
+
+        <!-- Inicio Lista de Detalles -->
+        <div class="row g-3 d-none d-md-block data-header">
+          <div class="row g-3">
+            <div class="form-group col-md-2 m-1">
+              Codigo
+            </div>
+            <div class="form-group col-md-2 m-1">
+              Proveedor
+            </div>
+            <div class="form-group col-12 col-md-3 m-1">
+              Descripcion
+            </div>
+            <div class="form-group col-12 col-md-1 m-1">
+              Cantidad
+            </div>
+            <div class="form-group col-12 col-md-1 m-1">
+              Precio
+            </div>
+            <div class="form-group col-12 col-md-1 m-1">
+              Total
+            </div>
+            <div class="form-group col-12 col-md-1 m-1">
+              Accion
+            </div>
+          </div>
+        </div>
+        <div class="row g-3 table table-striped table-hover table-dark table-bordered table-responsive data-table">
+          <div class="form-group col-12">
+            <div class="row g-3" *ngFor="let Detail of Details;let indice = index">
+              <div class="form-group col-12 col-md-2 m-1">
+                <span *ngIf="Factura_Inventario == '1'">{{Detail.SKU}}</span>
+                <span *ngIf="Factura_Inventario == '2'">{{Detail.Codigo_Referencia}}</span>
+              </div>
+              <div class="form-group col-12 col-md-2 m-1">
+                {{Detail.Codigo_Proveedor}}
+              </div>
+              <div class="form-group col-12 col-md-3 m-1">
+                {{Detail.Descripcion | slice:0:40}}, {{Detail.Precio_Sin_Descuento}} , {{Detail.Descuento}} ,
+                {{Detail.Precio}}
+              </div>
+              <div class="form-group col-12 col-md-1 m-1">
+                {{Detail.Cantidad | currency:' '}}
+              </div>
+              <div class="form-group col-12 col-md-1 m-1">
+                {{Detail.Precio | currency:' '}}
+              </div>
+              <div class="form-group col-12 col-md-1 m-1">
+                {{Detail.Sub_Total | currency:' '}}
+              </div>
+              <div class="form-group col-12 col-md-1 m-1">
+                <span style="display: inline-block;">
+                  <button [disabled]="Invoice.Respuesta_MH !='Registrado'" type="button" class="btn btn-danger btn-sm"
+                    style="min-width: 0px;margin-right: 1px;padding: 0rem 0.31rem;"
+                    (click)="removeVen_Factura_Detalle(indice)"><i class="fa fa-trash" aria-hidden="true"
+                      title="Borrar Linea"></i></button>
+                </span>
+                <span style="display: inline-block;">
+                  <button [disabled]="Invoice.Respuesta_MH !='Registrado'" type="button" class="btn btn-info btn-sm"
+                    style="min-width: 0px;margin-right: 1px;padding: 0rem 0.31rem;"
+                    (click)="editVen_Factura_Detalle(indice)"><i class="fa fa-edit" aria-hidden="true"
+                      title="Editar Linea"></i></button>
+                </span>
+                <span *ngIf="Factura_Inventario == '1'" style="display: inline-block;">
+                  <button *ngIf="Detail.SKU ==''" type="button" class="btn btn-success btn-sm"
+                    style="min-width: 0px;margin-right: 1px;padding: 0rem 0.31rem;"
+                    (click)="Nuevo_Articulo(Detail,indice)"><i class="fa fa-file" aria-hidden="true"
+                      title="Nuevo Articulo"></i></button>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Fin Lista de Detalles -->
+
+        <!-- Inicio de Totales -->
+        <div class="row g-3">
+          <div class="form-group col-12 col-md-4">
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text fw">Sub Total</span>
+              </div>
+              <label class="form-control currency">{{Invoice.Sub_Total | currency:' '}}</label>
+            </div>
+          </div>
+          <div class="form-group col-12 col-md-4">
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text fw">IVA</span>
+              </div>
+              <label class="form-control currency">{{Invoice.IVA| currency:' '}}</label>
+            </div>
+          </div>
+          <div class="form-group col-12 col-md-4">
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text fw">Total</span>
+              </div>
+              <label class="form-control currency">{{Invoice.Total| currency:' '}}</label>
+            </div>
+          </div>
+        </div>
+        <!-- Find de Totales -->
+
+        <div class="form-group col-12">
+          <div class="row g-3 page-actions">
+            <div class="form-group col-12 col-md-6">
+              <button *ngIf="Invoice.Respuesta_MH !='Registrado'" (click)="imprimirFactura()" type="button"
+                class="btn btn-info w-100" title="Cancela edicion">Files</button>
+            </div>
+            <div class="form-group col-12 col-md-2">
+              <button *ngIf="Invoice.Respuesta_MH =='aceptado' && Invoice.Tipo_Documento == '01'"
+                (click)="AnularFactura()" type="button" class="btn btn-danger w-100"
+                title="Anular Factura">NC</button>
+            </div>
+            <div class="form-group col-12 col-md-2">
+              <button [disabled]="Invoice.Respuesta_MH !='Registrado'" (click)="aplicarFactura()" type="button"
+                class="btn btn-success w-100" title="Cancela edicion">Grabar</button>
+            </div>
+            <div class="form-group col-12 col-md-2">
+              <button (click)="cancel()" type="button" class="btn btn-danger w-100"
+                title="Cancela edicion">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div [hidden]="!PantallaProductos" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Seleccionar Articulo</h2>
+      <input [(ngModel)]="searchFieldProduct" (blur)="searchProduct()" (keydown)="keytabProduct($event)" type="text"
+        class="form-control" placeholder="Buscar">
+    </div>
+
+    <div class="card-body modal-grid">
+      <div class="row g-3">
+        <div class="form-group col-12 col-sm-6" *ngFor="let Product of registros;let i = index">
+          <a (click)="Seleccionar(Product)">
+            <div class="card">
+              <div class="card-body">
+                {{Product.SKU}}
+                <h4 class="card-title">{{Product.Descripcion}} </h4>
+                <p><b>{{Product.Nombre }}</b></p>
+                Costo : {{Product.Ultimo_Costo|currency: ' '}} Moneda: {{Product.Moneda}}
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="row g-3">
+          <div class="form-group col-8 col-md-10"></div>
+          <div class="form-group col-2">
+            <button (click)="closeModal()" type="button" class="btn btn-danger"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div [hidden]="!PantallaArticuloNuevo" class="modal-main">
+  <div class="modal-content  card">
+    <div class="card-header">
+      <h2>Crear Articulo Nuevo</h2>
+    </div>
+
+    <div class="card-body modal-grid">
+      <div class="row g-3">
+        <div class="form-group col-md-6">
+          <label>Tipo</label>
+          <select [(ngModel)]="Articulo.Tipo_Codigo" name="Tipo_Codigo" type="text" class="form-control">
+            <option value='1'>Articulo para la Venta</option>
+            <option value='2'>Articulo de Uso Interno</option>
+            <option value='3'>Servicios para la Venta</option>
+            <option value='4'>Compra de Servicios</option>
+          </select>
+        </div>
+        <div class="form-group col-md-6">
+          <label>Codigo Cabys</label>
+          <input [(ngModel)]="Articulo.Codigo" name="Codigo" type="text" placeholder="Codigo" class="form-control">
+        </div>
+        <div [hidden]="!interfazInventario" class="form-group col-md-6">
+          <label>Codigo SKU</label>
+          <input [(ngModel)]="Articulo.SKU" name="SKU" type="text" placeholder="SKU" class="form-control">
+        </div>
+        <div [hidden]="!interfazInventario" class="form-group col-md-6">
+          <label>Codigo Proveedor</label>
+          <input [(ngModel)]="Articulo.Codigo_Proveedor" name="Codigo_Proveedor" type="text"
+            placeholder="Codigo Proveedor" class="form-control">
+        </div>
+        <div class="form-group col-md-12">
+          <label>Nombre</label>
+          <input [(ngModel)]="Articulo.Descripcion" name="Descripcion" type="text" placeholder="Nombre"
+            class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+          <label>Categoria</label>
+          <select [(ngModel)]="Articulo.Categoria" name="Categoria" type="text" class="form-control">
+            <option value='{{Categoria.Id_Categoria}}' *ngFor="let Categoria of Categories;let i = index">
+              {{Categoria.Nombre}}</option>
+          </select>
+        </div>
+        <div class="form-group col-md-6">
+          <label>Unidad de Medida</label>
+          <select [(ngModel)]="Articulo.Unidad_Medida" name="Unidad_Medida" type="text" class="form-control">
+            <option value='Unid'>Unidad</option>
+            <option value='Sp'>Servicio Profesional</option>
+            <option value='Spe'>Servicio personales</option>
+            <option value='Al'>Alquiler de uso habitacional</option>
+            <option value='Alc'>Alquiler de uso comercial</option>
+            <option value='Cm'>Comisiones</option>
+            <option value='Os'>Otro tipo de servicio</option>
+            <option value='St'>Servicios tecnicos</option>
+            <option value='L'>Litro</option>
+            <option value='m'>Metro</option>
+            <option value='kg'>Kilo</option>
+            <option value='gl'>Galon</option>
+            <option value='cm'>Comisiones</option>
+            <option value='h'>Hora</option>
+          </select>
+        </div>
+        <div class="form-group col-md-6">
+          <label>Tipo Impuesto</label>
+          <select (change)="cambiarTarifa()" [(ngModel)]="Articulo.Tipo_Impuesto" name="Tipo_Impuesto"
+            class="form-control">
+            <option value='01'>0% Excento</option>
+            <option value='02'>1% (Canasta Basica, Maquinaria Para CB, Inumos Agropecuarios)</option>
+            <option value='03'>2% (Medicamentos, Seguros, Educacion, Estado)</option>
+            <option value='04'>4% (Salud Privada, Boletos Aereos)</option>
+            <option value='05'>0% Transitorio</option>
+            <option value='06'>4% Transitorio</option>
+            <option value='07'>8% Transitorio</option>
+            <option value='08'>13% (venta de bienes y prestacion de servicios)</option>
+          </select>
+        </div>
+        <div class="form-group col-md-6">
+          <label>Tasa Impuesto</label>
+          <input [(ngModel)]="Articulo.Impuesto" disabled class="form-control" name="Impuesto" id="Impuesto" type="text"
+            placeholder="Tasa">
+        </div>
+        <div class="form-group col-md-6">
+          <label>Moneda</label>
+          <select [(ngModel)]="Articulo.Moneda" name="Moneda" type="text" class="form-control">
+            <option value='CRC'>Colones</option>
+            <option value='USD'>Dolares</option>
+          </select>
+        </div>
+
+        <!-- Inicio Precio -->
+        <div class="form-group col-md-3">
+          <label>Precio</label>
+          <input (change)="CalculoPrecio()" [(ngModel)]="Articulo.Precio" class="form-control" name="Precio"
+            id="Precio" type="text" placeholder="Precio">
+        </div>
+        <div class="form-group col-md-3">
+          <label> Precio + IVA </label>
+          <input (change)="CalculoPrecio2()" [(ngModel)]="Articulo.PrecioIva" class="form-control" name="PrecioIva"
+            id="PrecioIva" type="text" placeholder="Precio">
+        </div>
+        <!-- Fin Precio -->
+
+        <div [hidden]="!interfazInventario" class="form-group col-md-6">
+          <label>Minimos</label>
+          <input [(ngModel)]="Articulo.Minimo" name="Minimo" type="text" placeholder="Minimo" class="form-control">
+        </div>
+        <div [hidden]="!interfazInventario" class="form-group col-md-6">
+          <label>Maximos</label>
+          <input [(ngModel)]="Articulo.Maximo" name="Maximo" type="text" placeholder="Maximo" class="form-control">
+        </div>
+        <div [hidden]="!interfazInventario" class="form-group col-md-6">
+          <label>Existencia</label>
+          <input [(ngModel)]="Articulo.Existencia" disabled name="Existencia" type="text" placeholder="Existencia"
+            class="form-control">
+        </div>
+        <div [hidden]="!interfazInventario" class="form-group col-md-6">
+          <label>Costo Ultima Factura</label>
+          <input [(ngModel)]="Articulo.Ultimo_Costo" disabled class="form-control" name="Ultimo_Costo" id="Ultimo_Costo"
+            type="text" placeholder="Ultimo_Costo">
+        </div>
+        <div [hidden]="!interfazInventario" class="form-group col-md-6">
+          <label>Costo Promedio</label>
+          <input [(ngModel)]="Articulo.Costo_Promedio" disabled class="form-control" name="Costo_Promedio"
+            id="Costo_Promedio" type="text" placeholder="Costo_Promedio">
+        </div>
+        <div class="form-group col-md-6">
+          <label>Estado</label>
+          <select [(ngModel)]="Articulo.Estado" name="Estado" type="text" class="form-control">
+            <option value='1'>Activo</option>
+            <option value='0'>Inactivo</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer ">
+      <div class="form-group col-md-12">
+        <div class="row g-3">
+          <div class="form-group col-8 col-md-8"></div>
+          <div class="form-group col-12 col-md-2">
+            <button (click)="grabarArticulo()" type="button" class="btn btn-success w-100"
+              title="Cancela edicion">Grabar</button>
+          </div>
+          <div class="form-group col-12 col-md-2">
+            <button (click)="closePantallaArticuloNuevo()" type="button" class="btn btn-danger w-100"
+              title="Cancela edicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div [hidden]="!PantallaLoading" class="modal-main">
+  <div class="modal-content  card">
+    <h1>
+      Procesando.....
+    </h1>
+  </div>
+</div>

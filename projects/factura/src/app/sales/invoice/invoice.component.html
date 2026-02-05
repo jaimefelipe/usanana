@@ -1,5 +1,5 @@
-<div [hidden]="edit" class="container pb-5">
-  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+<div [hidden]="edit" class="container-fluid pb-5">
+  
   <h2>Facturas de Venta</h2>
   <div class="container-fluid">
     <div class="row">
@@ -17,7 +17,7 @@
     </div>
   </div>
   <form>
-    <div class="form-row">
+    <div class="form-row page-grid">
       <div class="form-group col-12 col-sm-6" *ngFor="let Product of Invoices;let i = index">
         <div class="card">
           <a (click)="editRecord(Product)">
@@ -82,8 +82,8 @@
   Form de Edición
 -->
 
-<div [hidden]="!edit" class="container pb-5">
-  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+<div [hidden]="!edit" class="container-fluid pb-5">
+  
   <h2>Factura</h2>
 
   <form>
@@ -410,7 +410,7 @@
         class="form-control" placeholder="Buscar">
     </div>
     <div class="card-body modal-grid">
-      <div class="form-row">
+      <div class="form-row page-grid">
         <div class="form-group col-12 col-sm-6" *ngFor="let Product of registros;let i = index">
           <a (click)="Seleccionar(Product)">
             <div class="card">
@@ -510,7 +510,7 @@
     <div class="card-header">
       <h2>Crear Cliente</h2>
     </div>
-    <div class="card-body form-row">
+    <div class="card-body form-row page-grid">
       <div class="form-group col-md-12">
         <label>Nombre</label>
         <input [(ngModel)]="persona.Nombre" name="Nombre" type="text" placeholder="Nombre" class="form-control">
@@ -601,7 +601,7 @@
     <div class="card-header">
       <h2>Cobro de Factura</h2>
     </div>
-    <div class="card-body form-row">
+    <div class="card-body form-row page-grid">
 
       <div class="form-group col-12 col-md-6">
         <div class="input-group">

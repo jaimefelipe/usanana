@@ -1,0 +1,18 @@
+<div class="opac-shell">
+  <header class="opac-header">
+    <div class="brand">
+      <span class="brand-title">OPAC Biblioteca</span>
+      <span class="brand-subtitle">Catalogo publico</span>
+    </div>
+    <nav class="opac-nav">
+      <a routerLink="/opac" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Buscar</a>
+      <a routerLink="/opac/mi-cuenta" routerLinkActive="active">Mi cuenta</a>
+      <a routerLink="/opac/registro" routerLinkActive="active">Registro</a>
+      <a href="/biblioteca/">Administracion</a>
+    </nav>
+  </header>
+
+  <main class="opac-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

@@ -5,7 +5,7 @@
   /* The Modal (background) */
   .modal-main {
     position: fixed; /* Stay in place */
-    z-index: 100; /* Sit on top */
+    z-index: 1300; /* Sit on top */
     left: 0;
     top: 0;
     width: 100%; /* Full width */

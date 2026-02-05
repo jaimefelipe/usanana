@@ -1,0 +1,21 @@
+<nav class="app-topbar fixed-top">
+  <div class="topbar-left">
+    <button type="button" class="btn btn-icon d-lg-none" (click)="toggleSidebar.emit()" aria-label="Toggle menu">
+      <i class="fa fa-bars"></i>
+    </button>
+    <img src="/assets/logo.svg" height="30" class="brand-logo" alt="Salvatec">
+    <span class="brand-name">{{ titulo }}</span>
+  </div>
+
+  <div class="topbar-right">
+    <button type="button" class="btn btn-ghost">
+      <i class="fa fa-bell"></i>
+      <span class="badge-dot"></span>
+    </button>
+    <button type="button" class="btn btn-ghost">
+      <i class="fa fa-comment"></i>
+      <span class="badge-dot"></span>
+    </button>
+    <button type="button" class="btn btn-avatar">SA</button>
+  </div>
+</nav>

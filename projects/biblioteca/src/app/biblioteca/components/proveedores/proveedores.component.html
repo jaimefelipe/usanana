@@ -1,0 +1,70 @@
+<div [hidden]="edit" class="container-fluid pb-5">
+  <div class="page-toolbar">
+    <div>
+      <h2 class="page-title">Proveedores</h2>
+    </div>
+    <div class="input-group page-search">
+      <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+      <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text"
+        class="form-control" placeholder="Buscar">
+      <button class="btn btn-success" type="button" (click)="nuevo()"><i class="fa fa-plus-circle"
+          aria-hidden="true"></i></button>
+    </div>
+  </div>
+
+  <form>
+    <div class="row g-4 page-grid">
+      <div class="form-group col-12 col-sm-6" *ngFor="let item of proveedores | bibliotecaSearch: searchField">
+        <div class="card h-100">
+          <a class="page-card-link" (click)="editar(item)">
+            <div class="card-body">
+              <h4 class="card-title">{{ item.nombre }}</h4>
+              Contacto: {{ item.contacto || '-' }}<br />
+              Estado: {{ item.estado || '-' }}
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div [hidden]="!edit" class="container-fluid pb-5">
+  <h2>Proveedor</h2>
+  <form class="page-form">
+    <div class="page-form-card">
+      <h5>{{ esEdicion ? 'Editar proveedor' : 'Nuevo proveedor' }}</h5>
+      <div class="mb-2">
+        <label class="form-label">Nombre</label>
+        <input class="form-control" [(ngModel)]="proveedor.nombre" name="nombre" />
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Contacto</label>
+        <input class="form-control" [(ngModel)]="proveedor.contacto" name="contacto" />
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Telefono</label>
+        <input class="form-control" [(ngModel)]="proveedor.telefono" name="telefono" />
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Email</label>
+        <input class="form-control" [(ngModel)]="proveedor.email" name="email" />
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Direccion</label>
+        <input class="form-control" [(ngModel)]="proveedor.direccion" name="direccion" />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Estado</label>
+        <select class="form-select" [(ngModel)]="proveedor.estado" name="estado">
+          <option value="activo">Activo</option>
+          <option value="inactivo">Inactivo</option>
+        </select>
+      </div>
+      <div class="page-actions d-flex gap-2">
+        <button class="btn btn-success" type="button" (click)="guardar()">Grabar</button>
+        <button class="btn btn-danger" type="button" (click)="cancelar()">Cancelar</button>
+      </div>
+    </div>
+  </form>
+</div>

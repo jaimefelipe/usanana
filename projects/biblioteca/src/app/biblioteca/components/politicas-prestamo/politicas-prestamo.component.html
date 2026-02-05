@@ -1,0 +1,77 @@
+<div [hidden]="edit" class="container-fluid pb-5">
+  <div class="page-toolbar">
+    <div>
+      <h2 class="page-title">Politicas de prestamo</h2>
+    </div>
+    <div class="input-group page-search">
+      <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+      <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text"
+        class="form-control" placeholder="Buscar">
+      <button class="btn btn-success" type="button" (click)="nuevo()"><i class="fa fa-plus-circle"
+          aria-hidden="true"></i></button>
+    </div>
+  </div>
+
+  <form>
+    <div class="row g-4 page-grid">
+      <div class="form-group col-12 col-sm-6" *ngFor="let item of politicas | bibliotecaSearch: searchField">
+        <div class="card h-100">
+          <a class="page-card-link" (click)="editar(item)">
+            <div class="card-body">
+              <h4 class="card-title">{{ item.tipoUsuario }}</h4>
+              Tipo material: {{ item.tipoMaterialId }}<br />
+              Dias: {{ item.diasPrestamo }} · Renovaciones: {{ item.maxRenovaciones }}
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div [hidden]="!edit" class="container-fluid pb-5">
+  <h2>Politica de prestamo</h2>
+  <form class="page-form">
+    <div class="page-form-card">
+      <h5>{{ esEdicion ? 'Editar politica' : 'Nueva politica' }}</h5>
+      <div class="mb-2">
+        <label class="form-label">Tipo usuario</label>
+        <select class="form-select" [(ngModel)]="politica.tipoUsuario" name="tipoUsuario">
+          <option value="alumno">Alumno</option>
+          <option value="docente">Docente</option>
+          <option value="administrativo">Administrativo</option>
+          <option value="externo">Externo</option>
+        </select>
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Tipo material</label>
+        <select class="form-select" [(ngModel)]="politica.tipoMaterialId" name="tipoMaterialId">
+          <option [ngValue]="0">Seleccione...</option>
+          <option *ngFor="let tipo of tiposMaterial" [ngValue]="tipo.id">{{ tipo.nombre }}</option>
+        </select>
+      </div>
+      <div class="row g-2">
+        <div class="col-6">
+          <label class="form-label">Dias prestamo</label>
+          <input type="number" class="form-control" [(ngModel)]="politica.diasPrestamo" name="diasPrestamo" />
+        </div>
+        <div class="col-6">
+          <label class="form-label">Max renovaciones</label>
+          <input type="number" class="form-control" [(ngModel)]="politica.maxRenovaciones" name="maxRenovaciones" />
+        </div>
+        <div class="col-6">
+          <label class="form-label">Max prestamos</label>
+          <input type="number" class="form-control" [(ngModel)]="politica.maxPrestamos" name="maxPrestamos" />
+        </div>
+        <div class="col-6">
+          <label class="form-label">Multa diaria</label>
+          <input type="number" class="form-control" [(ngModel)]="politica.multaDiaria" name="multaDiaria" />
+        </div>
+      </div>
+      <div class="page-actions d-flex gap-2">
+        <button class="btn btn-success" type="button" (click)="guardar()">Grabar</button>
+        <button class="btn btn-danger" type="button" (click)="cancelar()">Cancelar</button>
+      </div>
+    </div>
+  </form>
+</div>

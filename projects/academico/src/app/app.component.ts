@@ -1,10 +1,42 @@
-import { Component } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'academico';
+  menuColapsado = false;
+  isMobileView = false;
+
+  ngOnInit(): void {
+    this.updateViewport();
+  }
+
+  @HostListener('window:resize')
+  onResize(): void {
+    this.updateViewport();
+  }
+
+  toggleMenu(): void {
+    this.menuColapsado = !this.menuColapsado;
+  }
+
+  closeMenu(): void {
+    if (!this.menuColapsado) {
+      this.menuColapsado = true;
+    }
+  }
+
+  private updateViewport(): void {
+    const wasMobile = this.isMobileView;
+    this.isMobileView = window.innerWidth < 992;
+    if (this.isMobileView && !wasMobile) {
+      this.menuColapsado = true;
+    }
+    if (!this.isMobileView && wasMobile) {
+      this.menuColapsado = false;
+    }
+  }
 }

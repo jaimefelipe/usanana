@@ -1,4 +1,25 @@
 
-<app-menu></app-menu>
-<router-outlet>
-</router-outlet>
+<nav class="app-topbar fixed-top">
+  <div class="topbar-left">
+    <button type="button" class="btn btn-icon d-lg-none" (click)="toggleMenu()" aria-label="Toggle menu">
+      <span class="MenuIcon"></span>
+    </button>
+    <img src="assets/logo.svg" height="30" class="brand-logo" alt="Academico">
+    <span class="brand-name">Sistema Academico</span>
+  </div>
+  <div class="topbar-right">
+    <a class="btn btn-ghost" href="/main" title="Menu principal">
+      <span class="MenuIcon"></span>
+    </a>
+    <button type="button" class="btn btn-avatar">AC</button>
+  </div>
+</nav>
+
+<div class="sidebar-overlay" [class.is-visible]="isMobileView && !menuColapsado" (click)="closeMenu()"></div>
+
+<div class="wrapper">
+  <app-menu [collapsed]="menuColapsado" [mobile]="isMobileView" (toggleSidebar)="toggleMenu()"></app-menu>
+  <main class="main-content" [class.is-collapsed]="menuColapsado">
+    <router-outlet></router-outlet>
+  </main>
+</div>

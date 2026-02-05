@@ -1,85 +1,174 @@
-<!-- [hidden]="!logedIn" -->
-<nav  role="navigation">
-  <div id="menuToggle">
-    <!--
-    A fake / hidden checkbox is used as click reciever,
-    so you can use the :checked selector on it.
-    -->
-    <input  id="MenuShow" (click)="click()" [checked]="showMenu"  type="checkbox" />
+<nav class="sidebar p-2"
+     [class.collapsed]="collapsed"
+     [class.is-open]="mobile && !collapsed"
+     [class.is-mobile]="mobile"
+     (click)="onNavClick($event)"
+     role="navigation"
+     aria-label="Sidebar academico">
+  <ul class="nav flex-column">
+    <li class="nav-item sidebar-header" *ngIf="mobile">
+      <div class="d-flex align-items-center justify-content-between">
+        <img src="assets/logo.svg" height="26" class="sidebar-logo" alt="Academico">
+        <button type="button" class="sidebar-toggle" (click)="toggleSidebar.emit()" aria-label="Cerrar menu">
+          <span class="openIcon"></span>
+        </button>
+      </div>
+    </li>
 
-    <!--
-    Some spans to act as a hamburger.
+    <li class="nav-item pt-2 w-100" *ngIf="!mobile">
+      <a class="nav-link text-grey d-flex align-items-center justify-content-end w-100"
+         (click)="toggleSidebar.emit()"
+         role="button"
+         [attr.aria-expanded]="!collapsed">
+        <span class="openIcon" [class.is-collapsed]="collapsed"></span>
+      </a>
+    </li>
 
-    They are acting like a real hamburger,
-    not that McDonalds stuff.
-    -->
-    <span></span>
-    <span></span>
-    <span></span>
+    <li class="nav-item pt-2">
+      <a class="nav-link text-grey d-flex align-items-center"
+         [routerLink]="['/']"
+         routerLinkActive="active"
+         [routerLinkActiveOptions]="{ exact: true }"
+         [attr.title]="collapsed ? 'Inicio' : null">
+        <span class="homeIcon"></span>
+        <span class="ms-2 nav-text">Inicio {{ ambiente }}</span>
+      </a>
+    </li>
 
-    <!--
-    Too bad the menu has to be inside of the button
-    but hey, it's pure CSS magic.
-    -->
-      <ul  [hidden]="!showMenu" id="menu">
-        <a (click)="hideMenu()" [routerLink]="['/']"><li><i class="fa fa-home"></i> Inicio 2.1</li></a>
-        <div [hidden]="!logedIn">
-
-          <li (click)="clickPerfilMenu()" ><a><i class="fa fa-hospital-o"></i>  Configuración <i [ngClass]='ConfigClass' class="fa fa-cog"></i>  </a></li>
-          <ul [hidden]="!perfilMenu" >
-            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/perfil']"><li><i class="fa fa-credit-card"></i> Perfil </li></a>
-            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/usuario']"><li><i class="fa fa-credit-card"></i> Usuarios </li></a>
-            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/contactos']"><li><i class="fa fa-credit-card"></i> Contactos </li></a>
-            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/carrera']"><li><i class="fa fa-shopping-bag"></i> Carreras</li></a>
-            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/curso']"><li><i class="fa fa-shopping-basket"></i> Cursos</li></a>
-            <a (click)="hideMenu()" [hidden]="!logedIn " [routerLink]="['/categorias']"><li><i class="fa fa-shopping-bag"></i> Categorías</li></a>
-            <a (click)="hideMenu()" [hidden]="!logedIn " [routerLink]="['/subcategorias']"><li><i class="fa fa-shopping-bag"></i> Sub Categorías</li></a>
-            
-          </ul>
-
-          <li (click)="clickAcademicoMenu()" ><a><i class="fa fa-file"></i>  Registro <i [ngClass]='AcademicoClass' class="fa fa-cog"></i>  </a></li>
-          <ul [hidden]="!AcademicoMenu">
-            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/periodo']"><li><i class="fa fa-credit-card"></i> Periodo Académico</li></a>
-            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/grupo']"><li><i class="fa fa-align-justify"></i> Grupos</li></a>
-            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/matricula']"><li><i class="fa fa-map-signs"></i> Matrícula</li></a>
-
-            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/aulavirtual']"><li><i class="fa fa-credit-card"></i> Aula Virtual</li></a>
-            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/entregas']"><li><i class="fa fa-credit-card"></i> Entregas</li></a>
-
-            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/reportesacademicos']"><li><i class="fa fa-file"></i> Reportes</li></a>
-          </ul>
-
-
-          <li (click)="clickTesoreriaMenu()" ><a><i class="fa fa-file"></i>  Tesoreria <i [ngClass]='TesoreriaClass' class="fa fa-cog"></i>  </a></li>
-          <ul [hidden]="!TesoreriaMenu">
-            <a (click)="hideMenu()" [hidden]="!logedIn " [routerLink]="['/articulos']"><li><i class="fa fa-shopping-basket"></i> Artículos</li></a>
-            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/cobroacademico']"><li><i class="fa fa-credit-card"></i> Cobros</li></a>
-            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/ventas']"><li><i class="fa fa-credit-card"></i> Facturas</li></a>
-
-            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/cuentacxc']"><li><i class="fa fa-credit-card"></i> Cuentas x Cobrar</li></a>
-            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/documentocxc']"><li><i class="fa fa-file-o"></i> Documentos x Cobrar</li></a>
-            <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/movimientocxc']"><li><i class="fa fa-align-justify"></i> Movimientos x Cobrar</li></a>
-          </ul>
-
-          <li (click)="clickProfesorMenu()" ><a><i class="fa fa-file"></i>  Profesor <i [ngClass]='ProfesorClass' class="fa fa-cog"></i>  </a></li>
-          <ul [hidden]="!ProfesorMenu">
-            <a (click)="hideMenu()" [hidden]="!logedIn " [routerLink]="['/grupoprofesor']"><li><i class="fa fa-shopping-basket"></i> Grupos</li></a>
-          </ul>
-
-          <li (click)="clickAlumnoMenu()" ><a><i class="fa fa-file"></i>  Alumno <i [ngClass]='AlumnoClass' class="fa fa-cog"></i>  </a></li>
-          <ul [hidden]="!AlumnoMenu">
-            <a (click)="hideMenu()" [hidden]="!logedIn " [routerLink]="['/primeringreso']"><li><i class="fa fa-shopping-basket"></i> Perfil</li></a>
-            <a (click)="hideMenu()" [hidden]="!logedIn " [routerLink]="['/expedientealumno']"><li><i class="fa fa-shopping-basket"></i> Expediente</li></a>
-          </ul>
-
-        </div>
-        <a href="https://api.whatsapp.com/send?phone=50687786649" target="_blank"><li><i class="fa fa-phone"></i> Soporte</li></a>
-        <a href="/main" target="_self"><li><i class="fa fa-home"></i> Menú Principal</li></a>
-
-        <a (click)="hideMenu()" [hidden]="logedIn" [routerLink]="['/login']"><li><i class="fa fa-sign-in"></i> Entrar</li></a>
-        <a (click)="hideMenu()" [hidden]="!logedIn" [routerLink]="['/cambiar']"><li><i class="fa fa-key"></i> Cambiar Clave</li></a>
-        <a (click)="hideMenu()" [hidden]="!logedIn" (click)="logOut()" href="#"><li><i class="fa fa-sign-out"></i> Salir</li></a>
-        <a (click)="hideMenu()" [hidden]="!logedIn">{{Company}} | {{User}}</a>
+    <li class="nav-item" *ngIf="logedIn">
+      <a class="nav-link text-grey d-flex align-items-center"
+         href="#"
+         data-toggle="menu"
+         (click)="toggleSection($event, 'config')"
+         [attr.aria-expanded]="sectionState.config && !collapsed"
+         [attr.title]="collapsed ? 'Configuracion' : null">
+        <span class="InventarioIcon"></span>
+        <span class="ms-2 flex-grow-1 nav-text">Configuracion</span>
+        <span class="ms-auto menu-chevron nav-text">{{ chevron(sectionState.config) }}</span>
+      </a>
+      <ul class="nav flex-column ms-3" *ngIf="sectionState.config && !collapsed">
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/perfil']" routerLinkActive="active">- Perfil</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/usuario']" routerLinkActive="active">- Usuarios</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/contactos']" routerLinkActive="active">- Contactos</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/carrera']" routerLinkActive="active">- Carreras</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/curso']" routerLinkActive="active">- Cursos</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/categorias']" routerLinkActive="active">- Categorias</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/subcategorias']" routerLinkActive="active">- Sub categorias</a></li>
       </ul>
-  </div>
+    </li>
+
+    <li class="nav-item" *ngIf="logedIn">
+      <a class="nav-link text-grey d-flex align-items-center"
+         href="#"
+         data-toggle="menu"
+         (click)="toggleSection($event, 'registro')"
+         [attr.aria-expanded]="sectionState.registro && !collapsed"
+         [attr.title]="collapsed ? 'Registro' : null">
+        <span class="VentasIcon"></span>
+        <span class="ms-2 flex-grow-1 nav-text">Registro</span>
+        <span class="ms-auto menu-chevron nav-text">{{ chevron(sectionState.registro) }}</span>
+      </a>
+      <ul class="nav flex-column ms-3" *ngIf="sectionState.registro && !collapsed">
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/periodo']" routerLinkActive="active">- Periodo academico</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/grupo']" routerLinkActive="active">- Grupos</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/matricula']" routerLinkActive="active">- Matricula</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/aulavirtual']" routerLinkActive="active">- Aula virtual</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/entregas']" routerLinkActive="active">- Entregas</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/reportesacademicos']" routerLinkActive="active">- Reportes</a></li>
+      </ul>
+    </li>
+
+    <li class="nav-item" *ngIf="logedIn">
+      <a class="nav-link text-grey d-flex align-items-center"
+         href="#"
+         data-toggle="menu"
+         (click)="toggleSection($event, 'tesoreria')"
+         [attr.aria-expanded]="sectionState.tesoreria && !collapsed"
+         [attr.title]="collapsed ? 'Tesoreria' : null">
+        <span class="CobrarIcon"></span>
+        <span class="ms-2 flex-grow-1 nav-text">Tesoreria</span>
+        <span class="ms-auto menu-chevron nav-text">{{ chevron(sectionState.tesoreria) }}</span>
+      </a>
+      <ul class="nav flex-column ms-3" *ngIf="sectionState.tesoreria && !collapsed">
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/articulos']" routerLinkActive="active">- Articulos</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/cobroacademico']" routerLinkActive="active">- Cobros</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/ventas']" routerLinkActive="active">- Facturas</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/cuentacxc']" routerLinkActive="active">- Cuentas x Cobrar</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/documentocxc']" routerLinkActive="active">- Documentos x Cobrar</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/movimientocxc']" routerLinkActive="active">- Movimientos x Cobrar</a></li>
+      </ul>
+    </li>
+
+    <li class="nav-item" *ngIf="logedIn">
+      <a class="nav-link text-grey d-flex align-items-center"
+         href="#"
+         data-toggle="menu"
+         (click)="toggleSection($event, 'profesor')"
+         [attr.aria-expanded]="sectionState.profesor && !collapsed"
+         [attr.title]="collapsed ? 'Profesor' : null">
+        <span class="ComprasIcon"></span>
+        <span class="ms-2 flex-grow-1 nav-text">Profesor</span>
+        <span class="ms-auto menu-chevron nav-text">{{ chevron(sectionState.profesor) }}</span>
+      </a>
+      <ul class="nav flex-column ms-3" *ngIf="sectionState.profesor && !collapsed">
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/grupoprofesor']" routerLinkActive="active">- Grupos</a></li>
+      </ul>
+    </li>
+
+    <li class="nav-item" *ngIf="logedIn">
+      <a class="nav-link text-grey d-flex align-items-center"
+         href="#"
+         data-toggle="menu"
+         (click)="toggleSection($event, 'alumno')"
+         [attr.aria-expanded]="sectionState.alumno && !collapsed"
+         [attr.title]="collapsed ? 'Alumno' : null">
+        <span class="SoporteIcon"></span>
+        <span class="ms-2 flex-grow-1 nav-text">Alumno</span>
+        <span class="ms-auto menu-chevron nav-text">{{ chevron(sectionState.alumno) }}</span>
+      </a>
+      <ul class="nav flex-column ms-3" *ngIf="sectionState.alumno && !collapsed">
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/primeringreso']" routerLinkActive="active">- Perfil</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/expedientealumno']" routerLinkActive="active">- Expediente</a></li>
+      </ul>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link text-grey d-flex align-items-center"
+         href="https://api.whatsapp.com/send?phone=50687786649"
+         target="_blank" rel="noopener"
+         [attr.title]="collapsed ? 'Soporte' : null">
+        <span class="SoporteIcon"></span>
+        <span class="ms-2 nav-text">Soporte</span>
+      </a>
+    </li>
+
+
+    <li class="nav-item" *ngIf="!logedIn">
+      <a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/login']">
+        <span class="homeIcon"></span>
+        <span class="ms-2 nav-text">Entrar</span>
+      </a>
+    </li>
+
+    <li class="nav-item" *ngIf="logedIn">
+      <a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/cambiar']">
+        <span class="MenuIcon"></span>
+        <span class="ms-2 nav-text">Cambiar clave</span>
+      </a>
+    </li>
+
+    <li class="nav-item" *ngIf="logedIn">
+      <a class="nav-link text-grey d-flex align-items-center"
+         href="#"
+         (click)="logOut()"
+         [attr.title]="collapsed ? 'Salir' : null">
+        <span class="SalirIcon"></span>
+        <span class="ms-2 nav-text">Salir</span>
+      </a>
+    </li>
+
+    <li class="nav-item mt-4 px-2 text-muted small" *ngIf="logedIn && !collapsed">
+      {{ Company }} | {{ User }}
+    </li>
+  </ul>
 </nav>

@@ -1,0 +1,22 @@
+<div class="opac-home">
+  <h2>Buscar en el catalogo</h2>
+  <div class="search-bar">
+    <input class="form-control" placeholder="Buscar por titulo, autor o ISBN" [(ngModel)]="termino" />
+    <select class="form-select" [(ngModel)]="tipoMaterial">
+      <option value="todos">Tipos material</option>
+      <option *ngFor="let tipo of tiposMaterial" [value]="tipo.id">{{ tipo.nombre }}</option>
+    </select>
+  </div>
+
+  <div class="resultados">
+    <div *ngFor="let libro of resultados" class="resultado-card">
+      <div>
+        <h5>{{ libro.titulo }}</h5>
+        <p class="text-muted mb-1">{{ libro.autores || libro.autor }}</p>
+        <p class="small mb-0">{{ libro.tipoMaterial || 'Sin tipo' }} | {{ libro.categoria }}</p>
+      </div>
+      <a class="btn btn-outline-primary btn-sm" [routerLink]="['/opac/catalogo', libro.id]">Ver detalle</a>
+    </div>
+    <div *ngIf="resultados.length === 0" class="text-muted">Sin resultados.</div>
+  </div>
+</div>

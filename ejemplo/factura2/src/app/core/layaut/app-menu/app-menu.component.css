@@ -1,0 +1,159 @@
+.sidebar {
+  width: var(--ui-sidebar-width);
+  min-height: calc(100vh - var(--ui-topbar-h));
+  background: linear-gradient(180deg, var(--ui-sidebar) 0%, var(--ui-sidebar-2) 100%);
+  color: #c7ced9;
+  position: fixed;
+  top: var(--ui-topbar-h);
+  left: 0;
+  padding: 16px 12px;
+  overflow-y: auto;
+  z-index: 1035;
+  transition: width 0.2s ease, transform 0.25s ease;
+}
+
+.sidebar.collapsed {
+  width: var(--ui-sidebar-collapsed);
+}
+
+.sidebar.is-mobile {
+  width: min(84vw, 320px);
+  transform: translateX(-100%);
+  box-shadow: var(--ui-shadow);
+}
+
+.sidebar.is-mobile.is-open {
+  transform: translateX(0);
+}
+
+.sidebar .nav-link {
+  white-space: nowrap;
+  transition: padding 0.2s ease;
+  color: #c7ced9;
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.sidebar.collapsed .nav-link {
+  justify-content: center;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  text-align: center;
+}
+
+.sidebar.collapsed .nav-link i {
+  margin-right: 0 !important;
+}
+
+.text-grey {
+  color: #c7ced9;
+}
+
+.sidebar-header {
+  padding: 8px 8px 12px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sidebar-logo {
+  display: inline-block;
+}
+
+.sidebar-toggle {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.openIcon {
+  --size: 1.25rem;
+  display: inline-block;
+  width: var(--size);
+  height: var(--size);
+  line-height: 1;
+  vertical-align: middle;
+  background-image: url('/assets/close.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.openIcon.is-collapsed {
+  transform: rotate(180deg);
+  margin-right: 10px;
+}
+
+.homeIcon,
+.InventarioIcon,
+.VentasIcon,
+.ComprasIcon,
+.CobrarIcon,
+.SoporteIcon,
+.MenuIcon,
+.SalirIcon {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.homeIcon {
+  background-image: url('/assets/home.png');
+}
+
+.InventarioIcon {
+  background-image: url('/assets/inventario.png');
+}
+
+.VentasIcon {
+  background-image: url('/assets/ventas.png');
+}
+
+.ComprasIcon {
+  background-image: url('/assets/compras.png');
+}
+
+.CobrarIcon {
+  background-image: url('/assets/cobrar.png');
+}
+
+.SoporteIcon {
+  background-image: url('/assets/soporte.png');
+}
+
+.MenuIcon {
+  background-image: url('/assets/menu.png');
+}
+
+.SalirIcon {
+  background-image: url('/assets/salir.png');
+}
+
+.nav-item {
+  border-bottom: 0;
+}
+
+.sidebar > .nav > .nav-item + .nav-item {
+  margin-top: 6px;
+}
+
+.sidebar .nav .nav .nav-link {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  color: #aab3c0;
+}

@@ -45,7 +45,8 @@
               "node_modules/@syncfusion/ej2-navigations/styles/bootstrap.css",
               "node_modules/@syncfusion/ej2-popups/styles/bootstrap.css",
               "node_modules/@syncfusion/ej2-splitbuttons/styles/bootstrap.css",
-              "node_modules/@syncfusion/ej2-richtexteditor/styles/bootstrap.css"  
+              "node_modules/@syncfusion/ej2-richtexteditor/styles/bootstrap.css",
+              "projects/academico/src/styles.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
@@ -960,6 +961,112 @@
             ],
             "styles": [
               "projects/inventario/src/styles.css"
+            ],
+            "scripts": []
+          }
+        }
+      }
+    },
+    "biblioteca": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "standalone": false
+        },
+        "@schematics/angular:directive": {
+          "standalone": false
+        },
+        "@schematics/angular:pipe": {
+          "standalone": false
+        }
+      },
+      "root": "projects/biblioteca",
+      "sourceRoot": "projects/biblioteca/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:application",
+          "options": {
+            "baseHref": "/biblioteca/",
+            "outputPath": "dist/biblioteca",
+            "index": "projects/biblioteca/src/index.html",
+            "browser": "projects/biblioteca/src/main.ts",
+            "polyfills": [
+              "zone.js"
+            ],
+            "tsConfig": "projects/biblioteca/tsconfig.app.json",
+            "allowedCommonJsDependencies": ["sweetalert2"],
+            "assets": [
+              "projects/biblioteca/src/favicon.ico",
+              "projects/biblioteca/src/assets"
+            ],
+            "styles": [
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "projects/main/src/styles.css",
+              "projects/biblioteca/src/styles.css"
+            ],
+            "scripts": [
+              "node_modules/jquery/dist/jquery.min.js",
+              "node_modules/bootstrap/dist/js/bootstrap.min.js"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "1500kb",
+                  "maximumError": "11mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "12kb",
+                  "maximumError": "14kb"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "biblioteca:build:production"
+            },
+            "development": {
+              "buildTarget": "biblioteca:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "buildTarget": "biblioteca:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
+            "tsConfig": "projects/biblioteca/tsconfig.spec.json",
+            "assets": [
+              "projects/biblioteca/src/favicon.ico",
+              "projects/biblioteca/src/assets"
+            ],
+            "styles": [
+              "projects/main/src/styles.css",
+              "projects/biblioteca/src/styles.css"
             ],
             "scripts": []
           }

@@ -1,0 +1,384 @@
+import { Component, OnInit } from '@angular/core';
+import Swal from 'sweetalert2';
+import { BibliotecaDataService } from '../../services/biblioteca-data.service';
+import {
+  Libro,
+  MarcCampo,
+  MarcDicCampo,
+  MarcDicFormato,
+  MarcDicIndicador,
+  MarcDicSubcampo,
+  MarcRegistro,
+  MarcSubcampo,
+  TipoMaterial
+} from '../../models/biblioteca.models';
+
+interface CatalogacionSubcampoEntry {
+  codigo: string;
+  nombre: string;
+  valor: string;
+}
+
+interface CatalogacionEntrada {
+  tag: string;
+  nombre: string;
+  valor: string;
+  ind1: string;
+  ind2: string;
+  subcampos: CatalogacionSubcampoEntry[];
+}
+
+@Component({
+  selector: 'app-marc-catalogacion',
+  templateUrl: './marc-catalogacion.component.html',
+  styleUrls: ['./marc-catalogacion.component.css']
+})
+export class MarcCatalogacionComponent implements OnInit {
+  libros: Libro[] = [];
+  formatos: MarcDicFormato[] = [];
+  campos: MarcDicCampo[] = [];
+  subcampos: MarcDicSubcampo[] = [];
+  indicadores: MarcDicIndicador[] = [];
+  tiposMaterial: TipoMaterial[] = [];
+
+  libroFormVisible = false;
+  libroEditing = false;
+  libroForm: Libro = {
+    id: 0,
+    titulo: '',
+    autor: '',
+    isbn: '',
+    categoria: 'Sin categoria',
+    estado: 'disponible',
+    tipoMaterial: '',
+    tipoMaterialId: undefined
+  };
+
+  selectedLibroId?: number;
+  selectedFormatoId?: number;
+  selectedSection = '00';
+  secciones = ['00', '10', '20', '30', '40', '50', '60', '70', '80', '90'];
+  recordEntries: Record<string, CatalogacionEntrada> = {};
+
+  catalogForm = {
+    leader: '',
+    control001: '',
+    control005: '',
+    control008: ''
+  };
+
+  isSaving = false;
+
+  constructor(private dataService: BibliotecaDataService) {}
+
+  async ngOnInit() {
+    await this.cargarDatosBase();
+  }
+
+  private resetCatalogForm() {
+    this.catalogForm = {
+      leader: '',
+      control001: '',
+      control005: '',
+      control008: ''
+    };
+  }
+
+  private async cargarDatosBase() {
+    const [libros, formatos, campos, subcampos, indicadores, tiposMaterial] = await Promise.all([
+      this.dataService.getLibros(),
+      this.dataService.getMarcDicFormatos(),
+      this.dataService.getMarcDicCampos(),
+      this.dataService.getMarcDicSubcampos(),
+      this.dataService.getMarcDicIndicadores(),
+      this.dataService.getTiposMaterial()
+    ]);
+    this.libros = libros;
+    this.formatos = formatos;
+    this.campos = campos;
+    this.subcampos = subcampos;
+    this.indicadores = indicadores;
+    this.tiposMaterial = tiposMaterial;
+    if (!this.selectedFormatoId && formatos.length) {
+      this.selectedFormatoId = formatos[0].id;
+    }
+  }
+
+  getTagsPorSeccion() {
+    if (!this.selectedFormatoId) {
+      return [];
+    }
+    return this.campos.filter(campo => {
+      if (campo.formatoId !== this.selectedFormatoId) return false;
+      const numero = Number(campo.tag);
+      const rangoInicio = Number(this.selectedSection);
+      return numero >= rangoInicio && numero < rangoInicio + 10;
+    });
+  }
+
+  getSectionLabel(section: string) {
+    const ranges: Record<string, string> = {
+      '00': '000-009',
+      '10': '010-019',
+      '20': '020-029',
+      '30': '030-039',
+      '40': '040-049',
+      '50': '050-059',
+      '60': '060-069',
+      '70': '070-079',
+      '80': '080-089',
+      '90': '090-099'
+    };
+    return ranges[section] || section;
+  }
+
+  selectSection(section: string) {
+    this.selectedSection = section;
+  }
+
+  onTipoMaterialChange() {
+    const tipo = this.tiposMaterial.find(t => t.id === this.libroForm.tipoMaterialId);
+    this.libroForm.tipoMaterial = tipo ? tipo.nombre : '';
+  }
+
+  get selectedLibro() {
+    return this.libros.find(libro => libro.id === this.selectedLibroId);
+  }
+
+  private async cargarLibros() {
+    this.libros = await this.dataService.getLibros();
+  }
+
+  onFormatoChange() {
+    this.recordEntries = {};
+  }
+
+  getEntry(tag: string, nombre: string) {
+    const entry = this.ensureEntry(tag);
+    entry.nombre = nombre || entry.nombre;
+    const indicadores = this.getIndicadoresForTag(tag);
+    if (!entry.ind1) {
+      const valor1 = indicadores.find(ind => ind.posicion === 1);
+      entry.ind1 = valor1 ? valor1.valor : '';
+    }
+    if (!entry.ind2) {
+      const valor2 = indicadores.find(ind => ind.posicion === 2);
+      entry.ind2 = valor2 ? valor2.valor : '';
+    }
+    this.ensureSubcamposForEntry(entry, tag);
+    return entry;
+  }
+
+  getSubcamposForTag(tag: string) {
+    return this.subcampos.filter(
+      sub => sub.formatoId === this.selectedFormatoId && sub.tag === tag
+    );
+  }
+
+  getIndicadoresForTag(tag: string) {
+    return this.indicadores.filter(
+      indicador => indicador.formatoId === this.selectedFormatoId && indicador.tag === tag
+    );
+  }
+
+  hasSubcampos(tag: string) {
+    return this.getSubcamposForTag(tag).length > 0;
+  }
+
+  getIndicatorValues(tag: string, posicion: number) {
+    const valores = this.indicadores
+      .filter(ind => ind.formatoId === this.selectedFormatoId && ind.tag === tag && ind.posicion === posicion)
+      .map(ind => ind.valor);
+    const unique = Array.from(new Set(valores));
+    if (!unique.includes('')) {
+      unique.unshift('');
+    }
+    return unique;
+  }
+
+  getIndicatorOptions(tag: string, posicion: number) {
+    return this.indicadores
+      .filter(ind => ind.formatoId === this.selectedFormatoId && ind.tag === tag && ind.posicion === posicion)
+      .map(ind => ({ value: ind.valor, meaning: ind.significado }));
+  }
+
+  ensureSubcamposForEntry(entry: CatalogacionEntrada, tag: string) {
+    const definitions = this.getSubcamposForTag(tag);
+    definitions.forEach(def => {
+      const existing = entry.subcampos.find(sub => sub.codigo === def.codigo);
+      if (!existing) {
+        entry.subcampos.push({
+          codigo: def.codigo,
+          nombre: def.nombre,
+          valor: ''
+        });
+      } else {
+        existing.nombre = def.nombre;
+      }
+    });
+  }
+
+  removeSubcampo(tag: string, index: number) {
+    const entry = this.ensureEntry(tag);
+    entry.subcampos.splice(index, 1);
+  }
+
+  nuevoLibro() {
+    this.resetLibroForm();
+    this.recordEntries = {};
+    this.resetCatalogForm();
+    this.selectedSection = '00';
+    this.selectedLibroId = undefined;
+    if (!this.selectedFormatoId && this.formatos.length) {
+      this.selectedFormatoId = this.formatos[0].id;
+    }
+    this.libroFormVisible = true;
+  }
+
+  editarLibro(libro: Libro) {
+    this.libroForm = { ...libro };
+    this.selectedLibroId = libro.id;
+    this.recordEntries = {};
+    this.resetCatalogForm();
+    this.selectedSection = '00';
+    this.libroEditing = true;
+    this.onTipoMaterialChange();
+    this.libroFormVisible = true;
+  }
+
+  private resetLibroForm() {
+    this.libroForm = {
+      id: 0,
+      titulo: '',
+      autor: '',
+      isbn: '',
+      categoria: 'Sin categoria',
+      estado: 'disponible',
+      tipoMaterial: '',
+      tipoMaterialId: undefined
+    };
+    this.libroEditing = false;
+  }
+
+  async guardarLibro() {
+    if (!this.libroForm.titulo || !this.libroForm.isbn) {
+      Swal.fire('Complete título e ISBN para continuar');
+      return;
+    }
+
+    try {
+      if (this.libroEditing) {
+        await this.dataService.updateLibro(this.libroForm);
+        Swal.fire('Libro actualizado');
+        this.selectedLibroId = this.libroForm.id;
+      } else {
+        const libroId = await this.dataService.createLibro(this.libroForm);
+        if (libroId) {
+          this.selectedLibroId = libroId;
+          this.libroForm.id = libroId;
+          Swal.fire('Libro creado');
+        } else {
+          Swal.fire('No se pudo obtener el identificador del libro');
+        }
+      }
+      await this.cargarLibros();
+      this.libroEditing = true;
+    } catch (error) {
+      console.error(error);
+      Swal.fire('Error al guardar el libro');
+    }
+  }
+
+  cancelarLibro() {
+    this.resetLibroForm();
+    this.recordEntries = {};
+    this.resetCatalogForm();
+    this.selectedSection = '00';
+    this.libroFormVisible = false;
+  }
+
+  private ensureEntry(tag: string) {
+    if (!this.recordEntries[tag]) {
+      this.recordEntries[tag] = {
+        tag,
+        nombre: '',
+        valor: '',
+        ind1: '',
+        ind2: '',
+        subcampos: []
+      };
+    }
+    return this.recordEntries[tag];
+  }
+
+  async guardarCatalogacion() {
+    if (!this.selectedLibroId) {
+      Swal.fire('Seleccione un libro para continuar');
+      return;
+    }
+    if (!this.selectedFormatoId) {
+      Swal.fire('Seleccione un formato MARC válido');
+      return;
+    }
+    const formato = this.formatos.find(f => f.id === this.selectedFormatoId);
+    if (!formato) {
+      Swal.fire('No se encontró el formato seleccionado');
+      return;
+    }
+    const registro: MarcRegistro = {
+      id: 0,
+      libroId: this.selectedLibroId,
+      formato: formato.codigo,
+      leader: this.catalogForm.leader,
+      control001: this.catalogForm.control001,
+      control005: this.catalogForm.control005,
+      control008: this.catalogForm.control008
+    };
+
+    try {
+      this.isSaving = true;
+      const registroResult: any = await this.dataService.createMarcRegistro(registro);
+      const registroId = registroResult?.insertId ? Number(registroResult.insertId) : null;
+      if (!registroId) {
+        throw new Error('No se pudo determinar Id del registro');
+      }
+
+      for (const entry of Object.values(this.recordEntries)) {
+        if (!entry.valor && entry.subcampos.length === 0) {
+          continue;
+        }
+        const campoPayload: MarcCampo = {
+          id: 0,
+          marcRegistroId: registroId,
+          tag: entry.tag,
+          ind1: entry.ind1,
+          ind2: entry.ind2,
+          valor: entry.valor
+        };
+        const campoResult: any = await this.dataService.createMarcCampo(campoPayload);
+        const campoId = campoResult?.insertId ? Number(campoResult.insertId) : null;
+        if (!campoId) {
+          continue;
+        }
+        for (const sub of entry.subcampos) {
+          const subPayload: MarcSubcampo = {
+            id: 0,
+            marcCampoId: campoId,
+            codigo: sub.codigo,
+            valor: sub.valor
+          };
+          await this.dataService.createMarcSubcampo(subPayload);
+        }
+      }
+
+      Swal.fire('Registro MARC registrado correctamente');
+      this.recordEntries = {};
+      this.resetCatalogForm();
+    } catch (error) {
+      console.error(error);
+      Swal.fire('Ocurrió un error al registrar el MARC');
+    } finally {
+      this.isSaving = false;
+    }
+  }
+}

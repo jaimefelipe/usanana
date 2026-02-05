@@ -1,120 +1,152 @@
-.bg1 {
-  background: linear-gradient(to top, #09203f,#537895);
-  width: 100vw;
-  height: 100vh;
-  text-align: center;
+.academico-home {
+  max-width: 1100px;
 }
-.app-splash-screen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+
+.hero-card {
   display: flex;
-  justify-content: center;
   align-items: center;
-  width: 100%;
-  height: 100%;
-  z-index: 100;
-  transition: left 0.5s;
+  justify-content: space-between;
+  gap: 16px;
+  background: #ffffff;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius-lg);
+  padding: 20px;
+  box-shadow: var(--ui-shadow-sm);
 }
 
-.app-label {
-  margin-top: 32px;
-  color: #fff;
-  font-size: 2.5em;
-  font-family: 'Anton', sans-serif;
+.hero-content h3 {
+  margin: 0 0 6px;
 }
 
-.app-splash-inner {
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.home-section {
+  margin-top: 24px;
+}
+
+.section-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.section-title {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.section-subtitle {
+  color: var(--ui-muted);
+  font-size: 0.9rem;
+}
+
+.section-pill {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: #4b5563;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.shortcut-card .card-body {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.shortcut-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: rgba(240, 77, 100, 0.12);
+  color: var(--ui-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+.shortcut-title {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.shortcut-desc {
+  margin: 4px 0 0;
+  color: var(--ui-muted);
+  font-size: 0.9rem;
+}
+
+.kpi-card .card-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.kpi-stack {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+}
+
+.kpi-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.kpi-label {
+  font-weight: 600;
+}
+
+.kpi-meta {
+  color: var(--ui-muted);
+  font-size: 0.85rem;
+}
+
+.kpi-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  display: flex;
   align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  background: #f3f4f6;
+  color: #374151;
 }
 
-.app-logo {
-  background: url("../../../../../../../assets/logo_tansparent.png");
-  background-repeat: no-repeat;
-  max-width: 100%;
-  background-position: center;
-  background-size: contain;
-  width: 100px;
-  height: 100px;
-  margin: auto;
+.kpi-icon.tone-primary {
+  background: rgba(240, 77, 100, 0.12);
+  color: var(--ui-primary);
 }
 
-.center {
-  text-align: justify;
-}
-.center div {
-  text-align: center;
-
-}
-img {
-  max-width: 85vw;
-  margin-bottom: 10px;
-  margin-top: 10px;
+.kpi-icon.tone-success {
+  background: rgba(36, 176, 125, 0.12);
+  color: var(--ui-success);
 }
 
-.h-50 {
-  min-height: 100px;
+.kpi-icon.tone-warning {
+  background: rgba(243, 194, 75, 0.18);
+  color: #b7791f;
 }
 
-
-.conta {
-  background: url(../../../../../../../assets/conta1.png) no-repeat;
-  cursor:pointer;
-  border: none;
-  background-size: cover;
-  width: 80px;
-  height: 80px;
-  font-size: 2rem;
+.kpi-icon.tone-info {
+  background: rgba(20, 58, 104, 0.12);
+  color: #143a68;
 }
 
-.venta {
-  background: url(../../../../../../../assets/venta.png) no-repeat;
-  cursor:pointer;
-  border: none;
-  background-size: cover;
-  width: 80px;
-  height: 80px;
-  font-size: 2rem;
-}
-.factura {
-  background: url(../../../../../../../assets/factura.png) no-repeat;
-  cursor:pointer;
-  border: none;
-  background-size: cover;
-  width: 80px;
-  height: 80px;
-  font-size: 2rem;
-}
-.menu {
-  background: url(../../../../../../../assets/menu.png) no-repeat;
-  cursor:pointer;
-  border: none;
-  background-size: cover;
-  width: 80px;
-  height: 80px;
-  font-size: 2rem;
-}
-
-.bus {
-  background: url(../../../../../../../assets/bus.png) no-repeat;
-  cursor:pointer;
-  border: none;
-  background-size: cover;
-  width: 80px;
-  height: 80px;
-  font-size: 2rem;
-}
-.turismo {
-  background: url(../../../../../../../assets/turismo.png) no-repeat;
-  cursor:pointer;
-  border: none;
-  background-size: cover;
-  width: 80px;
-  height: 80px;
-  font-size: 2rem;
+@media (max-width: 767.98px) {
+  .hero-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }

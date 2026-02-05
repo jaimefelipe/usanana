@@ -1,0 +1,15 @@
+.opac-detalle {
+  max-width: 760px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.detalle-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}

@@ -1,0 +1,28 @@
+.search-bar {
+  max-width: 620px;
+  margin-bottom: 20px;
+  display: grid;
+  grid-template-columns: 1fr 200px;
+  gap: 12px;
+}
+
+.resultados {
+  display: grid;
+  gap: 12px;
+}
+
+.resultado-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  padding: 16px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@media (max-width: 768px) {
+  .search-bar {
+    grid-template-columns: 1fr;
+  }
+}

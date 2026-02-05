@@ -1,0 +1,17 @@
+.biblioteca-dashboard {
+  max-width: 1200px;
+}
+
+.kpi-value {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #1b2733;
+}
+
+.quick-links {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}

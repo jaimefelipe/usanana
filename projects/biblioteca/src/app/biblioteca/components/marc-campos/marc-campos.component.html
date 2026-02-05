@@ -1,0 +1,68 @@
+<div [hidden]="edit" class="container-fluid pb-5">
+  <div class="page-toolbar">
+    <div>
+      <h2 class="page-title">MARC campos</h2>
+    </div>
+    <div class="input-group page-search">
+      <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+      <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text"
+        class="form-control" placeholder="Buscar">
+      <button class="btn btn-success" type="button" (click)="nuevo()"><i class="fa fa-plus-circle"
+          aria-hidden="true"></i></button>
+    </div>
+  </div>
+
+  <form>
+    <div class="row g-4 page-grid">
+      <div class="form-group col-12 col-sm-6" *ngFor="let item of campos | bibliotecaSearch: searchField">
+        <div class="card h-100">
+          <a class="page-card-link" (click)="editar(item)">
+            <div class="card-body">
+              <h4 class="card-title">Tag {{ item.tag }}</h4>
+              Indicadores: {{ item.ind1 || '-' }} / {{ item.ind2 || '-' }}<br />
+              {{ item.valor || '-' }}
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div [hidden]="!edit" class="container-fluid pb-5">
+  <h2>MARC campo</h2>
+  <form class="page-form">
+    <div class="page-form-card">
+      <h5>{{ esEdicion ? 'Editar campo' : 'Nuevo campo' }}</h5>
+      <div class="mb-2">
+        <label class="form-label">Registro</label>
+        <select class="form-select" [(ngModel)]="campo.marcRegistroId" name="marcRegistroId">
+          <option [ngValue]="0">Seleccione...</option>
+          <option *ngFor="let registro of registros" [ngValue]="registro.id">{{ registro.id }} - {{ registro.formato }}</option>
+        </select>
+      </div>
+      <div class="row g-2">
+        <div class="col-4">
+          <label class="form-label">Tag</label>
+          <input class="form-control" [(ngModel)]="campo.tag" name="tag" />
+        </div>
+        <div class="col-4">
+          <label class="form-label">Ind1</label>
+          <input class="form-control" [(ngModel)]="campo.ind1" name="ind1" />
+        </div>
+        <div class="col-4">
+          <label class="form-label">Ind2</label>
+          <input class="form-control" [(ngModel)]="campo.ind2" name="ind2" />
+        </div>
+      </div>
+      <div class="mb-3 mt-2">
+        <label class="form-label">Valor</label>
+        <textarea class="form-control" rows="3" [(ngModel)]="campo.valor" name="valor"></textarea>
+      </div>
+      <div class="page-actions d-flex gap-2">
+        <button class="btn btn-success" type="button" (click)="guardar()">Grabar</button>
+        <button class="btn btn-danger" type="button" (click)="cancelar()">Cancelar</button>
+      </div>
+    </div>
+  </form>
+</div>

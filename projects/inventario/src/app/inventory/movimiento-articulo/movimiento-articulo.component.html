@@ -1,5 +1,5 @@
-<div [hidden]="edit" class="container pb-5">
-    <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+<div [hidden]="edit" class="container-fluid pb-5">
+    
     <div class="input-group mb-3">
       <div class="input-group-prepend">
         <h2>Artículos &nbsp;</h2>
@@ -29,7 +29,7 @@
       </div>
     </div>
     <form>
-      <div class="form-row">
+      <div class="form-row page-grid">
   
         <div class="form-group col-12 col-sm-6" *ngFor="let Product of Articulos;let i = index">
           <div class="card">
@@ -72,7 +72,7 @@
         
       </div>
       <div class="card-body modal-grid">
-        <div class="form-row">
+        <div class="form-row page-grid">
           <div class="form-group col-12" *ngFor="let Movimiento of Movimientos;let i = index">
             
               <div class="card">

@@ -1,0 +1,100 @@
+<div [hidden]="edit" class="container-fluid pb-5">
+  <div class="page-toolbar">
+    <div>
+      <h2 class="page-title">Ejemplares</h2>
+    </div>
+    <div class="input-group page-search">
+      <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+      <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text"
+        class="form-control" placeholder="Buscar">
+      <button class="btn btn-success" type="button" (click)="nuevo()"><i class="fa fa-plus-circle"
+          aria-hidden="true"></i></button>
+    </div>
+  </div>
+
+  <form>
+    <div class="row g-4 page-grid">
+      <div class="form-group col-12 col-sm-6" *ngFor="let item of ejemplares | bibliotecaSearch: searchField">
+        <div class="card h-100">
+          <a class="page-card-link" (click)="editar(item)">
+            <div class="card-body">
+              <h4 class="card-title">{{ item.libroTitulo || ('Libro ' + item.libroId) }}</h4>
+              Codigo: {{ item.codigoBarra || '-' }}<br />
+              Estado: {{ item.estado }}
+              <div class="mt-2" *ngIf="canViewArchivo && item.urlArchivo">
+                <button class="btn btn-link btn-sm" type="button" (click)="abrirArchivo($event, item.urlArchivo)">Ver PDF</button>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div [hidden]="!edit" class="container-fluid pb-5">
+  <h2>Ejemplar</h2>
+  <form class="page-form">
+    <div class="page-form-card">
+      <h5>{{ esEdicion ? 'Editar ejemplar' : 'Nuevo ejemplar' }}</h5>
+      <div class="mb-2">
+        <label class="form-label">Libro</label>
+        <select class="form-select" [(ngModel)]="ejemplar.libroId" name="libroId">
+          <option [ngValue]="0">Seleccione...</option>
+          <option *ngFor="let libro of libros" [ngValue]="libro.id">{{ libro.titulo }}</option>
+        </select>
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Codigo barra</label>
+        <input class="form-control" [(ngModel)]="ejemplar.codigoBarra" name="codigoBarra" />
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Ubicacion</label>
+        <input class="form-control" [(ngModel)]="ejemplar.ubicacion" name="ubicacion" />
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Sede</label>
+        <input class="form-control" [(ngModel)]="ejemplar.sede" name="sede" />
+      </div>
+      <div class="row g-2">
+        <div class="col-md-6">
+          <label class="form-label">Tipo soporte</label>
+          <select class="form-select" [(ngModel)]="ejemplar.tipoSoporte" name="tipoSoporte">
+            <option value="fisico">Fisico</option>
+            <option value="digital">Digital</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Estado</label>
+          <select class="form-select" [(ngModel)]="ejemplar.estado" name="estado">
+            <option value="disponible">Disponible</option>
+            <option value="prestado">Prestado</option>
+            <option value="reservado">Reservado</option>
+            <option value="perdido">Perdido</option>
+            <option value="mantenimiento">Mantenimiento</option>
+          </select>
+        </div>
+      </div>
+      <div class="mb-2 mt-2">
+        <label class="form-label">Inventario tag</label>
+        <input class="form-control" [(ngModel)]="ejemplar.inventarioTag" name="inventarioTag" />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">URL archivo</label>
+        <input class="form-control" [(ngModel)]="ejemplar.urlArchivo" name="urlArchivo" />
+      </div>
+      <div class="mb-3" *ngIf="canUploadArchivo && ejemplar.tipoSoporte === 'digital'">
+        <label class="form-label">Subir PDF</label>
+        <input class="form-control" type="file" accept="application/pdf" (change)="handleArchivoInput($event)" />
+        <div class="form-text">El archivo se sube al servidor y se enlaza al ejemplar.</div>
+      </div>
+      <div class="mb-3" *ngIf="canViewArchivo && ejemplar.urlArchivo">
+        <button class="btn btn-outline-primary btn-sm" type="button" (click)="abrirArchivo($event, ejemplar.urlArchivo)">Ver PDF actual</button>
+      </div>
+      <div class="page-actions d-flex gap-2">
+        <button class="btn btn-success" type="button" (click)="guardar()">Grabar</button>
+        <button class="btn btn-danger" type="button" (click)="cancelar()">Cancelar</button>
+      </div>
+    </div>
+  </form>
+</div>

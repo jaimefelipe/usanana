@@ -1,5 +1,5 @@
-<div class="container pb-5">
-  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+<div class="container-fluid pb-5">
+  
   <h2>Reportes Cuentas por Cobrar</h2>
   <div class="card-body">
     <div class="form-row">
@@ -72,7 +72,7 @@
         class="form-control" placeholder="Buscar">
     </div>
     <div class="card-body modal-grid">
-      <div class="form-row">
+      <div class="form-row page-grid">
         <div class="form-group col-12 col-sm-6" *ngFor="let Account of Accounts;let i = index">
           <a (click)="Seleccionar(Account)">
             <div class="card">

@@ -1,0 +1,47 @@
+<div class="container-fluid pb-5">
+  <form class="page-form">
+    <div class="page-form-card">
+      <h2 class="page-title mb-3">Reporte Facturas Compra</h2>
+
+      <div class="row g-3">
+        <div class="form-group col-12">
+          <label>Seleccionar el reporte a generar</label>
+          <select (change)="cambiarFechaMes()" [(ngModel)]="reporte" name="reporte" type="text" class="form-control">
+            <option value='1'>Reporte de Compras PDF</option>
+            <option value='3'>Reporte de Compras Excel</option>
+            <option value='2'>Proceso Facturacion XML Masiva</option>
+          </select>
+        </div>
+
+        <div *ngIf="MostrarFecha" class="form-group col-12 col-md-3">
+          <label>Fecha Inicio</label>
+          <div class="input-group">
+            <input class="form-control" placeholder="Inicio" name="Inicio" [(ngModel)]="FechaInicio" ngbDatepicker
+              #d1="ngbDatepicker">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary fa fa-calendar" (click)="d1.toggle()" type="button"></button>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="MostrarFecha" class="form-group col-12 col-md-3">
+          <label>Fecha Fin</label>
+          <div class="input-group">
+            <input class="form-control" placeholder="Fin" name="Fin" [(ngModel)]="FechaFin" ngbDatepicker
+              #d2="ngbDatepicker">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary fa fa-calendar" (click)="d2.toggle()" type="button"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3 page-actions">
+        <div class="form-group col-12 col-md-10"></div>
+        <div class="form-group col-12 col-md-2">
+          <button (click)="Reporte()" type="button" class="btn btn-primary w-100">Procesar</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

@@ -2,6 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { Title, Meta } from '@angular/platform-browser';
 import { CompanyService } from '../../../../../../main/src/app/general/company/company.service';
 import {Router} from '@angular/router';
+import {
+  AcademicoDashboardService,
+  AcademicoDashboardKpis
+} from '../../services/academico-dashboard.service';
 
 
 @Component({
@@ -16,7 +20,8 @@ export class FullComponent implements OnInit {
     private titleService: Title,
     private metaService: Meta,
     private companyService:CompanyService,
-    private route:Router
+    private route:Router,
+    private dashboardService: AcademicoDashboardService
   ) { }
   ambiente = false;
   pedidosButton = false;
@@ -26,11 +31,110 @@ export class FullComponent implements OnInit {
   AppCocina = false;
   AppPedido = false;
   logedIn = false;
+  kpiLoading = false;
+
+  quickLinks = [
+    {
+      title: 'Carreras',
+      description: 'Gestiona carreras, niveles y requisitos.',
+      icon: 'fa-graduation-cap',
+      route: '/carrera'
+    },
+    {
+      title: 'Cursos',
+      description: 'Administra la oferta academica.',
+      icon: 'fa-book',
+      route: '/curso'
+    },
+    {
+      title: 'Grupos',
+      description: 'Secciones activas por periodo.',
+      icon: 'fa-users',
+      route: '/grupo'
+    },
+    {
+      title: 'Matricula',
+      description: 'Registro de estudiantes.',
+      icon: 'fa-id-card',
+      route: '/matricula'
+    },
+    {
+      title: 'Aula virtual',
+      description: 'Cursos y recursos en linea.',
+      icon: 'fa-laptop',
+      route: '/aulavirtual'
+    },
+    {
+      title: 'Cobros',
+      description: 'Pagos y tesoreria academica.',
+      icon: 'fa-money',
+      route: '/cobroacademico'
+    }
+  ];
+
+  kpiCards: Array<{
+    key: keyof AcademicoDashboardKpis;
+    label: string;
+    value: number | null;
+    hint: string;
+    icon: string;
+    tone: 'primary' | 'success' | 'warning' | 'info';
+  }> = [
+    {
+      key: 'carrerasActivas',
+      label: 'Carreras activas',
+      value: null,
+      hint: 'Programas habilitados',
+      icon: 'fa-graduation-cap',
+      tone: 'success'
+    },
+    {
+      key: 'cursosActivos',
+      label: 'Cursos activos',
+      value: null,
+      hint: 'Oferta disponible',
+      icon: 'fa-book',
+      tone: 'primary'
+    },
+    {
+      key: 'gruposActivos',
+      label: 'Grupos activos',
+      value: null,
+      hint: 'Secciones en marcha',
+      icon: 'fa-users',
+      tone: 'info'
+    },
+    {
+      key: 'matriculasPeriodo',
+      label: 'Matriculas activas',
+      value: null,
+      hint: 'Periodo abierto',
+      icon: 'fa-id-card',
+      tone: 'warning'
+    },
+    {
+      key: 'periodosAbiertos',
+      label: 'Periodos abiertos',
+      value: null,
+      hint: 'Ciclos vigentes',
+      icon: 'fa-calendar',
+      tone: 'success'
+    },
+    {
+      key: 'aulasActivas',
+      label: 'Aulas virtuales',
+      value: null,
+      hint: 'Cursos en linea',
+      icon: 'fa-laptop',
+      tone: 'primary'
+    }
+  ];
   ngOnInit() {
     if(localStorage.getItem('isLoggedin') == "true") {
       this.logedIn = true;
     }
     this.loadHomeMenuIdentifier();
+    this.loadKpis();
     this.titleService.setTitle('Toxo | Sistemas de Gestión de Recursos Empresariales' );
     this.metaService.addTags([
       {name: 'keywords', content: 'Costa Rica, Sistemas, Factura Electronica, Ventas, POS, Inventario, Contabilidad, Planillas, Impuestos'},
@@ -76,6 +180,16 @@ export class FullComponent implements OnInit {
   }
   async loadButtonOptions(){
 
+  }
+
+  async loadKpis() {
+    this.kpiLoading = true;
+    const values = await this.dashboardService.loadKpis();
+    this.kpiCards = this.kpiCards.map((card) => ({
+      ...card,
+      value: values[card.key] ?? 0
+    }));
+    this.kpiLoading = false;
   }
   factura(){
     window.open('/factura/','_self')

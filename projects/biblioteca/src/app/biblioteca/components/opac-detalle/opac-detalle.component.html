@@ -1,0 +1,32 @@
+<div class="opac-detalle" *ngIf="libro; else noData">
+  <div class="detalle-header">
+    <div>
+      <h2>{{ libro.titulo }}</h2>
+      <p class="text-muted" *ngIf="libro.subtitulo">{{ libro.subtitulo }}</p>
+      <p class="text-muted">{{ libro.autores || libro.autor }} | ISBN {{ libro.isbn }}</p>
+    </div>
+    <button class="btn btn-primary" (click)="reservar()">Reservar</button>
+  </div>
+
+  <p><strong>Tipo material:</strong> {{ libro.tipoMaterial || 'No definido' }}</p>
+  <p><strong>Categoria:</strong> {{ libro.categoria }}</p>
+  <p><strong>Editorial:</strong> {{ libro.editorial || 'No definido' }}</p>
+  <p><strong>Idioma:</strong> {{ libro.idioma || 'No definido' }}</p>
+  <p><strong>Ano publicacion:</strong> {{ libro.anioPublicacion || 'No definido' }}</p>
+  <p><strong>Edicion:</strong> {{ libro.edicion || 'No definido' }}</p>
+  <p><strong>ISSN:</strong> {{ libro.issn || 'No definido' }}</p>
+  <p><strong>DOI:</strong> {{ libro.doi || 'No definido' }}</p>
+  <p><strong>URL publica:</strong>
+    <span *ngIf="libro.urlPublica; else sinUrl">
+      <a [href]="libro.urlPublica" target="_blank" rel="noopener">{{ libro.urlPublica }}</a>
+    </span>
+  </p>
+  <p><strong>Descripcion:</strong> {{ libro.descripcion || 'Sin descripcion' }}</p>
+  <p><strong>Palabras clave:</strong> {{ libro.palabrasClave || 'Sin palabras clave' }}</p>
+</div>
+
+<ng-template #noData>
+  <p>No se encontro el material solicitado.</p>
+</ng-template>
+
+<ng-template #sinUrl>No definido</ng-template>

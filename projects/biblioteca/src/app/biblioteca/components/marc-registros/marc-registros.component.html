@@ -1,0 +1,73 @@
+<div [hidden]="edit" class="container-fluid pb-5">
+  <div class="page-toolbar">
+    <div>
+      <h2 class="page-title">MARC registros</h2>
+    </div>
+    <div class="input-group page-search">
+      <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+      <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text"
+        class="form-control" placeholder="Buscar">
+      <button class="btn btn-success" type="button" (click)="nuevo()"><i class="fa fa-plus-circle"
+          aria-hidden="true"></i></button>
+    </div>
+  </div>
+
+  <form>
+    <div class="row g-4 page-grid">
+      <div class="form-group col-12 col-sm-6" *ngFor="let item of registros | bibliotecaSearch: searchField">
+        <div class="card h-100">
+          <a class="page-card-link" (click)="editar(item)">
+            <div class="card-body">
+              <h4 class="card-title">Libro {{ item.libroId }}</h4>
+              Formato: {{ item.formato }}<br />
+              Control 001: {{ item.control001 || '-' }}
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div [hidden]="!edit" class="container-fluid pb-5">
+  <h2>MARC registro</h2>
+  <form class="page-form">
+    <div class="page-form-card">
+      <h5>{{ esEdicion ? 'Editar registro' : 'Nuevo registro' }}</h5>
+      <div class="mb-2">
+        <label class="form-label">Libro</label>
+        <select class="form-select" [(ngModel)]="registro.libroId" name="libroId">
+          <option [ngValue]="0">Seleccione...</option>
+          <option *ngFor="let libro of libros" [ngValue]="libro.id">{{ libro.titulo }}</option>
+        </select>
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Formato</label>
+        <select class="form-select" [(ngModel)]="registro.formato" name="formato">
+          <option value="MARC21">MARC21</option>
+          <option value="UNIMARC">UNIMARC</option>
+        </select>
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Leader</label>
+        <input class="form-control" [(ngModel)]="registro.leader" name="leader" />
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Control 001</label>
+        <input class="form-control" [(ngModel)]="registro.control001" name="control001" />
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Control 005</label>
+        <input class="form-control" [(ngModel)]="registro.control005" name="control005" />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Control 008</label>
+        <input class="form-control" [(ngModel)]="registro.control008" name="control008" />
+      </div>
+      <div class="page-actions d-flex gap-2">
+        <button class="btn btn-success" type="button" (click)="guardar()">Grabar</button>
+        <button class="btn btn-danger" type="button" (click)="cancelar()">Cancelar</button>
+      </div>
+    </div>
+  </form>
+</div>

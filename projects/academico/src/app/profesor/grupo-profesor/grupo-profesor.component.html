@@ -1,24 +1,18 @@
-<div [hidden]="edit" class="container pb-5">
-  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
-  <h2>Grupos por Profesor</h2>
-  <div class="container-fluid">
-    <div class="row">
-      <div class="input-group mb-3">
-        <div class="input-group-prepend">
-          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
-        </div>
-        <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
-          placeholder="Buscar">
-        
-      </div>
-    </div>
+<div [hidden]="edit" class="container-fluid pb-5">
+  <div class="page-toolbar">
+  <h2 class="page-title">Grupos por Profesor</h2>
+  <div class="input-group page-search">
+    <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+    <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+      placeholder="Buscar">
+  </div>
   </div>
   <form>
-    <div class="form-row">
+    <div class="row g-4 page-grid">
 
       <div class="form-group col-12 col-sm-6" *ngFor="let Grupo of Grupos;let i = index">
-        <div class="card">
-          <a (click)="editRecord(Grupo)">
+        <div class="card h-100">
+          <a class="page-card-link" (click)="editRecord(Grupo)">
             <div class="card-body">
 
               <h4 class="card-title">{{Grupo.Curso}}</h4>
@@ -51,15 +45,14 @@
 <!--
     Form de Edición
   -->
-  <div [hidden]="!edit" class="container pb-5">
-    <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  <div [hidden]="!edit" class="container-fluid pb-5">
     <h2>Estudiantes del Grupo </h2>
     <form>
-      <div class="form-row">
+      <div class="row g-4 page-grid">
 
         <div class="form-group col-12 col-sm-6" *ngFor="let alumno of Alumnos;let i = index">
-          <div class="card">
-            <a (click)="abrirNotasPanel(alumno)">
+          <div class="card h-100">
+            <a class="page-card-link" (click)="abrirNotasPanel(alumno)">
               <div class="card-body">
 
                 <h4 class="card-title">{{alumno.Nombre}}</h4>
@@ -164,3 +157,4 @@
 
 </div>
 </div>
+

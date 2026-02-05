@@ -1,0 +1,70 @@
+<div [hidden]="edit" class="container-fluid pb-5">
+  <div class="page-toolbar">
+    <div>
+      <h2 class="page-title">Cotizaciones</h2>
+    </div>
+    <div class="input-group page-search">
+      <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+      <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text"
+        class="form-control" placeholder="Buscar">
+      <button class="btn btn-success" type="button" (click)="nuevo()"><i class="fa fa-plus-circle"
+          aria-hidden="true"></i></button>
+    </div>
+  </div>
+
+  <form>
+    <div class="row g-4 page-grid">
+      <div class="form-group col-12 col-sm-6" *ngFor="let item of cotizaciones | bibliotecaSearch: searchField">
+        <div class="card h-100">
+          <a class="page-card-link" (click)="editar(item)">
+            <div class="card-body">
+              <h4 class="card-title">{{ item.descripcion }}</h4>
+              Proveedor: {{ item.proveedorNombre || item.proveedorId }}<br />
+              Total: {{ item.total }} · Estado: {{ item.estado }}
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div [hidden]="!edit" class="container-fluid pb-5">
+  <h2>Cotizacion</h2>
+  <form class="page-form">
+    <div class="page-form-card">
+      <h5>{{ esEdicion ? 'Editar cotizacion' : 'Nueva cotizacion' }}</h5>
+      <div class="mb-2">
+        <label class="form-label">Proveedor</label>
+        <select class="form-select" [(ngModel)]="cotizacion.proveedorId" name="proveedorId">
+          <option [ngValue]="0">Seleccione...</option>
+          <option *ngFor="let proveedor of proveedores" [ngValue]="proveedor.id">{{ proveedor.nombre }}</option>
+        </select>
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Descripcion</label>
+        <input class="form-control" [(ngModel)]="cotizacion.descripcion" name="descripcion" />
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Fecha</label>
+        <input type="date" class="form-control" [(ngModel)]="cotizacion.fecha" name="fecha" />
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Total</label>
+        <input type="number" class="form-control" [(ngModel)]="cotizacion.total" name="total" />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Estado</label>
+        <select class="form-select" [(ngModel)]="cotizacion.estado" name="estado">
+          <option value="pendiente">Pendiente</option>
+          <option value="aprobada">Aprobada</option>
+          <option value="rechazada">Rechazada</option>
+        </select>
+      </div>
+      <div class="page-actions d-flex gap-2">
+        <button class="btn btn-success" type="button" (click)="guardar()">Grabar</button>
+        <button class="btn btn-danger" type="button" (click)="cancelar()">Cancelar</button>
+      </div>
+    </div>
+  </form>
+</div>

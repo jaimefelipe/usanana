@@ -1,0 +1,107 @@
+<div [hidden]="edit" class="container-fluid pb-5">
+  <div class="page-toolbar">
+    <div>
+      <h2 class="page-title">Cargos a Facturacion</h2>
+      <div class="page-subtitle">Catalogo de cargos aplicables</div>
+    </div>
+    <div class="input-group page-search">
+      <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+      <input [(ngModel)]="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+        placeholder="Buscar">
+      <button class="btn btn-primary" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
+          aria-hidden="true"></i></button>
+    </div>
+  </div>
+  <form>
+    <div class="row g-4 page-grid">
+      <div class="col-12 col-md-6 col-xl-4" *ngFor="let Caja of Charges;let i = index">
+        <div class="card h-100">
+          <a class="page-card-link" (click)="editRecord(Caja)">
+            <div class="card-body">
+              <h4 class="card-title">{{Caja.Nombre}}</h4>
+              <h4 class="card-title">{{Caja.Porcentaje}}</h4>
+              Estado :
+              <span *ngIf="Caja.Estado == '1'" class="text-success"> Activo</span>
+              <span *ngIf="Caja.Estado == '0'" class="text-danger"> Inactivo</span>
+              {{Caja.Id_Factura_Cargos}}
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="container-fluid">
+    <ul class="pagination">
+      <li class="page-item"><a (click)="ChangePage(0)" class="page-link"><i class="fa fa-fast-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(1)" class="page-link"><i class="fa fa-step-backward"
+            aria-hidden="true"></i></a></li>
+      <li class="page-item"><a (click)="ChangePage(2)" class="page-link"><i class="fa fa-step-forward"
+            aria-hidden="true"></i></a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- Form de Edicion -->
+<div [hidden]="!edit" class="container-fluid pb-5">
+  <form class="page-form">
+    <div class="page-form-card">
+      <div class="row g-3">
+        <div class="form-group col-md-6">
+          <label>Nombre del Cargo</label>
+          <input [(ngModel)]="Charge.Nombre" name="Nombre" type="text" placeholder="Nombre del Cargo"
+            class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+          <label>Categoria</label>
+          <select [(ngModel)]="Charge.Id_Categoria" name="Categoria" type="text" class="form-control">
+            <option value='{{Categoria.Id_Categoria}}' *ngFor="let Categoria of Categories;let i = index">
+              {{Categoria.Nombre}}</option>
+          </select>
+        </div>
+
+        <div class="form-group col-md-6">
+          <label>Codigo Cabys</label>
+          <input [(ngModel)]="Charge.Codigo" name="Codigo" type="text" placeholder="Codigo Cabys" class="form-control">
+        </div>
+
+        <div class="form-group col-md-6">
+          <label>Gravado Con el IVA</label>
+          <select [(ngModel)]="Charge.Iva" name="Iva" class="form-control">
+            <option value=0>Sin Gravar</option>
+            <option value=1>Gravado</option>
+          </select>
+        </div>
+
+        <div class="form-group col-md-6">
+          <label>Porcentaje sobre Factura</label>
+          <input [(ngModel)]="Charge.Porcentaje" name="Porcentaje" type="text" placeholder="Porcentaje Sobre Factura"
+            class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+          <label>Estado</label>
+          <select [(ngModel)]="Charge.Estado" name="Estado" class="form-control">
+            <option value=0>Inactivo</option>
+            <option value=1>Activo</option>
+          </select>
+        </div>
+
+        <div class="form-group col-md-12">
+          <div class="row g-3 page-actions">
+            <div class="form-group col-6 col-md-8">
+            </div>
+
+            <div class="form-group col-3 col-md-2">
+              <button (click)="grabar()" type="button" class="btn btn-success" title="Cancela edicion">Grabar</button>
+            </div>
+            <div class="form-group col-3 col-md-2">
+              <button (click)="cancel()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<!-- Fin de Edicion -->

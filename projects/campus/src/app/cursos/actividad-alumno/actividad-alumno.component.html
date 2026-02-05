@@ -67,7 +67,7 @@
             </a>
           </div>
 
-          <div *ngIf="p.Nota" class="mb-1">
+          <div *ngIf="p.Nota !== null && p.Nota !== undefined" class="mb-1">
             <strong>Nota:</strong>
             <span class="badge bg-success ms-2">{{ p.Nota }}</span>
           </div>

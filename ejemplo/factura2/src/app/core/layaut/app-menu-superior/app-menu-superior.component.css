@@ -1,0 +1,91 @@
+.app-topbar {
+  height: var(--ui-topbar-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  background: var(--ui-sidebar);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  z-index: 1040;
+}
+
+.topbar-left,
+.topbar-center,
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-logo {
+  display: inline-block;
+}
+
+.brand-name {
+  border-left: 2px solid rgba(255, 255, 255, 0.25);
+  padding-left: 16px;
+  margin-left: 12px;
+  font-weight: 600;
+  color: #f8fbff;
+}
+
+.topbar-search {
+  width: min(420px, 48vw);
+}
+
+.btn-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-ghost {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.btn-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: #fff;
+  font-weight: 600;
+  color: #143a68;
+}
+
+.badge-dot {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ui-primary);
+  box-shadow: 0 0 0 2px #fff;
+}
+
+@media (max-width: 575.98px) {
+  .brand-name {
+    display: none;
+  }
+
+  .app-topbar {
+    padding: 0 12px;
+  }
+}

@@ -1,0 +1,24 @@
+<div class="container-fluid pb-5">
+  <div class="page-toolbar">
+    <div>
+      <h2 class="page-title">OPAC historial de busqueda</h2>
+    </div>
+    <div class="input-group page-search">
+      <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+      <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text"
+        class="form-control" placeholder="Buscar">
+    </div>
+  </div>
+
+  <div class="row g-4 page-grid">
+    <div class="form-group col-12 col-sm-6" *ngFor="let item of historial | bibliotecaSearch: searchField">
+      <div class="card h-100">
+        <div class="card-body">
+          <h4 class="card-title">{{ item.consulta }}</h4>
+          Usuario: {{ item.usuarioId }}<br />
+          Fecha: {{ item.creadoEl || '-' }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,5 +1,5 @@
-<div [hidden]="edit" class="container pb-5">
-  <a [routerLink]="['/']" ><img src="/assets/toxologo.png" width="85px"></a>
+<div [hidden]="edit" class="container-fluid pb-5">
+  
   <h2>Licencias Toxo</h2>
 
   <div class="container-fluid">
@@ -13,7 +13,7 @@
     </div>
   </div>
   <form >
-    <div class="form-row">
+    <div class="form-row page-grid">
 
       <div class="form-group col-12 col-sm-6" *ngFor="let Licencia of Licencias;let i = index">
         <div class="card">
@@ -47,8 +47,8 @@
 </div>
 
 
-<div [hidden]="!edit" class="container pb-5">
-  <a [routerLink]="['/']" ><img src="/assets/toxologo.png" width="85px"></a>
+<div [hidden]="!edit" class="container-fluid pb-5">
+  
   <h2> Editar Licencia</h2>
   <form>
     <div class="form-row">

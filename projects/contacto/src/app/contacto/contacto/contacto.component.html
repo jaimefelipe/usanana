@@ -1,5 +1,5 @@
-<div [hidden]="edit" class="container pb-5">
-  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+<div [hidden]="edit" class="container-fluid pb-5">
+  
   
   <h2>Contactos</h2>
   <div class="container-fluid">
@@ -18,7 +18,7 @@
     </div>
   </div>
   <form>
-    <div class="form-row">
+    <div class="form-row page-grid">
 
       <div class="form-group col-12 col-sm-6" *ngFor="let Persona of Contactos;let i = index">
         <div class="card">
@@ -59,7 +59,7 @@
 
 
 <div [hidden]="!edit" class="container-fluid pb-5">
-  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  
   <h2>Contacto</h2> 
   <div class="tab">
     <button [ngClass]='GeneralClass' (click)="activarGeneral()" >General</button>
@@ -122,7 +122,7 @@
 <!--
   Form de Edición
 <div [hidden]="!edit" class="container-fluid pb-5">
-  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+  
   <h2>Contacto</h2> 
   <div class="tab">
     <button [ngClass]='GeneralClass' (click)="activarGeneral()" >General</button>
@@ -320,7 +320,7 @@
         </div>
       </div>
       <form>
-        <div class="form-row">
+        <div class="form-row page-grid">
           <div class="form-group col-12 col-sm-6" *ngFor="let Carrera of Carreras;let i = index">
             <a (click)="abrirPantallaCarreraContacto(Carrera)">
               <div class="card">
@@ -356,7 +356,7 @@
         </div>
       </div>
       <form>
-        <div class="form-row">
+        <div class="form-row page-grid">
           <div class="form-group col-12 col-sm-6" *ngFor="let nota of Notas;let i = index">
             <a (click)="abrirPantallaNotas(nota)">
               <div class="card">
@@ -518,7 +518,7 @@
       </div>
     </div>
     <form>
-      <div class="form-row">
+      <div class="form-row page-grid">
         <div class="form-group col-12 col-sm-6" *ngFor="let Carrera of Carreras;let i = index">
           <a (click)="abrirPantallaCarreraContacto(Carrera)">
             <div class="card">
@@ -628,7 +628,7 @@
         class="form-control" placeholder="Buscar">
     </div>
     <div class="card-body modal-grid">
-      <div class="form-row">
+      <div class="form-row page-grid">
         <div class="form-group col-12 col-sm-6" *ngFor="let Carrera of CarrerasActivas;let i = index">
           <a (click)="SeleccionarCarrera(Carrera)">
             <div class="card">
@@ -717,7 +717,7 @@
       </div>
     </div>
     <div class="card-body modal-grid">
-      <div class="form-row">
+      <div class="form-row page-grid">
         
         <div class="form-group col-12" *ngFor="let Usuario of Usuarios;let i = index">
           <a (click)="selectUsuario(Usuario)">

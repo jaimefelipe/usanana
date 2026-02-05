@@ -1,0 +1,185 @@
+<nav class="sidebar p-2"
+     [class.collapsed]="collapsed"
+     [class.is-open]="mobile && !collapsed"
+     [class.is-mobile]="mobile"
+     (click)="onNavClick($event)"
+     role="navigation"
+     aria-label="Sidebar principal">
+  <ul class="nav flex-column">
+
+    <li class="nav-item sidebar-header" *ngIf="mobile">
+      <div class="d-flex align-items-center justify-content-between">
+        <img src="/assets/logo.svg" height="26" class="sidebar-logo" alt="Salvatec">
+        <button type="button" class="sidebar-toggle" (click)="toggleSidebar.emit()" aria-label="Close menu">
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+    </li>
+
+    <!-- Toggle collapse -->
+    <li class="nav-item pt-2 w-100" *ngIf="!mobile">
+      <a class="nav-link text-grey d-flex align-items-center justify-content-end w-100"
+         (click)="toggleSidebar.emit()" role="button"
+         [attr.aria-expanded]="!collapsed">
+        <span class="openIcon" [class.is-collapsed]="collapsed"></span>
+      </a>
+    </li>
+
+    <!-- INICIO -->
+    <li class="nav-item pt-2">
+      <a class="nav-link text-grey d-flex align-items-center"
+         [routerLink]="['/']"
+         routerLinkActive="active"
+         [routerLinkActiveOptions]="{ exact: true }"
+         [attr.title]="collapsed ? 'Inicio' : null">
+        <i class="homeIcon"></i>
+        <span *ngIf="!collapsed" class="ms-2">Inicio {{ ambiente }} {{ appVersion }}</span>
+      </a>
+    </li>
+
+    <!-- CONFIGURACIÓN -->
+    <li class="nav-item" *ngIf="AppConfiguracion">
+      <a class="nav-link text-grey d-flex align-items-center"
+         href="#"
+         (click)="toggle($event, 'config')"
+         [attr.aria-expanded]="configuracionMenu && !collapsed"
+         [attr.title]="collapsed ? 'Configuración' : null">
+        <i class="fa fa-users"></i>
+        <span *ngIf="!collapsed" class="ms-2 flex-grow-1">Configuración</span>
+        <i *ngIf="!collapsed" class="ms-auto" [ngClass]="chevron(configuracionMenu)"></i>
+      </a>
+      <ul class="nav flex-column ms-3" *ngIf="configuracionMenu && !collapsed">
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/contactos']" routerLinkActive="active"> - Contactos</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/prodcliente']" routerLinkActive="active"> - Producto x Cliente</a></li>
+      </ul>
+    </li>
+
+    <!-- INVENTARIO -->
+    <li class="nav-item" *ngIf="AppInventario">
+      <a class="nav-link text-grey d-flex align-items-center"
+         href="#"
+         (click)="toggle($event, 'inventario')"
+         [attr.aria-expanded]="inventarioMenu && !collapsed"
+         [attr.title]="collapsed ? 'Inventario' : null">
+        <i class="InventarioIcon"></i>
+        <span *ngIf="!collapsed" class="ms-2 flex-grow-1">Inventario</span>
+        <i *ngIf="!collapsed" class="ms-auto" [ngClass]="chevron(inventarioMenu)"></i>
+      </a>
+      <ul class="nav flex-column ms-3" *ngIf="inventarioMenu && !collapsed">
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/categorias']" routerLinkActive="active"> - Categorías</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/subcategorias']" routerLinkActive="active"> - Sub Categorías</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/articulos']" routerLinkActive="active"> - Artículos</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/movinventario']" routerLinkActive="active"> - Movimientos</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/movarticulo']" routerLinkActive="active"> - Mov x Artículo</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/invmovdetail']" routerLinkActive="active"> - Detalle Movimientos</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/repinventario']" routerLinkActive="active"> - Reportes</a></li>
+      </ul>
+    </li>
+
+    <!-- VENTAS -->
+    <li class="nav-item" *ngIf="AppVentas">
+      <a class="nav-link text-grey d-flex align-items-center"
+         href="#"
+         (click)="toggle($event, 'ventas')"
+         [attr.aria-expanded]="ventasMenu && !collapsed"
+         [attr.title]="collapsed ? 'Ventas' : null">
+        <i class="VentasIcon"></i>
+        <span *ngIf="!collapsed" class="ms-2 flex-grow-1">Ventas</span>
+        <i *ngIf="!collapsed" class="ms-auto" [ngClass]="chevron(ventasMenu)"></i>
+      </a>
+      <ul class="nav flex-column ms-3" *ngIf="ventasMenu && !collapsed">
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/cajaventas']" routerLinkActive="active"> - Cajas</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/cajamovimiento']" routerLinkActive="active"> - Movimiento de Cajas</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/cierrecaja']" routerLinkActive="active"> - Cierre Caja</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/existencias']" routerLinkActive="active"> - Existencias</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/ventas']" routerLinkActive="active"> - Facturas</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/cargoventa']" routerLinkActive="active"> - Cargos Factura</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/reporteventas']" routerLinkActive="active"> - Reportes & Procesos</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/facturaerror']" routerLinkActive="active"> - Facturas Erróneas</a></li>
+      </ul>
+    </li>
+
+    <!-- COMPRAS -->
+    <li class="nav-item" *ngIf="AppCompras">
+      <a class="nav-link text-grey d-flex align-items-center"
+         href="#"
+         (click)="toggle($event, 'compras')"
+         [attr.aria-expanded]="comprasMenu && !collapsed"
+         [attr.title]="collapsed ? 'Compras' : null">
+        <i class="ComprasIcon"></i>
+        <span *ngIf="!collapsed" class="ms-2 flex-grow-1">Compras</span>
+        <i *ngIf="!collapsed" class="ms-auto" [ngClass]="chevron(comprasMenu)"></i>
+      </a>
+      <ul class="nav flex-column ms-3" *ngIf="comprasMenu && !collapsed">
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/purchaseInvoice']" routerLinkActive="active"> - Facturas</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/reportPurchase']" routerLinkActive="active"> - Reporte Compras</a></li>
+      </ul>
+    </li>
+
+    <!-- CxC -->
+    <li class="nav-item" *ngIf="AppCxC">
+      <a class="nav-link text-grey d-flex align-items-center"
+         href="#"
+         (click)="toggle($event, 'cxc')"
+         [attr.aria-expanded]="CxCMenu && !collapsed"
+         [attr.title]="collapsed ? 'Cuentas por Cobrar' : null">
+        <i class="CobrarIcon"></i>
+        <span *ngIf="!collapsed" class="ms-2 flex-grow-1">Cuentas x Cobrar</span>
+        <i *ngIf="!collapsed" class="ms-auto" [ngClass]="chevron(CxCMenu)"></i>
+      </a>
+      <ul class="nav flex-column ms-3" *ngIf="CxCMenu && !collapsed">
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/cxcClasificacion']" routerLinkActive="active"> - Clasificación</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/cuentacxc']" routerLinkActive="active"> - Cuentas x Cobrar</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/documentocxc']" routerLinkActive="active"> - Documentos</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/movimientocxc']" routerLinkActive="active"> - Movimientos</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/reportecxc']" routerLinkActive="active"> - Reporte CxC</a></li>
+      </ul>
+    </li>
+
+    <!-- ... resto igual ... -->
+    <!-- UTILIDADES -->
+    <li class="nav-item">
+      <a class="nav-link text-grey d-flex align-items-center"
+        href="https://api.whatsapp.com/send?phone=50687786649"
+        target="_blank" rel="noopener"
+        [attr.title]="collapsed ? 'Soporte' : null">
+        <i class="SoporteIcon"></i>
+        <span *ngIf="!collapsed" class="ms-2">Soporte</span>
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link text-grey d-flex align-items-center"
+        href="/main"
+        [attr.title]="collapsed ? 'Menú Principal' : null">
+        <i class="MenuIcon"></i>
+        <span *ngIf="!collapsed" class="ms-2">Menú Principal</span>
+      </a>
+    </li>
+
+    <li class="nav-item" *ngIf="logedIn">
+      <a class="nav-link text-grey d-flex align-items-center"
+        href="#"
+        (click)="logOut()"
+        [attr.title]="collapsed ? 'Salir' : null">
+        <i class="SalirIcon"></i>
+        <span *ngIf="!collapsed" class="ms-2">Salir</span>
+      </a>
+    </li>
+
+    <li class="nav-item" *ngIf="!logedIn">
+      <a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/login']">
+        <i class="fa fa-sign-in"></i>
+        <span *ngIf="!collapsed" class="ms-2">Entrar</span>
+      </a>
+    </li>
+
+    <!-- FOOTER USUARIO -->
+    <li class="nav-item mt-4 px-2 text-muted small" *ngIf="logedIn && !collapsed">
+      {{ Company }} | {{ User }}
+    </li>
+
+
+
+  </ul>
+</nav>

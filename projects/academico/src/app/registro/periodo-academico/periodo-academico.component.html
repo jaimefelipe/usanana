@@ -1,27 +1,20 @@
-<div [hidden]="edit" class="container pb-5">
-  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
-  <h2>Periódo Académico</h2>
-  <div class="container-fluid">
-    <div class="row">
-      <div class="input-group mb-3">
-        <div class="input-group-prepend">
-          <span class="input-group-text" id=""><i class="fa fa-search" aria-hidden="true"></i></span>
-        </div>
-        <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
-          placeholder="Buscar">
-        <div class="input-group-append">
-          <button class="btn btn-success" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
-              aria-hidden="true"></i></button>
-        </div>
-      </div>
-    </div>
+<div [hidden]="edit" class="container-fluid pb-5">
+  <div class="page-toolbar">
+  <h2 class="page-title">Periódo Académico</h2>
+  <div class="input-group page-search">
+    <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+    <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+      placeholder="Buscar">
+    <button class="btn btn-success" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
+        aria-hidden="true"></i></button>
+  </div>
   </div>
   <form>
-    <div class="form-row">
+    <div class="row g-4 page-grid">
 
       <div class="form-group col-12 col-sm-6" *ngFor="let Periodo of Periodos;let i = index">
-        <div class="card">
-          <a (click)="editRecord(Periodo)">
+        <div class="card h-100">
+          <a class="page-card-link" (click)="editRecord(Periodo)">
             <div class="card-body">
 
               <h4 class="card-title">{{Periodo.Bloque}}-{{Periodo.Anio}}</h4>
@@ -51,8 +44,7 @@
   Form de Edición
 -->
 
-<div [hidden]="!edit" class="container pb-5">
-  <a [routerLink]="['/']"><img src="/assets/toxologo.png" width="85px"></a>
+<div [hidden]="!edit" class="container-fluid pb-5">
   <h2>Periódo Académico</h2>
 
   <form>
@@ -103,4 +95,5 @@
   </form>
 
 </div>
+
 

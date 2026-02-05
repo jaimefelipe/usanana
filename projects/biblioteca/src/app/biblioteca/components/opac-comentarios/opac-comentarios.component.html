@@ -1,0 +1,73 @@
+<div [hidden]="edit" class="container-fluid pb-5">
+  <div class="page-toolbar">
+    <div>
+      <h2 class="page-title">OPAC comentarios</h2>
+    </div>
+    <div class="input-group page-search">
+      <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+      <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text"
+        class="form-control" placeholder="Buscar">
+      <button class="btn btn-success" type="button" (click)="nuevo()"><i class="fa fa-plus-circle"
+          aria-hidden="true"></i></button>
+    </div>
+  </div>
+
+  <form>
+    <div class="row g-4 page-grid">
+      <div class="form-group col-12 col-sm-6" *ngFor="let item of comentarios | bibliotecaSearch: searchField">
+        <div class="card h-100">
+          <a class="page-card-link" (click)="editar(item)">
+            <div class="card-body">
+              <h4 class="card-title">Libro {{ item.libroId }}</h4>
+              Usuario: {{ item.usuarioNombre || item.usuarioId }}<br />
+              Estado: {{ item.estado }}
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div [hidden]="!edit" class="container-fluid pb-5">
+  <h2>OPAC comentario</h2>
+  <form class="page-form">
+    <div class="page-form-card">
+      <h5>{{ esEdicion ? 'Editar comentario' : 'Nuevo comentario' }}</h5>
+      <div class="mb-2">
+        <label class="form-label">Libro</label>
+        <select class="form-select" [(ngModel)]="comentario.libroId" name="libroId">
+          <option [ngValue]="0">Seleccione...</option>
+          <option *ngFor="let libro of libros" [ngValue]="libro.id">{{ libro.titulo }}</option>
+        </select>
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Usuario</label>
+        <select class="form-select" [(ngModel)]="comentario.usuarioId" name="usuarioId">
+          <option [ngValue]="0">Seleccione...</option>
+          <option *ngFor="let usuario of usuarios" [ngValue]="usuario.id">{{ usuario.nombre }}</option>
+        </select>
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Calificacion</label>
+        <input type="number" min="1" max="5" class="form-control" [(ngModel)]="comentario.calificacion" name="calificacion" />
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Comentario</label>
+        <textarea class="form-control" rows="3" [(ngModel)]="comentario.comentario" name="comentario"></textarea>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Estado</label>
+        <select class="form-select" [(ngModel)]="comentario.estado" name="estado">
+          <option value="publicado">Publicado</option>
+          <option value="pendiente">Pendiente</option>
+          <option value="oculto">Oculto</option>
+        </select>
+      </div>
+      <div class="page-actions d-flex gap-2">
+        <button class="btn btn-success" type="button" (click)="guardar()">Grabar</button>
+        <button class="btn btn-danger" type="button" (click)="cancelar()">Cancelar</button>
+      </div>
+    </div>
+  </form>
+</div>

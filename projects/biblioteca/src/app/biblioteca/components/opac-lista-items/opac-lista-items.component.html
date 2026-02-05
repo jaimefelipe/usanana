@@ -1,0 +1,56 @@
+<div [hidden]="edit" class="container-fluid pb-5">
+  <div class="page-toolbar">
+    <div>
+      <h2 class="page-title">OPAC lista items</h2>
+    </div>
+    <div class="input-group page-search">
+      <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+      <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text"
+        class="form-control" placeholder="Buscar">
+      <button class="btn btn-success" type="button" (click)="nuevo()"><i class="fa fa-plus-circle"
+          aria-hidden="true"></i></button>
+    </div>
+  </div>
+
+  <form>
+    <div class="row g-4 page-grid">
+      <div class="form-group col-12 col-sm-6" *ngFor="let row of items | bibliotecaSearch: searchField">
+        <div class="card h-100">
+          <a class="page-card-link" (click)="nuevo()">
+            <div class="card-body">
+              <h4 class="card-title">{{ row.libroTitulo || row.libroId }}</h4>
+              Lista: {{ row.listaId }}
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div [hidden]="!edit" class="container-fluid pb-5">
+  <h2>OPAC lista item</h2>
+  <form class="page-form">
+    <div class="page-form-card">
+      <h5>Nuevo item</h5>
+      <div class="mb-2">
+        <label class="form-label">Lista</label>
+        <select class="form-select" [(ngModel)]="item.listaId" name="listaId">
+          <option [ngValue]="0">Seleccione...</option>
+          <option *ngFor="let lista of listas" [ngValue]="lista.id">{{ lista.nombre }}</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Libro</label>
+        <select class="form-select" [(ngModel)]="item.libroId" name="libroId">
+          <option [ngValue]="0">Seleccione...</option>
+          <option *ngFor="let libro of libros" [ngValue]="libro.id">{{ libro.titulo }}</option>
+        </select>
+      </div>
+      <div class="page-actions d-flex gap-2">
+        <button class="btn btn-success" type="button" (click)="guardar()">Grabar</button>
+        <button class="btn btn-danger" type="button" (click)="cancelar()">Cancelar</button>
+      </div>
+    </div>
+  </form>
+</div>
