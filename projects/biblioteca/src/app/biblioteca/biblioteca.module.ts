@@ -20,6 +20,7 @@ import { CategoriasComponent } from './components/categorias/categorias.componen
 import { EditorialesComponent } from './components/editoriales/editoriales.component';
 import { AutoresComponent } from './components/autores/autores.component';
 import { TiposMaterialComponent } from './components/tipos-material/tipos-material.component';
+import { TipoMaterialEtiquetasComponent } from './components/tipo-material-etiquetas/tipo-material-etiquetas.component';
 import { EjemplaresComponent } from './components/ejemplares/ejemplares.component';
 import { PoliticasPrestamoComponent } from './components/politicas-prestamo/politicas-prestamo.component';
 import { MultasComponent } from './components/multas/multas.component';
@@ -54,6 +55,8 @@ import { CotizacionesComponent } from './components/cotizaciones/cotizaciones.co
 import { SedesBibliotecaComponent } from './components/sedes-biblioteca/sedes-biblioteca.component';
 import { IntegracionesBibliotecaComponent } from './components/integraciones-biblioteca/integraciones-biblioteca.component';
 import { BibliotecaSearchPipe } from './pipes/biblioteca-search.pipe';
+import { AutoridadDiccionarioComponent } from './components/autoridad-diccionario/autoridad-diccionario.component';
+import { AutoridadCatalogacionComponent } from './components/autoridad-catalogacion/autoridad-catalogacion.component';
 
 @NgModule({
   declarations: [
@@ -71,6 +74,7 @@ import { BibliotecaSearchPipe } from './pipes/biblioteca-search.pipe';
     EditorialesComponent,
     AutoresComponent,
     TiposMaterialComponent,
+    TipoMaterialEtiquetasComponent,
     EjemplaresComponent,
     PoliticasPrestamoComponent,
     MultasComponent,
@@ -88,6 +92,8 @@ import { BibliotecaSearchPipe } from './pipes/biblioteca-search.pipe';
     MarcSubcamposComponent,
     MarcDiccionarioComponent,
     MarcCatalogacionComponent,
+    AutoridadDiccionarioComponent,
+    AutoridadCatalogacionComponent,
     AutoridadesComponent,
     AutoridadCamposComponent,
     AutoridadSubcamposComponent,

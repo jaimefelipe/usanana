@@ -67,3 +67,28 @@
 .btn-close::after {
   transform: rotate(-45deg);
 }
+
+.tags-header {
+  flex-wrap: nowrap;
+  gap: 1rem;
+  flex-grow: 1;
+  justify-content: space-between;
+  overflow-x: auto;
+}
+.tags-header .pagination-controls {
+  white-space: nowrap;
+}
+.tags-header .page-search {
+  flex: 0 0 auto;
+}
+
+.tags-header-row {
+  flex-wrap: nowrap;
+  gap: 1rem;
+}
+.tags-header-row .pagination-controls {
+  white-space: nowrap;
+}
+.tags-header-row .page-search {
+  flex: 0 0 auto;
+}

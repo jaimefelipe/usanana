@@ -1,0 +1,541 @@
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import Swal from 'sweetalert2';
+import { BibliotecaDataService } from '../../services/biblioteca-data.service';
+import {
+  AutoridadDicCampo,
+  AutoridadDicFormato,
+  AutoridadDicIndicador,
+  AutoridadDicSubcampo
+} from '../../models/biblioteca.models';
+
+@Component({
+  selector: 'app-autoridad-diccionario',
+  templateUrl: './autoridad-diccionario.component.html',
+  styleUrls: ['./autoridad-diccionario.component.css']
+})
+export class AutoridadDiccionarioComponent implements OnInit {
+  formatos: AutoridadDicFormato[] = [];
+  campos: AutoridadDicCampo[] = [];
+  currentPage = 1;
+  pageSize = 50;
+  totalCampos = 0;
+  pageCount = 0;
+  subcampos: AutoridadDicSubcampo[] = [];
+  indicadores: AutoridadDicIndicador[] = [];
+
+  formatoForm: AutoridadDicFormato = {
+    id: 0,
+    codigo: '',
+    nombre: '',
+    fuente: '',
+    version: '',
+    urlFuente: '',
+    activo: true
+  };
+
+  campoForm: AutoridadDicCampo = {
+    id: 0,
+    formatoId: 0,
+    tag: '',
+    nombre: '',
+    grupo: '',
+    esControl: false,
+    esObsoleto: false
+  };
+
+  subcampoForm: AutoridadDicSubcampo = {
+    id: 0,
+    formatoId: 0,
+    tag: '',
+    codigo: '',
+    nombre: '',
+    esObsoleto: false
+  };
+
+  indicadorForm: AutoridadDicIndicador = {
+    id: 0,
+    formatoId: 0,
+    tag: '',
+    posicion: 1,
+    valor: '',
+    significado: ''
+  };
+
+  searchFormatosField = '';
+  searchCamposField = '';
+  searchSubcamposField = '';
+  searchIndicadoresField = '';
+
+  formatoFormVisible = false;
+  campoFormVisible = false;
+  subcampoFormVisible = false;
+  indicadorFormVisible = false;
+
+  formatoEditing = false;
+  campoEditing = false;
+  subcampoEditing = false;
+  indicadorEditing = false;
+
+  repetibilidadOptions: Array<'NR' | 'R'> = ['NR', 'R'];
+  selectedFormatoId?: number;
+  selectedCampoId?: number;
+  selectedSubcampoId?: number;
+  selectedIndicadorId?: number;
+  campoSubcampos: AutoridadDicSubcampo[] = [];
+  campoSubcampoContext?: { formatoId: number; tag: string };
+  campoIndicadores: AutoridadDicIndicador[] = [];
+  campoIndicadorContext?: { formatoId: number; tag: string };
+
+  @ViewChild('campoFormSection') campoFormSection?: ElementRef<HTMLElement>;
+  @ViewChild('subcampoFormSection') subcampoFormSection?: ElementRef<HTMLElement>;
+  @ViewChild('indicadorFormSection') indicadorFormSection?: ElementRef<HTMLElement>;
+
+  constructor(private dataService: BibliotecaDataService) {}
+
+  async ngOnInit() {
+    await this.cargarTodo();
+  }
+
+  private async cargarTodo() {
+    const [formatos, subcampos, indicadores] = await Promise.all([
+      this.dataService.getAutoridadDicFormatos(),
+      this.dataService.getAutoridadDicSubcampos(),
+      this.dataService.getAutoridadDicIndicadores()
+    ]);
+    this.formatos = formatos;
+    this.subcampos = subcampos;
+    this.indicadores = indicadores;
+    if (this.campoSubcampoContext) {
+      await this.loadCampoSubcampos(this.campoSubcampoContext.formatoId, this.campoSubcampoContext.tag);
+    }
+    if (this.campoIndicadorContext) {
+      await this.loadCampoIndicadores(this.campoIndicadorContext.formatoId, this.campoIndicadorContext.tag);
+    }
+    await this.loadCamposPage();
+  }
+
+  private async loadCamposPage() {
+    const { campos, total } = await this.dataService.getAutoridadDicCamposPage(this.selectedFormatoId, this.currentPage, this.pageSize);
+    this.totalCampos = total;
+    this.pageCount = total > 0 ? Math.ceil(total / this.pageSize) : 0;
+    if (this.pageCount > 0 && this.currentPage > this.pageCount) {
+      this.currentPage = this.pageCount;
+      await this.loadCamposPage();
+      return;
+    }
+    if (!this.pageCount) {
+      this.currentPage = 1;
+    }
+    this.campos = campos;
+  }
+
+  async goToPage(page: number) {
+    if (page < 1 || (this.pageCount && page > this.pageCount) || page === this.currentPage) {
+      return;
+    }
+    this.currentPage = page;
+    await this.loadCamposPage();
+  }
+
+  getCamposRangeLabel() {
+    if (!this.totalCampos) {
+      return 'Sin resultados';
+    }
+    const start = (this.currentPage - 1) * this.pageSize + 1;
+    const end = Math.min(this.currentPage * this.pageSize, this.totalCampos);
+    return `Mostrando ${start}-${end} de ${this.totalCampos}`;
+  }
+
+  private async loadCampoSubcampos(formatoId?: number, tag?: string) {
+    if (!formatoId || !tag) {
+      this.campoSubcampos = [];
+      return;
+    }
+    this.campoSubcampos = await this.dataService.getAutoridadDicSubcamposPorTag(formatoId, tag);
+  }
+
+  private async loadCampoIndicadores(formatoId?: number, tag?: string) {
+    if (!formatoId || !tag) {
+      this.campoIndicadores = [];
+      return;
+    }
+    this.campoIndicadores = await this.dataService.getAutoridadDicIndicadoresPorTag(formatoId, tag);
+  }
+
+  private scrollToSection(ref?: ElementRef<HTMLElement>) {
+    if (!ref?.nativeElement) return;
+    setTimeout(() => {
+      ref.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+
+  searchFormatos() {
+    this.searchFormatosField = this.searchFormatosField.trim();
+  }
+
+  searchCampos() {
+    this.searchCamposField = this.searchCamposField.trim();
+  }
+
+  searchSubcampos() {
+    this.searchSubcamposField = this.searchSubcamposField.trim();
+  }
+
+  searchIndicadores() {
+    this.searchIndicadoresField = this.searchIndicadoresField.trim();
+  }
+
+  private resetFormatoForm() {
+    this.formatoForm = {
+      id: 0,
+      codigo: '',
+      nombre: '',
+      fuente: '',
+      version: '',
+      urlFuente: '',
+      activo: true
+    };
+    this.formatoEditing = false;
+  }
+
+  nuevoFormato() {
+    this.resetFormatoForm();
+    this.formatoFormVisible = true;
+  }
+
+  editarFormato(item: AutoridadDicFormato) {
+    this.formatoForm = { ...item };
+    this.formatoEditing = true;
+    this.formatoFormVisible = true;
+    this.selectedFormatoId = item.id;
+  }
+
+  async guardarFormato() {
+    if (!this.formatoForm.codigo || !this.formatoForm.nombre) {
+      Swal.fire('Complete el código y el nombre del formato');
+      return;
+    }
+
+    try {
+      if (this.formatoEditing) {
+        await this.dataService.updateAutoridadDicFormato(this.formatoForm);
+        Swal.fire('Formato actualizado');
+      } else {
+        await this.dataService.createAutoridadDicFormato(this.formatoForm);
+        Swal.fire('Formato creado');
+      }
+      await this.cargarTodo();
+      this.cancelarFormato();
+    } catch (error) {
+      console.error(error);
+      Swal.fire('Error al guardar el formato');
+    }
+  }
+
+  cancelarFormato() {
+    this.resetFormatoForm();
+    this.formatoFormVisible = false;
+    this.selectedFormatoId = undefined;
+  }
+
+  async eliminarFormato(item: AutoridadDicFormato) {
+    const result = await Swal.fire({
+      title: 'Eliminar formato',
+      text: 'Se eliminará el formato seleccionado y su relación con el diccionario',
+      showCancelButton: true,
+      confirmButtonText: 'Eliminar',
+      cancelButtonText: 'Cancelar'
+    });
+    if (!result.isConfirmed) return;
+
+    try {
+      await this.dataService.deleteAutoridadDicFormato(item.id);
+      await this.cargarTodo();
+      if (this.formatoEditing && this.formatoForm.id === item.id) {
+        this.cancelarFormato();
+      }
+      Swal.fire('Formato eliminado');
+    } catch (error) {
+      console.error(error);
+      Swal.fire('Error al eliminar el formato');
+    }
+  }
+
+  private resetCampoForm() {
+    this.campoForm = {
+      id: 0,
+      formatoId: 0,
+      tag: '',
+      nombre: '',
+      grupo: '',
+      esControl: false,
+      esObsoleto: false
+    };
+    this.campoEditing = false;
+  }
+
+  nuevoCampo() {
+    this.resetCampoForm();
+    this.campoFormVisible = true;
+    this.selectedCampoId = undefined;
+    this.scrollToSection(this.campoFormSection);
+  }
+
+  async editarCampo(item: AutoridadDicCampo) {
+    this.campoForm = { ...item };
+    this.campoEditing = true;
+    this.campoFormVisible = true;
+    this.selectedCampoId = item.id;
+    this.scrollToSection(this.campoFormSection);
+    this.campoSubcampoContext = { formatoId: item.formatoId, tag: item.tag };
+    await this.loadCampoSubcampos(item.formatoId, item.tag);
+    this.campoIndicadorContext = { formatoId: item.formatoId, tag: item.tag };
+    await this.loadCampoIndicadores(item.formatoId, item.tag);
+  }
+
+  async guardarCampo() {
+    if (!this.campoForm.formatoId || !this.campoForm.tag || !this.campoForm.nombre) {
+      Swal.fire('Complete el formato, el tag y el nombre del campo');
+      return;
+    }
+
+    try {
+      if (this.campoEditing) {
+        await this.dataService.updateAutoridadDicCampo(this.campoForm);
+        Swal.fire('Campo actualizado');
+      } else {
+        await this.dataService.createAutoridadDicCampo(this.campoForm);
+        Swal.fire('Campo creado');
+      }
+      await this.cargarTodo();
+      this.cancelarCampo();
+    } catch (error) {
+      console.error(error);
+      Swal.fire('Error al guardar el campo');
+    }
+  }
+
+  cancelarCampo() {
+    this.resetCampoForm();
+    this.campoFormVisible = false;
+    this.selectedCampoId = undefined;
+    this.campoSubcampoContext = undefined;
+    this.campoSubcampos = [];
+    this.campoIndicadorContext = undefined;
+    this.campoIndicadores = [];
+  }
+
+  async eliminarCampo(item: AutoridadDicCampo) {
+    const result = await Swal.fire({
+      title: 'Eliminar tag',
+      text: 'Se eliminará el tag del diccionario',
+      showCancelButton: true,
+      confirmButtonText: 'Eliminar',
+      cancelButtonText: 'Cancelar'
+    });
+    if (!result.isConfirmed) return;
+
+    try {
+      await this.dataService.deleteAutoridadDicCampo(item.id);
+      await this.cargarTodo();
+      if (this.campoEditing && this.campoForm.id === item.id) {
+        this.cancelarCampo();
+      }
+      Swal.fire('Tag eliminado');
+    } catch (error) {
+      console.error(error);
+      Swal.fire('Error al eliminar el tag');
+    }
+  }
+
+  private resetSubcampoForm() {
+    this.subcampoForm = {
+      id: 0,
+      formatoId: 0,
+      tag: '',
+      codigo: '',
+      nombre: '',
+      esObsoleto: false
+    };
+    this.subcampoEditing = false;
+  }
+
+  nuevoSubcampo(contextFormatoId?: number, contextTag?: string) {
+    this.resetSubcampoForm();
+    this.subcampoFormVisible = true;
+    this.selectedSubcampoId = undefined;
+    if (contextFormatoId) {
+      this.subcampoForm.formatoId = contextFormatoId;
+    }
+    if (contextTag) {
+      this.subcampoForm.tag = contextTag;
+    }
+    if (contextFormatoId && contextTag) {
+      this.campoSubcampoContext = { formatoId: contextFormatoId, tag: contextTag };
+    } else {
+      this.campoSubcampoContext = undefined;
+    }
+    this.scrollToSection(this.subcampoFormSection);
+  }
+
+  editarSubcampo(item: AutoridadDicSubcampo) {
+    this.subcampoForm = { ...item };
+    this.subcampoEditing = true;
+    this.subcampoFormVisible = true;
+    this.selectedSubcampoId = item.id;
+    this.scrollToSection(this.subcampoFormSection);
+    if (this.campoEditing) {
+      this.campoSubcampoContext = { formatoId: item.formatoId, tag: item.tag };
+    } else {
+      this.campoSubcampoContext = undefined;
+    }
+  }
+
+  async guardarSubcampo() {
+    if (!this.subcampoForm.formatoId || !this.subcampoForm.tag || !this.subcampoForm.codigo || !this.subcampoForm.nombre) {
+      Swal.fire('Complete el formato, tag, codigo y nombre del subcampo');
+      return;
+    }
+
+    try {
+      if (this.subcampoEditing) {
+        await this.dataService.updateAutoridadDicSubcampo(this.subcampoForm);
+        Swal.fire('Subcampo actualizado');
+      } else {
+        await this.dataService.createAutoridadDicSubcampo(this.subcampoForm);
+        Swal.fire('Subcampo creado');
+      }
+      await this.cargarTodo();
+      this.cancelarSubcampo();
+    } catch (error) {
+      console.error(error);
+      Swal.fire('Error al guardar el subcampo');
+    }
+  }
+
+  cancelarSubcampo() {
+    this.resetSubcampoForm();
+    this.subcampoFormVisible = false;
+    this.selectedSubcampoId = undefined;
+    if (!this.campoSubcampoContext) {
+      this.campoSubcampos = [];
+    }
+  }
+
+  async eliminarSubcampo(item: AutoridadDicSubcampo) {
+    const result = await Swal.fire({
+      title: 'Eliminar subcampo',
+      text: 'Se eliminará el subcampo del diccionario',
+      showCancelButton: true,
+      confirmButtonText: 'Eliminar',
+      cancelButtonText: 'Cancelar'
+    });
+    if (!result.isConfirmed) return;
+
+    try {
+      await this.dataService.deleteAutoridadDicSubcampo(item.id);
+      await this.cargarTodo();
+      if (this.subcampoEditing && this.subcampoForm.id === item.id) {
+        this.cancelarSubcampo();
+      }
+      Swal.fire('Subcampo eliminado');
+    } catch (error) {
+      console.error(error);
+      Swal.fire('Error al eliminar el subcampo');
+    }
+  }
+
+  private resetIndicadorForm() {
+    this.indicadorForm = {
+      id: 0,
+      formatoId: 0,
+      tag: '',
+      posicion: 1,
+      valor: '',
+      significado: ''
+    };
+    this.indicadorEditing = false;
+  }
+
+  nuevoIndicador(contextFormatoId?: number, contextTag?: string) {
+    this.resetIndicadorForm();
+    this.indicadorFormVisible = true;
+    this.selectedIndicadorId = undefined;
+    if (contextFormatoId) {
+      this.indicadorForm.formatoId = contextFormatoId;
+    }
+    if (contextTag) {
+      this.indicadorForm.tag = contextTag;
+    }
+    if (contextFormatoId && contextTag) {
+      this.campoIndicadorContext = { formatoId: contextFormatoId, tag: contextTag };
+    } else {
+      this.campoIndicadorContext = undefined;
+    }
+    this.scrollToSection(this.indicadorFormSection);
+  }
+
+  editarIndicador(item: AutoridadDicIndicador) {
+    this.indicadorForm = { ...item };
+    this.indicadorEditing = true;
+    this.indicadorFormVisible = true;
+    this.selectedIndicadorId = item.id;
+    this.scrollToSection(this.indicadorFormSection);
+    this.campoIndicadorContext = { formatoId: item.formatoId, tag: item.tag };
+  }
+
+  async guardarIndicador() {
+    if (!this.indicadorForm.formatoId || !this.indicadorForm.tag || !this.indicadorForm.valor || !this.indicadorForm.significado) {
+      Swal.fire('Complete el formato, tag, valor y significado del indicador');
+      return;
+    }
+
+    try {
+      if (this.indicadorEditing) {
+        await this.dataService.updateAutoridadDicIndicador(this.indicadorForm);
+        Swal.fire('Indicador actualizado');
+      } else {
+        await this.dataService.createAutoridadDicIndicador(this.indicadorForm);
+        Swal.fire('Indicador creado');
+      }
+      await this.cargarTodo();
+      this.cancelarIndicador();
+      if (this.campoIndicadorContext) {
+        await this.loadCampoIndicadores(this.campoIndicadorContext.formatoId, this.campoIndicadorContext.tag);
+      }
+    } catch (error) {
+      console.error(error);
+      Swal.fire('Error al guardar el indicador');
+    }
+  }
+
+  cancelarIndicador() {
+    this.resetIndicadorForm();
+    this.indicadorFormVisible = false;
+    this.selectedIndicadorId = undefined;
+  }
+
+  async eliminarIndicador(item: AutoridadDicIndicador) {
+    const result = await Swal.fire({
+      title: 'Eliminar indicador',
+      text: 'Se eliminará el indicador del diccionario',
+      showCancelButton: true,
+      confirmButtonText: 'Eliminar',
+      cancelButtonText: 'Cancelar'
+    });
+    if (!result.isConfirmed) return;
+
+    try {
+      await this.dataService.deleteAutoridadDicIndicador(item.id);
+      await this.cargarTodo();
+      if (this.indicadorEditing && this.indicadorForm.id === item.id) {
+        this.cancelarIndicador();
+      }
+      Swal.fire('Indicador eliminado');
+    } catch (error) {
+      console.error(error);
+      Swal.fire('Error al eliminar el indicador');
+    }
+  }
+
+}

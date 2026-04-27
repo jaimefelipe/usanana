@@ -110,11 +110,20 @@ export class ApiService {
     let aliasTabla = '';
     const table = this.sqlConfig.table.trim();
 
+    const aliasRegex = /^\s*([^\s]+)(?:\s+(?:AS\s+)?([^\s]+))?/i;
     if (table.startsWith('(')) {
       const match = table.match(/AS\s+([a-zA-Z_]\w*)$/i);
       aliasTabla = match ? match[1] : 't'; // alias por defecto 't'
     } else {
-      aliasTabla = table.split(' ')[0];
+      const match = table.match(aliasRegex);
+      if (match) {
+        const candidate = match[2] || match[1];
+        const reserved =
+          /(LEFT|RIGHT|INNER|JOIN|ON|WHERE|ORDER|LIMIT|GROUP|HAVING|UNION)$/i;
+        aliasTabla = reserved.test(candidate) ? match[1] : candidate;
+      } else {
+        aliasTabla = table.split(' ')[0];
+      }
     }
 
     if (this.sqlConfig.Empresa) {

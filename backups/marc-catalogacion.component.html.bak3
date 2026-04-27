@@ -1,0 +1,213 @@
+<div class="container-fluid pb-5">
+  <section [hidden]="libroFormVisible">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-3">
+      <div>
+        <h2 class="mb-1">Catálogo MARC</h2>
+        <div class="text-muted small">Selecciona un libro o crea uno nuevo antes de completar sus etiquetas MARC.</div>
+      </div>
+      <div class="input-group invoice-search">
+        <span class="input-group-text"><i class="fa fa-search"></i></span>
+        <input type="text" class="form-control" placeholder="Buscar" aria-label="Buscar libro">
+        <button class="btn btn-primary" type="button" (click)="nuevoLibro()">
+          <i class="fa fa-plus-circle"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="row g-4 invoice-grid">
+      <div class="col-12 col-md-6 col-xl-4" *ngFor="let libro of libros">
+        <div class="card invoice-card h-100">
+          <a class="invoice-card-link" (click)="editarLibro(libro)">
+            <div class="card-body">
+              <div class="d-flex align-items-start justify-content-between gap-2 mb-2">
+                <div class="invoice-doc text-muted">ID {{ libro.id }}</div>
+                <span class="text-muted small">{{ libro.estado }}</span>
+              </div>
+              <h4 class="card-title invoice-name mb-1">{{ libro.titulo }}</h4>
+              <div class="invoice-line">{{ libro.autor || 'Sin autor' }}</div>
+              <div class="invoice-line text-muted">ISBN: {{ libro.isbn || '-' }}</div>
+              <div class="invoice-line">
+                Categoría:
+                <span class="text-primary">{{ libro.categoria }}</span>
+              </div>
+              <div class="invoice-line">
+                Tipo de material:
+                <span class="text-info">{{ libro.tipoMaterial || '—' }}</span>
+              </div>
+              <div class="invoice-id text-muted small">Id de libro: {{ libro.id }}</div>
+            </div>
+          </a>
+        </div>
+      </div>
+      <div *ngIf="libros.length === 0" class="col-12">
+        <div class="card invoice-card empty">
+          <div class="card-body text-center text-muted small">No hay libros registrados.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid">
+      <ul class="pagination justify-content-center">
+        <li class="page-item"><button class="page-link" type="button">&laquo;</button></li>
+        <li class="page-item"><button class="page-link" type="button">&lsaquo;</button></li>
+        <li class="page-item"><button class="page-link" type="button">1</button></li>
+        <li class="page-item"><button class="page-link" type="button">2</button></li>
+        <li class="page-item"><button class="page-link" type="button">3</button></li>
+        <li class="page-item"><button class="page-link" type="button">&rsaquo;</button></li>
+      </ul>
+    </div>
+  </section>
+
+  <section [hidden]="!libroFormVisible" class="invoice-form">
+    <form class="card">
+      <div class="card-header invoice-form-header d-flex align-items-center justify-content-between flex-wrap gap-3">
+        <div>
+          <h2 class="mb-1">{{ libroEditing ? 'Editar libro MARC' : 'Nuevo libro MARC' }}</h2>
+          <p class="text-muted small mb-0">
+            {{ selectedLibro ? ('Catalogando: ' + selectedLibro.titulo) : 'Define el libro y completa sus etiquetas MARC.' }}
+          </p>
+        </div>
+        <div class="d-flex gap-2">
+          <button class="btn btn-outline-secondary" type="button" (click)="cancelarLibro()">Cancelar</button>
+          <button class="btn btn-success" type="button" (click)="guardarLibroYRegistro()" [disabled]="isSaving">
+            {{ isSaving ? 'Guardando...' : 'Guardar libro y registro MARC' }}
+          </button>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label">Tipo de documento</label>
+            <select class="form-select" [(ngModel)]="libroForm.tipoMaterialId" (ngModelChange)="onTipoMaterialChange()" name="libroTipoDocumento">
+              <option [ngValue]="undefined">Seleccione tipo...</option>
+              <option *ngFor="let tipo of tiposMaterial" [ngValue]="tipo.id">{{ tipo.nombre }}</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Formato MARC</label>
+            <select class="form-select" [(ngModel)]="selectedFormatoId" (change)="onFormatoChange()" name="catalogFormato">
+              <option [ngValue]="undefined">Selecciona un formato...</option>
+              <option *ngFor="let formato of formatos" [ngValue]="formato.id">{{ formato.nombre }}</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <div class="form-floating">
+              <input class="form-control" id="libroTitulo" type="text" [(ngModel)]="libroForm.titulo" name="libroTitulo" placeholder="Nombre" />
+              <label for="libroTitulo">Nombre</label>
+            </div>
+          </div>
+        </div>
+       
+        <div class="card mt-4">
+          <div class="card-body p-0">
+            <div class="section-tabs d-flex flex-wrap border-bottom">
+              <button
+                *ngFor="let section of secciones"
+                type="button"
+                class="btn btn-sm flex-fill text-start"
+                [class.active]="currentPage === section"
+                (click)="selectSection(section)">
+                {{ getSectionLabel(section) }}
+              </button>
+            </div>
+
+            <div class="tags-table p-3">
+        <div *ngIf="!selectedFormatoId" class="empty-section text-muted small">Selecciona un formato MARC para ver los tags.</div>
+        <div *ngIf="selectedFormatoId && getTagsPorSeccion().length === 0" class="empty-section text-muted small">No hay tags para esa sección.</div>
+        <div *ngIf="selectedFormatoId && getTagsPorSeccion().length > 0" class="table-responsive">
+          <table class="table table-hover table-sm align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Tag</th>
+                <th>Nombre</th>
+                <th>Grupo</th>
+                <th>Orden</th>
+                <th>Valor</th>
+                <th>Indicador 1</th>
+                <th>Indicador 2</th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngFor="let campo of getTagsPorSeccion()">
+                <ng-container *ngIf="getEntry(campo.tag, campo.nombre) as entry">
+                  <tr class="tag-table-row">
+                    <td>{{ campo.tag }}</td>
+                  <td>
+                    <div class="fw-semibold">{{ campo.nombre }}</div>
+                    <div class="text-muted small">{{ campo.formatoNombre || '' }}</div>
+                  </td>
+                  <td>{{ campo.grupo || 'Sin grupo' }}</td>
+                  <td>{{ campo.orden || 'N/A' }}</td>
+                  <td>
+                    <input
+                      class="form-control form-control"
+                      type="text"
+                      [(ngModel)]="entry.valor"
+                      [name]="'valor-' + campo.tag"
+                      placeholder="{{ campo.nombre }}" />
+                  </td>
+                  <td>
+                    <select *ngIf="getIndicatorOptions(campo.tag, 1).length > 0"
+                      class="form-select form-select-sm"
+                      [(ngModel)]="entry.ind1"
+                      [name]="'ind1-' + campo.tag">
+                      <option [value]="''">(vacío)</option>
+                      <option *ngFor="let opt of getIndicatorOptions(campo.tag, 1)" [value]="opt.value">
+                        {{ opt.value }}{{ opt.meaning ? ' · ' + opt.meaning : '' }}
+                      </option>
+                    </select>
+                  </td>
+                  <td>
+                    <select *ngIf="getIndicatorOptions(campo.tag, 2).length > 0"
+                      class="form-select form-select-sm"
+                      [(ngModel)]="entry.ind2"
+                      [name]="'ind2-' + campo.tag">
+                      <option [value]="''">(vacío)</option>
+                      <option *ngFor="let opt of getIndicatorOptions(campo.tag, 2)" [value]="opt.value">
+                        {{ opt.value }}{{ opt.meaning ? ' · ' + opt.meaning : '' }}
+                      </option>
+                    </select>
+                  </td>
+                  </tr>
+                  <tr *ngIf="entry.subcampos.length">
+                    <td colspan="7" class="p-0">
+                      <div class="table-responsive">
+                        <table class="table table-sm table-borderless mb-0">
+                          <thead>
+                            <tr class="small text-muted">
+                              <th>Código</th>
+                              <th>Nombre</th>
+                              <th>Valor</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let sub of entry.subcampos">
+                              <td><span class="badge bg-light text-muted">{{ sub.codigo }}</span></td>
+                              <td>{{ sub.nombre }}</td>
+                              <td class="pe-0">
+                                <input
+                                  class="form-control form-control-sm"
+                                  type="text"
+                                  [(ngModel)]="sub.valor"
+                                  [name]="'sub-' + campo.tag + '-' + sub.codigo"
+                                  placeholder="Valor del subcampo" />
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </td>
+                  </tr>
+                </ng-container>
+              </ng-container>
+            </tbody>
+          </table>
+        </div>
+      </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </section>
+</div>

@@ -1,0 +1,163 @@
+<div class="container-fluid pb-5">
+  <section>
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-3">
+      <div>
+        <h2 class="mb-1">Catalogación de autoridades</h2>
+        <div class="text-muted small">Gestiona los tags de autoridad a partir del diccionario específicas para cada tipo.</div>
+      </div>
+      <div class="d-flex gap-2 flex-wrap">
+        <select class="form-select" [(ngModel)]="selectedFormatoId" (change)="onFormatoChange()">
+          <option [ngValue]="undefined">Formátos de autoridad...</option>
+          <option *ngFor="let formato of formatos" [ngValue]="formato.id">{{ formato.nombre }}</option>
+        </select>
+        
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-body p-0">
+        <div class="section-tabs d-flex flex-wrap border-bottom bg-light">
+          <button
+            *ngFor="let section of secciones"
+            type="button"
+            class="btn btn-sm border-0 rounded-0"
+            [class.text-primary]="currentPage === section"
+            (click)="selectSection(section)">
+            {{ getSectionLabel(section) }}
+          </button>
+        </div>
+        <div class="tags-table p-3">
+          <div *ngIf="!selectedFormatoId" class="text-center text-muted small py-3">Selecciona un formato para ver los tags de autoridad.</div>
+          <div *ngIf="selectedFormatoId && getTagsPorSeccion().length === 0" class="text-center text-muted small py-3">No hay tags en esta sección.</div>
+          <div *ngIf="selectedFormatoId && getTagsPorSeccion().length > 0" class="table-responsive">
+            <table class="table table-hover table-sm align-middle mb-0">
+              <thead>
+                <tr>
+                  <th>Tag</th>
+                  <th class="col-name">Nombre</th>
+                  <th>Grupo</th>
+                  <th>Orden</th>
+                  <th class="col-valor">Valor</th>
+                  <th class="text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let campo of getTagsPorSeccion()">
+                  <ng-container *ngIf="getEntry(campo.tag, campo.nombre) as entry">
+                    <tr>
+                      <td>{{ campo.tag }}</td>
+                      <td class="tag-name-cell">
+                        <div class="fw-semibold">{{ campo.nombre }}</div>
+                        <div class="text-muted small">
+                          {{ campo.formatoNombre || '' }}
+                          <span *ngIf="entry.ind1 || entry.ind2" class="indicator-chip">
+                            <span *ngIf="entry.ind1">I1: {{ getIndicatorLabel(campo.tag, 1, entry.ind1) }}</span>
+                            <span *ngIf="entry.ind2" class="ms-2">I2: {{ getIndicatorLabel(campo.tag, 2, entry.ind2) }}</span>
+                          </span>
+                        </div>
+                      </td>
+                      <td>{{ campo.grupo || 'Sin grupo' }}</td>
+                      <td>{{ campo.orden ?? 'N/A' }}</td>
+                      <td class="tag-value-cell">
+                        <input
+                          class="form-control form-control-sm"
+                          type="text"
+                          [(ngModel)]="entry.valor"
+                          [name]="'valor-' + campo.tag"
+                          placeholder="{{ campo.nombre }}" />
+                      </td>
+                      <td class="text-center">
+                        <div class="indicator-actions d-flex justify-content-center gap-2">
+                          <div *ngIf="getIndicatorOptions(campo.tag, 1).length > 0" class="position-relative">
+                            <button class="btn btn-outline-secondary btn-sm icon-dropdown"
+                              type="button"
+                              (click)="toggleIndicatorDropdown(entry, 1, $event)"
+                              [attr.title]="'Indicador 1: ' + (entry.ind1 || '(vacío)')">
+                              <i class="fa fa-info-circle"></i>
+                            </button>
+                            <div *ngIf="isIndicatorDropdownOpen(entry, 1)" class="indicator-menu">
+                              <button class="dropdown-item" type="button" (click)="setIndicator(entry, 1, ''); closeIndicatorDropdown(entry)">
+                                (vacío)
+                              </button>
+                              <button *ngFor="let opt of getIndicatorOptions(campo.tag, 1)" class="dropdown-item" type="button"
+                                (click)="setIndicator(entry, 1, opt.value); closeIndicatorDropdown(entry)">
+                                {{ opt.value }}{{ opt.meaning ? ' · ' + opt.meaning : '' }}
+                              </button>
+                            </div>
+                          </div>
+                          <div *ngIf="getIndicatorOptions(campo.tag, 2).length > 0" class="position-relative">
+                            <button class="btn btn-outline-secondary btn-sm icon-dropdown"
+                              type="button"
+                              (click)="toggleIndicatorDropdown(entry, 2, $event)"
+                              [attr.title]="'Indicador 2: ' + (entry.ind2 || '(vacío)')">
+                              <i class="fa fa-info-circle"></i>
+                            </button>
+                            <div *ngIf="isIndicatorDropdownOpen(entry, 2)" class="indicator-menu">
+                              <button class="dropdown-item" type="button" (click)="setIndicator(entry, 2, ''); closeIndicatorDropdown(entry)">
+                                (vacío)
+                              </button>
+                              <button *ngFor="let opt of getIndicatorOptions(campo.tag, 2)" class="dropdown-item" type="button"
+                                (click)="setIndicator(entry, 2, opt.value); closeIndicatorDropdown(entry)">
+                                {{ opt.value }}{{ opt.meaning ? ' · ' + opt.meaning : '' }}
+                              </button>
+                            </div>
+                          </div>
+                          <button
+                            *ngIf="hasSubcampos(campo.tag)"
+                            class="btn btn-outline-secondary btn-sm icon-dropdown"
+                            type="button"
+                            (click)="openSubcampoModal(entry)"
+                            title="Subcampos">
+                            <i class="fa fa-list"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  </ng-container>
+                </ng-container>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="modal-mask" *ngIf="subcampoModalVisible">
+    <div class="modal-panel catalog-panel">
+      <div class="modal-header">
+        <div>
+          <h5 class="modal-title">Subcampos de autoridad</h5>
+          <p class="modal-subtitle mb-0">{{ activeSubcamposEntry?.tag }}</p>
+        </div>
+        <button type="button" class="btn-close" aria-label="Cerrar" (click)="closeSubcampoModal()"></button>
+      </div>
+      <div class="modal-body">
+        <div class="table-responsive">
+          <table class="table table-sm table-borderless mb-0">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th class="col-valor">Valor</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let sub of activeSubcamposEntry?.subcampos">
+                <td>{{ sub.codigo }}</td>
+                <td>{{ sub.nombre }}</td>
+                <td>
+                  <input class="form-control form-control-sm" type="text" [(ngModel)]="sub.valor"
+                    [name]="'modal-sub-' + activeSubcamposEntry?.tag + '-' + sub.codigo" />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" type="button" (click)="closeSubcampoModal()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>

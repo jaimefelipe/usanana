@@ -77,10 +77,10 @@
           <span class="ms-auto menu-chevron nav-text">{{ sectionChevron('operacion') }}</span>
         </a>
         <ul class="nav flex-column ms-3" *ngIf="sectionState.operacion && !menuColapsado">
-          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/catalogo']" routerLinkActive="active">- Catalogo</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/marc-catalogacion']" routerLinkActive="active">- Catalogación</a></li>
           <!--<li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/prestamos']" routerLinkActive="active">- Prestamos</a></li>
           <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/reservas']" routerLinkActive="active">- Reservas</a></li>
-        --><li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/usuarios']" routerLinkActive="active">- Usuarios biblioteca</a></li>
+        -->
           <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/reportes']" routerLinkActive="active">- Reportes</a></li>
         </ul>
       </li>
@@ -98,22 +98,15 @@
         </a>
         <ul class="nav flex-column ms-3" *ngIf="sectionState.catalogacion && !menuColapsado">
           <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/categorias']" routerLinkActive="active">- Categorias</a></li>
-          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/editoriales']" routerLinkActive="active">- Editoriales</a></li>
-          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/autores']" routerLinkActive="active">- Autores</a></li>
           <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/tipos-material']" routerLinkActive="active">- Tipos material</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/tipo-material-etiquetas']" routerLinkActive="active">- Etiquetas por tipo</a></li>
           <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/ejemplares']" routerLinkActive="active">- Ejemplares</a></li>
-          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/tesis']" routerLinkActive="active">- Tesis</a></li>
-          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/marc-registros']" routerLinkActive="active">- MARC registros</a></li>
-          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/marc-campos']" routerLinkActive="active">- MARC campos</a></li>
-          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/marc-subcampos']" routerLinkActive="active">- MARC subcampos</a></li>
           <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/marc-diccionario']" routerLinkActive="active">- MARC diccionario</a></li>
-          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/marc-catalogacion']" routerLinkActive="active">- Catalogación MARC</a></li>
-          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/autoridades']" routerLinkActive="active">- Autoridades</a></li>
-          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/autoridad-campos']" routerLinkActive="active">- Autoridad campos</a></li>
-          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/autoridad-subcampos']" routerLinkActive="active">- Autoridad subcampos</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/autoridad-diccionario']" routerLinkActive="active">- Autoridad diccionario</a></li>
         </ul>
       </li>
 
+      <!--
       <li class="nav-item">
         <a class="nav-link text-grey d-flex align-items-center"
            href="#"
@@ -130,7 +123,6 @@
           <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/multas']" routerLinkActive="active">- Multas</a></li>
         </ul>
       </li>
-
       <li class="nav-item">
         <a class="nav-link text-grey d-flex align-items-center"
            href="#"
@@ -149,7 +141,8 @@
           <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/serial-recepciones']" routerLinkActive="active">- Recepciones</a></li>
         </ul>
       </li>
-
+-->
+      
       <li class="nav-item">
         <a class="nav-link text-grey d-flex align-items-center"
            href="#"
@@ -166,8 +159,7 @@
           <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/presupuestos']" routerLinkActive="active">- Presupuestos</a></li>
           <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/ordenes-compra']" routerLinkActive="active">- Ordenes de compra</a></li>
           <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/ordenes-compra-detalle']" routerLinkActive="active">- Detalle ordenes</a></li>
-          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/facturas-compra']" routerLinkActive="active">- Facturas</a></li>
-          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/cotizaciones']" routerLinkActive="active">- Cotizaciones</a></li>
+          
         </ul>
       </li>
       <!-- 
@@ -204,7 +196,6 @@
         </a>
         <ul class="nav flex-column ms-3" *ngIf="sectionState.integraciones && !menuColapsado">
           <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/integraciones']" routerLinkActive="active">- Protocolos</a></li>
-          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/sedes']" routerLinkActive="active">- Sedes</a></li>
         </ul>
       </li>
 

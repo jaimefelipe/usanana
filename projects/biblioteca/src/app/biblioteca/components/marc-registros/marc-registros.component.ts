@@ -26,6 +26,12 @@ export class MarcRegistrosComponent implements OnInit {
 
   constructor(private dataService: BibliotecaDataService) {}
 
+  syncControl001() {
+    if (!this.esEdicion) {
+      this.registro.control001 = '';
+    }
+  }
+
   async ngOnInit() {
     await this.cargar();
   }

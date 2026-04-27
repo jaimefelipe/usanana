@@ -1,7 +1,33 @@
 import { Component, OnInit } from '@angular/core';
 import Swal from 'sweetalert2';
 import { BibliotecaDataService } from '../../services/biblioteca-data.service';
-import { Autoridad, AutoridadCampo } from '../../models/biblioteca.models';
+import {
+  Autoridad,
+  AutoridadCampo,
+  AutoridadSubcampo,
+  MarcDicCampo,
+  MarcDicFormato,
+  MarcDicIndicador,
+  MarcDicSubcampo
+} from '../../models/biblioteca.models';
+
+interface CatalogacionSubcampoEntry {
+  id?: number;
+  codigo: string;
+  nombre: string;
+  valor: string;
+}
+
+interface CatalogacionEntrada {
+  tag: string;
+  nombre: string;
+  valor: string;
+  ind1: string;
+  ind2: string;
+  subcampos: CatalogacionSubcampoEntry[];
+  campoId?: number;
+  indicatorDropdownOpen?: Record<1 | 2, boolean>;
+}
 
 @Component({
   selector: 'app-autoridad-campos',
@@ -9,98 +35,447 @@ import { Autoridad, AutoridadCampo } from '../../models/biblioteca.models';
   styleUrls: ['./autoridad-campos.component.css']
 })
 export class AutoridadCamposComponent implements OnInit {
-  campos: AutoridadCampo[] = [];
   autoridades: Autoridad[] = [];
-  campo: AutoridadCampo = { id: 0, autoridadId: 0, tag: '', ind1: '', ind2: '', valor: '' };
-  esEdicion = false;
-  edit = false;
-  searchField = '';
+  formatos: MarcDicFormato[] = [];
+  subcampos: MarcDicSubcampo[] = [];
+  indicadores: MarcDicIndicador[] = [];
+
+  selectedAutoridadId?: number;
+  selectedFormatoId?: number;
+
+  currentTags: MarcDicCampo[] = [];
+  currentPage = 1;
+  pageSize = 50;
+  secciones: number[] = [];
+  pageLabels: Record<number, string> = {};
+  totalTagsForFormat = 0;
+
+  recordEntries: Record<string, CatalogacionEntrada> = {};
+  authorityCampoMap = new Map<string, AutoridadCampo>();
+
+  indicatorOptionsByTag: Record<string, Record<1 | 2, { value: string; meaning?: string }[]>> = {};
+  subcamposByTag: Record<string, MarcDicSubcampo[]> = {};
+
+  subcampoModalVisible = false;
+  activeSubcamposEntry?: CatalogacionEntrada;
+
+  isSaving = false;
 
   constructor(private dataService: BibliotecaDataService) {}
 
   async ngOnInit() {
-    await this.cargar();
+    await this.cargarDatosBase();
   }
 
-  async cargar() {
-    this.autoridades = await this.dataService.getAutoridades();
-    this.campos = await this.dataService.getAutoridadCampos();
-  }
-
-  keytab(event: KeyboardEvent) {
-    if (event.key === 'Enter') {
-      this.search();
+  private async cargarDatosBase() {
+    const [autoridades, formatos, subcampos, indicadores] = await Promise.all([
+      this.dataService.getAutoridades(),
+      this.dataService.getMarcDicFormatos(),
+      this.dataService.getMarcDicSubcampos(),
+      this.dataService.getMarcDicIndicadores()
+    ]);
+    this.autoridades = autoridades;
+    this.formatos = formatos;
+    this.subcampos = subcampos;
+    this.indicadores = indicadores;
+    if (!this.selectedAutoridadId && autoridades.length) {
+      this.selectedAutoridadId = autoridades[0].id;
     }
+    if (!this.selectedFormatoId && formatos.length) {
+      this.selectedFormatoId = formatos[0].id;
+    }
+    this.buildCaches();
+    await this.actualizarCurrentTags();
+    await this.loadAuthorityMap();
   }
 
-  search() {
-    this.searchField = this.searchField.trim();
-  }
-
-  resetForm() {
-    this.campo = { id: 0, autoridadId: 0, tag: '', ind1: '', ind2: '', valor: '' };
-    this.esEdicion = false;
-  }
-
-  nuevo() {
-    this.resetForm();
-    this.edit = true;
-  }
-
-  editar(item: AutoridadCampo) {
-    this.campo = { ...item };
-    this.esEdicion = true;
-    this.edit = true;
-  }
-
-  async guardar() {
-    if (!this.campo.autoridadId || !this.campo.tag) {
-      Swal.fire('Complete la autoridad y el tag');
+  private async loadAuthorityMap() {
+    this.authorityCampoMap.clear();
+    if (!this.selectedAutoridadId) {
+      this.recordEntries = {};
       return;
     }
+    const campos = await this.dataService.getAutoridadCampos();
+    campos
+      .filter(c => c.autoridadId === this.selectedAutoridadId)
+      .forEach(c => this.authorityCampoMap.set(c.tag, c));
+    this.recordEntries = {};
+  }
 
-    try {
-      if (this.esEdicion) {
-        await this.dataService.updateAutoridadCampo(this.campo);
-        Swal.fire('Campo actualizado');
-      } else {
-        await this.dataService.createAutoridadCampo(this.campo);
-        Swal.fire('Campo creado');
-      }
-      this.resetForm();
-      this.edit = false;
-      await this.cargar();
-    } catch (error) {
-      console.error(error);
-      Swal.fire('Error al guardar el campo');
+  getSelectedAutoridadLabel() {
+    const autoridad = this.autoridades.find(a => a.id === this.selectedAutoridadId);
+    return autoridad ? autoridad.encabezado : 'Selecciona una autoridad';
+  }
+
+  async onAutoridadChange(autoridadId: number | undefined) {
+    if (!autoridadId) {
+      this.selectedAutoridadId = undefined;
+      this.authorityCampoMap.clear();
+      this.recordEntries = {};
+      return;
     }
+    this.selectedAutoridadId = autoridadId;
+    this.recordEntries = {};
+    await this.loadAuthorityMap();
   }
 
-  cancelar() {
-    this.resetForm();
-    this.edit = false;
+  async onFormatoChange() {
+    this.currentPage = 1;
+    this.pageLabels = {};
+    this.recordEntries = {};
+    await this.actualizarCurrentTags();
   }
 
-  async eliminar(item: AutoridadCampo) {
-    const result = await Swal.fire({
-      title: 'Eliminar campo',
-      text: 'Se eliminara el campo seleccionado',
-      showCancelButton: true,
-      confirmButtonText: 'Eliminar',
-      cancelButtonText: 'Cancelar'
+  getTagsPorSeccion() {
+    return this.currentTags;
+  }
+
+  getSectionLabel(section: number) {
+    return this.pageLabels[section] || this.getSectionRangePlaceholder(section);
+  }
+
+  private getSectionRangePlaceholder(section: number) {
+    const total = this.totalTagsForFormat || 0;
+    if (total === 0) {
+      return '000-000';
+    }
+    const start = (section - 1) * this.pageSize + 1;
+    const end = Math.min(section * this.pageSize, total);
+    return `${this.formatTagIndex(start)}-${this.formatTagIndex(end)}`;
+  }
+
+  private formatTagIndex(value: number) {
+    return value.toString().padStart(3, '0');
+  }
+
+  async selectSection(section: number) {
+    if (this.currentPage === section) {
+      return;
+    }
+    this.currentPage = section;
+    await this.actualizarCurrentTags();
+  }
+
+  getEntry(tag: string, nombre: string) {
+    const entry = this.ensureEntry(tag);
+    entry.nombre = nombre || entry.nombre;
+    const indicatorMap = this.indicatorOptionsByTag[tag] || {};
+    if (!entry.ind1) {
+      entry.ind1 = indicatorMap[1]?.[0]?.value || '';
+    }
+    if (!entry.ind2) {
+      entry.ind2 = indicatorMap[2]?.[0]?.value || '';
+    }
+    this.ensureSubcamposForEntry(entry, tag);
+    return entry;
+  }
+
+  getIndicatorOptions(tag: string, posicion: 1 | 2) {
+    return this.indicatorOptionsByTag[tag]?.[posicion] || [];
+  }
+
+  getIndicatorLabel(tag: string, posicion: 1 | 2, valor: string) {
+    const options = this.getIndicatorOptions(tag, posicion);
+    const match = options.find(opt => opt.value === valor);
+    return match?.meaning || valor;
+  }
+
+  getSubcamposForTag(tag: string) {
+    const key = this.buildTagKey(this.selectedFormatoId, tag);
+    return this.subcamposByTag[key] || [];
+  }
+
+  hasSubcampos(tag: string) {
+    return this.getSubcamposForTag(tag).length > 0;
+  }
+
+  private buildCaches() {
+    this.buildIndicatorCache();
+    this.buildSubcamposMap();
+  }
+
+  private buildIndicatorCache() {
+    this.indicatorOptionsByTag = {};
+    this.indicadores.forEach(ind => {
+      if (!this.indicatorOptionsByTag[ind.tag]) {
+        this.indicatorOptionsByTag[ind.tag] = { 1: [], 2: [] };
+      }
+      this.indicatorOptionsByTag[ind.tag][ind.posicion].push({
+        value: ind.valor,
+        meaning: ind.significado
+      });
     });
-    if (!result.isConfirmed) return;
+  }
 
-    try {
-      await this.dataService.deleteAutoridadCampo(item.id);
-      await this.cargar();
-      if (this.esEdicion && this.campo.id === item.id) {
-        this.cancelar();
+  private buildSubcamposMap() {
+    this.subcamposByTag = {};
+    this.subcampos.forEach(sub => {
+      const key = this.buildTagKey(sub.formatoId, sub.tag);
+      if (!this.subcamposByTag[key]) {
+        this.subcamposByTag[key] = [];
       }
-      Swal.fire('Campo eliminado');
+      this.subcamposByTag[key].push(sub);
+    });
+  }
+
+  private buildTagKey(formatoId: number | undefined, tag: string) {
+    return `${formatoId ?? 'no-formato'}::${tag}`;
+  }
+
+  private async actualizarCurrentTags() {
+    if (!this.selectedFormatoId) {
+      this.currentTags = [];
+      this.secciones = [];
+      this.currentPage = 1;
+      this.totalTagsForFormat = 0;
+      return;
+    }
+    const total = await this.dataService.countMarcDicCampos(this.selectedFormatoId);
+    this.totalTagsForFormat = total;
+    this.updateSectionPagination(total);
+    const { campos } = await this.dataService.getMarcDicCamposPage(
+      this.selectedFormatoId,
+      this.currentPage,
+      this.pageSize
+    );
+    this.currentTags = campos;
+    if (campos.length > 0) {
+      const startTag = campos[0].tag || '---';
+      const endTag = campos[campos.length - 1].tag || '---';
+      this.pageLabels[this.currentPage] = `${startTag}-${endTag}`;
+    }
+  }
+
+  private updateSectionPagination(total: number) {
+    const pages = total > 0 ? Math.max(1, Math.ceil(total / this.pageSize)) : 0;
+    if (pages === 0) {
+      this.currentPage = 1;
+      this.secciones = [];
+      this.pageLabels = {};
+      return;
+    }
+    this.secciones = Array.from({ length: pages }, (_, idx) => idx + 1);
+    if (this.currentPage > pages) {
+      this.currentPage = pages;
+    }
+  }
+
+  ensureSubcamposForEntry(entry: CatalogacionEntrada, tag: string) {
+    const definitions = this.getSubcamposForTag(tag);
+    definitions.forEach(def => {
+      const existing = entry.subcampos.find(sub => sub.codigo === def.codigo);
+      if (!existing) {
+        entry.subcampos.push({
+          codigo: def.codigo,
+          nombre: def.nombre,
+          valor: ''
+        });
+      } else {
+        existing.nombre = def.nombre;
+      }
+    });
+  }
+
+  private ensureEntry(tag: string) {
+    if (!this.recordEntries[tag]) {
+      this.recordEntries[tag] = {
+        tag,
+        nombre: '',
+        valor: '',
+        ind1: '',
+        ind2: '',
+        subcampos: []
+      };
+      const mapped = this.authorityCampoMap.get(tag);
+      if (mapped) {
+        this.recordEntries[tag].campoId = mapped.id;
+        this.recordEntries[tag].ind1 = mapped.ind1 || '';
+        this.recordEntries[tag].ind2 = mapped.ind2 || '';
+        this.recordEntries[tag].valor = mapped.valor || '';
+      }
+    }
+    return this.recordEntries[tag];
+  }
+
+  setIndicator(entry: CatalogacionEntrada, indicador: 1 | 2, value: string) {
+    if (indicador === 1) {
+      entry.ind1 = value;
+    } else {
+      entry.ind2 = value;
+    }
+    this.closeIndicatorDropdown(entry);
+  }
+
+  toggleIndicatorDropdown(entry: CatalogacionEntrada, indicador: 1 | 2, event: MouseEvent) {
+    event.stopPropagation();
+    entry.indicatorDropdownOpen = entry.indicatorDropdownOpen || { 1: false, 2: false };
+    entry.indicatorDropdownOpen[indicador] = !entry.indicatorDropdownOpen[indicador];
+  }
+
+  isIndicatorDropdownOpen(entry: CatalogacionEntrada, indicador: 1 | 2) {
+    return !!entry.indicatorDropdownOpen?.[indicador];
+  }
+
+  closeIndicatorDropdown(entry: CatalogacionEntrada) {
+    if (entry.indicatorDropdownOpen) {
+      entry.indicatorDropdownOpen[1] = false;
+      entry.indicatorDropdownOpen[2] = false;
+    }
+  }
+
+  async openSubcampoModal(entry: CatalogacionEntrada) {
+    if (!this.selectedAutoridadId) {
+      Swal.fire('Selecciona una autoridad primero');
+      return;
+    }
+    if (!entry.campoId) {
+      await this.syncAutoridadCampo(entry);
+    }
+    await this.reloadEntrySubcampos(entry);
+    this.activeSubcamposEntry = entry;
+    this.subcampoModalVisible = true;
+  }
+
+  private async reloadEntrySubcampos(entry: CatalogacionEntrada) {
+    this.ensureSubcamposForEntry(entry, entry.tag);
+    if (!entry.campoId) {
+      return;
+    }
+    const saved = await this.dataService.getAutoridadSubcamposByCampo(entry.campoId);
+    const definitions = new Map(this.getSubcamposForTag(entry.tag).map(def => [def.codigo, def]));
+    entry.subcampos.forEach(sub => {
+      const match = saved.find(item => item.codigo === sub.codigo);
+      if (match) {
+        sub.valor = match.valor || '';
+        sub.id = match.id;
+      } else {
+        sub.id = undefined;
+        if (!sub.valor) {
+          sub.valor = '';
+        }
+      }
+      const definition = definitions.get(sub.codigo);
+      if (definition) {
+        sub.nombre = definition.nombre;
+      }
+    });
+    saved.forEach(match => {
+      if (!entry.subcampos.some(sub => sub.codigo === match.codigo)) {
+        const definition = definitions.get(match.codigo);
+        entry.subcampos.push({
+          codigo: match.codigo,
+          nombre: definition ? definition.nombre : match.codigo,
+          valor: match.valor || '',
+          id: match.id
+        });
+      }
+    });
+  }
+
+  async closeSubcampoModal() {
+    if (this.activeSubcamposEntry?.campoId) {
+      await this.syncAutoridadSubcampos(this.activeSubcamposEntry, this.activeSubcamposEntry.campoId);
+    }
+    this.subcampoModalVisible = false;
+    this.activeSubcamposEntry = undefined;
+  }
+
+  async guardarAsignaciones() {
+    if (!this.selectedAutoridadId) {
+      Swal.fire('Selecciona una autoridad para continuar');
+      return;
+    }
+    try {
+      this.isSaving = true;
+      const entries = Object.values(this.recordEntries);
+      for (const entry of entries) {
+        if (this.entryHasData(entry)) {
+          await this.syncAutoridadCampo(entry);
+        } else if (entry.campoId) {
+          await this.deleteAutoridadCampo(entry);
+        }
+      }
+      await this.loadAuthorityMap();
+      Swal.fire('Asignaciones guardadas');
     } catch (error) {
       console.error(error);
-      Swal.fire('Error al eliminar el campo');
+      Swal.fire('Error al guardar las asignaciones');
+    } finally {
+      this.isSaving = false;
     }
+  }
+
+  async syncAutoridadCampo(entry: CatalogacionEntrada) {
+    if (!this.selectedAutoridadId) {
+      return;
+    }
+    const payload: AutoridadCampo = {
+      id: entry.campoId || 0,
+      autoridadId: this.selectedAutoridadId,
+      tag: entry.tag,
+      ind1: entry.ind1,
+      ind2: entry.ind2,
+      valor: entry.valor
+    };
+    let campoId = entry.campoId;
+    if (campoId) {
+      await this.dataService.updateAutoridadCampo(payload);
+    } else {
+      const newId = await this.dataService.createAutoridadCampo(payload);
+      campoId = newId || undefined;
+      entry.campoId = campoId;
+    }
+    if (campoId) {
+      this.authorityCampoMap.set(entry.tag, { ...payload, id: campoId });
+      await this.syncAutoridadSubcampos(entry, campoId);
+    }
+  }
+
+  private async syncAutoridadSubcampos(entry: CatalogacionEntrada, campoId: number) {
+    for (const sub of entry.subcampos) {
+      const valor = (sub.valor || '').trim();
+      if (sub.id) {
+        if (valor.length > 0) {
+          await this.dataService.updateAutoridadSubcampo({
+            id: sub.id,
+            autoridadCampoId: campoId,
+            codigo: sub.codigo,
+            valor: sub.valor
+          });
+        } else {
+          await this.dataService.deleteAutoridadSubcampo(sub.id);
+          sub.id = undefined;
+        }
+      } else if (valor.length > 0) {
+        const subId = await this.dataService.createAutoridadSubcampo({
+          id: 0,
+          autoridadCampoId: campoId,
+          codigo: sub.codigo,
+          valor: sub.valor
+        });
+        sub.id = subId || undefined;
+      }
+    }
+  }
+
+  private async deleteAutoridadCampo(entry: CatalogacionEntrada) {
+    if (!entry.campoId) {
+      return;
+    }
+    for (const sub of entry.subcampos) {
+      if (sub.id) {
+        await this.dataService.deleteAutoridadSubcampo(sub.id);
+        sub.id = undefined;
+      }
+    }
+    await this.dataService.deleteAutoridadCampo(entry.campoId);
+    entry.campoId = undefined;
+    this.authorityCampoMap.delete(entry.tag);
+  }
+
+  private entryHasData(entry: CatalogacionEntrada) {
+    const valor = (entry.valor || '').trim();
+    const tieneSubcampos = entry.subcampos.some(sub => (sub.valor || '').trim().length > 0);
+    return valor.length > 0 || tieneSubcampos;
   }
 }

@@ -1,3 +1,92 @@
-.mantenimiento h5 {
-  margin-bottom: 1rem;
+ .catalog-section {
+  padding-top: 1rem;
+}
+
+.catalog-section + .catalog-section {
+  margin-top: 3rem;
+  border-top: 1px solid #e9ecef;
+}
+.section-tabs button {
+  border-radius: 999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+}
+.tags-table .table {
+  width: 100%;
+  table-layout: fixed;
+}
+.tags-table .col-name,
+.tags-table .tag-name-cell {
+  width: 20%;
+}
+.tags-table .col-valor,
+.tags-table .tag-value-cell {
+  width: 25%;
+}
+.indicator-chip {
+  display: inline-flex;
+  gap: 0.4rem;
+  padding: 0.1rem 0.55rem;
+  margin-left: 0.45rem;
+  border-radius: 12px;
+  background: rgba(13, 110, 253, 0.1);
+  color: #0d6efd;
+  font-size: 0.75rem;
+}
+.indicator-actions .icon-dropdown {
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+.indicator-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  min-width: 160px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.15);
+  background: white;
+}
+.indicator-menu .dropdown-item {
+  font-size: 0.85rem;
+}
+.modal-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  padding: 1rem;
+  overflow-y: auto;
+}
+.modal-panel.catalog-panel {
+  background: #fff;
+  border-radius: 14px;
+  width: min(1100px, 100%);
+  max-height: 90vh;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.modal-header {
+  padding: 0.25rem 0.5rem;
+  border-bottom: 1px solid #e9ecef;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.modal-actions {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #e9ecef;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
 }

@@ -36,7 +36,7 @@
       <h5>{{ esEdicion ? 'Editar registro' : 'Nuevo registro' }}</h5>
       <div class="mb-2">
         <label class="form-label">Libro</label>
-        <select class="form-select" [(ngModel)]="registro.libroId" name="libroId">
+        <select class="form-select" [(ngModel)]="registro.libroId" (ngModelChange)="syncControl001()" name="libroId">
           <option [ngValue]="0">Seleccione...</option>
           <option *ngFor="let libro of libros" [ngValue]="libro.id">{{ libro.titulo }}</option>
         </select>
@@ -54,7 +54,7 @@
       </div>
       <div class="mb-2">
         <label class="form-label">Control 001</label>
-        <input class="form-control" [(ngModel)]="registro.control001" name="control001" />
+        <input class="form-control" [(ngModel)]="registro.control001" name="control001" readonly />
       </div>
       <div class="mb-2">
         <label class="form-label">Control 005</label>

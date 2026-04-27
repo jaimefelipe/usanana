@@ -1,0 +1,23 @@
+-- Agrega Id_Empresa a tablas de autoridades que aún no lo tienen
+SET FOREIGN_KEY_CHECKS = 0;
+
+ALTER TABLE Bib_Autoridad
+  ADD COLUMN IF NOT EXISTS Id_Empresa INT NOT NULL DEFAULT 1;
+
+ALTER TABLE Bib_Autoridad_Campo
+  ADD COLUMN IF NOT EXISTS Id_Empresa INT NOT NULL DEFAULT 1;
+
+ALTER TABLE Bib_Autoridad_Subcampo
+  ADD COLUMN IF NOT EXISTS Id_Empresa INT NOT NULL DEFAULT 1;
+
+ALTER TABLE Bib_Autoridad_Dic_Formato
+  ADD COLUMN IF NOT EXISTS Id_Empresa INT NOT NULL DEFAULT 1;
+
+ALTER TABLE Bib_Autoridad_Dic_Campo
+  ADD COLUMN IF NOT EXISTS Id_Empresa INT NOT NULL DEFAULT 1;
+
+ALTER TABLE Bib_Autoridad_Dic_Subcampo
+  ADD COLUMN IF NOT EXISTS Id_Empresa INT NOT NULL DEFAULT 1;
+
+ALTER TABLE Bib_Autoridad_Dic_Indicador
+  ADD COLUMN IF NOT EXISTS Id_Empresa INT NOT NULL DEFAULT 1;

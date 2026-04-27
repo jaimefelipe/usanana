@@ -17,6 +17,7 @@ import { CategoriasComponent } from './components/categorias/categorias.componen
 import { EditorialesComponent } from './components/editoriales/editoriales.component';
 import { AutoresComponent } from './components/autores/autores.component';
 import { TiposMaterialComponent } from './components/tipos-material/tipos-material.component';
+import { TipoMaterialEtiquetasComponent } from './components/tipo-material-etiquetas/tipo-material-etiquetas.component';
 import { EjemplaresComponent } from './components/ejemplares/ejemplares.component';
 import { PoliticasPrestamoComponent } from './components/politicas-prestamo/politicas-prestamo.component';
 import { MultasComponent } from './components/multas/multas.component';
@@ -37,6 +38,8 @@ import { MarcCatalogacionComponent } from './components/marc-catalogacion/marc-c
 import { AutoridadesComponent } from './components/autoridades/autoridades.component';
 import { AutoridadCamposComponent } from './components/autoridad-campos/autoridad-campos.component';
 import { AutoridadSubcamposComponent } from './components/autoridad-subcampos/autoridad-subcampos.component';
+import { AutoridadDiccionarioComponent } from './components/autoridad-diccionario/autoridad-diccionario.component';
+import { AutoridadCatalogacionComponent } from './components/autoridad-catalogacion/autoridad-catalogacion.component';
 import { OpacComentariosComponent } from './components/opac-comentarios/opac-comentarios.component';
 import { OpacEtiquetasComponent } from './components/opac-etiquetas/opac-etiquetas.component';
 import { OpacListasComponent } from './components/opac-listas/opac-listas.component';
@@ -68,6 +71,7 @@ const routes: Routes = [
       { path: 'editoriales', component: EditorialesComponent },
       { path: 'autores', component: AutoresComponent },
       { path: 'tipos-material', component: TiposMaterialComponent },
+      { path: 'tipo-material-etiquetas', component: TipoMaterialEtiquetasComponent },
       { path: 'ejemplares', component: EjemplaresComponent },
       { path: 'tesis', component: TesisComponent },
       { path: 'marc-registros', component: MarcRegistrosComponent },
@@ -75,6 +79,8 @@ const routes: Routes = [
       { path: 'marc-subcampos', component: MarcSubcamposComponent },
       { path: 'marc-diccionario', component: MarcDiccionarioComponent },
       { path: 'marc-catalogacion', component: MarcCatalogacionComponent },
+      { path: 'autoridad-diccionario', component: AutoridadDiccionarioComponent },
+      { path: 'autoridad-catalogacion', component: AutoridadCatalogacionComponent },
       { path: 'autoridades', component: AutoridadesComponent },
       { path: 'autoridad-campos', component: AutoridadCamposComponent },
       { path: 'autoridad-subcampos', component: AutoridadSubcamposComponent },

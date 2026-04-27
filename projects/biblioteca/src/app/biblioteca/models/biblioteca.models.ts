@@ -88,6 +88,17 @@ export interface TipoMaterial {
   descripcion?: string;
 }
 
+export interface TipoMaterialMarcCampo {
+  id: number;
+  tipoMaterialId: number;
+  dicCampoId: number;
+  tipoMaterialNombre?: string;
+  formatoId?: number;
+  formatoNombre?: string;
+  tag?: string;
+  campoNombre?: string;
+}
+
 export interface Ejemplar {
   id: number;
   libroId: number;
@@ -268,6 +279,50 @@ export interface MarcDicIndicador {
   significado: string;
 }
 
+export interface AutoridadDicFormato {
+  id: number;
+  codigo: string;
+  nombre: string;
+  fuente?: string;
+  version?: string;
+  urlFuente?: string;
+  activo: boolean;
+}
+
+export interface AutoridadDicCampo {
+  id: number;
+  formatoId: number;
+  formatoNombre?: string;
+  tag: string;
+  nombre: string;
+  grupo?: string;
+  repetibilidad?: 'NR' | 'R';
+  esControl: boolean;
+  esObsoleto: boolean;
+  orden?: number;
+}
+
+export interface AutoridadDicSubcampo {
+  id: number;
+  formatoId: number;
+  formatoNombre?: string;
+  tag: string;
+  codigo: string;
+  nombre: string;
+  repetibilidad?: 'NR' | 'R';
+  esObsoleto: boolean;
+}
+
+export interface AutoridadDicIndicador {
+  id: number;
+  formatoId: number;
+  formatoNombre?: string;
+  tag: string;
+  posicion: number;
+  valor: string;
+  significado: string;
+}
+
 export interface Autoridad {
   id: number;
   tipo: string;
@@ -278,6 +333,7 @@ export interface Autoridad {
 export interface AutoridadCampo {
   id: number;
   autoridadId: number;
+  libroId?: number;
   tag: string;
   ind1?: string;
   ind2?: string;

@@ -5,6 +5,10 @@ import {
   Autoridad,
   AutoridadCampo,
   AutoridadSubcampo,
+  AutoridadDicCampo,
+  AutoridadDicFormato,
+  AutoridadDicIndicador,
+  AutoridadDicSubcampo,
   Categoria,
   CotizacionBiblioteca,
   Editorial,
@@ -42,6 +46,7 @@ import {
   SuscripcionSerial,
   Tesis,
   TipoMaterial,
+  TipoMaterialMarcCampo,
   UsuarioBiblioteca,
   UsuarioRol
 } from '../models/biblioteca.models';
@@ -80,6 +85,10 @@ export class BibliotecaDataService {
 
   private escapeSql(value?: string): string {
     return (value || '').replace(/'/g, "''");
+  }
+
+  private getTagOrderField(tagField: string): string {
+    return `CASE WHEN ${tagField} REGEXP '^[0-9]+$' THEN 0 ELSE 1 END, CAST(${tagField} AS UNSIGNED), ${tagField}`;
   }
 
   async getLibros(): Promise<Libro[]> {
@@ -237,6 +246,89 @@ export class BibliotecaDataService {
     if (!response) return null;
     const candidate = response['insertId'] || response?.data?.insertId;
     return candidate ? Number(candidate) : null;
+  }
+
+  private ensureSqlSuccess(response: any, context: string) {
+    const success = response?.success;
+    const ok = success === true || success === 'true' || success === 1 || success === '1';
+    if (ok) {
+      return response;
+    }
+    const detail = response?.error || response?.Error || response?.message || '';
+    const sql = response?.sql ? ` SQL: ${response.sql}` : '';
+    throw new Error(`${context}${detail ? `: ${detail}` : ''}${sql}`);
+  }
+
+  private getEmpresaId(): number {
+    return Number(localStorage.getItem('Id_Empresa') || 1);
+  }
+
+  private getNombreUsuarioActual(): string {
+    return localStorage.getItem('Nombre_Usuario') || 'Sistema';
+  }
+
+  private getFirstDataRow(response: any): any {
+    if (Array.isArray(response?.data) && response.data.length > 0) {
+      return response.data[0];
+    }
+    if (Array.isArray(response) && response.length > 0) {
+      return response[0];
+    }
+    return null;
+  }
+
+  private async resolveMarcRegistroSummary(libroId: number, formato: string): Promise<{ id: number; control001: string } | null> {
+    const sqlConfig = {
+      table: 'Bib_Marc_Registro',
+      fields: 'Id_Marc_Registro, Control_001',
+      where: `Libro_Id=${libroId} AND Formato='${this.escapeSql(formato)}'`,
+      orderField: 'Id_Marc_Registro',
+      orderDirection: ' DESC ',
+      Empresa: true
+    };
+    const data = await this.apiService.executeSqlSyn(sqlConfig);
+    if (data && data['total'] > 0) {
+      return {
+        id: Number(data['data'][0]['Id_Marc_Registro']),
+        control001: data['data'][0]['Control_001'] || ''
+      };
+    }
+    return null;
+  }
+
+  private async resolveMarcRegistroControl001ById(id: number): Promise<string> {
+    const sqlConfig = {
+      table: 'Bib_Marc_Registro',
+      fields: 'Control_001',
+      where: `Id_Marc_Registro=${id}`,
+      orderField: 'Id_Marc_Registro',
+      orderDirection: ' DESC ',
+      Empresa: true
+    };
+    const data = await this.apiService.executeSqlSyn(sqlConfig);
+    if (data && data['total'] > 0) {
+      return data['data'][0]['Control_001'] || '';
+    }
+    return '';
+  }
+
+  private async callMarcProcedure(sql: string, context: string) {
+    const response = await this.apiService.postRecord(sql);
+    return this.ensureSqlSuccess(response, context);
+  }
+
+  async ensureMarcRegistroControl001(item: MarcRegistro): Promise<string> {
+    let control001 = item.control001 || await this.resolveMarcRegistroControl001ById(item.id);
+    if (!control001 && item.id) {
+      const sql = `CALL sp_Bib_Asegurar_Marc_Control001(${item.id}, ${this.getEmpresaId()});`;
+      const response = await this.callMarcProcedure(sql, 'Error SQL al asignar el consecutivo MARC 001');
+      const row = this.getFirstDataRow(response);
+      control001 = row?.Control_001 || row?.control001 || '';
+    }
+    if (!control001) {
+      throw new Error('No se pudo asignar el consecutivo MARC 001');
+    }
+    return control001;
   }
 
   private async resolveMarcRegistroId(libroId: number, formato: string): Promise<number | null> {
@@ -629,6 +721,65 @@ export class BibliotecaDataService {
     const empresaId = localStorage.getItem('Id_Empresa') || 1;
     return await this.apiService.postRecord(
       `DELETE FROM Bib_Tipo_Material WHERE Id_Tipo_Material=${id} AND Id_Empresa=${empresaId}`
+    );
+  }
+
+  async getTipoMaterialMarcCampos(tipoMaterialId?: number, formatoId?: number): Promise<TipoMaterialMarcCampo[]> {
+    try {
+      const whereParts = [`R.Id_Empresa=${this.getEmpresaId()}`];
+      if (tipoMaterialId) {
+        whereParts.push(`R.Tipo_Material_Id=${tipoMaterialId}`);
+      }
+      if (formatoId) {
+        whereParts.push(`C.Id_Formato=${formatoId}`);
+      }
+      const tagOrderField = this.getTagOrderField('C.Tag');
+      const sqlConfig = {
+        table: 'Bib_Tipo_Material_Marc_Campo R ' +
+          'INNER JOIN Bib_Tipo_Material TM ON R.Tipo_Material_Id = TM.Id_Tipo_Material ' +
+          'INNER JOIN Bib_Marc_Dic_Campo C ON R.Dic_Campo_Id = C.Id_Dic_Campo ' +
+          'INNER JOIN Bib_Marc_Dic_Formato F ON C.Id_Formato = F.Id_Formato',
+        fields: 'R.Id_Tipo_Material_Marc_Campo, R.Tipo_Material_Id, R.Dic_Campo_Id, TM.Nombre AS Tipo_Material, ' +
+          'C.Id_Formato, F.Nombre AS Formato, C.Tag, C.Nombre AS Campo',
+        where: whereParts.join(' AND '),
+        orderField: `TM.Nombre, F.Nombre, ${tagOrderField}`,
+        orderDirection: ' ASC ',
+        Empresa: false,
+        simple: true
+      };
+      const data = await this.apiService.executeSqlSyn(sqlConfig);
+      if (data && data['total'] > 0) {
+        return data['data'].map((row: any) => ({
+          id: Number(row.Id_Tipo_Material_Marc_Campo),
+          tipoMaterialId: Number(row.Tipo_Material_Id),
+          dicCampoId: Number(row.Dic_Campo_Id),
+          tipoMaterialNombre: row.Tipo_Material || '',
+          formatoId: row.Id_Formato ? Number(row.Id_Formato) : undefined,
+          formatoNombre: row.Formato || '',
+          tag: row.Tag || '',
+          campoNombre: row.Campo || ''
+        }));
+      }
+      return [];
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
+  async createTipoMaterialMarcCampo(item: TipoMaterialMarcCampo): Promise<any> {
+    const sql = {
+      table: 'Bib_Tipo_Material_Marc_Campo',
+      fields: 'Tipo_Material_Id,Dic_Campo_Id',
+      values: `${item.tipoMaterialId},${item.dicCampoId}`
+    };
+    return await this.apiService.insertRecord(sql);
+  }
+
+  async deleteTipoMaterialMarcCampo(id: number): Promise<any> {
+    const empresaId = localStorage.getItem('Id_Empresa') || 1;
+    return await this.apiService.postRecord(
+      `DELETE FROM Bib_Tipo_Material_Marc_Campo WHERE Id_Tipo_Material_Marc_Campo=${id} AND Id_Empresa=${empresaId}`
     );
   }
 
@@ -1341,29 +1492,46 @@ export class BibliotecaDataService {
   }
 
   async createMarcRegistro(item: MarcRegistro): Promise<number | null> {
-    const sql = {
-      table: 'Bib_Marc_Registro',
-      fields: 'Libro_Id,Formato,Leader,Control_001,Control_005,Control_008',
-      values: `${item.libroId},'${this.escapeSql(item.formato)}','${this.escapeSql(item.leader)}',` +
-        `'${this.escapeSql(item.control001)}','${this.escapeSql(item.control005)}','${this.escapeSql(item.control008)}'`
-    };
-    let data = await this.apiService.insertRecord(sql);
-    const insertId = this.extractInsertId(data);
-    if (insertId) {
-      return insertId;
+    const sql = `CALL sp_Bib_Crear_Marc_Registro(${item.libroId},` +
+      ` '${this.escapeSql(item.formato)}',` +
+      ` '${this.escapeSql(item.leader)}',` +
+      ` '${this.escapeSql(item.control005)}',` +
+      ` '${this.escapeSql(item.control008)}',` +
+      ` ${this.getEmpresaId()},` +
+      ` '${this.escapeSql(this.getNombreUsuarioActual())}');`;
+    const response = await this.callMarcProcedure(sql, 'Error SQL al crear el registro MARC');
+    const row = this.getFirstDataRow(response);
+    const registroId = Number(row?.Id_Marc_Registro || 0);
+    const control001 = row?.Control_001 || row?.control001 || '';
+    if (registroId) {
+      item.control001 = control001;
+      return registroId;
     }
-    return await this.resolveMarcRegistroId(item.libroId, item.formato);
+    const registro = await this.resolveMarcRegistroSummary(item.libroId, item.formato);
+    if (registro) {
+      item.control001 = registro.control001;
+      return registro.id;
+    }
+    return null;
   }
 
   async updateMarcRegistro(item: MarcRegistro): Promise<any> {
+    let control001 = item.control001 || await this.resolveMarcRegistroControl001ById(item.id);
+    if (!control001 && item.id) {
+      control001 = await this.ensureMarcRegistroControl001(item);
+    }
+    if (!control001) {
+      throw new Error('No se pudo asignar el consecutivo MARC 001');
+    }
     const sql = {
       table: 'Bib_Marc_Registro',
       fields: `Libro_Id=${item.libroId},Formato='${this.escapeSql(item.formato)}',Leader='${this.escapeSql(item.leader)}',` +
-        `Control_001='${this.escapeSql(item.control001)}',Control_005='${this.escapeSql(item.control005)}',` +
+        `Control_001='${this.escapeSql(control001)}',Control_005='${this.escapeSql(item.control005)}',` +
         `Control_008='${this.escapeSql(item.control008)}'`,
       where: 'Id_Marc_Registro=' + item.id
     };
-    return await this.apiService.updateRecord(sql);
+    const response = await this.apiService.updateRecord(sql);
+    return this.ensureSqlSuccess(response, 'Error SQL al actualizar el registro MARC');
   }
 
   async deleteMarcRegistro(id: number): Promise<any> {
@@ -1439,6 +1607,32 @@ export class BibliotecaDataService {
         fields: 'Id_Marc_Subcampo, Marc_Campo_Id, Codigo, Valor',
         orderField: 'Id_Marc_Subcampo',
         orderDirection: ' DESC ',
+        Empresa: true
+      };
+      const data = await this.apiService.executeSqlSyn(sqlConfig);
+      if (data && data['total'] > 0) {
+        return data['data'].map((row: any) => ({
+          id: Number(row.Id_Marc_Subcampo),
+          marcCampoId: Number(row.Marc_Campo_Id),
+          codigo: row.Codigo,
+          valor: row.Valor || ''
+        }));
+      }
+      return [];
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
+  async getMarcSubcamposByCampo(marcCampoId: number): Promise<MarcSubcampo[]> {
+    try {
+      const sqlConfig = {
+        table: 'Bib_Marc_Subcampo',
+        fields: 'Id_Marc_Subcampo, Marc_Campo_Id, Codigo, Valor',
+        where: `Marc_Campo_Id=${marcCampoId}`,
+        orderField: 'Id_Marc_Subcampo',
+        orderDirection: ' ASC ',
         Empresa: true
       };
       const data = await this.apiService.executeSqlSyn(sqlConfig);
@@ -1601,6 +1795,172 @@ export class BibliotecaDataService {
     }
   }
 
+  async getMarcSubcamposByCampos(marcCampoIds: number[]): Promise<MarcSubcampo[]> {
+    if (marcCampoIds.length === 0) {
+      return [];
+    }
+    try {
+      const ids = Array.from(new Set(marcCampoIds.filter(id => Number(id) > 0)));
+      if (ids.length === 0) {
+        return [];
+      }
+      const sqlConfig = {
+        table: 'Bib_Marc_Subcampo',
+        fields: 'Id_Marc_Subcampo, Marc_Campo_Id, Codigo, Valor',
+        where: `Marc_Campo_Id IN (${ids.join(',')})`,
+        orderField: 'Id_Marc_Subcampo',
+        orderDirection: ' ASC ',
+        Empresa: true
+      };
+      const data = await this.apiService.executeSqlSyn(sqlConfig);
+      if (data && data['total'] > 0) {
+        return data['data'].map((row: any) => ({
+          id: Number(row.Id_Marc_Subcampo),
+          marcCampoId: Number(row.Marc_Campo_Id),
+          codigo: row.Codigo,
+          valor: row.Valor || ''
+        }));
+      }
+      return [];
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
+  async getMarcDicCamposByFormato(formatoId: number): Promise<MarcDicCampo[]> {
+    if (!formatoId) {
+      return [];
+    }
+    try {
+      const tagOrderField = this.getTagOrderField('C.Tag');
+      const sqlConfig = {
+        table: 'Bib_Marc_Dic_Campo C LEFT JOIN Bib_Marc_Dic_Formato F ON C.Id_Formato = F.Id_Formato',
+        fields: 'C.Id_Dic_Campo, C.Id_Formato, F.Nombre AS Formato, C.Tag, C.Nombre, C.Grupo, C.Repetibilidad, C.Es_Control, C.Es_Obsoleto, C.Orden',
+        where: `C.Id_Formato = ${formatoId}`,
+        orderField: tagOrderField,
+        orderDirection: ' ASC ',
+        Empresa: false,
+        simple: true
+      };
+      const data = await this.apiService.executeSqlSyn(sqlConfig);
+      if (data && data['total'] > 0) {
+        return data['data'].map((row: any) => ({
+          id: Number(row.Id_Dic_Campo),
+          formatoId: Number(row.Id_Formato),
+          formatoNombre: row.Formato || '',
+          tag: row.Tag,
+          nombre: row.Nombre,
+          grupo: row.Grupo || '',
+          repetibilidad: row.Repetibilidad || undefined,
+          esControl: Number(row.Es_Control || 0) === 1,
+          esObsoleto: Number(row.Es_Obsoleto || 0) === 1,
+          orden: row.Orden ? Number(row.Orden) : undefined
+        }));
+      }
+      return [];
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
+  async getMarcDicCamposPage(
+    formatoId: number | undefined,
+    page: number,
+    pageSize: number,
+    tipoMaterialId?: number
+  ): Promise<{ campos: MarcDicCampo[]; total: number }> {
+    try {
+      const whereParts: string[] = [];
+      if (formatoId) {
+        whereParts.push(`C.Id_Formato = ${formatoId}`);
+      }
+      if (tipoMaterialId) {
+        whereParts.push(
+          `EXISTS (` +
+          `SELECT 1 FROM Bib_Tipo_Material_Marc_Campo R ` +
+          `WHERE R.Dic_Campo_Id = C.Id_Dic_Campo ` +
+          `AND R.Tipo_Material_Id = ${tipoMaterialId} ` +
+          `AND R.Id_Empresa = ${this.getEmpresaId()}` +
+          `)`
+        );
+      }
+      const whereClause = whereParts.join(' AND ');
+      const tagOrderField = this.getTagOrderField('C.Tag');
+      const sqlConfig = {
+        table: 'Bib_Marc_Dic_Campo C LEFT JOIN Bib_Marc_Dic_Formato F ON C.Id_Formato = F.Id_Formato',
+        fields: 'C.Id_Dic_Campo, C.Id_Formato, F.Nombre AS Formato, C.Tag, C.Nombre, C.Grupo, C.Repetibilidad, C.Es_Control, C.Es_Obsoleto, C.Orden',
+        orderField: tagOrderField,
+        orderDirection: ' ASC ',
+        Empresa: false,
+        where: whereClause,
+        paginacion: {
+          FirstRow: (page - 1) * pageSize + 1,
+          LastRow: page * pageSize,
+          TotalRows: 0
+        }
+      };
+      const data = await this.apiService.executeSqlSyn(sqlConfig);
+      if (data && data['data'] && data['data'].length) {
+        const campos = data['data'].map((row: any) => ({
+          id: Number(row.Id_Dic_Campo),
+          formatoId: Number(row.Id_Formato),
+          formatoNombre: row.Formato || '',
+          tag: row.Tag,
+          nombre: row.Nombre,
+          grupo: row.Grupo || '',
+          repetibilidad: row.Repetibilidad || undefined,
+          esControl: Number(row.Es_Control || 0) === 1,
+          esObsoleto: Number(row.Es_Obsoleto || 0) === 1,
+          orden: row.Orden ? Number(row.Orden) : undefined
+        }));
+        const total = Number(data?.paginacion?.TotalRows || data['total'] || campos.length);
+        return { campos, total };
+      }
+      const total = Number(data?.paginacion?.TotalRows || data?.['total'] || 0);
+      return { campos: [], total };
+    } catch (error) {
+      console.error(error);
+      return { campos: [], total: 0 };
+    }
+  }
+
+  async countMarcDicCampos(formatoId: number | undefined, tipoMaterialId?: number): Promise<number> {
+    try {
+      const whereParts: string[] = [];
+      if (formatoId) {
+        whereParts.push(`C.Id_Formato = ${formatoId}`);
+      }
+      if (tipoMaterialId) {
+        whereParts.push(
+          `EXISTS (` +
+          `SELECT 1 FROM Bib_Tipo_Material_Marc_Campo R ` +
+          `WHERE R.Dic_Campo_Id = C.Id_Dic_Campo ` +
+          `AND R.Tipo_Material_Id = ${tipoMaterialId} ` +
+          `AND R.Id_Empresa = ${this.getEmpresaId()}` +
+          `)`
+        );
+      }
+      const whereClause = whereParts.join(' AND ');
+      const sqlConfig = {
+        table: 'Bib_Marc_Dic_Campo C',
+        fields: 'COUNT(*) AS total',
+        where: whereClause,
+        simple: true,
+        Empresa: false
+      };
+      const data = await this.apiService.executeSqlSyn(sqlConfig);
+      if (data && data['data'] && data['data'].length > 0) {
+        return Number(data['data'][0].total || 0);
+      }
+      return 0;
+    } catch (error) {
+      console.error(error);
+      return 0;
+    }
+  }
+
   async createMarcDicCampo(item: MarcDicCampo): Promise<any> {
     const sql = {
       table: 'Bib_Marc_Dic_Campo',
@@ -1637,6 +1997,7 @@ export class BibliotecaDataService {
         fields: 'S.Id_Dic_Subcampo, S.Id_Formato, F.Nombre AS Formato, S.Tag, S.Codigo, S.Nombre, S.Repetibilidad, S.Es_Obsoleto',
         orderField: 'S.Tag, S.Codigo',
         orderDirection: ' ASC ',
+        simple: true,
         Empresa: false
       };
       const data = await this.apiService.executeSqlSyn(sqlConfig);
@@ -1695,6 +2056,7 @@ export class BibliotecaDataService {
         fields: 'I.Id_Dic_Indicador, I.Id_Formato, F.Nombre AS Formato, I.Tag, I.Posicion, I.Valor, I.Significado',
         orderField: 'I.Tag, I.Posicion, I.Valor',
         orderDirection: ' ASC ',
+        simple: true,
         Empresa: false
       };
       const data = await this.apiService.executeSqlSyn(sqlConfig);
@@ -1821,20 +2183,45 @@ export class BibliotecaDataService {
     );
   }
 
-  async getAutoridadCampos(): Promise<AutoridadCampo[]> {
+  async getAutoridadCampos(options?: { autoridadId?: number; libroId?: number; tags?: string[] }): Promise<AutoridadCampo[]> {
     try {
-      const sqlConfig = {
-        table: 'Bib_Autoridad_Campo',
-        fields: 'Id_Autoridad_Campo, Autoridad_Id, Tag, Ind1, Ind2, Valor',
-        orderField: 'Id_Autoridad_Campo',
-        orderDirection: ' DESC ',
-        Empresa: true
-      };
+    const fields = ['Id_Autoridad_Campo', 'Autoridad_Id', 'Tag', 'Ind1', 'Ind2', 'Valor', 'Libro_Id'];
+    const sqlConfig: {
+      table: string;
+      fields: string;
+      orderField: string;
+      orderDirection: string;
+      Empresa: boolean;
+      simple?: boolean;
+      where?: string;
+    } = {
+      table: 'Bib_Autoridad_Campo',
+      fields: fields.join(', '),
+      orderField: 'Id_Autoridad_Campo',
+      orderDirection: ' DESC ',
+      simple: true,
+      Empresa: true
+    };
+    const whereClauses: string[] = [];
+    if (options?.autoridadId) {
+      whereClauses.push(`Autoridad_Id = ${options.autoridadId}`);
+    }
+    if (options?.libroId) {
+      whereClauses.push(`Libro_Id = ${options.libroId}`);
+    }
+      if (options?.tags && options.tags.length) {
+        const list = options.tags.map(tag => `'${this.escapeSql(tag)}'`).join(',');
+        whereClauses.push(`Tag IN (${list})`);
+      }
+      if (whereClauses.length) {
+        sqlConfig.where = whereClauses.join(' AND ');
+      }
       const data = await this.apiService.executeSqlSyn(sqlConfig);
       if (data && data['total'] > 0) {
         return data['data'].map((row: any) => ({
           id: Number(row.Id_Autoridad_Campo),
           autoridadId: Number(row.Autoridad_Id),
+          libroId: row.Libro_Id ? Number(row.Libro_Id) : undefined,
           tag: row.Tag,
           ind1: row.Ind1 || '',
           ind2: row.Ind2 || '',
@@ -1848,21 +2235,611 @@ export class BibliotecaDataService {
     }
   }
 
+
+  async getAutoridadCamposPage(autoridadId: number | undefined, page: number, pageSize: number): Promise<{ campos: AutoridadCampo[]; total: number }> {
+    try {
+      const whereClause = autoridadId ? `Autoridad_Id = ${autoridadId}` : '';
+      const fields = ['Id_Autoridad_Campo', 'Autoridad_Id', 'Tag', 'Ind1', 'Ind2', 'Valor', 'Libro_Id'];
+      const sqlConfig: any = {
+        table: 'Bib_Autoridad_Campo',
+        fields: fields.join(', '),
+        orderField: 'Id_Autoridad_Campo',
+        orderDirection: ' ASC ',
+        Empresa: true,
+        where: whereClause,
+        paginacion: {
+          FirstRow: (page - 1) * pageSize + 1,
+          LastRow: page * pageSize,
+          TotalRows: 0
+        }
+      };
+      const data = await this.apiService.executeSqlSyn(sqlConfig);
+      if (data && data['data']) {
+        const campos = data['data'].map((row: any) => ({
+          id: Number(row.Id_Autoridad_Campo),
+          autoridadId: Number(row.Autoridad_Id),
+          libroId: row.Libro_Id ? Number(row.Libro_Id) : undefined,
+          tag: row.Tag,
+          ind1: row.Ind1 || '',
+          ind2: row.Ind2 || '',
+          valor: row.Valor || ''
+        }));
+        const total = Number(data?.paginacion?.TotalRows || data['total'] || campos.length);
+        return { campos, total };
+      }
+      const total = Number(data?.paginacion?.TotalRows || data?.['total'] || 0);
+      return { campos: [], total };
+    } catch (error) {
+      console.error(error);
+      return { campos: [], total: 0 };
+    }
+  }
+
+  async getAutoridadCampoByTag(autoridadId: number, tag: string, libroId?: number): Promise<AutoridadCampo | undefined> {
+    try {
+      const baseWhere = `Autoridad_Id = ${autoridadId} AND Tag='${this.escapeSql(tag)}'`;
+      const whereClause = libroId ? `${baseWhere} AND Libro_Id=${libroId}` : baseWhere;
+      const fields = ['Id_Autoridad_Campo', 'Autoridad_Id', 'Tag', 'Ind1', 'Ind2', 'Valor', 'Libro_Id'];
+      const sqlConfig: any = {
+        table: 'Bib_Autoridad_Campo',
+        fields: fields.join(', '),
+        where: whereClause,
+        orderField: 'Id_Autoridad_Campo',
+        orderDirection: ' DESC ',
+        Empresa: true,
+        simple: true
+      };
+      const data = await this.apiService.executeSqlSyn(sqlConfig);
+      if (data && data['data'] && data['data'].length) {
+        const row = data['data'][0];
+        return {
+          id: Number(row.Id_Autoridad_Campo),
+          autoridadId: Number(row.Autoridad_Id),
+          libroId: row.Libro_Id ? Number(row.Libro_Id) : undefined,
+          tag: row.Tag,
+          ind1: row.Ind1 || '',
+          ind2: row.Ind2 || '',
+          valor: row.Valor || ''
+        };
+      }
+      return undefined;
+    } catch (error) {
+      console.error(error);
+      return undefined;
+    }
+  }
+
+  async getMarcCamposByRegistroAndTags(registroId: number, tags: string[]): Promise<MarcCampo[]> {
+    if (!registroId || tags.length === 0) {
+      return [];
+    }
+    const tagsList = tags.map(tag => `'${this.escapeSql(tag)}'`).join(',');
+    const sqlConfig = {
+      table: 'Bib_Marc_Campo',
+      fields: 'Id_Marc_Campo, Marc_Registro_Id, Tag, Ind1, Ind2, Valor',
+      where: `Marc_Registro_Id=${registroId} AND Tag IN (${tagsList})`,
+      orderField: 'Id_Marc_Campo',
+      orderDirection: ' DESC ',
+      Empresa: true
+    };
+    try {
+      const data = await this.apiService.executeSqlSyn(sqlConfig);
+      if (data && data['total'] > 0) {
+        return data['data'].map((row: any) => ({
+          id: Number(row.Id_Marc_Campo),
+          marcRegistroId: Number(row.Marc_Registro_Id),
+          tag: row.Tag,
+          ind1: row.Ind1 || '',
+          ind2: row.Ind2 || '',
+          valor: row.Valor || ''
+        }));
+      }
+      return [];
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
+  async getAutoridadSubcamposByCampo(campoId: number): Promise<AutoridadSubcampo[]> {
+    try {
+      const sqlConfig = {
+        table: 'Bib_Autoridad_Subcampo',
+        fields: 'Id_Autoridad_Subcampo, Autoridad_Campo_Id, Codigo, Valor',
+        where: `Autoridad_Campo_Id=${campoId}`,
+        orderField: 'Id_Autoridad_Subcampo',
+        orderDirection: ' ASC ',
+        Empresa: true
+      };
+      const data = await this.apiService.executeSqlSyn(sqlConfig);
+      if (data && data['total'] > 0) {
+        return data['data'].map((row: any) => ({
+          id: Number(row.Id_Autoridad_Subcampo),
+          autoridadCampoId: Number(row.Autoridad_Campo_Id),
+          codigo: row.Codigo,
+          valor: row.Valor || ''
+        }));
+      }
+      return [];
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
+  async getAutoridadSubcamposByCampos(campoIds: number[]): Promise<AutoridadSubcampo[]> {
+    if (campoIds.length === 0) {
+      return [];
+    }
+    try {
+      const ids = Array.from(new Set(campoIds.filter(id => Number(id) > 0)));
+      if (ids.length === 0) {
+        return [];
+      }
+      const sqlConfig = {
+        table: 'Bib_Autoridad_Subcampo',
+        fields: 'Id_Autoridad_Subcampo, Autoridad_Campo_Id, Codigo, Valor',
+        where: `Autoridad_Campo_Id IN (${ids.join(',')})`,
+        orderField: 'Id_Autoridad_Subcampo',
+        orderDirection: ' ASC ',
+        Empresa: true
+      };
+      const data = await this.apiService.executeSqlSyn(sqlConfig);
+      if (data && data['total'] > 0) {
+        return data['data'].map((row: any) => ({
+          id: Number(row.Id_Autoridad_Subcampo),
+          autoridadCampoId: Number(row.Autoridad_Campo_Id),
+          codigo: row.Codigo,
+          valor: row.Valor || ''
+        }));
+      }
+      return [];
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
+  async getAutoridadDicFormatos(): Promise<AutoridadDicFormato[]> {
+    try {
+      const sqlConfig = {
+        table: 'Bib_Autoridad_Dic_Formato',
+        fields: 'Id_Formato, Codigo, Nombre, Fuente, Version, URL_Fuente, Activo',
+        orderField: 'Nombre',
+        orderDirection: ' ASC ',
+        Empresa: true
+      };
+      const data = await this.apiService.executeSqlSyn(sqlConfig);
+      if (data && data['total'] > 0) {
+        return data['data'].map((row: any) => ({
+          id: Number(row.Id_Formato),
+          codigo: row.Codigo,
+          nombre: row.Nombre,
+          fuente: row.Fuente || '',
+          version: row.Version || '',
+          urlFuente: row.URL_Fuente || '',
+          activo: Number(row.Activo || 0) === 1
+        }));
+      }
+      return [];
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
+  async createAutoridadDicFormato(item: AutoridadDicFormato): Promise<any> {
+    const sql = {
+      table: 'Bib_Autoridad_Dic_Formato',
+      fields: 'Codigo,Nombre,Fuente,Version,URL_Fuente,Activo',
+      values: `'${this.escapeSql(item.codigo)}','${this.escapeSql(item.nombre)}',` +
+        `'${this.escapeSql(item.fuente || '')}','${this.escapeSql(item.version || '')}',` +
+        `'${this.escapeSql(item.urlFuente || '')}',${item.activo ? 1 : 0}`
+    };
+    return await this.apiService.insertRecord(sql);
+  }
+
+  async updateAutoridadDicFormato(item: AutoridadDicFormato): Promise<any> {
+    const sql = {
+      table: 'Bib_Autoridad_Dic_Formato',
+      fields: `Codigo='${this.escapeSql(item.codigo)}',Nombre='${this.escapeSql(item.nombre)}',` +
+        `Fuente='${this.escapeSql(item.fuente || '')}',Version='${this.escapeSql(item.version || '')}',` +
+        `URL_Fuente='${this.escapeSql(item.urlFuente || '')}',Activo=${item.activo ? 1 : 0}`,
+      where: 'Id_Formato=' + item.id
+    };
+    return await this.apiService.updateRecord(sql);
+  }
+
+  async deleteAutoridadDicFormato(id: number): Promise<any> {
+    return await this.apiService.postRecord(
+      `DELETE FROM Bib_Autoridad_Dic_Formato WHERE Id_Formato=${id}`
+    );
+  }
+
+  async getAutoridadDicCamposPage(formatoId: number | undefined, page: number, pageSize: number): Promise<{ campos: AutoridadDicCampo[]; total: number }> {
+    try {
+      const whereClause = formatoId ? `C.Id_Formato = ${formatoId}` : '';
+      const tagOrderField = this.getTagOrderField('C.Tag');
+      const sqlConfig = {
+        table: 'Bib_Autoridad_Dic_Campo C LEFT JOIN Bib_Autoridad_Dic_Formato F ON C.Id_Formato = F.Id_Formato',
+        fields: 'C.Id_Dic_Campo, C.Id_Formato, F.Nombre AS Formato, C.Tag, C.Nombre, C.Grupo, C.Repetibilidad, C.Es_Control, C.Es_Obsoleto, C.Orden',
+        orderField: tagOrderField,
+        orderDirection: ' ASC ',
+        Empresa: true,
+        where: whereClause,
+        paginacion: {
+          FirstRow: (page - 1) * pageSize + 1,
+          LastRow: page * pageSize,
+          TotalRows: 0
+        }
+      };
+      const data = await this.apiService.executeSqlSyn(sqlConfig);
+      if (data && data['data'] && data['data'].length) {
+        const campos = data['data'].map((row: any) => ({
+          id: Number(row.Id_Dic_Campo),
+          formatoId: Number(row.Id_Formato),
+          formatoNombre: row.Formato || '',
+          tag: row.Tag,
+          nombre: row.Nombre,
+          grupo: row.Grupo || '',
+          repetibilidad: row.Repetibilidad || undefined,
+          esControl: Number(row.Es_Control || 0) === 1,
+          esObsoleto: Number(row.Es_Obsoleto || 0) === 1,
+          orden: row.Orden ? Number(row.Orden) : undefined
+        }));
+        const total = Number(data?.paginacion?.TotalRows || data['total'] || campos.length);
+        return { campos, total };
+      }
+      const total = Number(data?.paginacion?.TotalRows || data?.['total'] || 0);
+      return { campos: [], total };
+    } catch (error) {
+      console.error(error);
+      return { campos: [], total: 0 };
+    }
+  }
+
+  async countAutoridadDicCampos(formatoId: number | undefined): Promise<number> {
+    try {
+      const whereClause = formatoId ? `C.Id_Formato = ${formatoId}` : '';
+      const sqlConfig = {
+        table: 'Bib_Autoridad_Dic_Campo C',
+        fields: 'COUNT(*) AS total',
+        where: whereClause,
+        simple: true,
+        Empresa: true
+      };
+      const data = await this.apiService.executeSqlSyn(sqlConfig);
+      if (data && data['data'] && data['data'].length > 0) {
+        return Number(data['data'][0].total || 0);
+      }
+      return 0;
+    } catch (error) {
+      console.error(error);
+      return 0;
+    }
+  }
+
+  async createAutoridadDicCampo(item: AutoridadDicCampo): Promise<any> {
+    const sql = {
+      table: 'Bib_Autoridad_Dic_Campo',
+      fields: 'Id_Formato,Tag,Nombre,Grupo,Repetibilidad,Es_Control,Es_Obsoleto,Orden',
+      values: `${item.formatoId},'${this.escapeSql(item.tag)}','${this.escapeSql(item.nombre)}',` +
+        `'${this.escapeSql(item.grupo || '')}',${item.repetibilidad ? `'${this.escapeSql(item.repetibilidad)}'` : 'NULL'},` +
+        `${item.esControl ? 1 : 0},${item.esObsoleto ? 1 : 0},${item.orden != null ? item.orden : 'NULL'}`
+    };
+    return await this.apiService.insertRecord(sql);
+  }
+
+  async updateAutoridadDicCampo(item: AutoridadDicCampo): Promise<any> {
+    const sql = {
+      table: 'Bib_Autoridad_Dic_Campo',
+      fields: `Id_Formato=${item.formatoId},Tag='${this.escapeSql(item.tag)}',Nombre='${this.escapeSql(item.nombre)}',` +
+        `Grupo='${this.escapeSql(item.grupo || '')}',` +
+        `Repetibilidad=${item.repetibilidad ? `'${this.escapeSql(item.repetibilidad)}'` : 'NULL'},` +
+        `Es_Control=${item.esControl ? 1 : 0},Es_Obsoleto=${item.esObsoleto ? 1 : 0},Orden=${item.orden != null ? item.orden : 'NULL'}`,
+      where: 'Id_Dic_Campo=' + item.id
+    };
+    return await this.apiService.updateRecord(sql);
+  }
+
+  async deleteAutoridadDicCampo(id: number): Promise<any> {
+    return await this.apiService.postRecord(
+      `DELETE FROM Bib_Autoridad_Dic_Campo WHERE Id_Dic_Campo=${id}`
+    );
+  }
+
+  async getAutoridadDicSubcampos(): Promise<AutoridadDicSubcampo[]> {
+    try {
+      const sqlConfig = {
+        table: 'Bib_Autoridad_Dic_Subcampo S LEFT JOIN Bib_Autoridad_Dic_Formato F ON S.Id_Formato = F.Id_Formato',
+        fields: 'S.Id_Dic_Subcampo, S.Id_Formato, F.Nombre AS Formato, S.Tag, S.Codigo, S.Nombre, S.Repetibilidad, S.Es_Obsoleto',
+        orderField: 'S.Id_Dic_Subcampo',
+        orderDirection: ' ASC ',
+        simple: true,
+        Empresa: true
+      };
+      const data = await this.apiService.executeSqlSyn(sqlConfig);
+      if (data && data['total'] > 0) {
+        return data['data'].map((row: any) => ({
+          id: Number(row.Id_Dic_Subcampo),
+          formatoId: Number(row.Id_Formato),
+          formatoNombre: row.Formato || '',
+          tag: row.Tag,
+          codigo: row.Codigo,
+          nombre: row.Nombre,
+          repetibilidad: row.Repetibilidad || undefined,
+          esObsoleto: Number(row.Es_Obsoleto || 0) === 1
+        }));
+      }
+      return [];
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
+  async createAutoridadDicSubcampo(item: AutoridadDicSubcampo): Promise<any> {
+    const sql = {
+      table: 'Bib_Autoridad_Dic_Subcampo',
+      fields: 'Id_Formato,Tag,Codigo,Nombre,Repetibilidad,Es_Obsoleto',
+      values: `${item.formatoId},'${this.escapeSql(item.tag)}','${this.escapeSql(item.codigo)}',` +
+        `'${this.escapeSql(item.nombre)}',${item.repetibilidad ? `'${this.escapeSql(item.repetibilidad)}'` : 'NULL'},` +
+        `${item.esObsoleto ? 1 : 0}`
+    };
+    return await this.apiService.insertRecord(sql);
+  }
+
+  async updateAutoridadDicSubcampo(item: AutoridadDicSubcampo): Promise<any> {
+    const sql = {
+      table: 'Bib_Autoridad_Dic_Subcampo',
+      fields: `Id_Formato=${item.formatoId},Tag='${this.escapeSql(item.tag)}',Codigo='${this.escapeSql(item.codigo)}',` +
+        `Nombre='${this.escapeSql(item.nombre)}',` +
+        `Repetibilidad=${item.repetibilidad ? `'${this.escapeSql(item.repetibilidad)}'` : 'NULL'},` +
+        `Es_Obsoleto=${item.esObsoleto ? 1 : 0}`,
+      where: 'Id_Dic_Subcampo=' + item.id
+    };
+    return await this.apiService.updateRecord(sql);
+  }
+
+  async deleteAutoridadDicSubcampo(id: number): Promise<any> {
+    return await this.apiService.postRecord(
+      `DELETE FROM Bib_Autoridad_Dic_Subcampo WHERE Id_Dic_Subcampo=${id}`
+    );
+  }
+
+  async getAutoridadDicSubcamposPorTag(formatoId: number, tag: string): Promise<AutoridadDicSubcampo[]> {
+    try {
+      const sqlConfig = {
+        table: 'Bib_Autoridad_Dic_Subcampo S LEFT JOIN Bib_Autoridad_Dic_Formato F ON S.Id_Formato = F.Id_Formato',
+        fields: 'S.Id_Dic_Subcampo, S.Id_Formato, F.Nombre AS Formato, S.Tag, S.Codigo, S.Nombre, S.Repetibilidad, S.Es_Obsoleto',
+        where: `S.Id_Formato=${formatoId} AND S.Tag='${this.escapeSql(tag)}'`,
+        orderField: 'S.Codigo',
+        orderDirection: ' ASC ',
+        Empresa: true
+      };
+      const data = await this.apiService.executeSqlSyn(sqlConfig);
+      if (data && data['total'] > 0) {
+        return data['data'].map((row: any) => ({
+          id: Number(row.Id_Dic_Subcampo),
+          formatoId: Number(row.Id_Formato),
+          formatoNombre: row.Formato || '',
+          tag: row.Tag,
+          codigo: row.Codigo,
+          nombre: row.Nombre,
+          repetibilidad: row.Repetibilidad || undefined,
+          esObsoleto: Number(row.Es_Obsoleto || 0) === 1
+        }));
+      }
+      return [];
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
+  async getAutoridadDicSubcamposPorTags(formatoId: number, tags: string[]): Promise<AutoridadDicSubcampo[]> {
+    if (!formatoId || !tags?.length) {
+      return [];
+    }
+    try {
+      const tagsList = tags.map(tag => `'${this.escapeSql(tag)}'`).join(',');
+      const sqlConfig = {
+        table: 'Bib_Autoridad_Dic_Subcampo S LEFT JOIN Bib_Autoridad_Dic_Formato F ON S.Id_Formato = F.Id_Formato',
+        fields: 'S.Id_Dic_Subcampo, S.Id_Formato, F.Nombre AS Formato, S.Tag, S.Codigo, S.Nombre, S.Repetibilidad, S.Es_Obsoleto',
+        where: `S.Id_Formato=${formatoId} AND S.Tag IN (${tagsList})`,
+        orderField: 'S.Tag, S.Codigo',
+        orderDirection: ' ASC ',
+        Empresa: true,
+        simple: true
+      };
+      const data = await this.apiService.executeSqlSyn(sqlConfig);
+      if (data && data['total'] > 0) {
+        return data['data'].map((row: any) => ({
+          id: Number(row.Id_Dic_Subcampo),
+          formatoId: Number(row.Id_Formato),
+          formatoNombre: row.Formato || '',
+          tag: row.Tag,
+          codigo: row.Codigo,
+          nombre: row.Nombre,
+          repetibilidad: row.Repetibilidad || undefined,
+          esObsoleto: Number(row.Es_Obsoleto || 0) === 1
+        }));
+      }
+      return [];
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
+  async getAutoridadDicIndicadores(): Promise<AutoridadDicIndicador[]> {
+    try {
+      const sqlConfig = {
+        table: 'Bib_Autoridad_Dic_Indicador I LEFT JOIN Bib_Autoridad_Dic_Formato F ON I.Id_Formato = F.Id_Formato',
+        fields: 'I.Id_Dic_Indicador, I.Id_Formato, F.Nombre AS Formato, I.Tag, I.Posicion, I.Valor, I.Significado',
+        orderField: 'I.Id_Dic_Indicador',
+        orderDirection: ' ASC ',
+        simple: true,
+        Empresa: true
+      };
+      const data = await this.apiService.executeSqlSyn(sqlConfig);
+      if (data && data['total'] > 0) {
+        return data['data'].map((row: any) => ({
+          id: Number(row.Id_Dic_Indicador),
+          formatoId: Number(row.Id_Formato),
+          formatoNombre: row.Formato || '',
+          tag: row.Tag,
+          posicion: Number(row.Posicion),
+          valor: row.Valor,
+          significado: row.Significado
+        }));
+      }
+      return [];
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
+  async createAutoridadDicIndicador(item: AutoridadDicIndicador): Promise<any> {
+    const sql = {
+      table: 'Bib_Autoridad_Dic_Indicador',
+      fields: 'Id_Formato,Tag,Posicion,Valor,Significado',
+      values: `${item.formatoId},'${this.escapeSql(item.tag)}',${item.posicion},` +
+        `'${this.escapeSql(item.valor)}','${this.escapeSql(item.significado)}'`
+    };
+    return await this.apiService.insertRecord(sql);
+  }
+
+  async updateAutoridadDicIndicador(item: AutoridadDicIndicador): Promise<any> {
+    const sql = {
+      table: 'Bib_Autoridad_Dic_Indicador',
+      fields: `Id_Formato=${item.formatoId},Tag='${this.escapeSql(item.tag)}',Posicion=${item.posicion},` +
+        `Valor='${this.escapeSql(item.valor)}',Significado='${this.escapeSql(item.significado)}'`,
+      where: 'Id_Dic_Indicador=' + item.id
+    };
+    return await this.apiService.updateRecord(sql);
+  }
+
+  async deleteAutoridadDicIndicador(id: number): Promise<any> {
+    return await this.apiService.postRecord(
+      `DELETE FROM Bib_Autoridad_Dic_Indicador WHERE Id_Dic_Indicador=${id}`
+    );
+  }
+
+  async getAutoridadDicIndicadoresPorTag(formatoId: number, tag: string): Promise<AutoridadDicIndicador[]> {
+    try {
+      const sqlConfig = {
+        table: 'Bib_Autoridad_Dic_Indicador I LEFT JOIN Bib_Autoridad_Dic_Formato F ON I.Id_Formato = F.Id_Formato',
+        fields: 'I.Id_Dic_Indicador, I.Id_Formato, F.Nombre AS Formato, I.Tag, I.Posicion, I.Valor, I.Significado',
+        where: `I.Id_Formato=${formatoId} AND I.Tag='${this.escapeSql(tag)}'`,
+        orderField: 'I.Posicion, I.Valor',
+        orderDirection: ' ASC ',
+        Empresa: true
+      };
+      const data = await this.apiService.executeSqlSyn(sqlConfig);
+      if (data && data['total'] > 0) {
+        return data['data'].map((row: any) => ({
+          id: Number(row.Id_Dic_Indicador),
+          formatoId: Number(row.Id_Formato),
+          formatoNombre: row.Formato || '',
+          tag: row.Tag,
+          posicion: Number(row.Posicion),
+          valor: row.Valor,
+          significado: row.Significado
+        }));
+      }
+      return [];
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
+  async getAutoridadDicIndicadoresPorTags(formatoId: number, tags: string[]): Promise<AutoridadDicIndicador[]> {
+    if (!formatoId || !tags?.length) {
+      return [];
+    }
+    try {
+      const tagsList = tags.map(tag => `'${this.escapeSql(tag)}'`).join(',');
+      const sqlConfig = {
+        table: 'Bib_Autoridad_Dic_Indicador I LEFT JOIN Bib_Autoridad_Dic_Formato F ON I.Id_Formato = F.Id_Formato',
+        fields: 'I.Id_Dic_Indicador, I.Id_Formato, F.Nombre AS Formato, I.Tag, I.Posicion, I.Valor, I.Significado',
+        where: `I.Id_Formato=${formatoId} AND I.Tag IN (${tagsList})`,
+        orderField: 'I.Tag, I.Posicion, I.Valor',
+        orderDirection: ' ASC ',
+        Empresa: true,
+        simple: true
+      };
+      const data = await this.apiService.executeSqlSyn(sqlConfig);
+      if (data && data['total'] > 0) {
+        return data['data'].map((row: any) => ({
+          id: Number(row.Id_Dic_Indicador),
+          formatoId: Number(row.Id_Formato),
+          formatoNombre: row.Formato || '',
+          tag: row.Tag,
+          posicion: Number(row.Posicion),
+          valor: row.Valor,
+          significado: row.Significado
+        }));
+      }
+      return [];
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
+  async countAutoridadCampos(autoridadId: number | undefined): Promise<number> {
+    try {
+      const whereClause = autoridadId ? `Autoridad_Id = ${autoridadId}` : '';
+      const sqlConfig = {
+        table: 'Bib_Autoridad_Campo',
+        fields: 'COUNT(*) AS total',
+        where: whereClause,
+        simple: true,
+        Empresa: true
+      };
+      const data = await this.apiService.executeSqlSyn(sqlConfig);
+      if (data && data['data'] && data['data'].length > 0) {
+        return Number(data['data'][0].total || 0);
+      }
+      return 0;
+    } catch (error) {
+      console.error(error);
+      return 0;
+    }
+  }
   async createAutoridadCampo(item: AutoridadCampo): Promise<any> {
+    const fields = ['Autoridad_Id', 'Tag', 'Ind1', 'Ind2', 'Valor', 'Libro_Id'];
+    const values = [
+      `${item.autoridadId}`,
+      `'${this.escapeSql(item.tag)}'`,
+      `'${this.escapeSql(item.ind1 || '')}'`,
+      `'${this.escapeSql(item.ind2 || '')}'`,
+      `'${this.escapeSql(item.valor || '')}'`,
+      item.libroId ? `${item.libroId}` : 'NULL'
+    ];
     const sql = {
       table: 'Bib_Autoridad_Campo',
-      fields: 'Autoridad_Id,Tag,Ind1,Ind2,Valor',
-      values: `${item.autoridadId},'${this.escapeSql(item.tag)}','${this.escapeSql(item.ind1)}',` +
-        `'${this.escapeSql(item.ind2)}','${this.escapeSql(item.valor)}'`
+      fields: fields.join(','),
+      values: values.join(',')
     };
     return await this.apiService.insertRecord(sql);
   }
 
   async updateAutoridadCampo(item: AutoridadCampo): Promise<any> {
+    const fieldParts = [
+      `Autoridad_Id=${item.autoridadId}`,
+      `Tag='${this.escapeSql(item.tag)}'`,
+      `Ind1='${this.escapeSql(item.ind1 || '')}'`,
+      `Ind2='${this.escapeSql(item.ind2 || '')}'`,
+      `Valor='${this.escapeSql(item.valor || '')}'`,
+      `Libro_Id=${item.libroId ?? 'NULL'}`
+    ];
     const sql = {
       table: 'Bib_Autoridad_Campo',
-      fields: `Autoridad_Id=${item.autoridadId},Tag='${this.escapeSql(item.tag)}',` +
-        `Ind1='${this.escapeSql(item.ind1)}',Ind2='${this.escapeSql(item.ind2)}',Valor='${this.escapeSql(item.valor)}'`,
+      fields: fieldParts.join(','),
       where: 'Id_Autoridad_Campo=' + item.id
     };
     return await this.apiService.updateRecord(sql);
@@ -2762,5 +3739,74 @@ export class BibliotecaDataService {
       }));
     }
     return [];
+  }
+
+  async getMarcDicSubcamposPorTags(formatoId: number, tags: string[]): Promise<MarcDicSubcampo[]> {
+    if (!formatoId || !tags?.length) {
+      return [];
+    }
+    try {
+      const tagsList = tags.map(tag => `'${this.escapeSql(tag)}'`).join(',');
+      const sqlConfig = {
+        table: 'Bib_Marc_Dic_Subcampo S LEFT JOIN Bib_Marc_Dic_Formato F ON S.Id_Formato = F.Id_Formato',
+        fields: 'S.Id_Dic_Subcampo, S.Id_Formato, F.Nombre AS Formato, S.Tag, S.Codigo, S.Nombre, S.Repetibilidad, S.Es_Obsoleto',
+        where: `S.Id_Formato=${formatoId} AND S.Tag IN (${tagsList})`,
+        orderField: 'S.Tag, S.Codigo',
+        orderDirection: ' ASC ',
+        Empresa: false,
+        simple: true
+      };
+      const data = await this.apiService.executeSqlSyn(sqlConfig);
+      if (data && data['total'] > 0) {
+        return data['data'].map((row: any) => ({
+          id: Number(row.Id_Dic_Subcampo),
+          formatoId: Number(row.Id_Formato),
+          formatoNombre: row.Formato || '',
+          tag: row.Tag,
+          codigo: row.Codigo,
+          nombre: row.Nombre,
+          repetibilidad: row.Repetibilidad || undefined,
+          esObsoleto: Number(row.Es_Obsoleto || 0) === 1
+        }));
+      }
+      return [];
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
+  async getMarcDicIndicadoresPorTags(formatoId: number, tags: string[]): Promise<MarcDicIndicador[]> {
+    if (!formatoId || !tags?.length) {
+      return [];
+    }
+    try {
+      const tagsList = tags.map(tag => `'${this.escapeSql(tag)}'`).join(',');
+      const sqlConfig = {
+        table: 'Bib_Marc_Dic_Indicador I LEFT JOIN Bib_Marc_Dic_Formato F ON I.Id_Formato = F.Id_Formato',
+        fields: 'I.Id_Dic_Indicador, I.Id_Formato, F.Nombre AS Formato, I.Tag, I.Posicion, I.Valor, I.Significado',
+        where: `I.Id_Formato=${formatoId} AND I.Tag IN (${tagsList})`,
+        orderField: 'I.Tag, I.Posicion, I.Valor',
+        orderDirection: ' ASC ',
+        Empresa: false,
+        simple: true
+      };
+      const data = await this.apiService.executeSqlSyn(sqlConfig);
+      if (data && data['total'] > 0) {
+        return data['data'].map((row: any) => ({
+          id: Number(row.Id_Dic_Indicador),
+          formatoId: Number(row.Id_Formato),
+          formatoNombre: row.Formato || '',
+          tag: row.Tag,
+          posicion: Number(row.Posicion),
+          valor: row.Valor,
+          significado: row.Significado
+        }));
+      }
+      return [];
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
   }
 }

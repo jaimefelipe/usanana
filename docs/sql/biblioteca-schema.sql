@@ -382,10 +382,12 @@ CREATE TABLE Bib_Autoridad_Campo (
   Id_Autoridad_Campo INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   Id_Empresa INT NOT NULL,
   Autoridad_Id INT NOT NULL,
+  Libro_Id INT NULL,
   Tag VARCHAR(3) NOT NULL,
   Ind1 CHAR(1),
   Ind2 CHAR(1),
   Valor TEXT,
+  CONSTRAINT fk_autoridad_campo_libro FOREIGN KEY (Libro_Id) REFERENCES Bib_Libro(Id_Libro) ON DELETE SET NULL,
   CONSTRAINT fk_autoridad_campo_empresa FOREIGN KEY (Id_Empresa) REFERENCES Gen_Empresa(Id_Empresa),
   CONSTRAINT fk_autoridad_campo_autoridad FOREIGN KEY (Autoridad_Id) REFERENCES Bib_Autoridad(Id_Autoridad) ON DELETE CASCADE
 );

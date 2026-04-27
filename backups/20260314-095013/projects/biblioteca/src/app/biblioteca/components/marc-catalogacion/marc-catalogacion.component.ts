@@ -1,0 +1,845 @@
+import { Component, OnInit, ViewChild } from '@angular/core';
+import Swal from 'sweetalert2';
+import { BibliotecaDataService } from '../../services/biblioteca-data.service';
+import { AutoridadCatalogacionComponent } from '../autoridad-catalogacion/autoridad-catalogacion.component';
+import {
+  Libro,
+  MarcCampo,
+  MarcDicCampo,
+  MarcDicFormato,
+  MarcDicIndicador,
+  MarcDicSubcampo,
+  MarcRegistro,
+  MarcSubcampo,
+  TipoMaterial
+} from '../../models/biblioteca.models';
+
+interface CatalogacionSubcampoEntry {
+  id?: number;
+  codigo: string;
+  nombre: string;
+  valor: string;
+}
+
+interface CatalogacionEntrada {
+  tag: string;
+  nombre: string;
+  valor: string;
+  ind1: string;
+  ind2: string;
+  subcampos: CatalogacionSubcampoEntry[];
+  deletedSubcampoIds?: number[];
+  campoId?: number;
+  indicatorDropdownOpen?: Record<1 | 2, boolean>;
+}
+
+@Component({
+  selector: 'app-marc-catalogacion',
+  templateUrl: './marc-catalogacion.component.html',
+  styleUrls: ['./marc-catalogacion.component.css']
+})
+export class MarcCatalogacionComponent implements OnInit {
+  libros: Libro[] = [];
+  formatos: MarcDicFormato[] = [];
+  subcampos: MarcDicSubcampo[] = [];
+  indicadores: MarcDicIndicador[] = [];
+
+  libroFormVisible = false;
+  libroEditing = false;
+  libroForm: Libro = {
+    id: 0,
+    titulo: '',
+    autor: '',
+    isbn: '',
+    categoria: 'Sin categoria',
+    estado: 'disponible',
+    tipoMaterial: '',
+    tipoMaterialId: undefined
+  };
+
+  selectedLibroId?: number;
+  selectedFormatoId?: number;
+  currentPage = 1;
+  pageSize = 50;
+  secciones: number[] = [];
+  pageLabels: Record<number, string> = {};
+  totalTagsForFormat = 0;
+  recordEntries: Record<string, CatalogacionEntrada> = {};
+  subcampoModalVisible = false;
+  subcamposLoading = false;
+  subcamposSaving = false;
+  activeSubcamposEntry?: CatalogacionEntrada;
+  @ViewChild(AutoridadCatalogacionComponent)
+  autoridadCatalogacion?: AutoridadCatalogacionComponent;
+
+  catalogForm = {
+    leader: '',
+    control001: '',
+    control005: '',
+    control008: ''
+  };
+  activeCatalogTab: 'marc' | 'autoridad' = 'marc';
+
+  currentTags: MarcDicCampo[] = [];
+  indicatorOptionsByTag: Record<string, Record<number, { value: string; meaning?: string }[]>> = {};
+  subcamposByTag: Record<string, MarcDicSubcampo[]> = {};
+  tiposMaterial: TipoMaterial[] = [];
+  currentRegistroId?: number;
+
+  isSaving = false;
+
+  constructor(private dataService: BibliotecaDataService) {}
+
+  async ngOnInit() {
+    await this.cargarDatosBase();
+  }
+
+  private resetCatalogForm() {
+    this.catalogForm = {
+      leader: '',
+      control001: '',
+      control005: '',
+      control008: ''
+    };
+  }
+
+  private async cargarDatosBase() {
+    const [libros, formatos, tiposMaterial] = await Promise.all([
+      this.dataService.getLibros(),
+      this.dataService.getMarcDicFormatos(),
+      this.dataService.getTiposMaterial()
+    ]);
+    this.libros = libros;
+    this.formatos = formatos;
+    this.subcampos = [];
+    this.indicadores = [];
+    this.tiposMaterial = tiposMaterial;
+    if (!this.selectedFormatoId && formatos.length) {
+      this.selectedFormatoId = formatos[0].id;
+    }
+    this.buildCaches();
+    await this.actualizarCurrentTags();
+  }
+
+  getTagsPorSeccion() {
+    return this.currentTags;
+  }
+
+  getSectionLabel(section: number) {
+    return this.pageLabels[section] || this.getSectionRangePlaceholder(section);
+  }
+
+  private getSectionRangePlaceholder(section: number) {
+    const total = this.totalTagsForFormat || 0;
+    if (total === 0) {
+      return '000-000';
+    }
+    const start = (section - 1) * this.pageSize + 1;
+    const end = Math.min(section * this.pageSize, total);
+    return `${this.formatTagIndex(start)}-${this.formatTagIndex(end)}`;
+  }
+
+  private formatTagIndex(value: number) {
+    return value.toString().padStart(3, '0');
+  }
+
+  async selectSection(section: number) {
+    if (this.currentPage === section) {
+      return;
+    }
+    this.currentPage = section;
+    await this.actualizarCurrentTags();
+  }
+
+  onTipoMaterialChange() {
+    const tipo = this.tiposMaterial.find(t => t.id === this.libroForm.tipoMaterialId);
+    this.libroForm.tipoMaterial = tipo ? tipo.nombre : '';
+  }
+
+  onTituloChange(value: string) {
+    const safeValue = value || '';
+    this.libroForm.titulo = safeValue;
+    const entry245 = this.ensureEntry('245');
+    entry245.valor = safeValue;
+  }
+
+  onTagValueChange(tag: string, value: string) {
+    if (tag !== '245') {
+      return;
+    }
+    this.libroForm.titulo = value || '';
+  }
+
+  get selectedLibro() {
+    return this.libros.find(libro => libro.id === this.selectedLibroId);
+  }
+
+  private async cargarLibros() {
+    this.libros = await this.dataService.getLibros();
+  }
+
+  async onFormatoChange() {
+    this.recordEntries = {};
+    this.currentPage = 1;
+    this.pageLabels = {};
+    await this.actualizarCurrentTags();
+  }
+
+  getEntry(tag: string, nombre: string) {
+    const entry = this.ensureEntry(tag);
+    entry.nombre = nombre || entry.nombre;
+    this.ensureSubcamposForEntry(entry, tag);
+    return entry;
+  }
+
+  getSubcamposForTag(tag: string) {
+    const key = this.buildTagKey(this.selectedFormatoId, tag);
+    return this.subcamposByTag[key] || [];
+  }
+
+  hasSubcampos(tag: string) {
+    return this.getSubcamposForTag(tag).length > 0;
+  }
+
+  getIndicatorOptions(tag: string, posicion: number) {
+    const options = this.indicatorOptionsByTag[tag]?.[posicion] || [];
+    return options;
+  }
+
+  getIndicatorLabel(tag: string, posicion: 1 | 2, valor: string) {
+    const options = this.getIndicatorOptions(tag, posicion);
+    const match = options.find(opt => String(opt.value) === String(valor));
+    return match?.meaning || valor;
+  }
+
+  getIndicatorDisplayValue(entry: CatalogacionEntrada, indicador: 1 | 2) {
+    const value = indicador === 1 ? entry.ind1 : entry.ind2;
+    return String(value ?? '').trim() || 'x';
+  }
+
+  getTagDisplay(tag: string, entry: CatalogacionEntrada) {
+    const suffix = this.getIndicatorDisplayValue(entry, 1);
+    return `${tag}${suffix}`;
+  }
+
+  getIndicatorButtonLabel(tag: string, entry: CatalogacionEntrada, indicador: 1 | 2) {
+    return `${tag}-${this.getIndicatorDisplayValue(entry, indicador)}`;
+  }
+
+  private buildCaches() {
+    this.buildIndicatorCache();
+    this.buildSubcamposMap();
+  }
+
+  private buildIndicatorCache() {
+    this.indicatorOptionsByTag = {};
+    this.indicadores.forEach(ind => {
+      if (!this.indicatorOptionsByTag[ind.tag]) {
+        this.indicatorOptionsByTag[ind.tag] = { 1: [], 2: [] };
+      }
+      this.indicatorOptionsByTag[ind.tag][ind.posicion].push({
+        value: String(ind.valor ?? ''),
+        meaning: ind.significado
+      });
+    });
+  }
+
+  private buildSubcamposMap() {
+    this.subcamposByTag = {};
+    this.subcampos.forEach(sub => {
+      const key = this.buildTagKey(sub.formatoId, sub.tag);
+      if (!this.subcamposByTag[key]) {
+        this.subcamposByTag[key] = [];
+      }
+      this.subcamposByTag[key].push(sub);
+    });
+  }
+
+  private async actualizarCurrentTags() {
+    if (!this.selectedFormatoId) {
+      this.currentTags = [];
+      this.secciones = [];
+      this.currentPage = 1;
+      this.totalTagsForFormat = 0;
+      this.subcampos = [];
+      this.indicadores = [];
+      this.buildCaches();
+      return;
+    }
+    const total = await this.dataService.countMarcDicCampos(this.selectedFormatoId);
+    this.totalTagsForFormat = total;
+    this.updateSectionPagination(total);
+    const { campos } = await this.dataService.getMarcDicCamposPage(
+      this.selectedFormatoId,
+      this.currentPage,
+      this.pageSize
+    );
+    await this.loadDictionaryForCurrentTags(campos);
+    this.currentTags = campos;
+    if (campos.length > 0) {
+      const startTag = campos[0].tag || '---';
+      const endTag = campos[campos.length - 1].tag || '---';
+      this.pageLabels[this.currentPage] = `${startTag}-${endTag}`;
+    }
+    await this.populateEntriesForCurrentTags(campos);
+  }
+
+  private async loadDictionaryForCurrentTags(campos: MarcDicCampo[]) {
+    if (!this.selectedFormatoId || campos.length === 0) {
+      this.subcampos = [];
+      this.indicadores = [];
+      this.buildCaches();
+      return;
+    }
+    const tags = Array.from(new Set(campos.map(c => c.tag).filter(Boolean)));
+    const [subcampos, indicadores] = await Promise.all([
+      this.dataService.getMarcDicSubcamposPorTags(this.selectedFormatoId, tags),
+      this.dataService.getMarcDicIndicadoresPorTags(this.selectedFormatoId, tags)
+    ]);
+    this.subcampos = subcampos;
+    this.indicadores = indicadores;
+    this.buildCaches();
+  }
+
+  private async populateEntriesForCurrentTags(campos: MarcDicCampo[]) {
+    if (!this.currentRegistroId || campos.length === 0) {
+      return;
+    }
+    const tags = campos.map(c => c.tag);
+    const stored = await this.dataService.getMarcCamposByRegistroAndTags(this.currentRegistroId, tags);
+    const storedMap = new Map(stored.map(c => [c.tag, c]));
+    campos.forEach(campo => {
+      const entry = this.ensureEntry(campo.tag);
+      const match = storedMap.get(campo.tag);
+      if (match) {
+        entry.campoId = match.id;
+        entry.valor = match.valor || '';
+        entry.ind1 = match.ind1 || '';
+        entry.ind2 = match.ind2 || '';
+        if (campo.tag === '245') {
+          this.libroForm.titulo = entry.valor || '';
+        }
+      }
+    });
+  }
+
+  private updateSectionPagination(total: number) {
+    const pages = total > 0 ? Math.max(1, Math.ceil(total / this.pageSize)) : 0;
+    if (pages === 0) {
+      this.currentPage = 1;
+      this.secciones = [];
+      this.pageLabels = {};
+      return;
+    }
+    this.secciones = Array.from({ length: pages }, (_, idx) => idx + 1);
+    if (this.currentPage > pages) {
+      this.currentPage = pages;
+    }
+  }
+
+  private buildTagKey(formatoId: number | undefined, tag: string) {
+    return `${formatoId ?? 'no-formato'}::${tag}`;
+  }
+
+  ensureSubcamposForEntry(entry: CatalogacionEntrada, tag: string) {
+    const definitions = this.getSubcamposForTag(tag);
+    definitions.forEach(def => {
+      const existing = entry.subcampos.find(sub => sub.codigo === def.codigo);
+      if (!existing) {
+        entry.subcampos.push({
+          codigo: def.codigo,
+          nombre: def.nombre,
+          valor: ''
+        });
+      } else {
+        existing.nombre = def.nombre;
+      }
+    });
+  }
+
+  isSubcampoRepeatable(tag: string, codigo: string) {
+    const def = this.getSubcamposForTag(tag).find(item => item.codigo === codigo);
+    return (def?.repetibilidad || '').toUpperCase() === 'R';
+  }
+
+  countSubcampoInstances(entry: CatalogacionEntrada, codigo: string) {
+    return entry.subcampos.filter(sub => sub.codigo === codigo).length;
+  }
+
+  canRemoveSubcampo(entry: CatalogacionEntrada, index: number) {
+    const sub = entry.subcampos[index];
+    if (!sub) {
+      return false;
+    }
+    if (!this.isSubcampoRepeatable(entry.tag, sub.codigo)) {
+      return false;
+    }
+    return this.countSubcampoInstances(entry, sub.codigo) > 1;
+  }
+
+  addRepeatableSubcampo(entry: CatalogacionEntrada, codigo: string, index: number) {
+    if (!this.isSubcampoRepeatable(entry.tag, codigo)) {
+      return;
+    }
+    const def = this.getSubcamposForTag(entry.tag).find(item => item.codigo === codigo);
+    entry.subcampos.splice(index + 1, 0, {
+      codigo,
+      nombre: def?.nombre || codigo,
+      valor: ''
+    });
+  }
+
+  removeSubcampo(tag: string, index: number) {
+    const entry = this.ensureEntry(tag);
+    const removed = entry.subcampos[index];
+    if (!removed) {
+      return;
+    }
+    if (removed.id) {
+      entry.deletedSubcampoIds = entry.deletedSubcampoIds || [];
+      entry.deletedSubcampoIds.push(removed.id);
+    }
+    entry.subcampos.splice(index, 1);
+  }
+
+  setIndicator(entry: CatalogacionEntrada, indicador: 1 | 2, value: string) {
+    const safeValue = String(value ?? '');
+    if (indicador === 1) {
+      entry.ind1 = safeValue;
+    } else {
+      entry.ind2 = safeValue;
+    }
+    this.closeIndicatorDropdown(entry);
+  }
+
+  toggleIndicatorDropdown(entry: CatalogacionEntrada, indicador: 1 | 2, event: MouseEvent) {
+    event.stopPropagation();
+    entry.indicatorDropdownOpen =
+      entry.indicatorDropdownOpen || { 1: false, 2: false };
+    entry.indicatorDropdownOpen[indicador] = !entry.indicatorDropdownOpen[indicador];
+  }
+
+  isIndicatorDropdownOpen(entry: CatalogacionEntrada, indicador: 1 | 2) {
+    return !!entry.indicatorDropdownOpen?.[indicador];
+  }
+
+  closeIndicatorDropdown(entry: CatalogacionEntrada) {
+    if (entry.indicatorDropdownOpen) {
+      entry.indicatorDropdownOpen[1] = false;
+      entry.indicatorDropdownOpen[2] = false;
+    }
+  }
+
+  private async reloadEntrySubcampos(entry: CatalogacionEntrada) {
+    const definitions = this.getSubcamposForTag(entry.tag);
+    const definitionsByCode = new Map(definitions.map(def => [def.codigo, def]));
+
+    // Si el campo no está en memoria, se busca por registro+tag para recuperar
+    // su ID y poder consultar los subcampos persistidos.
+    if (!entry.campoId && this.currentRegistroId) {
+      const stored = await this.dataService.getMarcCamposByRegistroAndTags(this.currentRegistroId, [entry.tag]);
+      const match = stored.find(item => item.tag === entry.tag);
+      if (match) {
+        entry.campoId = match.id;
+        entry.ind1 = match.ind1 || entry.ind1 || '';
+        entry.ind2 = match.ind2 || entry.ind2 || '';
+        entry.valor = match.valor || entry.valor || '';
+      }
+    }
+
+    if (!entry.campoId) {
+      this.ensureSubcamposForEntry(entry, entry.tag);
+      return;
+    }
+    const saved = await this.dataService.getMarcSubcamposByCampo(entry.campoId);
+    const savedByCode = new Map<string, MarcSubcampo[]>();
+    saved.forEach(item => {
+      const list = savedByCode.get(item.codigo) || [];
+      list.push(item);
+      savedByCode.set(item.codigo, list);
+    });
+    const orderedCodes = Array.from(new Set([
+      ...definitions.map(def => def.codigo),
+      ...saved.map(item => item.codigo)
+    ]));
+    const rebuilt: CatalogacionSubcampoEntry[] = [];
+    orderedCodes.forEach(codigo => {
+      const definition = definitionsByCode.get(codigo);
+      const repeatable = (definition?.repetibilidad || '').toUpperCase() === 'R';
+      const matches = savedByCode.get(codigo) || [];
+      if (matches.length === 0) {
+        if (definition) {
+          rebuilt.push({
+            codigo,
+            nombre: definition.nombre,
+            valor: ''
+          });
+        }
+        return;
+      }
+      if (repeatable) {
+        matches.forEach(match => {
+          rebuilt.push({
+            codigo,
+            nombre: definition ? definition.nombre : codigo,
+            valor: match.valor || '',
+            id: match.id
+          });
+        });
+      } else {
+        const match = matches[0];
+        rebuilt.push({
+          codigo,
+          nombre: definition ? definition.nombre : codigo,
+          valor: match.valor || '',
+          id: match.id
+        });
+      }
+    });
+    entry.subcampos = rebuilt;
+    this.ensureSubcamposForEntry(entry, entry.tag);
+  }
+
+async setActiveCatalogTab(tab: 'marc' | 'autoridad') {
+    this.activeCatalogTab = tab;
+    if (tab === 'autoridad') {
+      await this.autoridadCatalogacion?.refreshForLibro(this.selectedLibroId);
+    }
+  }
+
+  async guardarTodo() {
+    await this.guardarLibroYRegistro();
+    if (this.autoridadCatalogacion) {
+      await this.autoridadCatalogacion.guardarAsignaciones({ showAlert: false });
+    }
+  }
+
+  async openSubcampoModal(entry: CatalogacionEntrada) {
+    this.subcampoModalVisible = true;
+    this.activeSubcamposEntry = entry;
+    this.subcamposLoading = true;
+    entry.subcampos = [];
+    entry.deletedSubcampoIds = [];
+    try {
+      await this.reloadEntrySubcampos(entry);
+    } catch (error: any) {
+      console.error(error);
+      const detail = error?.error?.message || error?.message || 'Error desconocido';
+      Swal.fire('No se pudieron cargar los subcampos del tag', detail, 'error');
+    } finally {
+      this.subcamposLoading = false;
+    }
+  }
+
+  closeSubcampoModal() {
+    this.subcampoModalVisible = false;
+    this.subcamposLoading = false;
+    this.activeSubcamposEntry = undefined;
+  }
+
+  async guardarSubcamposModal() {
+    if (!this.activeSubcamposEntry) {
+      return;
+    }
+    try {
+      this.subcamposSaving = true;
+      const registroId = await this.ensureRegistroIdForSubcampos();
+      if (!registroId) {
+        return;
+      }
+      await this.syncCampo(this.activeSubcamposEntry, registroId);
+      await this.reloadEntrySubcampos(this.activeSubcamposEntry);
+      Swal.fire('Subcampos guardados correctamente');
+    } catch (error: any) {
+      console.error(error);
+      const detail = error?.error?.message || error?.message || 'Error desconocido';
+      Swal.fire('Ocurrió un error al guardar los subcampos', detail, 'error');
+    } finally {
+      this.subcamposSaving = false;
+    }
+  }
+
+  private async ensureRegistroIdForSubcampos(): Promise<number | null> {
+    if (this.currentRegistroId) {
+      return this.currentRegistroId;
+    }
+    if (!this.selectedLibroId) {
+      Swal.fire('Guarde primero el libro para poder guardar subcampos');
+      return null;
+    }
+    if (!this.selectedFormatoId) {
+      Swal.fire('Seleccione un formato MARC para poder guardar subcampos');
+      return null;
+    }
+    const formato = this.formatos.find(f => f.id === this.selectedFormatoId);
+    if (!formato) {
+      Swal.fire('No se encontró el formato MARC seleccionado');
+      return null;
+    }
+    const registroId = await this.syncMarcRegistro(this.selectedLibroId, formato);
+    if (!registroId) {
+      Swal.fire('No se pudo crear u obtener el registro MARC');
+      return null;
+    }
+    return registroId;
+  }
+
+  async nuevoLibro() {
+    this.resetLibroForm();
+    this.recordEntries = {};
+    this.resetCatalogForm();
+    this.currentPage = 1;
+    this.pageLabels = {};
+    this.selectedLibroId = undefined;
+    if (!this.selectedFormatoId && this.formatos.length) {
+      this.selectedFormatoId = this.formatos[0].id;
+    }
+    await this.actualizarCurrentTags();
+    this.libroFormVisible = true;
+  }
+
+  async editarLibro(libro: Libro) {
+    this.libroForm = { ...libro };
+    this.selectedLibroId = libro.id;
+    this.recordEntries = {};
+    this.resetCatalogForm();
+    this.currentPage = 1;
+    this.pageLabels = {};
+    this.libroEditing = true;
+    this.onTipoMaterialChange();
+    this.libroFormVisible = true;
+    await this.cargarMarcParaLibro(libro.id);
+    await this.autoridadCatalogacion?.refreshForLibro(this.selectedLibroId);
+    await this.actualizarCurrentTags();
+  }
+
+  private resetLibroForm() {
+    this.libroForm = {
+      id: 0,
+      titulo: '',
+      autor: '',
+      isbn: '',
+      categoria: 'Sin categoria',
+      estado: 'disponible',
+      tipoMaterial: '',
+      tipoMaterialId: undefined
+    };
+    this.libroEditing = false;
+    this.currentRegistroId = undefined;
+  }
+
+  private async persistirLibro(): Promise<number> {
+    const libroId = await this.dataService.createLibro(this.libroForm);
+    if (!libroId) {
+      throw new Error('No se pudo obtener el identificador del libro');
+    }
+    this.libroForm.id = libroId;
+    this.selectedLibroId = libroId;
+    this.libroEditing = true;
+    await this.cargarDatosBase();
+    return libroId;
+  }
+
+  private async actualizarLibroExistente(libroId: number) {
+    await this.dataService.updateLibro(this.libroForm);
+    const index = this.libros.findIndex(libro => libro.id === libroId);
+    if (index >= 0) {
+      this.libros[index] = { ...this.libroForm };
+    }
+  }
+
+  private entryHasData(entry: CatalogacionEntrada) {
+    const valor = (entry.valor || '').trim();
+    const tieneSubcampos = entry.subcampos.some(sub => (sub.valor || '').trim().length > 0);
+    const tieneIndicadores = (entry.ind1 || '').trim().length > 0 || (entry.ind2 || '').trim().length > 0;
+    return valor.length > 0 || tieneSubcampos || tieneIndicadores;
+  }
+
+  async guardarLibroYRegistro() {
+    if (!this.libroForm.titulo) {
+      Swal.fire('Complete el título para continuar');
+      return;
+    }
+    if (!this.selectedFormatoId) {
+      Swal.fire('Seleccione un formato MARC para continuar');
+      return;
+    }
+
+    try {
+      this.isSaving = true;
+      let libroId = this.selectedLibroId;
+      if (this.libroEditing && libroId) {
+        await this.actualizarLibroExistente(libroId);
+      } else {
+        libroId = await this.persistirLibro();
+      }
+      if (!libroId) {
+        throw new Error('No se pudo determinar el identificador del libro');
+      }
+
+      const formato = this.formatos.find(f => f.id === this.selectedFormatoId);
+      if (!formato) {
+        throw new Error('No se encontró el formato seleccionado');
+      }
+
+      const registroId = await this.syncMarcRegistro(libroId, formato);
+      if (!registroId) {
+        throw new Error('No se pudo determinar el identificador del registro MARC');
+      }
+
+      for (const entry of Object.values(this.recordEntries)) {
+        if (this.entryHasData(entry)) {
+          await this.syncCampo(entry, registroId);
+        } else if (entry.campoId) {
+          await this.deleteCampo(entry);
+        }
+      }
+
+      Swal.fire('Libro y registro MARC guardados correctamente');
+    } catch (error: any) {
+      console.error(error);
+      const detail = error?.error?.message || error?.message || 'Error desconocido';
+      Swal.fire('Ocurrió un error al guardar el libro y el MARC', detail, 'error');
+    } finally {
+      this.isSaving = false;
+    }
+  }
+
+  cancelarLibro() {
+    this.resetLibroForm();
+    this.recordEntries = {};
+    this.resetCatalogForm();
+    this.currentPage = 1;
+    this.pageLabels = {};
+    this.libroFormVisible = false;
+  }
+
+  private ensureEntry(tag: string) {
+    if (!this.recordEntries[tag]) {
+      this.recordEntries[tag] = {
+        tag,
+        nombre: '',
+        valor: '',
+        ind1: '',
+        ind2: '',
+        subcampos: [],
+        deletedSubcampoIds: []
+      };
+    }
+    return this.recordEntries[tag];
+  }
+
+  private async cargarMarcParaLibro(libroId: number) {
+    this.recordEntries = {};
+    this.currentRegistroId = undefined;
+    const registros = await this.dataService.getMarcRegistros();
+    const registro = registros.find(r => r.libroId === libroId);
+    if (!registro) {
+      this.resetCatalogForm();
+      return;
+    }
+    this.currentRegistroId = registro.id;
+    const formatoMatch = this.formatos.find(f => f.codigo === registro.formato);
+    if (formatoMatch) {
+      this.selectedFormatoId = formatoMatch.id;
+    }
+    this.catalogForm = {
+      leader: registro.leader || '',
+      control001: registro.control001 || '',
+      control005: registro.control005 || '',
+      control008: registro.control008 || ''
+    };
+  }
+
+  private async syncMarcRegistro(libroId: number, formato: MarcDicFormato): Promise<number | null> {
+    const registroPayload: MarcRegistro = {
+      id: 0,
+      libroId,
+      formato: formato.codigo,
+      leader: this.catalogForm.leader,
+      control001: this.catalogForm.control001,
+      control005: this.catalogForm.control005,
+      control008: this.catalogForm.control008
+    };
+    if (this.currentRegistroId) {
+      await this.dataService.updateMarcRegistro({ ...registroPayload, id: this.currentRegistroId });
+      return this.currentRegistroId;
+    }
+    const registroId = await this.dataService.createMarcRegistro(registroPayload);
+    if (registroId) {
+      this.currentRegistroId = registroId;
+    }
+    return registroId;
+  }
+
+  private async syncCampo(entry: CatalogacionEntrada, registroId: number) {
+    const payload: MarcCampo = {
+      id: entry.campoId || 0,
+      marcRegistroId: registroId,
+      tag: entry.tag,
+      ind1: entry.ind1,
+      ind2: entry.ind2,
+      valor: entry.valor
+    };
+    let campoId = entry.campoId;
+    if (campoId) {
+      await this.dataService.updateMarcCampo({ ...payload, id: campoId });
+    } else {
+      const newId = await this.dataService.createMarcCampo(payload);
+      campoId = newId || undefined;
+      entry.campoId = campoId;
+    }
+    if (!campoId) {
+      return;
+    }
+    await this.syncSubcampos(entry, campoId);
+  }
+
+  private async syncSubcampos(entry: CatalogacionEntrada, campoId: number) {
+    if (entry.deletedSubcampoIds?.length) {
+      const ids = Array.from(new Set(entry.deletedSubcampoIds.filter(id => !!id)));
+      for (const id of ids) {
+        await this.dataService.deleteMarcSubcampo(id);
+      }
+      entry.deletedSubcampoIds = [];
+    }
+    for (const sub of entry.subcampos) {
+      const valor = (sub.valor || '').trim();
+      if (sub.id) {
+        if (valor.length > 0) {
+          await this.dataService.updateMarcSubcampo({
+            id: sub.id,
+            marcCampoId: campoId,
+            codigo: sub.codigo,
+            valor: sub.valor
+          });
+        } else {
+          await this.dataService.deleteMarcSubcampo(sub.id);
+          sub.id = undefined;
+        }
+      } else if (valor.length > 0) {
+        const subId = await this.dataService.createMarcSubcampo({
+          id: 0,
+          marcCampoId: campoId,
+          codigo: sub.codigo,
+          valor: sub.valor
+        });
+        sub.id = subId || undefined;
+      }
+    }
+  }
+
+  private async deleteCampo(entry: CatalogacionEntrada) {
+    if (!entry.campoId) {
+      return;
+    }
+    for (const sub of entry.subcampos) {
+      if (sub.id) {
+        await this.dataService.deleteMarcSubcampo(sub.id);
+        sub.id = undefined;
+      }
+    }
+    await this.dataService.deleteMarcCampo(entry.campoId);
+    entry.campoId = undefined;
+  }
+}

@@ -16,6 +16,10 @@ import {
 export class MarcDiccionarioComponent implements OnInit {
   formatos: MarcDicFormato[] = [];
   campos: MarcDicCampo[] = [];
+  currentPage = 1;
+  pageSize = 50;
+  totalCampos = 0;
+  pageCount = 0;
   subcampos: MarcDicSubcampo[] = [];
   indicadores: MarcDicIndicador[] = [];
 
@@ -93,14 +97,12 @@ export class MarcDiccionarioComponent implements OnInit {
   }
 
   private async cargarTodo() {
-    const [formatos, campos, subcampos, indicadores] = await Promise.all([
+    const [formatos, subcampos, indicadores] = await Promise.all([
       this.dataService.getMarcDicFormatos(),
-      this.dataService.getMarcDicCampos(),
       this.dataService.getMarcDicSubcampos(),
       this.dataService.getMarcDicIndicadores()
     ]);
     this.formatos = formatos;
-    this.campos = campos;
     this.subcampos = subcampos;
     this.indicadores = indicadores;
     if (this.campoSubcampoContext) {
@@ -109,6 +111,40 @@ export class MarcDiccionarioComponent implements OnInit {
     if (this.campoIndicadorContext) {
       await this.loadCampoIndicadores(this.campoIndicadorContext.formatoId, this.campoIndicadorContext.tag);
     }
+    await this.loadCamposPage();
+  }
+
+  private async loadCamposPage() {
+    const { campos } = await this.dataService.getMarcDicCamposPage(undefined, this.currentPage, this.pageSize);
+    const total = await this.dataService.countMarcDicCampos(undefined);
+    this.totalCampos = total;
+    this.pageCount = total > 0 ? Math.ceil(total / this.pageSize) : 0;
+    if (this.pageCount > 0 && this.currentPage > this.pageCount) {
+      this.currentPage = this.pageCount;
+      await this.loadCamposPage();
+      return;
+    }
+    if (!this.pageCount) {
+      this.currentPage = 1;
+    }
+    this.campos = campos;
+  }
+
+  async goToPage(page: number) {
+    if (page < 1 || (this.pageCount && page > this.pageCount) || page === this.currentPage) {
+      return;
+    }
+    this.currentPage = page;
+    await this.loadCamposPage();
+  }
+
+  getCamposRangeLabel() {
+    if (!this.totalCampos) {
+      return 'Sin resultados';
+    }
+    const start = (this.currentPage - 1) * this.pageSize + 1;
+    const end = Math.min(this.currentPage * this.pageSize, this.totalCampos);
+    return `Mostrando ${start}-${end} de ${this.totalCampos}`;
   }
 
   private async loadCampoSubcampos(formatoId?: number, tag?: string) {
