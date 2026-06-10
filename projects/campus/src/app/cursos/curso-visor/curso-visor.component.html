@@ -1,4 +1,4 @@
-<div class="curso-page">
+<div class="curso-page" *ngIf="cursoDisponible; else cursoNoDisponible">
 
   <!-- HERO / CABECERA DEL CURSO -->
   <section class="curso-hero">
@@ -102,3 +102,13 @@
     </div>
   </section>
 </div>
+
+<ng-template #cursoNoDisponible>
+  <div class="curso-page">
+    <div class="placeholder">
+      <h3>No se pudo cargar el curso</h3>
+      <p>El aula no esta disponible o la matricula del curso no esta confirmada.</p>
+      <button class="btn-volver" (click)="volverACursos()">Volver a cursos</button>
+    </div>
+  </div>
+</ng-template>

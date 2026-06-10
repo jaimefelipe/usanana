@@ -80,6 +80,16 @@ export class CarrerasContactoComponent implements OnInit {
       }else{
         this.CarreraEstudiante = data['data'][0];
       }
+    }else{
+      this.CarreraEstudiante = {
+        Id_Carrera_Estudiante:'',
+        Id_Persona:this.Persona.Id_Persona,
+        Id_Carrera:'',
+        Carrera:'',
+        Fecha_Ingreso:this.Fecha.day + '-' + this.Fecha.month + '-' + this.Fecha.year,
+        Fecha_Graduacion:'',
+        Estado:'1'
+      };
     }
     this.PantallaCarreraContacto = true;
   }
@@ -92,6 +102,10 @@ export class CarrerasContactoComponent implements OnInit {
       this.loadCarrerasPorContacato();
   }
   async loadCarrerasPorContacato(){
+    if(!this.Persona || !this.Persona.Id_Persona){
+      this.CarrerasActivas = [];
+      return;
+    }
     let data = await this.contactoService.loadCarrerasPorAlumno(this.Persona.Id_Persona);
     if(data['total']==0){
       this.CarrerasActivas = [];
@@ -104,7 +118,7 @@ export class CarrerasContactoComponent implements OnInit {
     this.PantallaCarreraContacto = false;
   }
 
-  grabarCarrera(){
+  async grabarCarrera(){
     this.CarreraEstudiante.Id_Persona = this.Persona.Id_Persona;
     this.CarreraEstudiante.Fecha_Ingreso = this.Fecha_Ingreso.day + '-' + this.Fecha_Ingreso.month + '-' + this.Fecha_Ingreso.year;
     this.CarreraEstudiante.Fecha_Graduacion = this.Fecha_Graduacion.day + '-' + this.Fecha_Graduacion.month + '-' + this.Fecha_Graduacion.year;
@@ -124,10 +138,25 @@ export class CarrerasContactoComponent implements OnInit {
       }
     }
     if(this.CarreraEstudiante.Id_Carrera_Estudiante ==''){
-      this.insertCarrera();
+      const existe = await this.contactoService.validarCarreraPorAlumno(this.CarreraEstudiante.Id_Persona, this.CarreraEstudiante.Id_Carrera);
+      if(existe['total'] > 0){
+        Swal.fire('La carrera seleccionada ya esta asignada al alumno/contacto');
+        return false;
+      }
+      await this.insertCarrera();
     }else{
-      this.updateCarrera();
+      const existe = await this.contactoService.validarCarreraPorAlumno(
+        this.CarreraEstudiante.Id_Persona,
+        this.CarreraEstudiante.Id_Carrera,
+        this.CarreraEstudiante.Id_Carrera_Estudiante
+      );
+      if(existe['total'] > 0){
+        Swal.fire('La carrera seleccionada ya esta asignada al alumno/contacto');
+        return false;
+      }
+      await this.updateCarrera();
     }
+    await this.loadCarrerasPorContacato();
     this.cerrarPantallaCarreraContacto();
     return true;
 
@@ -147,6 +176,10 @@ export class CarrerasContactoComponent implements OnInit {
     this.PantallaCarrerasActivas = false;
   }
   async leerCarrerasActivas(){
+    if(!this.Persona || !this.Persona.Id_Persona){
+      this.CarrerasActivas = [];
+      return;
+    }
     let data = await this.carreraService.leerCarrerasActivas(this.Persona.Id_Persona);
     this.CarrerasActivas = data['data'];
 

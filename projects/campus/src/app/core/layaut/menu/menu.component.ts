@@ -53,17 +53,23 @@ export class MenuComponent implements OnInit {
 
   ngOnInit(): void {
     //Verificar Login
-    if(localStorage.getItem('isLoggedin') == 'false'){
-      let arrlocation = window.location.pathname.split('/');
-      if(arrlocation[2] !== 'login'){
-        //Si es primer ingreso no necesita hacer login
-        if(arrlocation[2] !== 'primeringreso'){
-          this.route.navigate(['/login']);
-          this.LogedIn = true;
-        }
-      } else{
-        this.LogedIn = false;
-      }
+    const rutaActual = window.location.pathname.split('/')[2] || '';
+    const rutaPublica = rutaActual === 'login' || rutaActual === 'primeringreso';
+    this.LogedIn = this.tieneSesionCampus();
+
+    if(!this.LogedIn && !rutaPublica){
+      this.route.navigate(['/login']);
+      return;
+    }
+
+    if(rutaPublica){
+      this.LogedIn = false;
+    }
+
+    if(this.LogedIn){
+      this.Company = localStorage.getItem("Id_Empresa");
+      this.User = localStorage.getItem("Nombre_Usuario");
+      this.SeguridadStr = localStorage.getItem("ToxoSG");
     }
 
     if(localStorage.getItem('ambiente') == 'Dev'){
@@ -71,20 +77,21 @@ export class MenuComponent implements OnInit {
     }else{
       this.ambiente = '';
     }
-    //Cargar las obciones de seguridad del Usuario
-    this.loadUserMenu();
-    if(localStorage.getItem("ToxoMT") == '1'){
-      this.Master = true;
-    }else{
-      this.Master = false;
+
+    if(this.LogedIn){
+      this.loadUserMenu();
+      if(localStorage.getItem("ToxoMT") == '1'){
+        this.Master = true;
+      }else{
+        this.Master = false;
+      }
+
+      if(!this.SeguridadStr){
+        this.SeguridadStr = "0.0.0.0.0.0.0.0.0.0.0.0";
+      }
+      this.Seguridad = this.SeguridadStr.split(".");
     }
-    if(this.SeguridadStr == ""){
-      this.SeguridadStr = "0.0.0.0.0.0.0.0.0.0.0.0";
-    }
-    this.Seguridad = this.SeguridadStr.split(".");
-    if(localStorage.getItem('isLoggedin') == "true") {
-      this.LogedIn = true;
-    }
+
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       this.deferredPrompt = e;
@@ -135,11 +142,17 @@ export class MenuComponent implements OnInit {
 
   //Leer los Menus a que tiene acceso el usuario
   async loadUserMenu(){
+    const idUsuario = localStorage.getItem('Id_Usuario');
+    if(!idUsuario){
+      this.UserMenu = [];
+      return;
+    }
+
     let sqlConfig = {
       table: 'Seg_Usuario_Grupo inner join App_Grupo on Seg_Usuario_Grupo.Id_Grupo = App_Grupo.ID_Grupo inner join App on App_Grupo.Id_App = App.Id_App',
       fields: 'App_Grupo.Id_App,App_Grupo.Estado,Editar,Agregar,App.Principal,App.Padre',
       orderField: '',
-      where: 'Id_Usuario = '+localStorage.getItem('Id_Usuario')+' and App_Grupo.Estado = 1'
+      where: 'Id_Usuario = '+idUsuario+' and App_Grupo.Estado = 1'
     }
     let data =  await this.apiService.executeSqlSyn(sqlConfig);
     if(data['total']>0){
@@ -183,6 +196,14 @@ export class MenuComponent implements OnInit {
     if(this.Master){
       this.AppPOV
     }
+  }
+
+  private tieneSesionCampus(){
+    const tieneIdentidad = !!localStorage.getItem('Id_Empresa') && !!localStorage.getItem('Id_Usuario');
+    if(tieneIdentidad && localStorage.getItem('isLoggedin') !== 'true'){
+      localStorage.setItem('isLoggedin', 'true');
+    }
+    return tieneIdentidad;
   }
 
 }

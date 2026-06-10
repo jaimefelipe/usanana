@@ -25,21 +25,21 @@
       </div>
       <div [hidden]="!Academico"  class="form-group col-md-6">
         <label for="name">Alumno</label>
-        <select [(ngModel)]="Persona.Alumno" name="Alumno" class="form-control">
+        <select [(ngModel)]="Persona.Alumno" name="Alumno" class="form-control" (change)="asociarUsuarioAutomatico()">
           <option value='0'>No es Alumno</option>
           <option value='1'>Si es Alumno</option>
         </select>
       </div>
       <div [hidden]="!Academico"  class="form-group col-md-6">
         <label for="name">Profesor</label>
-        <select [(ngModel)]="Persona.Profesor" name="Profesor" class="form-control">
+        <select [(ngModel)]="Persona.Profesor" name="Profesor" class="form-control" (change)="asociarUsuarioAutomatico()">
           <option value='0'>No es Profesor</option>
           <option value='1'>Si es Profesor</option>
         </select>
       </div>
       <div  class="form-group col-md-6">
         <label for="name">Empleado</label>
-        <select [(ngModel)]="Persona.Empleado" name="Empleado" class="form-control">
+        <select [(ngModel)]="Persona.Empleado" name="Empleado" class="form-control" (change)="asociarUsuarioAutomatico()">
           <option value='0'>No es Empleado</option>
           <option value='1'>Si es Empleado</option>
         </select>
@@ -47,7 +47,7 @@
     </div>
   </div>
 
-    <div [hidden]="!Persona.Empleado"  class="form-group row align-items-center mb-2">
+    <div [hidden]="Persona.Alumno != '1' && Persona.Profesor != '1' && Persona.Empleado != '1'"  class="form-group row align-items-center mb-2">
       <label class="col-sm-2 col-form-label">Usuario</label>
       <div class="col-sm-10">
         <div class="input-group">

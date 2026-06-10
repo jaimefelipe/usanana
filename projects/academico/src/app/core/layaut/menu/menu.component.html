@@ -1,4 +1,4 @@
-<nav class="sidebar p-2"
+﻿<nav class="sidebar p-2"
      [class.collapsed]="collapsed"
      [class.is-open]="mobile && !collapsed"
      [class.is-mobile]="mobile"
@@ -70,6 +70,7 @@
       </a>
       <ul class="nav flex-column ms-3" *ngIf="sectionState.registro && !collapsed">
         <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/periodo']" routerLinkActive="active">- Periodo academico</a></li>
+        <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/admisiones']" routerLinkActive="active">- Admisiones</a></li>
         <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/grupo']" routerLinkActive="active">- Grupos</a></li>
         <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/matricula']" routerLinkActive="active">- Matricula</a></li>
         <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/aulavirtual']" routerLinkActive="active">- Aula virtual</a></li>
@@ -167,8 +168,10 @@
       </a>
     </li>
 
-    <li class="nav-item mt-4 px-2 text-muted small" *ngIf="logedIn && !collapsed">
-      {{ Company }} | {{ User }}
+    <li class="nav-item px-2 sidebar-footer" *ngIf="logedIn && !collapsed">
+      <div class="text-muted small">{{ Company }} | {{ User }}</div>
+      <div class="sidebar-version">Academico v{{ appVersion }}</div>
     </li>
   </ul>
 </nav>
+

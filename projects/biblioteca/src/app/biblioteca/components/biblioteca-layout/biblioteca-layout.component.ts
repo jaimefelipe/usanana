@@ -14,6 +14,7 @@ export class BibliotecaLayoutComponent implements OnInit {
   logedIn = false;
   Company = localStorage.getItem('Id_Empresa');
   User = localStorage.getItem('Nombre_Usuario');
+  appVersion = '2.0.0.5';
   sectionState: Record<SectionKey, boolean> = {
     operacion: false,
     catalogacion: false,

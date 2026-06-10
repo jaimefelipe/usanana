@@ -29,7 +29,7 @@ export class SecurityUserComponent implements OnInit {
     Correo:'',
     Tipo_Usuario:'0',
     Estado:'',
-    Clave:'',
+    Clave:'Password',
     Ventas:'0',
     Compras:'0',
     Inventario:'0',
@@ -47,6 +47,35 @@ export class SecurityUserComponent implements OnInit {
     Pov:'',
     Proyecto:'',
     CRM:''
+  }
+  private crearUsuarioBase() {
+    return {
+      Id_Usuario: '',
+      Nombre_Usuario:'',
+      Numero_Identificacion:'',
+      Nombre:'',
+      Correo:'',
+      Tipo_Usuario:'0',
+      Estado:'1',
+      Clave:'Password',
+      Ventas:'0',
+      Compras:'0',
+      Inventario:'0',
+      CXC:'0',
+      CXP:'0',
+      CG:'0',
+      BA:'0',
+      Restaurante:'0',
+      Seguridad:'0',
+      Transporte:'0',
+      Hospedaje:'0',
+      Turismo:'0',
+      Salonero:'',
+      Academico:'',
+      Pov:'',
+      Proyecto:'',
+      CRM:''
+    };
   }
   edit = false;
   ngOnInit(): void {
@@ -105,33 +134,7 @@ export class SecurityUserComponent implements OnInit {
         this.Usuario = data['data'][0];
       }
     }else{
-      this.Usuario  = {
-        Id_Usuario: '',
-        Nombre_Usuario:'',
-        Numero_Identificacion:'',
-        Nombre:'',
-        Correo:'',
-        Tipo_Usuario:'0',
-        Estado:'1',
-        Clave:'',
-        Ventas:'0',
-        Compras:'0',
-        Inventario:'0',
-        CXC:'0',
-        CXP:'0',
-        CG:'0',
-        BA:'0',
-        Restaurante:'0',
-        Seguridad:'0',
-        Transporte:'0',
-        Hospedaje:'0',
-        Turismo:'0',
-        Salonero:'',
-        Academico:'',
-        Pov:'',
-        Proyecto:'',
-        CRM:''
-      }
+      this.Usuario = this.crearUsuarioBase();
     }
   }
   async grabar(){
@@ -145,6 +148,9 @@ export class SecurityUserComponent implements OnInit {
     }
     if(this.Usuario.Id_Usuario == ''){
       //Nuevo
+      if(!this.Usuario.Clave){
+        this.Usuario.Clave = 'Password';
+      }
       //Validar si el Usuario ya existe en la base de datos
       let existe = await this.securityUserService.validateUser(this.Usuario.Correo);
       if(existe['total'] >0) {
@@ -159,8 +165,8 @@ export class SecurityUserComponent implements OnInit {
       await this.securityUserService.AsociarUsuario(Id_Usuario,localStorage.getItem('Id_Empresa'))
     }else{
       //Update
-      this.securityUserService.updateUser(this.Usuario);
-      this.securityUserService.ChangeUserStatus(this.Usuario.Id_Usuario,localStorage.getItem('Id_Empresa'),this.Usuario.Estado);
+      await this.securityUserService.updateUser(this.Usuario);
+      await this.securityUserService.ChangeUserStatus(this.Usuario.Id_Usuario,localStorage.getItem('Id_Empresa'),this.Usuario.Estado);
     }
     this.loadUsers(this.searchField);
     this.cancel();
@@ -168,5 +174,29 @@ export class SecurityUserComponent implements OnInit {
   }
   cancel(){
     this.edit = false;
+  }
+
+  async resetearClave(){
+    if(this.Master !== '1') return;
+    const { value: claveAdmin, isConfirmed } = await Swal.fire({
+      title: 'Confirmación de supervisor',
+      text: 'Ingrese su clave para resetear la contraseña a "Password"',
+      input: 'password',
+      inputPlaceholder: 'Su clave actual',
+      inputAttributes: { autocomplete: 'current-password' },
+      showCancelButton: true,
+      confirmButtonText: 'Confirmar reset',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#d33'
+    });
+    if (!isConfirmed || !claveAdmin) return;
+    const valido = await this.securityUserService.validarClaveAdmin(claveAdmin);
+    if (!valido) {
+      Swal.fire('Clave incorrecta', 'La clave de supervisor no es válida.', 'error');
+      return;
+    }
+    await this.securityUserService.resetearClave(this.Usuario.Id_Usuario);
+    this.Usuario.Clave = 'Password';
+    Swal.fire('Listo', 'La contraseña fue reseteada a "Password".', 'success');
   }
 }

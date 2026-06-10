@@ -1,43 +1,103 @@
-<div class="lms-home">
-  <h2 class="titulo-campus">CAMPUS ACADEMICO</h2>
-  <h1 class="bienvenida">Bienvenido/a {{ nombre }}</h1>
-  <p class="subtitulo">Explora el campus de oportunidades académicas</p>
-
-  
-  <h3 class="seccion">Perfil del Estudiante</h3>
-  <div class="cards">
-    
-    <div class="card">
-      <img src="assets/info-personal.png" alt="Historial académico" />
-      <h4>Mis Datos</h4>
-      <a routerLink="perfil" class="btn btn-warning">Ver Datos</a>
+<div class="campus-dashboard">
+  <section class="campus-hero">
+    <div class="hero-copy">
+      <span class="hero-eyebrow">Campus Academico</span>
+      <h1>Bienvenido/a {{ nombre || 'Estudiante' }}</h1>
+      <p>Consulta tus datos, solicita matricula y entra rapidamente a tus cursos activos.</p>
     </div>
 
-    <div class="card">
-      <img src="assets/matricula.png" alt="Matrícula" />
-      <h4>Matrícula</h4>
-      <a routerLink="matricula" class="btn btn-warning">Matricúlate</a>
+    <div class="hero-status">
+      <span class="status-label">Cursos activos</span>
+      <strong>{{ cursosActivos.length }}</strong>
+      <span class="status-note">Disponibles para ingresar</span>
     </div>
-    <!--
-    <div class="card">
-      <img src="assets/historial.png" alt="Historial académico" />
-      <h4>Historial</h4>
-      <a routerLink="/lms/historial" class="btn btn-warning">Ver historial</a>
-    </div>
-    -->
-  </div>
-  
-  
-  <h3 class="seccion">Mis Cursos</h3>
+  </section>
 
-  <div class="cards">
-    
-    <div class="card" *ngFor="let curso of cursosActivos">
-      <img src="assets/icons/monitor.svg" alt="Curso" />
-      <h4>{{ curso.Curso }}</h4>
-      <a class="btn btn-warning"  (click)="entrarCurso(curso.Id_Curso, $event)">Entrar</a>
+  <section class="dashboard-section">
+    <div class="section-header">
+      <div>
+        <span class="section-kicker">Perfil del estudiante</span>
+        <h2>Acciones rapidas</h2>
+      </div>
     </div>
 
-   
-  </div>
+    <div class="quick-actions">
+      <a routerLink="perfil" class="quick-card">
+        <img src="assets/info-personal.png" alt="Mis datos" />
+        <div>
+          <h3>Mis Datos</h3>
+          <p>Actualiza y revisa tu informacion personal.</p>
+        </div>
+        <span class="quick-action">
+          Ver datos
+          <i class="fa fa-arrow-right" aria-hidden="true"></i>
+        </span>
+      </a>
+
+      <a routerLink="matricula" class="quick-card">
+        <img src="assets/matricula.png" alt="Matricula" />
+        <div>
+          <h3>Matricula</h3>
+          <p>Solicita cursos pendientes en el periodo abierto.</p>
+        </div>
+        <span class="quick-action">
+          Solicitar matricula
+          <i class="fa fa-arrow-right" aria-hidden="true"></i>
+        </span>
+      </a>
+    </div>
+  </section>
+
+  <section class="dashboard-section">
+    <div class="section-header">
+      <div>
+        <span class="section-kicker">Aulas virtuales</span>
+        <h2>Mis Cursos</h2>
+      </div>
+    </div>
+
+    <div class="empty-courses" *ngIf="cursosActivos.length === 0">
+      <i class="fa fa-book" aria-hidden="true"></i>
+      <h3>No tienes cursos activos</h3>
+      <p>Cuando Academico confirme tu matricula, tus cursos apareceran aqui.</p>
+      <a routerLink="matricula" class="btn empty-action">Solicitar matricula</a>
+    </div>
+
+    <div class="course-grid" *ngIf="cursosActivos.length > 0">
+      <article class="course-card" *ngFor="let curso of cursosActivos">
+        <img class="course-image" [src]="getImagenCurso(curso)" (error)="usarImagenCursoDefault($event)" alt="Curso" />
+
+        <div class="course-body">
+          <div class="course-topline">
+            <span class="course-code" *ngIf="curso.Codigo">{{ curso.Codigo }}</span>
+            <span class="course-mode" *ngIf="getModalidadCurso(curso.Modalidad)">{{ getModalidadCurso(curso.Modalidad) }}</span>
+          </div>
+
+          <h3>{{ curso.Curso }}</h3>
+
+          <div class="course-meta">
+            <span *ngIf="curso.Grupo">
+              <i class="fa fa-users" aria-hidden="true"></i>
+              {{ curso.Grupo }}
+            </span>
+            <span *ngIf="curso.Bloque || curso.Anio">
+              <i class="fa fa-calendar" aria-hidden="true"></i>
+              {{ curso.Bloque }}-{{ curso.Anio }}
+            </span>
+            <span *ngIf="curso.Profesor">
+              <i class="fa fa-user" aria-hidden="true"></i>
+              {{ curso.Profesor }}
+            </span>
+          </div>
+        </div>
+
+        <div class="course-footer">
+          <button type="button" class="btn enter-course" (click)="entrarCurso(curso, $event)">
+            Entrar al aula
+            <i class="fa fa-arrow-right" aria-hidden="true"></i>
+          </button>
+        </div>
+      </article>
+    </div>
+  </section>
 </div>

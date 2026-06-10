@@ -15,7 +15,7 @@ export class CursoService {
     }
     let sqlConfig = {
       table: 'Edu_Curso',
-      fields: 'Id_Curso,Codigo,Curso,Estado',
+      fields: 'Id_Curso,Codigo,Curso,Imagen,Estado',
       searchField: search,
       paginacion: paginacion,
       where:estado
@@ -26,7 +26,7 @@ export class CursoService {
   async cargarCurso(Id_Curso){
     let sqlConfig = {
       table: 'Edu_Curso',
-      fields: 'Id_Curso,Codigo,Curso,Descripcion,Requisitos,Creditos,Estado',
+      fields: 'Id_Curso,Codigo,Curso,Descripcion,Requisitos,Creditos,Imagen,Estado',
       where: 'Id_Curso='+Id_Curso
     }
     return await this.apiService.executeSqlSyn(sqlConfig);
@@ -35,12 +35,13 @@ export class CursoService {
   async InsertarCurso(Curso){
     let sql = {
       table: 'Edu_Curso',
-      fields: 'Codigo,Curso,Descripcion,Requisitos,Creditos,Estado',
+      fields: 'Codigo,Curso,Descripcion,Requisitos,Creditos,Imagen,Estado',
       values: '\'' + Curso.Codigo
       + '\',\'' + Curso.Curso
       + '\',\'' + Curso.Descripcion
       + '\',\'' + Curso.Requisitos
       + '\',\'' + Curso.Creditos
+      + '\',\'' + Curso.Imagen
       + '\',\'' + Curso.Estado + '\''
     };
     return await this.apiService.insertRecord(sql);
@@ -53,10 +54,34 @@ export class CursoService {
       + '\',Descripcion=\'' + Curso.Descripcion
       + '\',Requisitos=\'' + Curso.Requisitos
       + '\',Creditos=\'' + Curso.Creditos
+      + '\',Imagen=\'' + Curso.Imagen
       + '\',Estado=\''+ Curso.Estado  + '\'',
       where: 'Id_Curso=' + Curso.Id_Curso
     };
     return await this.apiService.updateRecord(sql);
+  }
+
+  async subirImagen(file){
+    const resp = await this.apiService.loadImageFile(file);
+    return this.normalizarRespuestaImagen(resp);
+  }
+
+  private normalizarRespuestaImagen(resp: any){
+    const data = Array.isArray(resp)
+      ? resp[0]
+      : Array.isArray(resp?.data)
+        ? resp.data[0]
+        : resp?.data || resp;
+
+    const url = data?.url || data?.Url || data?.URL || data?.archivo || data?.Archivo || data?.file || data?.File || data?.path || data?.Path;
+    const success = data?.success === true || data?.success === 'true' || data?.Success === true || data?.Success === 'true' || !!url;
+
+    return {
+      ...data,
+      success,
+      url,
+      message: data?.message || data?.Message || data?.Error || data?.error
+    };
   }
 
 

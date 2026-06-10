@@ -110,7 +110,8 @@ export class ContactoComponent implements OnInit {
       Alumno: '', Profesor: '', Estado: '', Otro_Documento: '', Condicion_Venta: '', Plazo_Credito: '',
       Metodo_Pago: '', Porcenaje_Descuento: '', Moneda: 'CRC', Ultima_Factura: '', Pagina_Web: '',
       Prospecto: '1', Facebook: '', Linkedin: '', Contabilidad: '', FacturaElectronica: '', PuntoVenta: '',
-      Restaurante: '', Asesoria: '', Declaracion: '', Precio: '',Codigo_Actividad_Economica:'',Nombre_Actividad_Economica:''
+      Restaurante: '', Asesoria: '', Declaracion: '', Precio: '',Codigo_Actividad_Economica:'',Nombre_Actividad_Economica:'',
+      Empleado: '0', Id_Usuario: '', Nombre_Usuario: ''
     };
   }
 
@@ -224,6 +225,27 @@ export class ContactoComponent implements OnInit {
     if (!this.Persona.Nombre) {
       Swal.fire('Favor suministrar el nombre del Cliente');
       return;
+    }
+
+    if (!this.Persona.Id_Persona) {
+      const duplicados = await this.contactoService.validarContactoOUsuarioExistente(this.Persona);
+      if (duplicados.total > 0) {
+        const detalle = duplicados.data
+          .slice(0, 5)
+          .map(item => item.Tipo_Registro + ': ' + item.Nombre + ' - ' + (item.Identificacion || 'sin identificacion'))
+          .join('\n');
+        const confirmacion = await Swal.fire({
+          title: 'El contacto ya existe en la base de datos',
+          text: detalle + '\n\n¿Desea agregarlo de todas formas?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Si, agregar de todas formas',
+          cancelButtonText: 'No, cancelar'
+        });
+        if (!confirmacion.isConfirmed) {
+          return;
+        }
+      }
     }
    
     const data = await this.contactoService.savePersona(this.Persona);

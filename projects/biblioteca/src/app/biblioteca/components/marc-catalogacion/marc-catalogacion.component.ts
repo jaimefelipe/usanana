@@ -40,6 +40,10 @@ interface CatalogacionEntrada {
 })
 export class MarcCatalogacionComponent implements OnInit {
   libros: Libro[] = [];
+  libroPage = 1;
+  libroPageSize = 50;
+  libroTotal = 0;
+  libroSearch = '';
   formatos: MarcDicFormato[] = [];
   subcampos: MarcDicSubcampo[] = [];
   indicadores: MarcDicIndicador[] = [];
@@ -81,7 +85,6 @@ export class MarcCatalogacionComponent implements OnInit {
   activeCatalogTab: 'marc' | 'autoridad' = 'marc';
 
   currentTags: MarcDicCampo[] = [];
-  allTagsForFilter: MarcDicCampo[] = [];
   tagFilter = '';
   indicatorOptionsByTag: Record<string, Record<number, { value: string; meaning?: string }[]>> = {};
   subcamposByTag: Record<string, MarcDicSubcampo[]> = {};
@@ -89,6 +92,9 @@ export class MarcCatalogacionComponent implements OnInit {
   currentRegistroId?: number;
 
   isSaving = false;
+  librosLoading = false;
+  editLoading = false;
+  tagsLoading = false;
 
   constructor(private dataService: BibliotecaDataService) {}
 
@@ -136,13 +142,60 @@ export class MarcCatalogacionComponent implements OnInit {
     this.applySystemManagedEntryValue('003');
   }
 
+  private buildMarc005Timestamp(date = new Date()) {
+    const pad = (value: number) => String(value).padStart(2, '0');
+    return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}` +
+      `${pad(date.getHours())}${pad(date.getMinutes())}${pad(date.getSeconds())}.0`;
+  }
+
+  private setSubcampoDefault(entry: CatalogacionEntrada, codigo: string, valor: string, nombre = codigo) {
+    let subcampo = entry.subcampos.find(item => item.codigo === codigo);
+    if (!subcampo) {
+      subcampo = { codigo, nombre, valor: '' };
+      entry.subcampos.push(subcampo);
+    }
+    if (!String(subcampo.valor || '').trim()) {
+      subcampo.valor = valor;
+    }
+  }
+
+  private applyNewMarcRecordDefaults() {
+    if (this.currentRegistroId) {
+      return;
+    }
+    if (!this.catalogForm.control005) {
+      this.catalogForm.control005 = this.buildMarc005Timestamp();
+    }
+    Object.values(this.recordEntries).forEach(entry => this.applyNewMarcRecordDefaultForEntry(entry));
+  }
+
+  private applyNewMarcRecordDefaultForEntry(entry: CatalogacionEntrada) {
+    if (this.currentRegistroId) {
+      return;
+    }
+    if (entry.tag === '005' && !String(entry.valor || '').trim()) {
+      const timestamp = this.catalogForm.control005 || this.buildMarc005Timestamp();
+      this.catalogForm.control005 = timestamp;
+      entry.valor = timestamp;
+      return;
+    }
+
+    if (entry.tag !== '040') {
+      return;
+    }
+    this.setSubcampoDefault(entry, 'a', 'CR-USAJ');
+    this.setSubcampoDefault(entry, 'b', 'spa');
+    this.setSubcampoDefault(entry, 'c', 'CR-USAJ');
+    this.setSubcampoDefault(entry, 'e', 'rda');
+    this.syncEntryValueFromSubcampos(entry, true);
+  }
+
   private async cargarDatosBase() {
-    const [libros, formatos, tiposMaterial] = await Promise.all([
-      this.dataService.getLibros(),
+    const [formatos, tiposMaterial] = await Promise.all([
       this.dataService.getMarcDicFormatos(),
       this.dataService.getTiposMaterial()
     ]);
-    this.libros = libros;
+    await this.cargarLibros();
     this.formatos = formatos;
     this.subcampos = [];
     this.indicadores = [];
@@ -155,10 +208,6 @@ export class MarcCatalogacionComponent implements OnInit {
   }
 
   getTagsPorSeccion() {
-    const filter = this.tagFilter.trim();
-    if (filter) {
-      return this.allTagsForFilter.filter(campo => campo.tag?.includes(filter));
-    }
     return this.currentTags;
   }
 
@@ -200,7 +249,6 @@ export class MarcCatalogacionComponent implements OnInit {
   async onTipoMaterialChange() {
     this.syncTipoMaterialSeleccionado();
     this.clearTagFilter();
-    this.allTagsForFilter = [];
     this.currentPage = 1;
     this.pageLabels = {};
     await this.actualizarCurrentTags();
@@ -208,19 +256,29 @@ export class MarcCatalogacionComponent implements OnInit {
 
   async onTagFilterChange(value: string) {
     this.tagFilter = String(value || '').trim();
-    if (!this.isTagFilterActive) {
-      return;
-    }
-    await this.ensureAllTagsLoadedForFilter();
+    this.currentPage = 1;
+    this.pageLabels = {};
+    await this.actualizarCurrentTags();
   }
 
   clearTagFilter() {
     this.tagFilter = '';
   }
 
+  async limpiarFiltroTags() {
+    this.clearTagFilter();
+    this.currentPage = 1;
+    this.pageLabels = {};
+    await this.actualizarCurrentTags();
+  }
+
   onTagValueChange(tag: string, value: string) {
     if (this.isSystemManagedTag(tag)) {
       this.syncSystemManagedControlFields();
+      return;
+    }
+    if (tag === '005') {
+      this.catalogForm.control005 = value || '';
       return;
     }
     if (tag !== '245') {
@@ -242,14 +300,73 @@ export class MarcCatalogacionComponent implements OnInit {
     return this.libros.find(libro => libro.id === this.selectedLibroId);
   }
 
-  private async cargarLibros() {
-    this.libros = await this.dataService.getLibros();
+  private async cargarLibros(setLoading = true) {
+    if (setLoading) {
+      this.librosLoading = true;
+    }
+    const page = Math.max(1, this.libroPage);
+    try {
+      const result = await this.dataService.getLibrosPage(page, this.libroPageSize, this.libroSearch);
+      this.libros = result.libros;
+      this.libroTotal = result.total;
+      const totalPages = this.libroTotalPages;
+      if (totalPages > 0 && page > totalPages) {
+        this.libroPage = totalPages;
+        await this.cargarLibros(false);
+      }
+    } catch (error: any) {
+      console.error(error);
+      const detail = error?.error?.message || error?.message || 'No se pudo cargar la pagina de libros.';
+      Swal.fire('Error al cargar libros', detail, 'error');
+      this.libros = [];
+      this.libroTotal = 0;
+    } finally {
+      if (setLoading) {
+        this.librosLoading = false;
+      }
+    }
+  }
+
+  get libroTotalPages() {
+    return this.libroTotal > 0 ? Math.ceil(this.libroTotal / this.libroPageSize) : 0;
+  }
+
+  get libroPageNumbers() {
+    const total = this.libroTotalPages;
+    if (total <= 0) {
+      return [];
+    }
+    const start = Math.max(1, this.libroPage - 2);
+    const end = Math.min(total, start + 4);
+    return Array.from({ length: end - start + 1 }, (_, index) => start + index);
+  }
+
+  get libroRangeStart() {
+    return this.libroTotal === 0 ? 0 : ((this.libroPage - 1) * this.libroPageSize) + 1;
+  }
+
+  get libroRangeEnd() {
+    return Math.min(this.libroPage * this.libroPageSize, this.libroTotal);
+  }
+
+  async cambiarPaginaLibros(page: number) {
+    const totalPages = this.libroTotalPages;
+    if (page < 1 || (totalPages > 0 && page > totalPages) || page === this.libroPage) {
+      return;
+    }
+    this.libroPage = page;
+    await this.cargarLibros();
+  }
+
+  async onLibroSearchChange(value: string) {
+    this.libroSearch = value || '';
+    this.libroPage = 1;
+    await this.cargarLibros();
   }
 
   async onFormatoChange() {
     this.recordEntries = {};
     this.clearTagFilter();
-    this.allTagsForFilter = [];
     this.currentPage = 1;
     this.pageLabels = {};
     await this.actualizarCurrentTags();
@@ -259,6 +376,7 @@ export class MarcCatalogacionComponent implements OnInit {
     const entry = this.ensureEntry(tag);
     entry.nombre = nombre || entry.nombre;
     this.ensureSubcamposForEntry(entry, tag);
+    this.applyNewMarcRecordDefaultForEntry(entry);
     return entry;
   }
 
@@ -326,57 +444,47 @@ export class MarcCatalogacionComponent implements OnInit {
   }
 
   private async actualizarCurrentTags() {
+    this.tagsLoading = true;
     if (!this.selectedFormatoId || !this.libroForm.tipoMaterialId) {
       this.currentTags = [];
-      this.allTagsForFilter = [];
       this.secciones = [];
       this.currentPage = 1;
       this.totalTagsForFormat = 0;
       this.subcampos = [];
       this.indicadores = [];
       this.buildCaches();
+      this.tagsLoading = false;
       return;
     }
-    const total = await this.dataService.countMarcDicCampos(this.selectedFormatoId, this.libroForm.tipoMaterialId);
-    this.totalTagsForFormat = total;
-    this.updateSectionPagination(total);
-    const { campos } = await this.dataService.getMarcDicCamposPage(
-      this.selectedFormatoId,
-      this.currentPage,
-      this.pageSize,
-      this.libroForm.tipoMaterialId
-    );
-    await this.loadDictionaryForCurrentTags(campos);
-    this.currentTags = campos;
-    if (campos.length > 0) {
-      const startTag = campos[0].tag || '---';
-      const endTag = campos[campos.length - 1].tag || '---';
-      this.pageLabels[this.currentPage] = `${startTag}-${endTag}`;
+    try {
+      const filter = this.tagFilter.trim();
+      const total = await this.dataService.countMarcDicCampos(this.selectedFormatoId, this.libroForm.tipoMaterialId, filter);
+      this.totalTagsForFormat = total;
+      this.updateSectionPagination(total);
+      const { campos } = await this.dataService.getMarcDicCamposPage(
+        this.selectedFormatoId,
+        this.currentPage,
+        this.pageSize,
+        this.libroForm.tipoMaterialId,
+        filter
+      );
+      await this.loadDictionaryForCurrentTags(campos);
+      this.currentTags = campos;
+      if (campos.length > 0) {
+        const startTag = campos[0].tag || '---';
+        const endTag = campos[campos.length - 1].tag || '---';
+        this.pageLabels[this.currentPage] = `${startTag}-${endTag}`;
+      }
+      await this.populateEntriesForCurrentTags(campos);
+      this.applyNewMarcRecordDefaults();
+    } catch (error: any) {
+      console.error(error);
+      this.currentTags = [];
+      const detail = error?.error?.message || error?.message || 'No se pudieron cargar las etiquetas MARC.';
+      Swal.fire('Error al cargar etiquetas MARC', detail, 'error');
+    } finally {
+      this.tagsLoading = false;
     }
-    await this.populateEntriesForCurrentTags(campos);
-  }
-
-  private async ensureAllTagsLoadedForFilter() {
-    if (!this.selectedFormatoId || !this.libroForm.tipoMaterialId) {
-      return;
-    }
-    if (this.allTagsForFilter.length > 0) {
-      return;
-    }
-    const total = this.totalTagsForFormat || await this.dataService.countMarcDicCampos(this.selectedFormatoId, this.libroForm.tipoMaterialId);
-    if (total <= 0) {
-      this.allTagsForFilter = [];
-      return;
-    }
-    const { campos } = await this.dataService.getMarcDicCamposPage(
-      this.selectedFormatoId,
-      1,
-      total,
-      this.libroForm.tipoMaterialId
-    );
-    this.allTagsForFilter = campos;
-    await this.loadDictionaryForCurrentTags(campos);
-    await this.populateEntriesForCurrentTags(campos);
   }
 
   private async loadDictionaryForCurrentTags(campos: MarcDicCampo[]) {
@@ -767,7 +875,6 @@ async setActiveCatalogTab(tab: 'marc' | 'autoridad') {
     this.recordEntries = {};
     this.resetCatalogForm();
     this.clearTagFilter();
-    this.allTagsForFilter = [];
     this.currentPage = 1;
     this.pageLabels = {};
     this.selectedLibroId = undefined;
@@ -780,21 +887,35 @@ async setActiveCatalogTab(tab: 'marc' | 'autoridad') {
   }
 
   async editarLibro(libro: Libro) {
-    this.libroForm = { ...libro };
     this.selectedLibroId = libro.id;
+    this.libroForm = { ...libro };
     this.recordEntries = {};
     this.resetCatalogForm();
     this.clearTagFilter();
-    this.allTagsForFilter = [];
     this.currentPage = 1;
     this.pageLabels = {};
     this.libroEditing = true;
-    this.syncTipoMaterialSeleccionado();
     this.syncSystemManagedControlFields('');
     this.libroFormVisible = true;
-    await this.cargarMarcParaLibro(libro.id);
-    await this.autoridadCatalogacion?.refreshForLibro(this.selectedLibroId);
-    await this.actualizarCurrentTags();
+    this.editLoading = true;
+    try {
+      const libroActual = await this.dataService.getLibroById(libro.id);
+      if (!libroActual) {
+        throw new Error('No se encontro el libro seleccionado en la base de datos.');
+      }
+      this.libroForm = { ...libroActual };
+      this.syncTipoMaterialSeleccionado();
+      await this.cargarMarcParaLibro(libroActual.id);
+      await this.autoridadCatalogacion?.refreshForLibro(this.selectedLibroId);
+      await this.actualizarCurrentTags();
+    } catch (error: any) {
+      console.error(error);
+      const detail = error?.error?.message || error?.message || 'No se pudo cargar el libro para catalogacion.';
+      Swal.fire('Error al cargar el libro', detail, 'error');
+      this.cancelarLibro();
+    } finally {
+      this.editLoading = false;
+    }
   }
 
   private resetLibroForm() {
@@ -912,7 +1033,6 @@ async setActiveCatalogTab(tab: 'marc' | 'autoridad') {
     this.recordEntries = {};
     this.resetCatalogForm();
     this.clearTagFilter();
-    this.allTagsForFilter = [];
     this.currentPage = 1;
     this.pageLabels = {};
     this.libroFormVisible = false;
@@ -936,8 +1056,8 @@ async setActiveCatalogTab(tab: 'marc' | 'autoridad') {
   private async cargarMarcParaLibro(libroId: number) {
     this.recordEntries = {};
     this.currentRegistroId = undefined;
-    const registros = await this.dataService.getMarcRegistros();
-    const registro = registros.find(r => r.libroId === libroId);
+    const formatoActual = this.formatos.find(f => f.id === this.selectedFormatoId);
+    const registro = await this.dataService.getMarcRegistroByLibroId(libroId, formatoActual?.codigo);
     if (!registro) {
       this.resetCatalogForm();
       this.syncSystemManagedControlFields('');
@@ -1028,6 +1148,9 @@ async setActiveCatalogTab(tab: 'marc' | 'autoridad') {
   }
 
   private async syncMarcRegistro(libroId: number, formato: MarcDicFormato): Promise<number | null> {
+    if (!this.catalogForm.control005) {
+      this.catalogForm.control005 = this.buildMarc005Timestamp();
+    }
     const registroPayload: MarcRegistro = {
       id: 0,
       libroId,

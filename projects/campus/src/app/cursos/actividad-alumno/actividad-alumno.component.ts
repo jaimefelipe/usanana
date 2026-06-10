@@ -99,6 +99,7 @@ export class ActividadAlumnoComponent implements OnInit {
         Swal.fire('Actividad enviada correctamente');
         this.actividad.Comentario = '';
         this.fileToUpload = null;
+        await this.leerEntregas();
       } else {
         Swal.fire(resultado?.message || 'Error al enviar actividad');
       }
@@ -109,11 +110,22 @@ export class ActividadAlumnoComponent implements OnInit {
   }
   async leerEntregas(){
     let data = await this.actividadAlumnoService.obtenerParticipaciones(this.actividad.Id_Actividad);
-    this.participacion = data['data'];
+    this.participacion = data?.['data'] || [];
     console.log(this.participacion)
   }
   obtenerNombreArchivo(url: string): string {
   return url?.split('/').pop() || 'Ver archivo';
 }
+
+  getEntregaUrl(entrega: any): string {
+    const url = entrega?.Url || '';
+    if (!url) {
+      return '';
+    }
+    if (url.startsWith('http')) {
+      return url;
+    }
+    return 'https://usantana.com' + (url.startsWith('/') ? url : '/' + url);
+  }
 
 }

@@ -1,0 +1,275 @@
+﻿<div [hidden]="edit" class="container-fluid pb-5">
+  <div class="page-toolbar">
+    <h2 class="page-title">Admisiones</h2>
+    <div class="input-group page-search">
+      <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+      <input [(ngModel)]="searchField" (keyup.enter)="cargarSolicitudes()" class="form-control" placeholder="Buscar por codigo, nombre, identificacion o correo">
+      <select [(ngModel)]="estadoFiltro" class="form-control" (change)="cargarSolicitudes()">
+        <option value="">Todos los estados</option>
+        <option value="solicitud_recibida">Solicitud recibida</option>
+        <option value="documentacion_incompleta">Documentacion incompleta</option>
+        <option value="pendiente_aprobacion">Pendiente de aprobacion</option>
+        <option value="aprobada">Aprobada</option>
+        <option value="admitida_condicionada">Admitida condicionada</option>
+        <option value="orden_pago">Orden de pago</option>
+        <option value="pago_en_revision">Pago en revision</option>
+        <option value="alumno_activo">Alumno activo</option>
+      </select>
+      <button class="btn btn-primary" type="button" (click)="cargarSolicitudes()"><i class="fa fa-search" aria-hidden="true"></i></button>
+    </div>
+  </div>
+
+  <div *ngIf="Cargando" class="alert alert-info">Cargando solicitudes...</div>
+  <div *ngIf="!Cargando && MensajeListado" class="alert alert-warning">{{MensajeListado}}</div>
+
+  <div class="row g-4 page-grid">
+    <div class="form-group col-12 col-sm-6 col-lg-4" *ngFor="let solicitud of Solicitudes">
+      <div class="card h-100">
+        <a class="page-card-link" (click)="abrirExpediente(solicitud)">
+          <div class="card-body">
+            <h4 class="card-title">{{solicitud.Codigo}}</h4>
+            <p class="mb-1"><strong>{{solicitud.Nombre}}</strong></p>
+            <p class="mb-1 text-muted">{{solicitud.Identificacion}} | {{solicitud.Correo}}</p>
+            <p class="mb-1">{{solicitud.Carrera}}</p>
+            <span class="badge badge-primary">{{solicitud.Estado}}</span>
+            <span *ngIf="solicitud.Aspirante_Actualizo == 1" class="badge badge-warning ml-1">Actualizado por aspirante</span>
+            <p *ngIf="solicitud.Fecha_Ultima_Actualizacion_Aspirante" class="mb-0 mt-2 text-muted">
+              Ultima actualizacion: {{solicitud.Fecha_Ultima_Actualizacion_Aspirante}}
+            </p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div [hidden]="!edit" class="container-fluid pb-5" *ngIf="Solicitud">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h2>Expediente {{Solicitud.Codigo}}</h2>
+      <p class="text-muted mb-0">Revision de admision y matricula de primer ingreso</p>
+    </div>
+    <button class="btn btn-danger" type="button" (click)="cancel()"><i class="fa fa-times mr-1"></i> Cancelar</button>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <p><strong>Aspirante:</strong> {{Solicitud.Nombre}} | {{Solicitud.Identificacion}}</p>
+          <p><strong>Contacto:</strong> {{Solicitud.Correo}} | {{Solicitud.Telefono}}</p>
+          <p><strong>Carrera:</strong> {{Solicitud.Carrera}} | {{Solicitud.Modalidad}}</p>
+        </div>
+        <div class="col-md-6">
+          <p><strong>Estado:</strong> {{Solicitud.Estado}}</p>
+          <p *ngIf="Solicitud.Fecha_Ultima_Actualizacion_Aspirante">
+            <strong>Actualizacion aspirante:</strong> {{Solicitud.Fecha_Ultima_Actualizacion_Aspirante}}
+            <span *ngIf="!Solicitud.Revisado_Actualizacion_El || Solicitud.Revisado_Actualizacion_El < Solicitud.Fecha_Ultima_Actualizacion_Aspirante" class="badge badge-warning ml-1">Pendiente de revisar</span>
+          </p>
+          <p *ngIf="urlSeguimiento()"><strong>Portal del aspirante:</strong> <a [href]="urlSeguimiento()" target="_blank" rel="noopener">Abrir seguimiento</a></p>
+          <button *ngIf="Solicitud.Fecha_Ultima_Actualizacion_Aspirante && (!Solicitud.Revisado_Actualizacion_El || Solicitud.Revisado_Actualizacion_El < Solicitud.Fecha_Ultima_Actualizacion_Aspirante)" class="btn btn-sm btn-outline-primary" type="button" (click)="marcarActualizacionRevisada()">Marcar actualizacion revisada</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5>Documentos</h5>
+      <div *ngIf="!Documentos.length" class="alert alert-warning">No hay documentos registrados para esta solicitud.</div>
+      <div class="border rounded p-2 mb-2" *ngFor="let documento of Documentos">
+        <div class="form-row">
+          <div class="form-group col-md-4">
+            <strong>{{documento.Nombre}}</strong>
+            <br>
+            <small class="text-muted" *ngIf="documento.Nombre_Archivo">{{documento.Nombre_Archivo}}</small>
+
+            <a *ngIf="documento.Url_Publica" class="document-preview d-block mt-2" [href]="documento.Url_Publica" target="_blank" rel="noopener" title="Abrir documento">
+              <img *ngIf="documento.Es_Imagen" [src]="documento.Url_Publica" alt="Vista previa de {{documento.Nombre}}">
+              <iframe *ngIf="documento.Es_Pdf" [src]="documento.Url_Segura" title="Vista previa de {{documento.Nombre}}"></iframe>
+              <div *ngIf="!documento.Es_Imagen && !documento.Es_Pdf" class="file-preview">
+                <span>{{documento.Nombre_Archivo || 'Documento cargado'}}</span>
+              </div>
+            </a>
+
+            <div *ngIf="documento.Url_Publica" class="mt-2 d-flex gap-2 flex-wrap">
+              <a class="btn btn-sm btn-outline-primary" [href]="documento.Url_Publica" target="_blank" rel="noopener">Ver</a>
+              <a class="btn btn-sm btn-outline-secondary" [href]="documento.Url_Publica" [attr.download]="documento.Nombre_Archivo || true">Descargar</a>
+            </div>
+            <span *ngIf="!documento.Url_Publica" class="text-muted">Sin archivo</span>
+          </div>
+          <div class="form-group col-md-3">
+            <label>Estado</label>
+            <select [(ngModel)]="documento.Estado" class="form-control">
+              <option value="pendiente">Pendiente</option>
+              <option value="recibido">Recibido</option>
+              <option value="aprobado">Aprobado</option>
+              <option value="rechazado">Rechazado</option>
+              <option value="requiere_correccion">Requiere correccion</option>
+            </select>
+          </div>
+          <div class="form-group col-md-3">
+            <label>Observacion</label>
+            <input [(ngModel)]="documento.Observacion" class="form-control" placeholder="Observacion">
+          </div>
+          <div class="form-group col-md-2 d-flex align-items-end">
+            <button class="btn btn-secondary btn-block" (click)="guardarDocumento(documento)">Guardar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5>Aprobacion</h5>
+      <textarea [(ngModel)]="Solicitud.Condiciones_Admision" class="form-control mb-2" rows="3" placeholder="Condiciones u observaciones"></textarea>
+      <button class="btn btn-success mr-2" (click)="aprobar('aprobada')">Aprobar</button>
+      <button class="btn btn-warning mr-2" (click)="aprobar('condicionada')">Admitir condicionada</button>
+      <button class="btn btn-danger" (click)="aprobar('rechazada')">Rechazar</button>
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5>Orden de pago</h5>
+      <div class="card mb-3" *ngIf="ConfigFinanciera">
+        <div class="card-body">
+          <h6>Precios configurados en la carrera</h6>
+          <small class="text-muted d-block mb-2">
+            Configuracion: {{ConfigFinanciera.Id_Config_Financiera || 'sin registro'}} |
+            Carrera: {{ConfigFinanciera.Id_Carrera || 'por nivel'}} |
+            Nivel: {{ConfigFinanciera.Nivel || Solicitud.Nivel}}
+          </small>
+          <div class="row">
+            <div class="col-md-3"><strong>Matricula:</strong><br>{{ConfigFinanciera.Moneda}} {{ConfigFinanciera.Matricula_Bloque | number:'1.2-2'}}</div>
+            <div class="col-md-3"><strong>Precio credito:</strong><br>{{ConfigFinanciera.Moneda}} {{ConfigFinanciera.Precio_Credito | number:'1.2-2'}}</div>
+            <div class="col-md-3"><strong>Precio curso:</strong><br>{{ConfigFinanciera.Moneda}} {{ConfigFinanciera.Precio_Curso | number:'1.2-2'}}</div>
+            <div class="col-md-3"><strong>Cursos bloque:</strong><br>{{ConfigFinanciera.Cursos_Por_Bloque}}</div>
+            <div class="col-md-3 mt-2"><strong>Creditos curso:</strong><br>{{ConfigFinanciera.Creditos_Por_Curso}}</div>
+            <div class="col-md-9 mt-2"><strong>Medios de pago:</strong><br>{{ConfigFinanciera.Medio_Pago_Texto}}</div>
+          </div>
+          <small class="text-muted d-block mt-2">Para cambiar estos montos vaya a Configuracion de Carreras > Precios admision.</small>
+        </div>
+      </div>
+
+      <div class="card mb-3">
+        <div class="card-body">
+          <h6>Plan de estudios</h6>
+          <div *ngIf="!PlanEstudios.length" class="alert alert-light border">No hay cursos configurados para esta carrera.</div>
+          <div class="table-responsive" *ngIf="PlanEstudios.length">
+            <table class="table table-sm table-striped">
+              <thead>
+                <tr>
+                  <th>Bloque</th>
+                  <th>Codigo</th>
+                  <th>Curso</th>
+                  <th>Creditos</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let curso of PlanEstudios">
+                  <td>{{curso.Bloque}}</td>
+                  <td>{{curso.Codigo}}</td>
+                  <td>{{curso.Curso}}</td>
+                  <td>{{curso.Creditos}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="CalculoPago" class="alert alert-light border">
+        <strong>Calculo de admision:</strong>
+        Matricula {{CalculoPago.moneda || 'CRC'}} {{CalculoPago.matricula_bloque | number:'1.2-2'}},
+        cursos {{CalculoPago.cursos_por_bloque}},
+        Base {{CalculoPago.moneda || 'CRC'}} {{CalculoPago.monto_base | number:'1.2-2'}},
+        descuento {{CalculoPago.moneda || 'CRC'}} {{CalculoPago.descuento | number:'1.2-2'}},
+        total estimado {{CalculoPago.moneda || 'CRC'}} {{CalculoPago.total | number:'1.2-2'}},
+        {{CalculoPago.numero_cuotas}} cuota(s) de {{CalculoPago.moneda || 'CRC'}} {{CalculoPago.cuota_monto | number:'1.2-2'}}.
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-5">
+          <select [(ngModel)]="PlanSeleccionado" (ngModelChange)="recalcularPago()" class="form-control">
+            <option *ngFor="let plan of Planes" [ngValue]="plan">{{plan.Nombre}}</option>
+          </select>
+        </div>
+        <div class="form-group col-md-4">
+          <input [(ngModel)]="MontoOrden" type="number" class="form-control" placeholder="Monto base" readonly>
+          <small class="text-muted">Proviene de la configuracion financiera por carrera/nivel.</small>
+        </div>
+        <div class="form-group col-md-3">
+          <button class="btn btn-primary btn-block" (click)="generarOrdenPago()">Generar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5>Bitacora del proceso</h5>
+      <div *ngIf="!Bitacora.length" class="alert alert-light border">No hay movimientos registrados.</div>
+      <div class="table-responsive" *ngIf="Bitacora.length">
+        <table class="table table-sm table-striped">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Accion</th>
+              <th>Estado</th>
+              <th>Comentario</th>
+              <th>Usuario</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of Bitacora">
+              <td>{{item.Creado_El}}</td>
+              <td>{{item.Accion}}</td>
+              <td>{{item.Estado_Anterior}} -> {{item.Estado_Nuevo}}</td>
+              <td>{{item.Comentario}}</td>
+              <td>{{item.Creado_Por}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5>Revision financiera</h5>
+      <div *ngIf="!OrdenesPago.length" class="alert alert-light border">No hay ordenes de pago generadas.</div>
+      <div class="border rounded p-3 mb-2" *ngFor="let orden of OrdenesPago">
+        <div class="row">
+          <div class="col-md-5">
+            <strong>{{orden.Referencia}}</strong><br>
+            <small>{{orden.Plan_Pago}} | {{orden.Moneda}} {{orden.Total}}</small><br>
+            <small *ngIf="orden.Numero_Cuotas">Cuotas: {{orden.Numero_Cuotas}} de {{orden.Moneda}} {{orden.Cuota_Monto}}</small><br>
+            <a *ngIf="orden.Comprobante_Publico" [href]="orden.Comprobante_Publico" target="_blank" rel="noopener">Ver comprobante</a>
+            <span *ngIf="!orden.Comprobante_Publico" class="text-muted">Sin comprobante</span>
+          </div>
+          <div class="col-md-3">
+            <select [(ngModel)]="orden.Estado" class="form-control">
+              <option value="pendiente">Pendiente</option>
+              <option value="comprobante_recibido">Comprobante recibido</option>
+              <option value="aprobado">Aprobado</option>
+              <option value="rechazado">Rechazado</option>
+              <option value="incompleto">Incompleto</option>
+              <option value="vencido">Vencido</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <input [(ngModel)]="orden.Observacion_Financiera" class="form-control" placeholder="Observacion financiera">
+          </div>
+          <div class="col-md-1">
+            <button class="btn btn-secondary btn-block" (click)="guardarOrdenPago(orden)">OK</button>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-dark mt-2" (click)="aprobarPagoYMatricular()">Pago aprobado y matricular</button>
+    </div>
+  </div>
+</div>
+
+

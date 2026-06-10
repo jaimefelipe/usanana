@@ -91,59 +91,120 @@ export class BibliotecaDataService {
     return `CASE WHEN ${tagField} REGEXP '^[0-9]+$' THEN 0 ELSE 1 END, CAST(${tagField} AS UNSIGNED), ${tagField}`;
   }
 
+  private getLibrosTable(): string {
+    return 'Bib_Libro L ' +
+      'LEFT JOIN Bib_Categoria C ON L.Categoria_Id = C.Id_Categoria ' +
+      'LEFT JOIN Bib_Editorial E ON L.Editorial_Id = E.Id_Editorial ' +
+      'LEFT JOIN Bib_Tipo_Material TM ON L.Id_Tipo_Material = TM.Id_Tipo_Material';
+  }
+
+  private getLibrosFields(): string {
+    return `L.Id_Libro, L.Titulo, L.Subtitulo, L.ISBN, L.ISSN, L.DOI, L.Idioma, L.Anio_Publicacion,
+      L.Edicion, L.Descripcion, L.Palabras_Clave, L.URL_Publica, L.Categoria_Id, L.Editorial_Id, L.Id_Tipo_Material,
+      C.Nombre AS Categoria, E.Nombre AS Editorial, TM.Nombre AS Tipo_Material,
+      (SELECT MS245A.Valor
+        FROM Bib_Marc_Registro MR245A
+        INNER JOIN Bib_Marc_Campo MC245A ON MC245A.Marc_Registro_Id = MR245A.Id_Marc_Registro AND MC245A.Tag = '245'
+        INNER JOIN Bib_Marc_Subcampo MS245A ON MS245A.Marc_Campo_Id = MC245A.Id_Marc_Campo AND MS245A.Codigo = 'a'
+        WHERE MR245A.Libro_Id = L.Id_Libro
+        ORDER BY MR245A.Id_Marc_Registro DESC, MC245A.Id_Marc_Campo DESC, MS245A.Id_Marc_Subcampo ASC
+        LIMIT 1) AS Marc245A,
+      (SELECT MS245B.Valor
+        FROM Bib_Marc_Registro MR245B
+        INNER JOIN Bib_Marc_Campo MC245B ON MC245B.Marc_Registro_Id = MR245B.Id_Marc_Registro AND MC245B.Tag = '245'
+        INNER JOIN Bib_Marc_Subcampo MS245B ON MS245B.Marc_Campo_Id = MC245B.Id_Marc_Campo AND MS245B.Codigo = 'b'
+        WHERE MR245B.Libro_Id = L.Id_Libro
+        ORDER BY MR245B.Id_Marc_Registro DESC, MC245B.Id_Marc_Campo DESC, MS245B.Id_Marc_Subcampo ASC
+        LIMIT 1) AS Marc245B,
+      (SELECT MS245C.Valor
+        FROM Bib_Marc_Registro MR245C
+        INNER JOIN Bib_Marc_Campo MC245C ON MC245C.Marc_Registro_Id = MR245C.Id_Marc_Registro AND MC245C.Tag = '245'
+        INNER JOIN Bib_Marc_Subcampo MS245C ON MS245C.Marc_Campo_Id = MC245C.Id_Marc_Campo AND MS245C.Codigo = 'c'
+        WHERE MR245C.Libro_Id = L.Id_Libro
+        ORDER BY MR245C.Id_Marc_Registro DESC, MC245C.Id_Marc_Campo DESC, MS245C.Id_Marc_Subcampo ASC
+        LIMIT 1) AS Marc245C,
+      (SELECT GROUP_CONCAT(A2.Nombre ORDER BY A2.Nombre SEPARATOR ', ')
+        FROM Bib_Libro_Autor LA2
+        INNER JOIN Bib_Autor A2 ON LA2.Autor_Id = A2.Id_Autor
+        WHERE LA2.Libro_Id = L.Id_Libro) AS Autores,
+      (SELECT CASE
+          WHEN SUM(E2.Estado='disponible') > 0 THEN 'disponible'
+          WHEN SUM(E2.Estado='reservado') > 0 THEN 'reservado'
+          WHEN SUM(E2.Estado='prestado') > 0 THEN 'prestado'
+          WHEN SUM(E2.Estado='perdido') > 0 THEN 'perdido'
+          WHEN SUM(E2.Estado='mantenimiento') > 0 THEN 'mantenimiento'
+          ELSE 'disponible'
+        END
+        FROM Bib_Ejemplar E2
+        WHERE E2.Libro_Id = L.Id_Libro) AS Estado_Ejemplar`;
+  }
+
+  private getLibrosWhere(search = ''): string {
+    const text = this.escapeSql(search.trim());
+    if (!text) {
+      return '';
+    }
+    return `(L.Titulo LIKE '%${text}%' ` +
+      `OR L.ISBN LIKE '%${text}%' ` +
+      `OR L.ISSN LIKE '%${text}%' ` +
+      `OR C.Nombre LIKE '%${text}%' ` +
+      `OR E.Nombre LIKE '%${text}%' ` +
+      `OR TM.Nombre LIKE '%${text}%' ` +
+      `OR EXISTS (` +
+      `SELECT 1 FROM Bib_Marc_Registro MR245S ` +
+      `INNER JOIN Bib_Marc_Campo MC245S ON MC245S.Marc_Registro_Id = MR245S.Id_Marc_Registro AND MC245S.Tag = '245' ` +
+      `INNER JOIN Bib_Marc_Subcampo MS245S ON MS245S.Marc_Campo_Id = MC245S.Id_Marc_Campo AND MS245S.Codigo IN ('a','b','c') ` +
+      `WHERE MR245S.Libro_Id = L.Id_Libro ` +
+      `AND CONVERT(MS245S.Valor USING utf8mb4) COLLATE utf8mb4_unicode_ci LIKE '%${text}%'` +
+      `) ` +
+      `OR EXISTS (` +
+      `SELECT 1 FROM Bib_Libro_Autor LA3 ` +
+      `INNER JOIN Bib_Autor A3 ON LA3.Autor_Id = A3.Id_Autor ` +
+      `WHERE LA3.Libro_Id = L.Id_Libro AND A3.Nombre LIKE '%${text}%'` +
+      `))`;
+  }
+
+  private mapLibroRow(row: any): Libro {
+    return {
+      id: Number(row.Id_Libro),
+      titulo: row.Marc245A || row.Titulo,
+      subtitulo: row.Marc245B || row.Subtitulo || '',
+      autor: row.Marc245C || row.Autores || 'Sin autor',
+      autores: row.Autores || '',
+      marc245a: row.Marc245A || '',
+      marc245b: row.Marc245B || '',
+      marc245c: row.Marc245C || '',
+      isbn: row.ISBN || '',
+      issn: row.ISSN || '',
+      doi: row.DOI || '',
+      categoria: row.Categoria || 'Sin categoria',
+      editorial: row.Editorial || 'Sin editorial',
+      tipoMaterial: row.Tipo_Material || 'Sin tipo',
+      estado: row.Estado_Ejemplar || 'disponible',
+      idioma: row.Idioma || '',
+      anioPublicacion: row.Anio_Publicacion ? Number(row.Anio_Publicacion) : undefined,
+      edicion: row.Edicion || '',
+      descripcion: row.Descripcion || '',
+      palabrasClave: row.Palabras_Clave || '',
+      urlPublica: row.URL_Publica || '',
+      categoriaId: row.Categoria_Id ? Number(row.Categoria_Id) : undefined,
+      editorialId: row.Editorial_Id ? Number(row.Editorial_Id) : undefined,
+      tipoMaterialId: row.Id_Tipo_Material ? Number(row.Id_Tipo_Material) : undefined
+    };
+  }
+
   async getLibros(): Promise<Libro[]> {
     try {
       const sqlConfig = {
-        table: 'Bib_Libro L ' +
-          'LEFT JOIN Bib_Categoria C ON L.Categoria_Id = C.Id_Categoria ' +
-          'LEFT JOIN Bib_Editorial E ON L.Editorial_Id = E.Id_Editorial ' +
-          'LEFT JOIN Bib_Tipo_Material TM ON L.Id_Tipo_Material = TM.Id_Tipo_Material',
-        fields: `L.Id_Libro, L.Titulo, L.Subtitulo, L.ISBN, L.ISSN, L.DOI, L.Idioma, L.Anio_Publicacion,
-          L.Edicion, L.Descripcion, L.Palabras_Clave, L.URL_Publica, L.Categoria_Id, L.Editorial_Id, L.Id_Tipo_Material,
-          C.Nombre AS Categoria, E.Nombre AS Editorial, TM.Nombre AS Tipo_Material,
-          (SELECT GROUP_CONCAT(A2.Nombre ORDER BY A2.Nombre SEPARATOR ', ')
-            FROM Bib_Libro_Autor LA2
-            INNER JOIN Bib_Autor A2 ON LA2.Autor_Id = A2.Id_Autor
-            WHERE LA2.Libro_Id = L.Id_Libro) AS Autores,
-          (SELECT CASE
-              WHEN SUM(E2.Estado='disponible') > 0 THEN 'disponible'
-              WHEN SUM(E2.Estado='reservado') > 0 THEN 'reservado'
-              WHEN SUM(E2.Estado='prestado') > 0 THEN 'prestado'
-              WHEN SUM(E2.Estado='perdido') > 0 THEN 'perdido'
-              WHEN SUM(E2.Estado='mantenimiento') > 0 THEN 'mantenimiento'
-              ELSE 'disponible'
-            END
-            FROM Bib_Ejemplar E2
-            WHERE E2.Libro_Id = L.Id_Libro) AS Estado_Ejemplar`,
+        table: this.getLibrosTable(),
+        fields: this.getLibrosFields(),
         orderField: 'L.Titulo',
         orderDirection: ' ASC ',
         Empresa: false
       };
       const data = await this.apiService.executeSqlSyn(sqlConfig);
       if (data && data['total'] > 0) {
-        return data['data'].map((row: any) => ({
-          id: Number(row.Id_Libro),
-          titulo: row.Titulo,
-          subtitulo: row.Subtitulo || '',
-          autor: row.Autores || 'Sin autor',
-          autores: row.Autores || '',
-          isbn: row.ISBN || '',
-          issn: row.ISSN || '',
-          doi: row.DOI || '',
-          categoria: row.Categoria || 'Sin categoria',
-          editorial: row.Editorial || 'Sin editorial',
-          tipoMaterial: row.Tipo_Material || 'Sin tipo',
-          estado: row.Estado_Ejemplar || 'disponible',
-          idioma: row.Idioma || '',
-          anioPublicacion: row.Anio_Publicacion ? Number(row.Anio_Publicacion) : undefined,
-          edicion: row.Edicion || '',
-          descripcion: row.Descripcion || '',
-          palabrasClave: row.Palabras_Clave || '',
-          urlPublica: row.URL_Publica || '',
-          categoriaId: row.Categoria_Id ? Number(row.Categoria_Id) : undefined,
-          editorialId: row.Editorial_Id ? Number(row.Editorial_Id) : undefined,
-          tipoMaterialId: row.Id_Tipo_Material ? Number(row.Id_Tipo_Material) : undefined
-        }));
+        return data['data'].map((row: any) => this.mapLibroRow(row));
       }
       return [];
     } catch (error) {
@@ -152,9 +213,85 @@ export class BibliotecaDataService {
     }
   }
 
+  async getLibrosPage(page = 1, pageSize = 50, search = ''): Promise<{ libros: Libro[]; total: number }> {
+    try {
+      const total = await this.countLibros(search);
+      if (total === 0) {
+        return { libros: [], total };
+      }
+      const sqlConfig = {
+        table: this.getLibrosTable(),
+        fields: this.getLibrosFields(),
+        where: this.getLibrosWhere(search),
+        orderField: 'L.Id_Libro',
+        orderDirection: ' DESC ',
+        Empresa: false,
+        paginacion: {
+          FirstRow: (Math.max(1, page) - 1) * pageSize + 1,
+          LastRow: Math.max(1, page) * pageSize,
+          TotalRows: 0
+        }
+      };
+      const data = await this.apiService.executeSqlSyn(sqlConfig);
+      const libros = data && data['data'] ? data['data'].map((row: any) => this.mapLibroRow(row)) : [];
+      return { libros, total };
+    } catch (error) {
+      console.error(error);
+      const searchLower = search.trim().toLowerCase();
+      const fallback = searchLower
+        ? this.libros.filter(libro =>
+            [libro.titulo, libro.autor, libro.autores, libro.isbn, libro.categoria, libro.tipoMaterial]
+              .some(value => String(value || '').toLowerCase().includes(searchLower))
+          )
+        : this.libros;
+      const start = (Math.max(1, page) - 1) * pageSize;
+      return {
+        libros: fallback.slice(start, start + pageSize),
+        total: fallback.length
+      };
+    }
+  }
+
+  async countLibros(search = ''): Promise<number> {
+    try {
+      const sqlConfig = {
+        table: this.getLibrosTable(),
+        fields: 'COUNT(*) AS total',
+        where: this.getLibrosWhere(search),
+        simple: true,
+        Empresa: false
+      };
+      const data = await this.apiService.executeSqlSyn(sqlConfig);
+      if (data && data['data'] && data['data'].length > 0) {
+        return Number(data['data'][0].total || 0);
+      }
+      return 0;
+    } catch (error) {
+      console.error(error);
+      return this.libros.length;
+    }
+  }
+
   async getLibroById(id: number): Promise<Libro | undefined> {
-    const libros = await this.getLibros();
-    return libros.find(libro => libro.id === id);
+    try {
+      const sqlConfig = {
+        table: this.getLibrosTable(),
+        fields: this.getLibrosFields(),
+        where: `L.Id_Libro=${Number(id)}`,
+        orderField: 'L.Id_Libro',
+        orderDirection: ' DESC ',
+        simple: true,
+        Empresa: false
+      };
+      const data = await this.apiService.executeSqlSyn(sqlConfig);
+      if (data && data['data'] && data['data'].length > 0) {
+        return this.mapLibroRow(data['data'][0]);
+      }
+      return undefined;
+    } catch (error) {
+      console.error(error);
+      return this.libros.find(libro => libro.id === id);
+    }
   }
 
   async getAutoresPorLibro(libroId: number): Promise<number[]> {
@@ -1491,6 +1628,50 @@ export class BibliotecaDataService {
     }
   }
 
+  private mapMarcRegistroRow(row: any): MarcRegistro {
+    return {
+      id: Number(row.Id_Marc_Registro),
+      libroId: Number(row.Libro_Id),
+      formato: row.Formato,
+      leader: row.Leader || '',
+      control001: row.Control_001 || '',
+      control005: row.Control_005 || '',
+      control008: row.Control_008 || ''
+    };
+  }
+
+  async getMarcRegistroByLibroId(libroId: number, formato?: string): Promise<MarcRegistro | undefined> {
+    try {
+      const formatoWhere = formato ? ` AND Formato='${this.escapeSql(formato)}'` : '';
+      const sqlConfig = {
+        table: 'Bib_Marc_Registro',
+        fields: 'Id_Marc_Registro, Libro_Id, Formato, Leader, Control_001, Control_005, Control_008',
+        where: `Libro_Id=${Number(libroId)}${formatoWhere}`,
+        orderField: 'Id_Marc_Registro',
+        orderDirection: ' DESC ',
+        simple: true,
+        Empresa: true
+      };
+      let data = await this.apiService.executeSqlSyn(sqlConfig);
+      if (data && data['data'] && data['data'].length > 0) {
+        return this.mapMarcRegistroRow(data['data'][0]);
+      }
+      if (formato) {
+        data = await this.apiService.executeSqlSyn({
+          ...sqlConfig,
+          where: `Libro_Id=${Number(libroId)}`
+        });
+        if (data && data['data'] && data['data'].length > 0) {
+          return this.mapMarcRegistroRow(data['data'][0]);
+        }
+      }
+      return undefined;
+    } catch (error) {
+      console.error(error);
+      return undefined;
+    }
+  }
+
   async createMarcRegistro(item: MarcRegistro): Promise<number | null> {
     const sql = `CALL sp_Bib_Crear_Marc_Registro(${item.libroId},` +
       ` '${this.escapeSql(item.formato)}',` +
@@ -1869,12 +2050,17 @@ export class BibliotecaDataService {
     formatoId: number | undefined,
     page: number,
     pageSize: number,
-    tipoMaterialId?: number
+    tipoMaterialId?: number,
+    tagFilter = ''
   ): Promise<{ campos: MarcDicCampo[]; total: number }> {
     try {
       const whereParts: string[] = [];
+      const filter = this.escapeSql(tagFilter.trim());
       if (formatoId) {
         whereParts.push(`C.Id_Formato = ${formatoId}`);
+      }
+      if (filter) {
+        whereParts.push(`(C.Tag LIKE '%${filter}%' OR C.Nombre LIKE '%${filter}%')`);
       }
       if (tipoMaterialId) {
         whereParts.push(
@@ -1926,11 +2112,15 @@ export class BibliotecaDataService {
     }
   }
 
-  async countMarcDicCampos(formatoId: number | undefined, tipoMaterialId?: number): Promise<number> {
+  async countMarcDicCampos(formatoId: number | undefined, tipoMaterialId?: number, tagFilter = ''): Promise<number> {
     try {
       const whereParts: string[] = [];
+      const filter = this.escapeSql(tagFilter.trim());
       if (formatoId) {
         whereParts.push(`C.Id_Formato = ${formatoId}`);
+      }
+      if (filter) {
+        whereParts.push(`(C.Tag LIKE '%${filter}%' OR C.Nombre LIKE '%${filter}%')`);
       }
       if (tipoMaterialId) {
         whereParts.push(

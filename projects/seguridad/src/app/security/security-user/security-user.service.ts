@@ -7,6 +7,73 @@ import { ApiService } from '../../../../../core/src/app/lib/api.service';
 export class SecurityUserService {
 
   constructor(private apiService: ApiService) {}
+
+  private q(value: any): string {
+    const text = value === null || value === undefined ? '' : String(value);
+    return "'" + text.replace(/'/g, "''") + "'";
+  }
+
+  private normalizarIdentificacion(value: any): string {
+    return value === null || value === undefined ? '' : String(value).replace(/[^0-9A-Za-z]/g, '');
+  }
+
+  private requiereRolAlumno(Usuario: any): boolean {
+    return Usuario && (Usuario.Alumno == '1' || Usuario.Academico == '1');
+  }
+
+  async sincronizarPersonaDesdeUsuario(Id_Usuario: any, Usuario: any) {
+    const identificacion = this.normalizarIdentificacion(Usuario.Numero_Identificacion);
+    const correo = Usuario.Correo || '';
+    if(!Id_Usuario || (!identificacion && !correo)) {
+      return { ok: false, total: 0, data: [], error: 'Usuario sin identificacion o correo para asociar contacto' };
+    }
+
+    let where = '';
+    if(identificacion) {
+      where = "Identificacion='" + identificacion + "'";
+    } else {
+      where = "Correo='" + correo.replace(/'/g, "''") + "'";
+    }
+
+    const personaData = await this.apiService.executeSqlSyn({
+      table: 'Gen_Persona',
+      fields: 'Id_Persona,Alumno,Profesor,Empleado',
+      where: where + ' and Id_Empresa=' + localStorage.getItem('Id_Empresa'),
+      Empresa: false
+    });
+
+    const camposBase = [
+      'Nombre=' + this.q(Usuario.Nombre),
+      'Correo=' + this.q(correo),
+      'Identificacion=' + this.q(identificacion),
+      'Id_Usuario=' + this.q(Id_Usuario),
+      'Nombre_Usuario=' + this.q(Usuario.Nombre)
+    ];
+
+    if(this.requiereRolAlumno(Usuario)) {
+      camposBase.push("Alumno='1'");
+    }
+
+    if(personaData['total'] > 0) {
+      return await this.apiService.updateRecord({
+        table: 'Gen_Persona',
+        fields: camposBase.join(','),
+        where: 'Id_Persona=' + personaData['data'][0]['Id_Persona']
+      });
+    }
+
+    const fields = 'Nombre,Correo,Identificacion,Id_Usuario,Nombre_Usuario,Alumno,Estado';
+    const values = [
+      this.q(Usuario.Nombre),
+      this.q(correo),
+      this.q(identificacion),
+      this.q(Id_Usuario),
+      this.q(Usuario.Nombre),
+      this.requiereRolAlumno(Usuario) ? "'1'" : "'0'",
+      "'1'"
+    ].join(',');
+    return await this.apiService.insertRecord({ table: 'Gen_Persona', fields: fields, values: values });
+  }
   async loadAllUsers(paginacion,search?) {
     let sqlConfig = {
       table: 'Seg_Usuario',
@@ -89,16 +156,13 @@ export class SecurityUserService {
       + '\'',
       where: 'Id_Usuario=' + Usuario.Id_Usuario
     };
-    let dat = await this.ValidarPersonaExiste(Usuario.Numero_Identificacion);
-    if(dat['total'] == 0){
-      //insertar la persona;
-      await this.CrearPersonaBasdaUsuario(Usuario.Numero_Identificacion,Usuario.Nombre);
-    }
-    return await this.apiService.updateRecord(sql);
+    let data = await this.apiService.updateRecord(sql);
+    await this.sincronizarPersonaDesdeUsuario(Usuario.Id_Usuario, Usuario);
+    return data;
   }
   async inserUsert(Usuario){
     let userName = await this.composeUsername(Usuario.Nombre)
-    let Clave = 'Password';
+    let Clave = Usuario.Clave && String(Usuario.Clave).trim() !== '' ? Usuario.Clave : 'Password';
     let sql = {
       table: 'Seg_Usuario',
       fields: 'Nombre,Nombre_Usuario,Correo,Clave,Tipo_Usuario,Estado,Ventas,Compras,Inventario,CXC,CXP,CG,BA,Restaurante,Transporte,Seguridad,Hospedaje,Turismo,Academico,Pov,Proyecto,Numero_Identificacion',
@@ -127,12 +191,9 @@ export class SecurityUserService {
       + '\',\'' + Usuario.Numero_Identificacion
       + '\''
     };
-    let dat = await this.ValidarPersonaExiste(Usuario.Numero_Identificacion);
-    if(dat['total'] == 0){
-      //insertar la persona;
-      await this.CrearPersonaBasdaUsuario(Usuario.Numero_Identificacion,Usuario.Nombre);
-    }
-    return await this.apiService.insertRecord(sql);
+    let data = await this.apiService.insertRecord(sql);
+    await this.sincronizarPersonaDesdeUsuario(data['Identity'], Usuario);
+    return data;
   }
   async composeUsername(Name){
     let arrUserName = Name.split(' ');
@@ -181,6 +242,20 @@ export class SecurityUserService {
   }
   async ChangeUserStatus(Id_User,Id_Empresa,Status){
     let sql = "Update Seg_Usuario_Empresa set Estado = " + Status + " where Id_Usuario = " + Id_User + " and Id_Empresa = " + Id_Empresa;
+    return await this.apiService.postRecord(sql);
+  }
+
+  async validarClaveAdmin(clave: string): Promise<boolean> {
+    const idUsuario = localStorage.getItem('Id_Usuario');
+    if (!idUsuario) return false;
+    const data: any = await this.apiService.postRecord(
+      "SELECT Clave FROM Seg_Usuario WHERE Id_Usuario = " + idUsuario
+    );
+    return data?.data?.[0]?.Clave === clave;
+  }
+
+  async resetearClave(Id_Usuario: any): Promise<any> {
+    const sql = "UPDATE Seg_Usuario SET Clave = 'Password' WHERE Id_Usuario = " + Number(Id_Usuario);
     return await this.apiService.postRecord(sql);
   }
 

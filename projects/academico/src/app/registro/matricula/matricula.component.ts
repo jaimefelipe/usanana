@@ -228,15 +228,14 @@ export class MatriculaComponent implements OnInit {
       data = await this.matriculaService.ActualizarMatricual(this.Matricula);
     }
     if(data['success'] == 'true'){
-      this.Matricula.Id_Matricula = data['Identity'];
+      if(this.Matricula.Id_Matricula == ""){
+        this.Matricula.Id_Matricula = data['Identity'];
+      }
       this.cargarMatriculas();
-      //jaime
-      //this.cargarMatriculaDetalle(this.Matricula.Id_Matricula)
-      Swal.fire('Matricula grabada correctamente');
+      Swal.fire('Matrícula grabada correctamente');
+      return true;
     }
-    
-    return true;
-
+    return false;
   }
   cancel(){
     this.edit = false;
@@ -264,7 +263,15 @@ export class MatriculaComponent implements OnInit {
     this.cerrarPantallaAlumnos();
   }
   /* Eventos de la pantalla de busqueda de cursos para matricular */
-  abrirPantallaCursos(curso){
+  async abrirPantallaCursos(curso){
+    if(this.Matricula.Id_Matricula == ''){
+      if(this.Matricula.Id_Periodo == ''){
+        Swal.fire('Favor seleccionar el Período Académico');
+        return;
+      }
+      const saved = await this.grabar();
+      if(!saved) return;
+    }
     this.cargarCursosDisponibles();
     this.PantallaCursos = true;
   }

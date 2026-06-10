@@ -16,8 +16,12 @@ export class GrupoProfesorComponent implements OnInit {
   NotasPanel = false;
   searchField = '';
   Id_Grupo = '';
+  GrupoSeleccionado:any = null;
   Grupos = [];
   Alumnos = [];
+  Actividades = [];
+  Entregas = [];
+  Id_Actividad = '';
   Notas = {
 
   }
@@ -70,11 +74,15 @@ export class GrupoProfesorComponent implements OnInit {
   }
   async editRecord(Grupo){
     this.Id_Grupo = Grupo.Id_Grupo;
+    this.GrupoSeleccionado = Grupo;
     if(Grupo){
       let data = await this.grupoProfesorService.cargarAlumnos(Grupo.Id_Grupo);
-      this.Alumnos = data['data'];
+      this.Alumnos = data?.['data'] || [];
+      await this.cargarActividadesGrupo();
     }else{
       this.Alumnos = [];
+      this.Actividades = [];
+      this.Entregas = [];
     }
     this.edit = true;
   }
@@ -93,6 +101,9 @@ export class GrupoProfesorComponent implements OnInit {
   }
   CerrarPantallaGrupo(){
     this.edit = false;
+    this.GrupoSeleccionado = null;
+    this.Id_Actividad = '';
+    this.Entregas = [];
   }
   abrirNotasPanel(Estudiante){
     this.estudiante = Estudiante;
@@ -121,6 +132,7 @@ export class GrupoProfesorComponent implements OnInit {
   }
   async grabarNotas(){
     await this.grupoProfesorService.grabarNotas(this.estudiante);
+    await this.recargarAlumnosGrupo();
     this.CerrarPantallaNotas();
   }
 
@@ -135,5 +147,101 @@ export class GrupoProfesorComponent implements OnInit {
       Swal.fire('Hay un error en las notras el promedio no puede ser mayor que 100');
     }
     this.estudiante.Promedio = String(promedio);
+  }
+
+  async cargarActividadesGrupo(){
+    if(!this.Id_Grupo){
+      this.Actividades = [];
+      return;
+    }
+    const data = await this.grupoProfesorService.cargarActividadesGrupo(this.Id_Grupo);
+    this.Actividades = data?.['data'] || [];
+  }
+
+  async cargarEntregasActividad(){
+    if(!this.Id_Actividad){
+      this.Entregas = [];
+      return;
+    }
+    const data = await this.grupoProfesorService.cargarEntregasActividad(this.Id_Actividad, this.Id_Grupo);
+    this.Entregas = data?.['data'] || [];
+  }
+
+  async guardarEntrega(entrega){
+    if(entrega.Nota !== null && entrega.Nota !== '' && (Number(entrega.Nota) < 0 || Number(entrega.Nota) > 100)){
+      Swal.fire('La nota debe estar entre 0 y 100');
+      return;
+    }
+
+    const data = await this.grupoProfesorService.actualizarEntrega(entrega);
+    if(data?.['success'] === 'true'){
+      Swal.fire('Entrega actualizada');
+      await this.cargarActividadesGrupo();
+      await this.cargarEntregasActividad();
+    }else{
+      Swal.fire(data?.['message'] || 'No se pudo actualizar la entrega');
+    }
+  }
+
+  async aplicarNotasLmsAlActa(){
+    if(!this.Id_Grupo){
+      return;
+    }
+
+    const confirmar = await Swal.fire({
+      title: 'Aplicar notas LMS',
+      text: 'Se calculara el promedio de entregas calificadas y se copiara al acta del grupo.',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Aplicar',
+      cancelButtonText: 'Cancelar'
+    });
+
+    if(!confirmar.isConfirmed){
+      return;
+    }
+
+    const data = await this.grupoProfesorService.aplicarNotasLmsAlActa(this.Id_Grupo);
+    if(data?.['success'] === 'true'){
+      await this.recargarAlumnosGrupo();
+      Swal.fire('Notas aplicadas', 'Se actualizaron ' + data['total'] + ' estudiantes con entregas calificadas.', 'success');
+    }else{
+      Swal.fire(data?.['message'] || 'No se pudieron aplicar las notas LMS');
+    }
+  }
+
+  async recargarAlumnosGrupo(){
+    if(!this.Id_Grupo){
+      return;
+    }
+    const data = await this.grupoProfesorService.cargarAlumnos(this.Id_Grupo);
+    this.Alumnos = data?.['data'] || [];
+  }
+
+  getTipoActividad(tipo){
+    const tipos = {
+      '1': 'Tarea',
+      '2': 'Examen',
+      '4': 'Presentacion'
+    };
+    return tipos[tipo] || tipo || '';
+  }
+
+  getEntregaUrl(entrega){
+    const url = entrega?.Url || '';
+    if(!url){
+      return '';
+    }
+    if(url.startsWith('http')){
+      return url;
+    }
+    return 'https://usantana.com' + (url.startsWith('/') ? url : '/' + url);
+  }
+
+  getEstadoEntrega(entrega){
+    if(entrega.Nota === null || entrega.Nota === undefined || entrega.Nota === ''){
+      return 'Pendiente';
+    }
+    return 'Calificada';
   }
 }

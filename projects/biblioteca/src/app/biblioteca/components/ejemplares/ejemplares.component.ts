@@ -11,6 +11,7 @@ import { Ejemplar, Libro } from '../../models/biblioteca.models';
 export class EjemplaresComponent implements OnInit {
   ejemplares: Ejemplar[] = [];
   libros: Libro[] = [];
+  librosBusqueda: Libro[] = [];
   ejemplar: Ejemplar = {
     id: 0,
     libroId: 0,
@@ -23,6 +24,13 @@ export class EjemplaresComponent implements OnInit {
   archivoSeleccionado: File | null = null;
   canViewArchivo = false;
   canUploadArchivo = false;
+  PantallaLibros = false;
+  libroSearchField = '';
+  libroPage = 1;
+  libroPageSize = 12;
+  libroTotal = 0;
+  libroLoading = false;
+  libroSeleccionadoTexto = '';
 
   constructor(private dataService: BibliotecaDataService) {}
 
@@ -33,7 +41,6 @@ export class EjemplaresComponent implements OnInit {
   }
 
   async cargar() {
-    this.libros = await this.dataService.getLibros();
     this.ejemplares = await this.dataService.getEjemplares();
   }
 
@@ -56,6 +63,7 @@ export class EjemplaresComponent implements OnInit {
     };
     this.esEdicion = false;
     this.archivoSeleccionado = null;
+    this.libroSeleccionadoTexto = '';
   }
 
   nuevo() {
@@ -68,6 +76,7 @@ export class EjemplaresComponent implements OnInit {
     this.esEdicion = true;
     this.edit = true;
     this.archivoSeleccionado = null;
+    this.libroSeleccionadoTexto = this.getLibroTexto(item);
   }
 
   async guardar() {
@@ -159,5 +168,80 @@ export class EjemplaresComponent implements OnInit {
     event.stopPropagation();
     if (!url) return;
     window.open(url, '_blank');
+  }
+
+  async abrirSelectorLibros() {
+    this.PantallaLibros = true;
+    this.libroSearchField = this.libroSeleccionadoTexto;
+    await this.cargarLibrosBusqueda(true);
+  }
+
+  cerrarSelectorLibros() {
+    this.PantallaLibros = false;
+  }
+
+  async buscarLibrosPopup() {
+    await this.cargarLibrosBusqueda(true);
+  }
+
+  async keytabLibros(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      await this.buscarLibrosPopup();
+    }
+  }
+
+  async ChangePageLibros(direction: number) {
+    const nextPage = this.libroPage + direction;
+    if (nextPage < 1 || nextPage > this.totalPaginasLibros()) {
+      return;
+    }
+    this.libroPage = nextPage;
+    await this.cargarLibrosBusqueda(false);
+  }
+
+  seleccionarLibro(libro: Libro) {
+    this.ejemplar.libroId = libro.id;
+    this.ejemplar.libroTitulo = libro.titulo;
+    this.libroSeleccionadoTexto = this.getLibroTexto({
+      id: 0,
+      libroId: libro.id,
+      libroTitulo: libro.titulo,
+      tipoSoporte: 'fisico',
+      estado: 'disponible'
+    });
+    this.cerrarSelectorLibros();
+  }
+
+  totalPaginasLibros(): number {
+    return Math.max(1, Math.ceil(this.libroTotal / this.libroPageSize));
+  }
+
+  private async cargarLibrosBusqueda(resetPage: boolean) {
+    if (resetPage) {
+      this.libroPage = 1;
+    }
+    this.libroLoading = true;
+    try {
+      const response = await this.dataService.getLibrosPage(
+        this.libroPage,
+        this.libroPageSize,
+        this.libroSearchField.trim()
+      );
+      this.librosBusqueda = response.libros;
+      this.libroTotal = response.total;
+    } catch (error) {
+      console.error(error);
+      Swal.fire('Error al buscar libros');
+    } finally {
+      this.libroLoading = false;
+    }
+  }
+
+  private getLibroTexto(item: Ejemplar): string {
+    if (!item.libroId) {
+      return '';
+    }
+    return item.libroTitulo || `Libro ${item.libroId}`;
   }
 }

@@ -19,6 +19,7 @@ export class CarreraComponent implements OnInit {
   PantallaCurso = false;
   CarreraActive = true;
   CursosActive = false;
+  FinancieroActive = false;
 
   searchField = '';
   searchField_Curso = '';
@@ -35,9 +36,24 @@ export class CarreraComponent implements OnInit {
 
   CarreraClass = 'text-success tablinks active';
   CursoClass = '';
+  FinancieroClass = '';
   Carreras = [];
   CursosCarrera = [];
   CursosDisponibles = [];
+  BancosTexto = '';
+  ConfigFinanciera = {
+    Id_Config_Financiera: '',
+    Nombre: '',
+    Moneda: 'CRC',
+    Cursos_Por_Bloque: 4,
+    Creditos_Por_Curso: 3,
+    Precio_Credito: 0,
+    Precio_Curso: 0,
+    Matricula_Bloque: 0,
+    Medio_Pago_Texto: 'Realice el pago por transferencia o deposito y cargue el comprobante en el portal de seguimiento.',
+    Bancos_JSON: '[]',
+    Notificar_Email: 'admisiones@usantana.com'
+  };
 
   Carrera = {
     Id_Carrera:'',
@@ -156,6 +172,7 @@ export class CarreraComponent implements OnInit {
   async LeerCarrera(Id_Carrera){
     let data = await this.carreraService.cargarCarrera(Id_Carrera);
     this.Carrera = data['data'][0];
+    await this.cargarConfigFinanciera();
   }
 
   editRecord(Carrera){
@@ -210,15 +227,28 @@ export class CarreraComponent implements OnInit {
   activarCarrera(){
     this.CarreraActive = true;
     this.CursosActive = false;
+    this.FinancieroActive = false;
     this.CarreraClass = 'text-success tablinks active';
     this.CursoClass = '';
+    this.FinancieroClass = '';
   }
 
   activarCursos(){
     this.CarreraActive = false;
     this.CursosActive = true;
+    this.FinancieroActive = false;
     this.CarreraClass = '';
     this.CursoClass = 'text-success tablinks active';
+    this.FinancieroClass = '';
+  }
+
+  activarFinanciero(){
+    this.CarreraActive = false;
+    this.CursosActive = false;
+    this.FinancieroActive = true;
+    this.CarreraClass = '';
+    this.CursoClass = '';
+    this.FinancieroClass = 'text-success tablinks active';
   }
   async leerCursosCarrera(Id_Carrera){
     let data = await this.carreraService.CargarCursosCarrera(Id_Carrera,this.paginacion,this.searchField_Curso);
@@ -291,5 +321,82 @@ export class CarreraComponent implements OnInit {
   seleccionarCurso(curso){
     this.Curso = curso;
     this.closeModalCursos();
+  }
+
+  async cargarConfigFinanciera(){
+    if(!this.Carrera.Id_Carrera){
+      this.resetConfigFinanciera();
+      return;
+    }
+    let data = await this.carreraService.cargarConfigFinanciera(this.Carrera.Id_Carrera);
+    if(data && data['data'] && data['data'].length){
+      this.ConfigFinanciera = data['data'][0];
+    }else{
+      this.resetConfigFinanciera();
+      this.ConfigFinanciera.Nombre = 'Configuracion admision ' + this.Carrera.Carrera;
+    }
+    this.BancosTexto = this.formatearBancosTexto(this.ConfigFinanciera.Bancos_JSON);
+  }
+
+  resetConfigFinanciera(){
+    this.ConfigFinanciera = {
+      Id_Config_Financiera: '',
+      Nombre: '',
+      Moneda: 'CRC',
+      Cursos_Por_Bloque: 4,
+      Creditos_Por_Curso: 3,
+      Precio_Credito: 0,
+      Precio_Curso: 0,
+      Matricula_Bloque: 0,
+      Medio_Pago_Texto: 'Realice el pago por transferencia o deposito y cargue el comprobante en el portal de seguimiento.',
+      Bancos_JSON: '[]',
+      Notificar_Email: 'admisiones@usantana.com'
+    };
+    this.BancosTexto = '';
+  }
+
+  parseJson(value){
+    try{
+      return value ? JSON.parse(value) : null;
+    }catch(e){
+      return null;
+    }
+  }
+
+  formatearBancosTexto(json){
+    const bancos = this.parseJson(json) || [];
+    if(!Array.isArray(bancos) || !bancos.length){
+      return '';
+    }
+    return bancos.map((b) => [b.banco, b.cuenta, b.iban, b.moneda, b.titular].filter(Boolean).join(' | ')).join('\n');
+  }
+
+  bancosTextoAJson(){
+    const bancos = String(this.BancosTexto || '').split(/\r?\n/).map(linea => {
+      const partes = linea.split('|').map(x => x.trim());
+      return {
+        banco: partes[0] || '',
+        cuenta: partes[1] || '',
+        iban: partes[2] || '',
+        moneda: partes[3] || this.ConfigFinanciera.Moneda || 'CRC',
+        titular: partes[4] || 'Universidad Santa Ana San Jose'
+      };
+    }).filter(b => b.banco || b.cuenta || b.iban);
+    return JSON.stringify(bancos);
+  }
+
+  async guardarConfigFinanciera(){
+    if(!this.Carrera.Id_Carrera){
+      Swal.fire('Primero guarde la carrera');
+      return;
+    }
+    this.ConfigFinanciera.Bancos_JSON = this.bancosTextoAJson();
+    let data = await this.carreraService.guardarConfigFinanciera(this.Carrera,this.ConfigFinanciera);
+    if(data && data['success'] == 'true'){
+      Swal.fire('Configuracion financiera guardada');
+      await this.cargarConfigFinanciera();
+    }else{
+      Swal.fire(data && data['error'] ? data['error'] : 'No se pudo guardar la configuracion financiera');
+    }
   }
 }

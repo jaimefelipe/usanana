@@ -31,11 +31,13 @@ constructor(private aulaService: AulaVirtualService, private grupoService: Grupo
     Bienvenida: '',
     Link_Reglamento: '',
     Link_Etiqueta: '',
+    Imagen: '',
     Activo: true
   };
 
   Aulas = [];
   Grupos = [];
+  imagenAulaFile: File | null = null;
 
   paginacion = {
     FirstRow: 1,
@@ -90,9 +92,14 @@ constructor(private aulaService: AulaVirtualService, private grupoService: Grupo
 
   editRecord(aula?: any) {
     this.edit = true;
+    this.imagenAulaFile = null;
     this.activarGeneral();
     if (aula) {
-      this.Aula = { ...aula };
+      this.Aula = {
+        ...aula,
+        Imagen: aula.Imagen || '',
+        Activo: aula.Activo === true || aula.Activo === 1 || aula.Activo === '1'
+      };
       localStorage.setItem('Id_Grupo',this.Aula.Id_Grupo)
     } else {
       this.Aula = {
@@ -102,21 +109,39 @@ constructor(private aulaService: AulaVirtualService, private grupoService: Grupo
         Bienvenida: '',
         Link_Reglamento: '',
         Link_Etiqueta: '',
+        Imagen: '',
         Activo: true
       };
     }
   }
 
-  grabar() {
+  async grabar() {
     if (!this.Aula.Id_Grupo || !this.Aula.Bienvenida) {
       Swal.fire('Debe seleccionar el grupo y escribir la bienvenida');
       return;
+    }
+
+    if(this.imagenAulaFile){
+      const formData = new FormData();
+      formData.append('archivo', this.imagenAulaFile);
+      formData.append('Id_Empresa', localStorage.getItem('Id_Empresa') || '');
+      formData.append('Id_Grupo', this.Aula.Id_Grupo || '');
+      formData.append('Id_AulaVirtual', this.Aula.Id_AulaVirtual || '');
+
+      const resp = await this.aulaService.subirImagen(formData);
+      if(resp && (resp.success === true || resp.success === 'true') && resp.url){
+        this.Aula.Imagen = encodeURI(resp.url);
+      }else{
+        Swal.fire(resp?.message || 'Error al subir la imagen del aula virtual');
+        return;
+      }
     }
 
     this.aulaService.saveAula(this.Aula).then(resp => {
       Swal.fire('Aula virtual guardada correctamente');
       this.loadAulas();
       this.edit = false;
+      this.imagenAulaFile = null;
     }).catch(err => {
       console.error(err);
       Swal.fire('Error al guardar el aula');
@@ -125,6 +150,11 @@ constructor(private aulaService: AulaVirtualService, private grupoService: Grupo
 
   cancelar() {
     this.edit = false;
+    this.imagenAulaFile = null;
+  }
+
+  handleImagenAulaSeleccionada(file: File | null) {
+    this.imagenAulaFile = file;
   }
 
   // Tabs

@@ -620,23 +620,25 @@ export class ApiService {
   }
 
   async loadImageFile(file: any) {
-    let data = await fetch('https://usantana.com/core/loadImg.php', {
-      method: 'POST',
-      body: file,
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('HTTP error ' + response.status);
+    try {
+      const response = await fetch(
+        'https://usantana.com/core/loadFile.php?id=' +
+          localStorage.getItem('Id_Empresa'),
+        {
+          method: 'POST',
+          body: file,
         }
-        return response.json();
-      })
-      .then((json) => {
-        return json;
-      })
-      .catch(function () {
-        return JSON.parse('[{"success":"false","total":"0","Error":"error en catch"}]');
-      });
-    return data;
+      );
+
+      if (!response.ok) {
+        throw new Error('HTTP error ' + response.status);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error al subir imagen:', error);
+      return { success: false, message: 'Error en la conexion' };
+    }
   }
 
   // Validar Licencia.

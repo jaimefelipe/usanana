@@ -4,6 +4,7 @@ import { ContactoService } from '../../../../../contacto/src/app/contacto/contac
 import { CursoService } from '../../config/curso/curso.service';
 import { CarreraService } from '../../config/carrera/carrera.service';
 import { SecurityUserService } from '../../../../../seguridad/src/app/security/security-user/security-user.service';
+import { PrimerIngresoService } from './primer-ingreso.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -18,7 +19,8 @@ export class PrimerIngresoComponent implements OnInit {
     private cursoService:CursoService,
     private contactoService:ContactoService,
     private carreraService:CarreraService,
-    private securityUserService:SecurityUserService
+    private securityUserService:SecurityUserService,
+    private primerIngresoService: PrimerIngresoService
   ) { }
   Registrado = true;
   NombreValido = true;
@@ -48,16 +50,34 @@ export class PrimerIngresoComponent implements OnInit {
     Residencia: 'Costa Rica',
     Nivel:'3',
     Carrera:'',
+    Modalidad: '',
+    Id_Sucursal: '',
+    Colegio_Procedencia: '',
+    Ultimo_Grado: '',
+    Anio_Graduacion: '',
+    Promedio: '',
+    Observaciones: '',
   };
+  Documentos = [
+    { Tipo_Documento: 'identificacion', Nombre: 'Cedula, DIMEX o pasaporte', Requerido: true, URL: '', Nombre_Archivo: '', Mime_Type: '', Subiendo: false },
+    { Tipo_Documento: 'titulo', Nombre: 'Titulo academico', Requerido: true, URL: '', Nombre_Archivo: '', Mime_Type: '', Subiendo: false },
+    { Tipo_Documento: 'notas', Nombre: 'Certificacion de notas', Requerido: true, URL: '', Nombre_Archivo: '', Mime_Type: '', Subiendo: false },
+    { Tipo_Documento: 'foto', Nombre: 'Fotografia', Requerido: true, URL: '', Nombre_Archivo: '', Mime_Type: '', Subiendo: false },
+    { Tipo_Documento: 'otro', Nombre: 'Otros documentos', Requerido: false, URL: '', Nombre_Archivo: '', Mime_Type: '', Subiendo: false }
+  ];
+  CodigoSolicitud = '';
   ngOnInit() {
+    if (!localStorage.getItem('Id_Empresa')) {
+      localStorage.setItem('Id_Empresa', '1');
+    }
     this.leerNacionalidades();
     this.leerCursos();
     this.leerPaises();
   }
   async leerCursos(){
     let data = await this.cursoService.leerCursosPorNivel(this.Persona.Nivel);
-    this.Carreras = data['data'];
-    this.Persona.Carrera = this.Carreras[0]['Id_Carrera'];
+    this.Carreras = data && data['data'] ? data['data'] : [];
+    this.Persona.Carrera = this.Carreras.length ? this.Carreras[0]['Id_Carrera'] : '';
   }
   async leerPaises(){
     this.Paises =  await this.generalService.leerPaises();
@@ -88,7 +108,7 @@ export class PrimerIngresoComponent implements OnInit {
       Swal.fire('No Espcificó la Carrera de su Interés');
       return false;
     }
-    this.validarNombreUsuario(); 
+    this.aplicarRegistro();
     return true
   }
   async validarNombreUsuario(){
@@ -112,7 +132,7 @@ export class PrimerIngresoComponent implements OnInit {
       //Persona existe
       Swal.fire({
         title: "Ya Existe un Candidato Inscrito con el nombre " + persona['data'][0]['Nombre'],
-        text: "Si son sus datos por favor contacte vía telefónica",
+        text: "Si son sus datos por favor contacte a UNELA vía telefónica",
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
@@ -131,9 +151,17 @@ export class PrimerIngresoComponent implements OnInit {
     }
   }
   async aplicarRegistro(){
-    let persona  = await this.contactoService.savePersona(this.Persona);
-    this.Persona.Id_Persona = persona['Identity'];
-    this.asignarCarreraEstudiante();
+    const faltantes = this.Documentos.filter(d => d.Requerido && !d.URL);
+    if (faltantes.length > 0) {
+      Swal.fire('Debe cargar los documentos requeridos antes de enviar la solicitud');
+      return;
+    }
+    let solicitud = await this.primerIngresoService.crearSolicitud(this.Persona, this.Documentos);
+    if (solicitud && solicitud['success'] === 'true') {
+      this.CodigoSolicitud = solicitud['Identity'];
+      this.Registrado = false;
+      Swal.fire('Solicitud recibida', 'Admisiones revisara la documentacion y le notificara el siguiente paso.', 'success');
+    }
   }
   async asignarCarreraEstudiante(){
     let data = await this.carreraService.asignarCarreraEstudiante(this.Persona.Id_Persona,this.Persona.Carrera);
@@ -143,5 +171,27 @@ export class PrimerIngresoComponent implements OnInit {
     let usuario = data['Identity'];
     let user = await this.securityUserService.AsociarUsuario(localStorage.getItem('Id_Empresa'),usuario);
     this.Registrado = true;
+  }
+
+  async onDocumentoChange(event: any, documento: any) {
+    const file = event && event.target && event.target.files ? event.target.files[0] : null;
+    if (!file) {
+      return;
+    }
+    const formData = new FormData();
+    formData.append('archivo', file);
+    documento.Subiendo = true;
+    try {
+      const resp = await this.primerIngresoService.subirDocumento(formData);
+      if (resp && resp.success === true) {
+        documento.URL = resp.url;
+        documento.Nombre_Archivo = file.name;
+        documento.Mime_Type = file.type;
+      } else {
+        Swal.fire(resp && resp.message ? resp.message : 'No se pudo subir el documento');
+      }
+    } finally {
+      documento.Subiendo = false;
+    }
   }
 }

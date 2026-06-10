@@ -1,21 +1,101 @@
-<div [hidden]="edit" class="container-fluid pb-5">
-  <h2>Matrícula</h2>
+<div [hidden]="edit" class="container-fluid pb-5 matricula-page">
+  <div class="matricula-header">
+    <div>
+      <span class="matricula-eyebrow">Campus Academico</span>
+      <h2>Matricula</h2>
+      <p>Selecciona los cursos pendientes que deseas solicitar para el periodo activo.</p>
+    </div>
+
+    <a routerLink="/" class="btn back-btn">
+      <i class="fa fa-arrow-left" aria-hidden="true"></i>
+      Regresar al campus
+    </a>
+  </div>
+
   <form>
-    <div class="form-row page-grid">
+    <div class="form-row page-grid matricula-grid">
+
+      <div class="col-12" *ngIf="Matriculas.length === 0">
+        <div class="empty-state">
+          <i class="fa fa-info-circle" aria-hidden="true"></i>
+          <h3>No hay cursos disponibles</h3>
+          <p>No hay cursos pendientes con grupo abierto para el periodo activo.</p>
+        </div>
+      </div>
 
       <div class="form-group col-12 col-sm-6" *ngFor="let Matricula of Matriculas;let i = index">
-        <div class="card">
-          <a (click)="editRecord(Matricula)">
-            <div class="card-body">
+        <div class="card h-100 matricula-card">
+          <div class="card-body">
 
-              <h4 class="card-title">{{Matricula.Codigo}}-{{Matricula.Curso}},{{Matricula.Creditos}}</h4>
-
+            <div class="course-heading">
+              <span class="course-code">{{Matricula.Codigo}}</span>
+              <span class="credit-badge" *ngIf="Matricula.Creditos">{{Matricula.Creditos}} creditos</span>
             </div>
-          </a>
+
+            <h4 class="card-title">{{Matricula.Curso}}</h4>
+
+            <div class="meta-list">
+              <div class="meta-item" *ngIf="Matricula.Carrera">
+                <span class="meta-icon"><i class="fa fa-graduation-cap" aria-hidden="true"></i></span>
+                <div>
+                  <span class="meta-label">Carrera</span>
+                  <span class="meta-value">{{Matricula.Carrera}}</span>
+                </div>
+              </div>
+
+              <div class="meta-item" *ngIf="Matricula.Periodo_Bloque || Matricula.Anio">
+                <span class="meta-icon"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                <div>
+                  <span class="meta-label">Periodo</span>
+                  <span class="meta-value">{{Matricula.Periodo_Bloque}}-{{Matricula.Anio}}</span>
+                </div>
+              </div>
+
+              <div class="meta-item" *ngIf="Matricula.Grupo">
+                <span class="meta-icon"><i class="fa fa-users" aria-hidden="true"></i></span>
+                <div>
+                  <span class="meta-label">Grupo</span>
+                  <span class="meta-value">{{Matricula.Grupo}}</span>
+                </div>
+              </div>
+
+              <div class="meta-item" *ngIf="Matricula.Modalidad || Matricula.Dia || Matricula.Hora">
+                <span class="meta-icon"><i class="fa fa-clock-o" aria-hidden="true"></i></span>
+                <div>
+                  <span class="meta-label">Horario</span>
+                  <span class="meta-value">
+                    <span *ngIf="Matricula.Modalidad == 'P'">Presencial</span>
+                    <span *ngIf="Matricula.Modalidad == 'V'">Virtual</span>
+                    <span *ngIf="Matricula.Modalidad == 'T'">Tutoria</span>
+                    <span *ngIf="Matricula.Modalidad == 'S'">Suficiencia</span>
+                    <span *ngIf="Matricula.Dia"> {{Matricula.Dia}}</span>
+                    <span *ngIf="Matricula.Hora"> {{Matricula.Hora}}</span>
+                  </span>
+                </div>
+              </div>
+
+              <div class="meta-item" *ngIf="Matricula.Profesor">
+                <span class="meta-icon"><i class="fa fa-user" aria-hidden="true"></i></span>
+                <div>
+                  <span class="meta-label">Profesor</span>
+                  <span class="meta-value">{{Matricula.Profesor}}</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="card-footer">
+            <button
+              type="button"
+              class="btn matricula-btn"
+              (click)="matricular(Matricula)"
+              [disabled]="MatriculandoIdGrupo == Matricula.Id_Grupo">
+              <i class="fa fa-check-circle" aria-hidden="true"></i>
+              {{MatriculandoIdGrupo == Matricula.Id_Grupo ? 'Procesando...' : 'Solicitar matricula'}}
+            </button>
+          </div>
         </div>
       </div>
     </div>
   </form>
-
-  
 </div>

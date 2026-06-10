@@ -44,12 +44,7 @@ export class LoginCampusComponent implements OnInit {
         if(this.registro.password == 'password'){
           this.router.navigate(['/cambiar']);
         }else{
-          let arrlocation = window.location.pathname.split('/');
-          if (arrlocation.length == 2){
-            window.location.href = "/"
-          }else{
-            window.location.href = "/"+arrlocation[1]+'/';
-          }
+          this.router.navigate(['/']);
         }
       };
       return true;

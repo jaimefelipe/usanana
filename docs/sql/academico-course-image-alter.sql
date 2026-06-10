@@ -1,0 +1,5 @@
+ALTER TABLE Edu_Curso
+  ADD COLUMN Imagen VARCHAR(500) NULL AFTER Creditos;
+
+ALTER TABLE Lms_AulaVirtual
+  ADD COLUMN Imagen VARCHAR(500) NULL AFTER Link_Etiqueta;

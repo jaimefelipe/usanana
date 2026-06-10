@@ -5,6 +5,7 @@ import { CursoService } from '../../../../../academico/src/app/config/curso/curs
 import { CarreraService } from '../../../../../academico/src/app/config/carrera/carrera.service';
 import { SecurityUserService } from '../../../../../seguridad/src/app/security/security-user/security-user.service';
 import Swal from 'sweetalert2';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -19,7 +20,8 @@ export class PerfilComponent implements OnInit {
       private cursoService:CursoService,
       private contactoService:ContactoService,
       private carreraService:CarreraService,
-      private securityUserService:SecurityUserService
+      private securityUserService:SecurityUserService,
+      private route: Router
     ) { }
     Registrado = false;
     NombreValido = true;
@@ -51,10 +53,13 @@ export class PerfilComponent implements OnInit {
       Carrera:'',
     };
     ngOnInit() {
+      if(!this.tieneSesionCampus()){
+        this.route.navigate(['/login']);
+        return;
+      }
+
       this.LeerInfoUsuario();
-      //Validar si hay login entonces salir
       this.Registrado = false;
-      localStorage.setItem('Id_Empresa','16');
       this.leerNacionalidades();
       this.leerPaises();
     }
@@ -136,12 +141,34 @@ export class PerfilComponent implements OnInit {
     }
    
     async LeerInfoUsuario(){
-      console.log('Id_Usuario',localStorage.getItem('Id_Usuario'));
-      let data = await this.contactoService.loadPersona('',localStorage.getItem('Id_Usuario'));
+      const idUsuario = localStorage.getItem('Id_Usuario');
+      if(!idUsuario){
+        this.route.navigate(['/login']);
+        return;
+      }
+
+      console.log('Id_Usuario', idUsuario);
+      let data = await this.contactoService.loadPersona('', idUsuario);
+      if(!data || data['total'] == 0 || !data['data']?.[0]){
+        this.route.navigate(['/login']);
+        return;
+      }
+
       this.Persona = data['data'][0];
+      if(this.Persona.Nombre){
+        localStorage.setItem('Nombre', this.Persona.Nombre);
+      }
       console.log(this.Persona)
     }
     regresar(){
-       window.location.href = '/';
+       this.route.navigate(['/']);
+    }
+
+    private tieneSesionCampus(){
+      const tieneIdentidad = !!localStorage.getItem('Id_Empresa') && !!localStorage.getItem('Id_Usuario');
+      if(tieneIdentidad && localStorage.getItem('isLoggedin') !== 'true'){
+        localStorage.setItem('isLoggedin', 'true');
+      }
+      return tieneIdentidad;
     }
 }

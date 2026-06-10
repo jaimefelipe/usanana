@@ -39,10 +39,13 @@
       <h5>{{ esEdicion ? 'Editar ejemplar' : 'Nuevo ejemplar' }}</h5>
       <div class="mb-2">
         <label class="form-label">Libro</label>
-        <select class="form-select" [(ngModel)]="ejemplar.libroId" name="libroId">
-          <option [ngValue]="0">Seleccione...</option>
-          <option *ngFor="let libro of libros" [ngValue]="libro.id">{{ libro.titulo }}</option>
-        </select>
+        <div class="input-group ejemplares-book-picker">
+          <button class="btn btn-outline-secondary" type="button" (click)="abrirSelectorLibros()" title="Buscar libro">
+            <i class="fa fa-search" aria-hidden="true"></i>
+          </button>
+          <input class="form-control" [value]="libroSeleccionadoTexto || 'Buscar y seleccionar libro'" readonly
+            (click)="abrirSelectorLibros()" />
+        </div>
       </div>
       <div class="mb-2">
         <label class="form-label">Codigo barra</label>
@@ -97,4 +100,52 @@
       </div>
     </div>
   </form>
+</div>
+
+<div class="modal-main ejemplares-modal" [hidden]="!PantallaLibros">
+  <div class="modal-content card ejemplares-modal-content">
+    <div class="card-header d-flex align-items-center justify-content-between gap-2">
+      <h2 class="mb-0">Seleccionar libro</h2>
+      <button class="btn btn-outline-secondary btn-sm" type="button" (click)="cerrarSelectorLibros()">Cerrar</button>
+    </div>
+    <div class="card-body">
+      <div class="input-group page-search ejemplares-modal-search">
+        <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+        <input class="form-control" [(ngModel)]="libroSearchField" name="libroSearchField"
+          (keydown)="keytabLibros($event)" type="text" placeholder="Buscar por titulo, autor, ISBN o categoria">
+        <button class="btn btn-success" type="button" (click)="buscarLibrosPopup()">Buscar</button>
+      </div>
+
+      <div class="text-muted small mt-2" *ngIf="!libroLoading">
+        {{ libroTotal }} libros encontrados
+      </div>
+
+      <div class="text-muted small mt-3" *ngIf="libroLoading">Buscando libros...</div>
+
+      <div class="row g-3 mt-1" *ngIf="!libroLoading">
+        <div class="col-12 col-md-6" *ngFor="let libro of librosBusqueda">
+          <button class="btn ejemplares-book-result w-100 text-start" type="button" (click)="seleccionarLibro(libro)">
+            <span class="book-title">{{ libro.titulo }}</span>
+            <span class="book-meta">{{ libro.autor || libro.autores || 'Sin autor' }}</span>
+            <span class="book-meta">{{ libro.isbn || libro.issn || 'Sin identificador' }} | {{ libro.categoria }}</span>
+          </button>
+        </div>
+        <div class="col-12" *ngIf="librosBusqueda.length === 0">
+          <div class="card">
+            <div class="card-body text-muted small">No hay libros para el filtro indicado.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer d-flex align-items-center justify-content-between gap-2 flex-wrap">
+      <button class="btn btn-outline-secondary" type="button" (click)="ChangePageLibros(-1)" [disabled]="libroPage <= 1">
+        Anterior
+      </button>
+      <span class="text-muted small">Pagina {{ libroPage }} de {{ totalPaginasLibros() }}</span>
+      <button class="btn btn-outline-secondary" type="button" (click)="ChangePageLibros(1)"
+        [disabled]="libroPage >= totalPaginasLibros()">
+        Siguiente
+      </button>
+    </div>
+  </div>
 </div>

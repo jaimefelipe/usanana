@@ -65,3 +65,121 @@ padding: 6px 12px;
 border: 1px solid #ccc;
 border-top: none;
 }
+
+.grupo-card,
+.alumno-card {
+  border: 1px solid #dde5ee;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(12, 43, 75, 0.06);
+}
+
+.grupo-meta {
+  color: #607080;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin-top: 8px;
+}
+
+.grupo-detalle {
+  background: #f5f7fa;
+  min-height: calc(100vh - 96px);
+  padding-top: 18px;
+}
+
+.detalle-header,
+.profesor-panel {
+  background: #ffffff;
+  border: 1px solid #e3e8ef;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(12, 43, 75, 0.08);
+  margin-bottom: 18px;
+  padding: 18px 20px;
+}
+
+.detalle-header {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.detalle-eyebrow {
+  color: #0b8754;
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.detalle-header h2,
+.panel-title h3 {
+  color: #0c2b4b;
+  font-weight: 800;
+  margin: 0;
+}
+
+.detalle-header p,
+.panel-title p {
+  color: #607080;
+  margin: 6px 0 0;
+}
+
+.detalle-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.panel-title {
+  align-items: flex-start;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.entregas-table td {
+  vertical-align: middle;
+}
+
+.nota-input {
+  min-width: 90px;
+}
+
+.notas-resumen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0;
+}
+
+.notas-resumen span {
+  background: #eef3f8;
+  border-radius: 999px;
+  color: #405366;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 8px;
+}
+
+.promedio-line {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+@media (max-width: 767px) {
+  .detalle-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .detalle-actions .btn {
+    width: 100%;
+  }
+}

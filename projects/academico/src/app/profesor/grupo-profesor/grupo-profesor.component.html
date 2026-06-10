@@ -1,28 +1,32 @@
 <div [hidden]="edit" class="container-fluid pb-5">
   <div class="page-toolbar">
-  <h2 class="page-title">Grupos por Profesor</h2>
-  <div class="input-group page-search">
-    <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
-    <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
-      placeholder="Buscar">
+    <h2 class="page-title">Grupos por Profesor</h2>
+    <div class="input-group page-search">
+      <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+      <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+        placeholder="Buscar">
+    </div>
   </div>
-  </div>
+
   <form>
     <div class="row g-4 page-grid">
-
       <div class="form-group col-12 col-sm-6" *ngFor="let Grupo of Grupos;let i = index">
-        <div class="card h-100">
+        <div class="card h-100 grupo-card">
           <a class="page-card-link" (click)="editRecord(Grupo)">
             <div class="card-body">
-
               <h4 class="card-title">{{Grupo.Curso}}</h4>
-              {{Grupo.Periodo}} - {{Grupo.Codigo}} - {{Grupo.Nombre}} 
-              <span *ngIf="Grupo.Modalidad == 1"> Presencial</span>
-              <span *ngIf="Grupo.Modalidad == 2"> Virtual</span>
-              <span *ngIf="Grupo.Modalidad == 3"> Tutoria</span>
-              <td class="col-sm-1"> {{Grupo.Dia}}</td>
-              <td class="col-sm-1"> {{Grupo.Hora}}</td>
-
+              <div class="grupo-meta">
+                <span>{{Grupo.Periodo}}</span>
+                <span>{{Grupo.Codigo}}</span>
+                <span>{{Grupo.Nombre}}</span>
+              </div>
+              <div class="grupo-meta">
+                <span *ngIf="Grupo.Modalidad == 1">Presencial</span>
+                <span *ngIf="Grupo.Modalidad == 2">Virtual</span>
+                <span *ngIf="Grupo.Modalidad == 3">Tutoria</span>
+                <span *ngIf="Grupo.Dia">{{Grupo.Dia}}</span>
+                <span *ngIf="Grupo.Hora">{{Grupo.Hora}}</span>
+              </div>
             </div>
           </a>
         </div>
@@ -42,119 +46,197 @@
   </div>
 </div>
 
-<!--
-    Form de Edición
-  -->
-  <div [hidden]="!edit" class="container-fluid pb-5">
-    <h2>Estudiantes del Grupo </h2>
+<div [hidden]="!edit" class="container-fluid pb-5 grupo-detalle">
+  <div class="detalle-header">
+    <div>
+      <span class="detalle-eyebrow">Grupo seleccionado</span>
+      <h2>{{GrupoSeleccionado?.Curso || 'Estudiantes del grupo'}}</h2>
+      <p *ngIf="GrupoSeleccionado">{{GrupoSeleccionado.Codigo}} - {{GrupoSeleccionado.Periodo}} - {{GrupoSeleccionado.Nombre}}</p>
+    </div>
+
+    <div class="detalle-actions">
+      <button (click)="aplicarNotasLmsAlActa()" type="button" class="btn btn-primary">
+        <i class="fa fa-refresh" aria-hidden="true"></i> Aplicar notas LMS
+      </button>
+      <button (click)="GenerarActa()" type="button" class="btn btn-success">
+        <i class="fa fa-file-text-o" aria-hidden="true"></i> Acta de notas
+      </button>
+      <button (click)="CerrarPantallaGrupo()" type="button" class="btn btn-danger">
+        Regresar
+      </button>
+    </div>
+  </div>
+
+  <section class="profesor-panel">
+    <div class="panel-title">
+      <div>
+        <h3>Entregas de actividades</h3>
+        <p>Revisa archivos enviados por los alumnos, registra nota y retroalimentacion.</p>
+      </div>
+    </div>
+
+    <div class="form-row align-items-end">
+      <div class="form-group col-md-8">
+        <label>Actividad</label>
+        <select class="form-control" [(ngModel)]="Id_Actividad" name="Id_Actividad" (change)="cargarEntregasActividad()">
+          <option value="">Seleccione una actividad</option>
+          <option *ngFor="let actividad of Actividades" [value]="actividad.Id_Actividad">
+            Semana {{actividad.Numero_Semana}} - {{actividad.Nombre}} ({{getTipoActividad(actividad.Tipo)}}) -
+            {{actividad.Revisadas || 0}}/{{actividad.Entregas || 0}} revisadas
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <div class="alert alert-info" *ngIf="Actividades.length === 0">
+      Este grupo no tiene actividades entregables configuradas en el aula virtual.
+    </div>
+
+    <div class="table-responsive" *ngIf="Id_Actividad">
+      <table class="table table-bordered table-sm entregas-table">
+        <thead class="thead-light">
+          <tr>
+            <th>Alumno</th>
+            <th>Archivo</th>
+            <th>Fecha</th>
+            <th>Estado</th>
+            <th>Nota</th>
+            <th>Retroalimentacion</th>
+            <th>Accion</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let entrega of Entregas">
+            <td>{{entrega.Estudiante}}</td>
+            <td>
+              <a *ngIf="getEntregaUrl(entrega)" [href]="getEntregaUrl(entrega)" target="_blank">Ver archivo</a>
+              <span *ngIf="!getEntregaUrl(entrega)" class="text-muted">Sin archivo</span>
+            </td>
+            <td>{{entrega.Creado_El | date:'short'}}</td>
+            <td>
+              <span class="badge" [class.badge-success]="getEstadoEntrega(entrega) === 'Calificada'" [class.badge-secondary]="getEstadoEntrega(entrega) === 'Pendiente'">
+                {{getEstadoEntrega(entrega)}}
+              </span>
+            </td>
+            <td>
+              <input type="number" min="0" max="100" class="form-control form-control-sm nota-input" [(ngModel)]="entrega.Nota" name="Nota{{entrega.Id_Entrega}}">
+            </td>
+            <td>
+              <textarea class="form-control form-control-sm" rows="2" [(ngModel)]="entrega.Comentario_Docente" name="Comentario{{entrega.Id_Entrega}}"></textarea>
+            </td>
+            <td>
+              <button type="button" class="btn btn-sm btn-success" (click)="guardarEntrega(entrega)">Guardar</button>
+            </td>
+          </tr>
+          <tr *ngIf="Entregas.length === 0">
+            <td colspan="7" class="text-center text-muted">No hay entregas para la actividad seleccionada.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="profesor-panel">
+    <div class="panel-title">
+      <div>
+        <h3>Estudiantes y acta</h3>
+        <p>El acta toma las notas guardadas en la matricula del grupo.</p>
+      </div>
+    </div>
+
     <form>
       <div class="row g-4 page-grid">
-
         <div class="form-group col-12 col-sm-6" *ngFor="let alumno of Alumnos;let i = index">
-          <div class="card h-100">
+          <div class="card h-100 alumno-card">
             <a class="page-card-link" (click)="abrirNotasPanel(alumno)">
               <div class="card-body">
-
                 <h4 class="card-title">{{alumno.Nombre}}</h4>
-                 {{alumno.Rubrica_1}}- {{alumno.Rubrica_2}} - {{alumno.Rubrica_3}} -{{alumno.Rubrica_4}} - {{alumno.Rubrica_5}} -{{alumno.Promedio}}
-                 <span *ngIf="alumno.Estado == 1"> Cursando</span>
-                 <span *ngIf="alumno.Estado == 2"> Aprobado</span>
-                 <span *ngIf="alumno.Estado == 3"> Reprobado</span>
-                 <span *ngIf="alumno.Estado == 4"> Convalidado</span>
-                 <span *ngIf="alumno.Estado == 5"> Retirado</span>
-                 <span *ngIf="alumno.Estado == 6"> Pre Matricula</span>
+                <div class="notas-resumen">
+                  <span>R1 {{alumno.Rubrica_1 || 0}}</span>
+                  <span>R2 {{alumno.Rubrica_2 || 0}}</span>
+                  <span>R3 {{alumno.Rubrica_3 || 0}}</span>
+                  <span>R4 {{alumno.Rubrica_4 || 0}}</span>
+                  <span>R5 {{alumno.Rubrica_5 || 0}}</span>
+                </div>
+                <div class="promedio-line">
+                  <strong>Promedio: {{alumno.Promedio || 0}}</strong>
+                  <span *ngIf="alumno.Estado == 1" class="text-primary">Cursando</span>
+                  <span *ngIf="alumno.Estado == 2" class="text-success">Aprobado</span>
+                  <span *ngIf="alumno.Estado == 3" class="text-danger">Reprobado</span>
+                  <span *ngIf="alumno.Estado == 4" class="text-info">Convalidado</span>
+                  <span *ngIf="alumno.Estado == 5" class="text-danger">Retirado</span>
+                  <span *ngIf="alumno.Estado == 6" class="text-secondary">Pre Matricula</span>
+                </div>
               </div>
             </a>
           </div>
         </div>
-        
       </div>
-      
-      <div class="form-row">
-          <div class="form-group col-md-9">
-          </div>
-
-          <div class="col-md-2">
-              <button (click)="GenerarActa()" type="button" class="btn btn-success">Acta. Notas</button>
-          </div>
-          <div class="col-md-1">
-              <button (click)="CerrarPantallaGrupo()" type="button" class="btn btn-danger" title="Cancela edicion">Cancelar</button>
-          </div>
-      </div>
-  
     </form>
+  </section>
 </div>
-
 
 <div [hidden]="!NotasPanel" class="modal-main">
-  <div class="modal-content  card">
+  <div class="modal-content card">
     <div class="card-header">
-      <h2>Edición Notas del Estudiante</h2>
+      <h2>Edicion Notas del Estudiante</h2>
     </div>
 
-
-  <div class="card-body">
-    <div class="form-row">
-      <div class="form-group col-md-12">
-          <label>Estudiante</label>
-          <input [(ngModel)]="estudiante.Nombre" disabled='disabled' class="form-control" name="Nombre" id="Nombre" type="text" placeholder="Nombre">
-      </div>
-      
-      <div class="form-group col-md-3">
-        <label>Rúbrica 1</label>
-        <input  (change)='CalcularPromedio()' [(ngModel)]="estudiante.Rubrica_1" name="Rubrica_1" type="text" placeholder="Rubrica 1" class="form-control">
-      </div>
-      <div class="form-group col-md-3">
-        <label>Rúbrica 2</label>
-        <input  (change)='CalcularPromedio()' [(ngModel)]="estudiante.Rubrica_2" name="Rubrica_2" type="text" placeholder="Rubrica 2" class="form-control">
-      </div>
-      <div class="form-group col-md-3">
-        <label>Rúbrica 3</label>
-        <input  (change)='CalcularPromedio()' (change)='CalcularPromedio()' [(ngModel)]="estudiante.Rubrica_3" name="Rubrica_3" type="text" placeholder="Rubrica 3" class="form-control">
-      </div>
-      <div class="form-group col-md-3">
-        <label>Rúbrica 4</label>
-        <input  (change)='CalcularPromedio()' [(ngModel)]="estudiante.Rubrica_4" name="Rubrica_4" type="text" placeholder="Rubrica 4" class="form-control">
-      </div>
-      <div class="form-group col-md-3">
-        <label>Rúbrica 5</label>
-        <input  (change)='CalcularPromedio()'  [(ngModel)]="estudiante.Rubrica_5" name="Rubrica_5" type="text" placeholder="Rubrica 5" class="form-control">
-      </div>
-      <div class="form-group col-md-3">
-        <label>Promedio</label>
-        <input disabled="disabled" [(ngModel)]="estudiante.Promedio" name="Promedio" type="text" placeholder="Promedio" class="form-control">
-      </div>
-
-      <div class="form-group col-md-3">
-        <label>Estado</label>
-        <select [(ngModel)]="estudiante.Estado" name="DetalleEstado" type="text" class="form-control">
-            <option value='1'>Cursando</option>
-            <option value='2'>Aprobado</option>
-            <option value='3'>Reprobado</option>
-          </select>
-      </div>
-
-    </div>
-  </div>
-
-  <div class="card-footer ">
-    <div class="form-group col-md-12">
+    <div class="card-body">
       <div class="form-row">
-        <div class="form-group col-8">
+        <div class="form-group col-md-12">
+          <label>Estudiante</label>
+          <input [(ngModel)]="estudiante.Nombre" disabled="disabled" class="form-control" name="Nombre" id="Nombre" type="text" placeholder="Nombre">
+        </div>
 
+        <div class="form-group col-md-3">
+          <label>Rubrica 1</label>
+          <input (change)="CalcularPromedio()" [(ngModel)]="estudiante.Rubrica_1" name="Rubrica_1" type="text" placeholder="Rubrica 1" class="form-control">
         </div>
-        <div class="form-group col-2">
-          <button (click)="grabarNotas()" type="button" class="btn btn-success"
-            title="Cancela edicion">Grabar</button>
+        <div class="form-group col-md-3">
+          <label>Rubrica 2</label>
+          <input (change)="CalcularPromedio()" [(ngModel)]="estudiante.Rubrica_2" name="Rubrica_2" type="text" placeholder="Rubrica 2" class="form-control">
         </div>
-        <div class="form-group col-2">
-          <button (click)="CerrarPantallaNotas()" type="button" class="btn btn-danger"
-            title="Cancela edicion">Cerrar</button>
+        <div class="form-group col-md-3">
+          <label>Rubrica 3</label>
+          <input (change)="CalcularPromedio()" [(ngModel)]="estudiante.Rubrica_3" name="Rubrica_3" type="text" placeholder="Rubrica 3" class="form-control">
+        </div>
+        <div class="form-group col-md-3">
+          <label>Rubrica 4</label>
+          <input (change)="CalcularPromedio()" [(ngModel)]="estudiante.Rubrica_4" name="Rubrica_4" type="text" placeholder="Rubrica 4" class="form-control">
+        </div>
+        <div class="form-group col-md-3">
+          <label>Rubrica 5</label>
+          <input (change)="CalcularPromedio()" [(ngModel)]="estudiante.Rubrica_5" name="Rubrica_5" type="text" placeholder="Rubrica 5" class="form-control">
+        </div>
+        <div class="form-group col-md-3">
+          <label>Promedio</label>
+          <input disabled="disabled" [(ngModel)]="estudiante.Promedio" name="Promedio" type="text" placeholder="Promedio" class="form-control">
+        </div>
+
+        <div class="form-group col-md-3">
+          <label>Estado</label>
+          <select [(ngModel)]="estudiante.Estado" name="DetalleEstado" type="text" class="form-control">
+            <option value="1">Cursando</option>
+            <option value="2">Aprobado</option>
+            <option value="3">Reprobado</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer">
+      <div class="form-group col-md-12">
+        <div class="form-row">
+          <div class="form-group col-8"></div>
+          <div class="form-group col-2">
+            <button (click)="grabarNotas()" type="button" class="btn btn-success">Grabar</button>
+          </div>
+          <div class="form-group col-2">
+            <button (click)="CerrarPantallaNotas()" type="button" class="btn btn-danger">Cerrar</button>
+          </div>
         </div>
       </div>
     </div>
   </div>
-
 </div>
-</div>
-

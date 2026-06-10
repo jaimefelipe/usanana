@@ -44,6 +44,8 @@ export class LoginComponent implements OnInit {
     });
   }
   async onLoggedin() {
+    this.registro.email = this.registro.email.trim();
+    this.registro.password = this.registro.password.trim();
     if(this.registro.empresa == ""){
       await this.emailValidation();
     }

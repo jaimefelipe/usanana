@@ -25,10 +25,11 @@ export class SemanaEstudioComponent implements OnInit {
     Fecha_Inicio:'',
     Fecha_Limite:''
   }
-  ngOnInit() {
-    this.leerSemana();
-    this.LeerRecursos();
-    this.leerActividades();
+  async ngOnInit() {
+    await this.leerSemana();
+    await this.LeerRecursos();
+    await this.leerActividades();
+    this.seleccionarPrimerContenido();
   }
   
   itemSeleccionado: ItemSemana | null = null;
@@ -41,15 +42,15 @@ export class SemanaEstudioComponent implements OnInit {
 
   async LeerRecursos(){
     let data = await this.semanaEstudioService.leerRecursosSemana(this.Id_Semana);
-    this.Recursos = data['data'];
+    this.Recursos = data?.['data'] || [];
   }
   async leerActividades(){
     let data = await this.semanaEstudioService.leerActividadesSemana(this.Id_Semana)
-    this.Actividades = data['data'];
+    this.Actividades = data?.['data'] || [];
   }
   async leerSemana(){
     let data = await this.semanaEstudioService.leerInfoSemana(this.Id_Semana);
-    this.Semana = data['data'][0];
+    this.Semana = data?.['data']?.[0] || this.Semana;
 
   }
   volverAlCurso(){
@@ -58,5 +59,16 @@ export class SemanaEstudioComponent implements OnInit {
   seleccionarActividad(actividad: any) {
     this.itemSeleccionado = null;
     this.actividadSeleccionada = actividad;
+  }
+  private seleccionarPrimerContenido() {
+    if (this.Recursos.length > 0) {
+      this.itemSeleccionado = this.Recursos[0];
+      this.actividadSeleccionada = null;
+      return;
+    }
+
+    if (this.Actividades.length > 0) {
+      this.seleccionarActividad(this.Actividades[0]);
+    }
   }
 }

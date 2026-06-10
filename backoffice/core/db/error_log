@@ -1,0 +1,48 @@
+[22-Aug-2025 10:02:01 America/Costa_Rica] PHP Warning:  mysqli_connect(): (HY000/1044): Access denied for user 'usanwoig_santana'@'localhost' to database 'usanwoig_santana' in /home/usanwoig/public_html/core/db/epsMySqlDataBase_v2.php on line 45
+[22-Aug-2025 10:02:01 America/Costa_Rica] PHP Warning:  mysqli_set_charset() expects parameter 1 to be mysqli, bool given in /home/usanwoig/public_html/core/db/epsMySqlDataBase_v2.php on line 50
+[22-Aug-2025 10:02:01 America/Costa_Rica] PHP Warning:  mysqli_autocommit() expects parameter 1 to be mysqli, bool given in /home/usanwoig/public_html/core/db/epsMySqlDataBase_v2.php on line 51
+[22-Aug-2025 10:02:01 America/Costa_Rica] PHP Fatal error:  Uncaught Error: Call to a member function query() on bool in /home/usanwoig/public_html/core/db/epsMySqlDataBase_v2.php:77
+Stack trace:
+#0 /home/usanwoig/public_html/core/db/eps_execSql_v21.php(76): epsMySqlDatabase->Execute('SELECT App_Grup...')
+#1 {main}
+  thrown in /home/usanwoig/public_html/core/db/epsMySqlDataBase_v2.php on line 77
+[22-Aug-2025 10:02:01 America/Costa_Rica] PHP Warning:  mysqli_connect(): (HY000/1044): Access denied for user 'usanwoig_santana'@'localhost' to database 'usanwoig_santana' in /home/usanwoig/public_html/core/db/epsMySqlDataBase_v2.php on line 45
+[22-Aug-2025 10:02:01 America/Costa_Rica] PHP Warning:  mysqli_set_charset() expects parameter 1 to be mysqli, bool given in /home/usanwoig/public_html/core/db/epsMySqlDataBase_v2.php on line 50
+[22-Aug-2025 10:02:01 America/Costa_Rica] PHP Warning:  mysqli_autocommit() expects parameter 1 to be mysqli, bool given in /home/usanwoig/public_html/core/db/epsMySqlDataBase_v2.php on line 51
+[22-Aug-2025 10:02:01 America/Costa_Rica] PHP Fatal error:  Uncaught Error: Call to a member function query() on bool in /home/usanwoig/public_html/core/db/epsMySqlDataBase_v2.php:77
+Stack trace:
+#0 /home/usanwoig/public_html/core/db/eps_execSql_v21.php(76): epsMySqlDatabase->Execute('SELECT Show_Hom...')
+#1 {main}
+  thrown in /home/usanwoig/public_html/core/db/epsMySqlDataBase_v2.php on line 77
+[22-Aug-2025 10:02:02 America/Costa_Rica] PHP Warning:  mysqli_connect(): (HY000/1044): Access denied for user 'usanwoig_santana'@'localhost' to database 'usanwoig_santana' in /home/usanwoig/public_html/core/db/epsMySqlDataBase_v2.php on line 45
+[22-Aug-2025 10:02:02 America/Costa_Rica] PHP Warning:  mysqli_set_charset() expects parameter 1 to be mysqli, bool given in /home/usanwoig/public_html/core/db/epsMySqlDataBase_v2.php on line 50
+[22-Aug-2025 10:02:02 America/Costa_Rica] PHP Warning:  mysqli_autocommit() expects parameter 1 to be mysqli, bool given in /home/usanwoig/public_html/core/db/epsMySqlDataBase_v2.php on line 51
+[22-Aug-2025 10:02:02 America/Costa_Rica] PHP Fatal error:  Uncaught Error: Call to a member function query() on bool in /home/usanwoig/public_html/core/db/epsMySqlDataBase_v2.php:77
+Stack trace:
+#0 /home/usanwoig/public_html/core/db/eps_execSql_v21.php(76): epsMySqlDatabase->Execute('SELECT App_Grup...')
+#1 {main}
+  thrown in /home/usanwoig/public_html/core/db/epsMySqlDataBase_v2.php on line 77
+[22-Aug-2025 10:02:02 America/Costa_Rica] PHP Warning:  mysqli_connect(): (HY000/1044): Access denied for user 'usanwoig_santana'@'localhost' to database 'usanwoig_santana' in /home/usanwoig/public_html/core/db/epsMySqlDataBase_v2.php on line 45
+[22-Aug-2025 10:02:02 America/Costa_Rica] PHP Warning:  mysqli_set_charset() expects parameter 1 to be mysqli, bool given in /home/usanwoig/public_html/core/db/epsMySqlDataBase_v2.php on line 50
+[22-Aug-2025 10:02:02 America/Costa_Rica] PHP Warning:  mysqli_autocommit() expects parameter 1 to be mysqli, bool given in /home/usanwoig/public_html/core/db/epsMySqlDataBase_v2.php on line 51
+[22-Aug-2025 10:02:02 America/Costa_Rica] PHP Fatal error:  Uncaught Error: Call to a member function query() on bool in /home/usanwoig/public_html/core/db/epsMySqlDataBase_v2.php:77
+Stack trace:
+#0 /home/usanwoig/public_html/core/db/eps_execSql_v21.php(76): epsMySqlDatabase->Execute('SELECT Show_Hom...')
+#1 {main}
+  thrown in /home/usanwoig/public_html/core/db/epsMySqlDataBase_v2.php on line 77
+[22-Aug-2025 10:02:02 America/Costa_Rica] PHP Warning:  mysqli_connect(): (HY000/1044): Access denied for user 'usanwoig_santana'@'localhost' to database 'usanwoig_santana' in /home/usanwoig/public_html/core/db/epsMySqlDataBase_v2.php on line 45
+[22-Aug-2025 10:02:02 America/Costa_Rica] PHP Warning:  mysqli_set_charset() expects parameter 1 to be mysqli, bool given in /home/usanwoig/public_html/core/db/epsMySqlDataBase_v2.php on line 50
+[22-Aug-2025 10:02:02 America/Costa_Rica] PHP Warning:  mysqli_autocommit() expects parameter 1 to be mysqli, bool given in /home/usanwoig/public_html/core/db/epsMySqlDataBase_v2.php on line 51
+[22-Aug-2025 10:02:02 America/Costa_Rica] PHP Fatal error:  Uncaught Error: Call to a member function query() on bool in /home/usanwoig/public_html/core/db/epsMySqlDataBase_v2.php:77
+Stack trace:
+#0 /home/usanwoig/public_html/core/db/eps_execSql_v21.php(76): epsMySqlDatabase->Execute('SELECT App_Grup...')
+#1 {main}
+  thrown in /home/usanwoig/public_html/core/db/epsMySqlDataBase_v2.php on line 77
+[22-Aug-2025 10:02:02 America/Costa_Rica] PHP Warning:  mysqli_connect(): (HY000/1044): Access denied for user 'usanwoig_santana'@'localhost' to database 'usanwoig_santana' in /home/usanwoig/public_html/core/db/epsMySqlDataBase_v2.php on line 45
+[22-Aug-2025 10:02:02 America/Costa_Rica] PHP Warning:  mysqli_set_charset() expects parameter 1 to be mysqli, bool given in /home/usanwoig/public_html/core/db/epsMySqlDataBase_v2.php on line 50
+[22-Aug-2025 10:02:02 America/Costa_Rica] PHP Warning:  mysqli_autocommit() expects parameter 1 to be mysqli, bool given in /home/usanwoig/public_html/core/db/epsMySqlDataBase_v2.php on line 51
+[22-Aug-2025 10:02:02 America/Costa_Rica] PHP Fatal error:  Uncaught Error: Call to a member function query() on bool in /home/usanwoig/public_html/core/db/epsMySqlDataBase_v2.php:77
+Stack trace:
+#0 /home/usanwoig/public_html/core/db/eps_execSql_v21.php(76): epsMySqlDatabase->Execute('SELECT Show_Hom...')
+#1 {main}
+  thrown in /home/usanwoig/public_html/core/db/epsMySqlDataBase_v2.php on line 77

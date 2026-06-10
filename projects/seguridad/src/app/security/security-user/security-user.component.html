@@ -109,7 +109,12 @@
       <div class="form-group col-md-12">
         <div class="form-row">
           <div class="form-group col-6 col-md-8">
-
+            <button *ngIf="Master=='1' && Usuario.Id_Usuario != ''"
+                    (click)="resetearClave()" type="button"
+                    class="btn btn-warning"
+                    title="Resetea la contraseña del usuario a 'Password'. Requiere clave de supervisor.">
+              <i class="fa fa-refresh"></i> Resetear a Password
+            </button>
           </div>
           <div class="form-group col-3 col-md-2">
             <button (click)="grabar()" type="button" class="btn btn-success" title="Cancela edicion">Grabar</button>

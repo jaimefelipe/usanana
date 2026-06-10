@@ -15,7 +15,7 @@
     <form>
       <input [(ngModel)]="registro.email" (blur)="emailValidation()" name="email" type="email" class="form-control mb-3" placeholder="Correo">
       <input [(ngModel)]="registro.password" name="password" type="password" class="form-control mb-3" placeholder="Contraseña">
-      <button (click)="onLoggedin()" class="btn btn-warning text-white font-weight-bold w-100 mb-2">Ingresar</button>
+      <button type="button" (click)="onLoggedin()" class="btn btn-warning text-white font-weight-bold w-100 mb-2">Ingresar</button>
     </form>
     <small>Click <a href="#">aquí</a> si olvidaste tu contraseña</small>
   </div>

@@ -1,23 +1,24 @@
-<div [hidden]="!Registrado" class="container">
+﻿<div [hidden]="!Registrado" class="container">
 
-    <h2>Formulario de Registro Primer Ingreso</h2>
+    <h1>Universidad Santana de San Jose </h1>
+    <h2>Formulario de solicitud de admision de primer ingreso</h2>
     <div>
         <img src="/assets/unela.png">
     </div>
-    Proceso de registro para admisión como estudiante.
+    Proceso de solicitud de admision como estudiante de la Universidad Santana de San Jose.
 
     <h3>Nota</h3>
     <p>
-        Con el siguiente formulario se realizará el proceso de inscripción , Un funcionario validará la información suministrada en este formulario y si existe alguna disconformidad se comunicará con usted para subsanar la misma
+        Con este formulario se abre el expediente digital de admision. El area de admisiones validara la informacion y los documentos cargados.
     </p>
     <p>
-        Con el siguiente proceso se generará un usuario que le permitirá ingresar al sistema por medio del cual podrá consultar su expedente.`
+        Cuando la solicitud sea admitida y el pago sea validado, el sistema activara el usuario academico del estudiante.
     </p>
 
     <form>
         <div class="card">
             <div class="card-header">
-                Información Personal del Candidato
+                InformaciÃ³n Personal del Candidato
             </div>
             <div class="card-body">
                 <div class="form-row">
@@ -29,7 +30,7 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-4">
-                        <label>País de Residencia</label>
+                        <label>PaÃ­s de Residencia</label>
                         <select [(ngModel)]="Persona.Residencia" name="pais" class="form-control">
                           <option  *ngFor="let Pais of Paises ; let i = index" value='{{Pais}}'>{{Pais}}</option>
                         </select>
@@ -47,8 +48,8 @@
                     <div class="form-group col-md-4">
                         <label>Tipo</label>
                         <select [(ngModel)]="Persona.Tipo_Identificacion" name="Tipo_Identificacion" class="form-control">
-                              <option value='01'>Cédula Física</option>
-                              <option value='02'>Cédula Jurídica</option>
+                              <option value='01'>CÃ©dula FÃ­sica</option>
+                              <option value='02'>CÃ©dula JurÃ­dica</option>
                               <option value='03'>DIMEX</option>
                               <option value='04'>NITE</option>
                               <option value='05'>PASAPORTE</option>
@@ -66,7 +67,7 @@
 
                 <div class="form-row">
                     <div class="form-group col-md-4">
-                        <label>Teléfono</label>
+                        <label>TelÃ©fono</label>
                         <input [(ngModel)]="Persona.Telefono" class="form-control" name="Telefono" id="Telefono" type="text" placeholder="Telefono">
                     </div>
                     <div class="form-group col-md-4">
@@ -100,13 +101,13 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-12">
-                        <label>Dirección</label>
-                        <input [(ngModel)]="Persona.Direccion" class="form-control" name="Direccion" id="Direccion" type="text" placeholder="Dirección">
+                        <label>DirecciÃ³n</label>
+                        <input [(ngModel)]="Persona.Direccion" class="form-control" name="Direccion" id="Direccion" type="text" placeholder="DirecciÃ³n">
                     </div>
                 </div>
             </div>
             <div class="card-header">
-                Datos Académicos de Interes
+                Datos AcadÃ©micos de Interes
             </div>
             <div class="card-body">
                 <div class="form-row">
@@ -115,14 +116,14 @@
                         <select (change)='leerCursos()' [(ngModel)]="Persona.Nivel" name="Nivel" class="form-control">
                             <option value='1'>Curso Libre</option>
                             <option value='2'>Seminario</option>
-                            <option value='3'>Técnico</option>
+                            <option value='3'>TÃ©cnico</option>
                             <option value='4'>Diploma</option>
                             <option value='5'>Bachillerato</option>
                             <option value='6'>Licenciatura</option>
-                            <option value='7'>Maestría</option>
+                            <option value='7'>MaestrÃ­a</option>
                             <option value='8'>Doctorado</option>
-                            <option value='9'>Especialización</option>
-                            <option value='10'>Certificación</option>
+                            <option value='9'>EspecializaciÃ³n</option>
+                            <option value='10'>CertificaciÃ³n</option>
                         </select>
                     </div>
                     <div class="form-group col-md-8">
@@ -132,6 +133,62 @@
                       </select>
                     </div>
 
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label>Modalidad</label>
+                        <select [(ngModel)]="Persona.Modalidad" name="Modalidad" class="form-control">
+                            <option value='Presencial'>Presencial</option>
+                            <option value='Virtual'>Virtual</option>
+                            <option value='Hibrida'>Hibrida</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label>Sede</label>
+                        <input [(ngModel)]="Persona.Id_Sucursal" class="form-control" name="Id_Sucursal" type="text" placeholder="Sede de interes">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label>Promedio</label>
+                        <input [(ngModel)]="Persona.Promedio" class="form-control" name="Promedio" type="text" placeholder="Promedio aproximado">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label>Colegio o institucion de procedencia</label>
+                        <input [(ngModel)]="Persona.Colegio_Procedencia" class="form-control" name="Colegio_Procedencia" type="text">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label>Ultimo grado aprobado</label>
+                        <input [(ngModel)]="Persona.Ultimo_Grado" class="form-control" name="Ultimo_Grado" type="text">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label>Ano de graduacion</label>
+                        <input [(ngModel)]="Persona.Anio_Graduacion" class="form-control" name="Anio_Graduacion" type="text">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label>Observaciones</label>
+                        <textarea [(ngModel)]="Persona.Observaciones" class="form-control" name="Observaciones" rows="3"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="card-header">
+                Documentos de Admision
+            </div>
+            <div class="card-body">
+                <div class="form-row" *ngFor="let documento of Documentos">
+                    <div class="form-group col-md-5">
+                        <label>{{documento.Nombre}} <span *ngIf="documento.Requerido">*</span></label>
+                    </div>
+                    <div class="form-group col-md-5">
+                        <input type="file" class="form-control" (change)="onDocumentoChange($event, documento)">
+                    </div>
+                    <div class="form-group col-md-2">
+                        <span *ngIf="documento.Subiendo">Subiendo...</span>
+                        <span *ngIf="documento.URL" class="text-success">Cargado</span>
+                        <span *ngIf="!documento.URL && documento.Requerido" class="text-danger">Pendiente</span>
+                    </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-10">
@@ -148,26 +205,29 @@
 </div>
 
 <div [hidden]="Registrado" class="container">
-    <h2>Registro Primer Ingreso</h2>
+    <h1>Universidad Santana de San Jose </h1>
+    <h2>Solicitud de primer ingreso</h2>
     <div>
         <img src="/assets/unela.png">
     </div>
-    Proceso de registro para admisión como estudiante.
+    Proceso de solicitud de admision como estudiante de la Universidad Santana de San Jose.
     <br><br><br>
-    <h3>Usuario Creado</h3>
+    <h3>Solicitud recibida</h3>
     <p>
-        Se ha generado un usuario en el sistema donde podrá realizar la actualización de su expediente, Matricula y demás trámites
+        La solicitud fue recibida. Admisiones revisara el expediente digital y notificara cualquier correccion pendiente.
     </p>
     <p>
-        Usuario : {{Persona.Correo}} <br> Clave : password
+        Codigo interno de solicitud: {{CodigoSolicitud}}
     </p>
     <p>
-        El sistema le solicitará cambiar su clave cuando ingrese por primera vez
+        El usuario academico se activara automaticamente cuando admisiones y financiero completen la aprobacion.
     </p>
     <p>
-        Bienvenido .
+        Cuando sea admitido recibira la carta formal, opciones de pago e instrucciones para activar su usuario academico.
     </p>
     <p>
-        Ingrese al sistema <a href="/login">Sistema</a>
+        
+        <!-- Ingrese al sistema <a href="http://ibo.jaimebrenes.com/login">Sistema de Unela</a> -->
     </p>
 </div>
+

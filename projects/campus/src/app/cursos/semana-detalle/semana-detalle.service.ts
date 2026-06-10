@@ -13,8 +13,11 @@ export class SemanaDetalleService {
   async leerRecursosSemana(Id_Semana){
     let sqlConfig = {
         table: 'Lms_Recurso',
-        fields: 'Id_Recurso,Titulo',
-        where: 'Id_Semana = ' + Id_Semana + ' and Estado = 1'
+        fields: 'Id_Recurso,Id_Semana,Titulo,Tipo,URL,CASE WHEN Tipo = 1 THEN Contenido ELSE URL END AS Contenido',
+        orderField: 'Id_Recurso',
+        orderDirection: ' ASC ',
+        Empresa:false,
+        where: 'Id_Semana = ' + Id_Semana + ' and (Estado = 1 or Estado is null or CAST(Estado AS CHAR) = \'\')'
     }
     return await this.apiService.executeSqlSyn(sqlConfig);
   }
@@ -22,7 +25,10 @@ export class SemanaDetalleService {
   async leerActividadesSemana(Id_Semana){
     let sqlConfig = {
         table: 'Lms_Actividad',
-        fields: 'Id_Actividad,Nombre',
+        fields: 'Id_Actividad,Nombre,Tipo,Instrucciones,Fecha_Limite,Puntaje,URL',
+        orderField: 'Id_Actividad',
+        orderDirection: ' ASC ',
+        Empresa:false,
         where: 'Id_Semana = ' + Id_Semana + ' and Estado = 1'
     }
     return await this.apiService.executeSqlSyn(sqlConfig);

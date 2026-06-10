@@ -611,6 +611,20 @@ a {
   margin-bottom: 0;
 }
 
+.sidebar > .nav > .nav-item.sidebar-footer {
+  margin-top: auto;
+  padding-top: 14px;
+  border-bottom: 0;
+  border-top: 1px solid var(--ui-sidebar-border);
+}
+
+.sidebar-version {
+  margin-top: 4px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #143a68;
+}
+
 .sidebar .nav .nav {
   margin-left: 0 !important;
   padding-left: 12px;

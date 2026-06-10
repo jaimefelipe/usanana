@@ -38,11 +38,11 @@ export class SemanaDetalleComponent implements OnInit {
   }
   async LeerRecursos(){
     let data = await this.semanaDetalleService.leerRecursosSemana(this.semana.Id_Semana);
-    this.recursos = data['data'];
+    this.recursos = data?.['data'] || [];
   }
   async leerActividades(){
     let data = await this.semanaDetalleService.leerActividadesSemana(this.semana.Id_Semana)
-    this.actividades = data['data'];
+    this.actividades = data?.['data'] || [];
   }
   seleccionarSemana(semana){
     localStorage.setItem('Id_Semana',semana.Id_Semana);

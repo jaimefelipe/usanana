@@ -23,6 +23,7 @@ export class MenuComponent implements OnInit {
   logedIn = false;
   Company = localStorage.getItem("Id_Empresa");
   User = localStorage.getItem("Nombre_Usuario");
+  appVersion = '1.0.0.1';
   SeguridadStr = localStorage.getItem("ToxoSG");
   Master = false;
   Seguridad = [];

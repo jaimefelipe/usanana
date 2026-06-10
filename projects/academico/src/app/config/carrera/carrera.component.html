@@ -60,7 +60,8 @@
 
   <div class="tab">
     <button [ngClass]='CarreraClass' (click)="activarCarrera()">Carrera</button>
-    <button [ngClass]='CursoClass' (click)="activarCursos()">Cursos</button>    
+    <button [ngClass]='CursoClass' (click)="activarCursos()">Cursos</button>
+    <button [ngClass]='FinancieroClass' (click)="activarFinanciero()">Precios admision</button>
   </div>
 
   <form [hidden]="!CarreraActive">
@@ -183,6 +184,58 @@
       </ul>
     </div>
     
+  </div>
+
+  <div [hidden]="!FinancieroActive">
+    <div class="card mb-3">
+      <div class="card-body">
+        <h4>Precios de admision y matricula</h4>
+        <p class="text-muted">Estos valores son oficiales para todos los aspirantes de esta carrera.</p>
+        <div class="form-row">
+          <div class="form-group col-md-3">
+            <label>Matricula por bloque</label>
+            <input [(ngModel)]="ConfigFinanciera.Matricula_Bloque" name="Matricula_Bloque" type="number" class="form-control">
+          </div>
+          <div class="form-group col-md-3">
+            <label>Precio por credito</label>
+            <input [(ngModel)]="ConfigFinanciera.Precio_Credito" name="Precio_Credito" type="number" class="form-control">
+          </div>
+          <div class="form-group col-md-3">
+            <label>Precio por curso</label>
+            <input [(ngModel)]="ConfigFinanciera.Precio_Curso" name="Precio_Curso" type="number" class="form-control">
+            <small class="text-muted">Use este campo si no cobra por credito.</small>
+          </div>
+          <div class="form-group col-md-3">
+            <label>Moneda</label>
+            <input [(ngModel)]="ConfigFinanciera.Moneda" name="Moneda" class="form-control">
+          </div>
+          <div class="form-group col-md-3">
+            <label>Cursos por bloque</label>
+            <input [(ngModel)]="ConfigFinanciera.Cursos_Por_Bloque" name="Cursos_Por_Bloque" type="number" class="form-control">
+          </div>
+          <div class="form-group col-md-3">
+            <label>Creditos por curso</label>
+            <input [(ngModel)]="ConfigFinanciera.Creditos_Por_Curso" name="Creditos_Por_Curso" type="number" class="form-control">
+          </div>
+          <div class="form-group col-md-6">
+            <label>Correo para notificar comprobantes</label>
+            <input [(ngModel)]="ConfigFinanciera.Notificar_Email" name="Notificar_Email" class="form-control">
+          </div>
+          <div class="form-group col-md-12">
+            <label>Instrucciones / medios de pago</label>
+            <textarea [(ngModel)]="ConfigFinanciera.Medio_Pago_Texto" name="Medio_Pago_Texto" class="form-control" rows="2"></textarea>
+          </div>
+          <div class="form-group col-md-12">
+            <label>Cuentas bancarias</label>
+            <textarea [(ngModel)]="BancosTexto" name="BancosTexto" class="form-control" rows="4" placeholder="Banco | cuenta | IBAN | moneda | titular"></textarea>
+            <small class="text-muted">Una cuenta por linea. Formato: Banco | cuenta | IBAN | moneda | titular</small>
+          </div>
+          <div class="form-group col-md-12">
+            <button (click)="guardarConfigFinanciera()" type="button" class="btn btn-success">Guardar precios</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="form-group col-md-12">
     <div class="form-row">

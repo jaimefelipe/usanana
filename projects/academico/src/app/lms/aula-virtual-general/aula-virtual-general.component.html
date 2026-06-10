@@ -12,8 +12,8 @@
     <div class="form-group col-md-4">
       <label for="estado"><strong>Estado</strong></label>
       <select class="form-control" id="Activo" [(ngModel)]="Aula.Activo" name="estado">
-        <option [value]="1">Activo</option>
-        <option [value]="0">Inactivo</option>
+        <option [ngValue]="true">Activo</option>
+        <option [ngValue]="false">Inactivo</option>
       </select>
     </div>
   </div>
@@ -21,6 +21,25 @@
   <div class="form-group">
     <label for="bienvenida"><strong>Mensaje de Bienvenida</strong></label>
     <textarea class="form-control" id="bienvenida" [(ngModel)]="Aula.Bienvenida" rows="20" placeholder="Bienvenida del curso..."></textarea>
+  </div>
+
+  <div class="form-group">
+    <label><strong>Imagen del aula virtual</strong></label>
+    <div class="aula-imagen-editor">
+      <img class="aula-imagen-preview" [src]="getImagenAula()" (error)="usarImagenAulaDefault($event)" alt="Imagen del aula virtual">
+      <div class="aula-imagen-controls">
+        <div class="custom-file mb-2">
+          <input type="file" class="custom-file-input" id="aulaImagen" accept="image/jpeg,image/png,image/webp,image/gif" (change)="handleImagenInput($event)">
+          <label class="custom-file-label" for="aulaImagen">
+            {{ imagenFileName || 'Seleccionar imagen' }}
+          </label>
+        </div>
+        <input [(ngModel)]="Aula.Imagen" name="ImagenAula" type="text" placeholder="URL de imagen" class="form-control mb-2">
+        <button type="button" class="btn btn-outline-danger btn-sm" (click)="quitarImagen()" *ngIf="Aula.Imagen || imagenPreviewUrl">
+          Quitar imagen
+        </button>
+      </div>
+    </div>
   </div>
 
 

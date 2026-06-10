@@ -114,8 +114,17 @@
               <ejs-richtexteditor height="300px" (change)="onCongenidoChange($event)"  [(value)]="Recurso.Contenido" [toolbarSettings]="{ enable: true }"></ejs-richtexteditor>
             </div>
             
-            <!-- URL para Link o YouTube -->
-            <div *ngIf="Recurso.Tipo === '2' || Recurso.Tipo === '3'">
+            <!-- URL / embed para Link o YouTube -->
+            <div *ngIf="Recurso.Tipo === '2'">
+              <textarea
+                class="form-control mt-2"
+                [(ngModel)]="Recurso.URL"
+                name="URL"
+                rows="5"
+                placeholder="Pegue una URL o el codigo embed de Canva"></textarea>
+              <small class="form-text text-muted">Para Canva puede pegar el codigo completo que incluye iframe; el campus usara automaticamente la URL embebida.</small>
+            </div>
+            <div *ngIf="Recurso.Tipo === '3'">
               <input type="text" class="form-control mt-2" [(ngModel)]="Recurso.URL" name="URL" placeholder="https://...">
             </div>
             

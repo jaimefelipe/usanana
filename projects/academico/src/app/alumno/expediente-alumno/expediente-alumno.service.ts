@@ -37,16 +37,18 @@ constructor(
     }
     else{
       let sqlConfig = {
-        table: 'Seg_Usuario JOIN Gen_Persona  ON Gen_Persona.Nombre = Seg_Usuario.Nombre',
+        table: 'Gen_Persona',
         fields: 'Gen_Persona.Id_Persona',
         orderField: '',
         searchField: '',
         Empresa:false,
-        where: "Seg_Usuario.Id_Usuario  = " + localStorage.getItem('Id_Usuario') + ' and Gen_Persona.Id_Empresa =' + localStorage.getItem('Id_Empresa')
+        where: "Gen_Persona.Id_Usuario  = " + localStorage.getItem('Id_Usuario') + ' and Gen_Persona.Id_Empresa =' + localStorage.getItem('Id_Empresa')
       }
       let data = await this.apiService.executeSqlSyn(sqlConfig);
-      Id_Persona = data['data'][0]['Id_Persona']
-      localStorage.setItem('Id_Persona',Id_Persona);
+      if(data['total'] > 0){
+        Id_Persona = data['data'][0]['Id_Persona']
+        localStorage.setItem('Id_Persona',Id_Persona);
+      }
       return Id_Persona;
     }
   }

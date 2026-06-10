@@ -1,3 +1,73 @@
-.mantenimiento h5 {
+.mantenimiento h5,
+.page-form-card h5 {
   margin-bottom: 1rem;
+}
+
+.ejemplares-book-picker .btn,
+.ejemplares-book-picker .form-control {
+  min-height: 44px;
+}
+
+.ejemplares-book-picker .form-control {
+  background: #fff;
+  cursor: pointer;
+}
+
+.ejemplares-modal {
+  padding: 20px;
+  overflow: auto;
+}
+
+.ejemplares-modal-content {
+  width: min(980px, calc(100vw - 32px));
+  margin: 32px auto;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius-md);
+  box-shadow: var(--ui-shadow);
+}
+
+.ejemplares-modal-search {
+  width: 100%;
+}
+
+.ejemplares-book-result {
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius-sm);
+  background: var(--ui-surface);
+  min-height: 112px;
+  padding: 12px 14px;
+}
+
+.ejemplares-book-result:hover,
+.ejemplares-book-result:focus {
+  border-color: var(--ui-primary);
+  box-shadow: var(--ui-shadow-sm);
+}
+
+.book-title,
+.book-meta {
+  display: block;
+}
+
+.book-title {
+  color: var(--ui-text);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.book-meta {
+  color: var(--ui-muted);
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+
+@media (max-width: 575.98px) {
+  .ejemplares-modal {
+    padding: 8px;
+  }
+
+  .ejemplares-modal-content {
+    width: calc(100vw - 16px);
+    margin: 12px auto;
+  }
 }

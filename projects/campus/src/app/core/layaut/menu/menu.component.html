@@ -18,6 +18,7 @@
                         <a href="/reglamentos.php" class="dropdown-item">Reglamentos</a>
                         <a href="/biblioteca.php" class="dropdown-item">Biblioteca</a>
                         <a href="/campus/login" class="dropdown-item">Sistema</a>
+                        <a [hidden]="!LogedIn" [routerLink]="['/cambiar']" class="dropdown-item"><i class="fa fa-key"></i> Cambiar clave</a>
                         <a [hidden]="!LogedIn" (click)="logOut()" href="#"><li><i class="fa fa-sign-out"></i> Salir</li></a>
 
                     </div>

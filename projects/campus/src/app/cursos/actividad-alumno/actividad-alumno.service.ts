@@ -27,7 +27,7 @@ constructor(
   async obtenerParticipaciones(Id_Actividad){
     let sqlConfig = {
       table: 'Lms_EntregaActividad',
-      fields: 'Url,Nota,Comentario_Docente',
+      fields: 'Id_Entrega,Url,Nota,Comentario_Docente,Creado_El',
       where: 'Id_Actividad = ' + Id_Actividad + ' and Id_Usuario = ' + localStorage.getItem('Id_Usuario')
     }
     return await this.apiService.executeSqlSyn(sqlConfig);

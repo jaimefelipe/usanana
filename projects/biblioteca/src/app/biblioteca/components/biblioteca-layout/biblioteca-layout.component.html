@@ -27,7 +27,7 @@
        (click)="onNavClick($event)"
        role="navigation"
        aria-label="Sidebar biblioteca">
-    <ul class="nav flex-column">
+    <ul class="nav flex-column h-100">
       <li class="nav-item sidebar-header" *ngIf="isMobileView">
         <div class="d-flex align-items-center justify-content-between">
           <img src="assets/logo.svg" height="26" class="sidebar-logo" alt="Biblioteca">
@@ -253,8 +253,9 @@
         </a>
       </li>
 
-      <li class="nav-item mt-4 px-2 text-muted small" *ngIf="!menuColapsado">
-        {{ Company }} | {{ User }}
+      <li class="nav-item px-2 sidebar-footer" *ngIf="!menuColapsado">
+        <div class="text-muted small">{{ Company }} | {{ User }}</div>
+        <div class="sidebar-version">Biblioteca v{{ appVersion }}</div>
       </li>
       </ng-container>
     </ul>

@@ -39,4 +39,137 @@ async cargarGrupos(paginacion,search?) {
     };
     return await this.apiService.updateRecord(sqlConfig);
   }
+
+  async cargarActividadesGrupo(Id_Grupo){
+    const sql = `
+      SELECT
+        A.Id_Actividad,
+        A.Nombre,
+        A.Tipo,
+        A.Puntaje,
+        A.Fecha_Limite,
+        S.Numero_Semana,
+        S.Titulo AS Semana,
+        COUNT(EA.Id_Entrega) AS Entregas,
+        SUM(CASE WHEN EA.Nota IS NOT NULL THEN 1 ELSE 0 END) AS Revisadas
+      FROM Lms_AulaVirtual AV
+      INNER JOIN Lms_SemanaCurso S
+        ON S.Id_AulaVirtual = AV.Id_AulaVirtual
+      INNER JOIN Lms_Actividad A
+        ON A.Id_Semana = S.Id_Semana
+      LEFT JOIN Lms_EntregaActividad EA
+        ON EA.Id_Actividad = A.Id_Actividad
+        AND EA.Id_Empresa = AV.Id_Empresa
+      WHERE AV.Id_Grupo = ${Number(Id_Grupo)}
+        AND AV.Id_Empresa = ${localStorage.getItem('Id_Empresa')}
+        AND A.Tipo <> '3'
+      GROUP BY
+        A.Id_Actividad,
+        A.Nombre,
+        A.Tipo,
+        A.Puntaje,
+        A.Fecha_Limite,
+        S.Numero_Semana,
+        S.Titulo
+      ORDER BY S.Numero_Semana, A.Id_Actividad
+    `;
+
+    return await this.apiService.postRecord(sql);
+  }
+
+  async cargarEntregasActividad(Id_Actividad, Id_Grupo){
+    const sql = `
+      SELECT
+        EA.Id_Entrega,
+        EA.Id_Actividad,
+        EA.Id_Usuario,
+        EA.Url,
+        EA.Nota,
+        EA.Comentario_Docente,
+        EA.Creado_El,
+        estudiante.Nombre AS Estudiante,
+        MD.Id_Matricula_Detalle
+      FROM Lms_EntregaActividad EA
+      INNER JOIN Gen_Persona estudiante
+        ON estudiante.Id_Usuario = EA.Id_Usuario
+        AND estudiante.Id_Empresa = EA.Id_Empresa
+      INNER JOIN Edu_Matricula M
+        ON M.Id_Persona = estudiante.Id_Persona
+        AND M.Id_Empresa = EA.Id_Empresa
+      INNER JOIN Edu_Matricula_Detalle MD
+        ON MD.Id_Matricula = M.Id_Matricula
+      WHERE EA.Id_Actividad = ${Number(Id_Actividad)}
+        AND MD.Id_Grupo = ${Number(Id_Grupo)}
+        AND EA.Id_Empresa = ${localStorage.getItem('Id_Empresa')}
+      ORDER BY EA.Creado_El DESC
+    `;
+
+    return await this.apiService.postRecord(sql);
+  }
+
+  async actualizarEntrega(entrega){
+    const nota = entrega.Nota === null || entrega.Nota === undefined || entrega.Nota === ''
+      ? 'NULL'
+      : Number(entrega.Nota);
+    const comentario = this.normalizarTexto(entrega.Comentario_Docente);
+
+    let sqlConfig = {
+      table: 'Lms_EntregaActividad',
+      fields: 'Nota=' + nota + ',Comentario_Docente=\'' + comentario + '\'',
+      where: 'Id_Entrega=' + entrega.Id_Entrega
+    };
+
+    return await this.apiService.updateRecord(sqlConfig);
+  }
+
+  async aplicarNotasLmsAlActa(Id_Grupo){
+    const sql = `
+      SELECT
+        MD.Id_Matricula_Detalle,
+        ROUND(AVG(EA.Nota), 2) AS PromedioLms
+      FROM Edu_Matricula_Detalle MD
+      INNER JOIN Edu_Matricula M
+        ON M.Id_Matricula = MD.Id_Matricula
+      INNER JOIN Gen_Persona estudiante
+        ON estudiante.Id_Persona = M.Id_Persona
+      INNER JOIN Lms_AulaVirtual AV
+        ON AV.Id_Grupo = MD.Id_Grupo
+      INNER JOIN Lms_SemanaCurso S
+        ON S.Id_AulaVirtual = AV.Id_AulaVirtual
+      INNER JOIN Lms_Actividad A
+        ON A.Id_Semana = S.Id_Semana
+        AND A.Tipo <> '3'
+      INNER JOIN Lms_EntregaActividad EA
+        ON EA.Id_Actividad = A.Id_Actividad
+        AND EA.Id_Usuario = estudiante.Id_Usuario
+        AND EA.Id_Empresa = M.Id_Empresa
+      WHERE MD.Id_Grupo = ${Number(Id_Grupo)}
+        AND M.Id_Empresa = ${localStorage.getItem('Id_Empresa')}
+        AND EA.Nota IS NOT NULL
+      GROUP BY MD.Id_Matricula_Detalle
+    `;
+
+    const data = await this.apiService.postRecord(sql);
+    const registros = data?.['data'] || [];
+
+    for (const registro of registros) {
+      const promedio = Number(registro.PromedioLms || 0);
+      const estado = promedio >= 70 ? '2' : '3';
+      await this.apiService.updateRecord({
+        table: 'Edu_Matricula_Detalle',
+        fields: 'Rubrica_1=\'' + promedio + '\',Rubrica_2=\'0\',Rubrica_3=\'0\',Rubrica_4=\'0\',Rubrica_5=\'0\',Promedio=\'' + promedio + '\',Estado=\'' + estado + '\'',
+        where: 'Id_Matricula_Detalle=' + registro.Id_Matricula_Detalle
+      });
+    }
+
+    return {
+      success: 'true',
+      total: registros.length,
+      data: registros
+    };
+  }
+
+  private normalizarTexto(valor){
+    return String(valor || '').replace(/'/g, ' ');
+  }
 }

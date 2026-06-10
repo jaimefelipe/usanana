@@ -7,14 +7,25 @@
       </div>
       <div class="input-group invoice-search">
         <span class="input-group-text"><i class="fa fa-search"></i></span>
-        <input type="text" class="form-control" placeholder="Buscar" aria-label="Buscar libro">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Buscar"
+          aria-label="Buscar libro"
+          [(ngModel)]="libroSearch"
+          (ngModelChange)="onLibroSearchChange($event)">
         <button class="btn btn-primary" type="button" (click)="nuevoLibro()">
           <i class="fa fa-plus-circle"></i>
         </button>
       </div>
     </div>
 
-    <div class="row g-4 invoice-grid">
+    <div *ngIf="librosLoading" class="catalog-loading text-center text-muted py-4">
+      <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+      Cargando libros...
+    </div>
+
+    <div class="row g-4 invoice-grid" *ngIf="!librosLoading">
       <div class="col-12 col-md-6 col-xl-4" *ngFor="let libro of libros">
         <div class="card invoice-card h-100">
           <a class="invoice-card-link" (click)="editarLibro(libro)">
@@ -23,8 +34,16 @@
                 <div class="invoice-doc text-muted">ID {{ libro.id }}</div>
                 <span class="text-muted small">{{ libro.estado }}</span>
               </div>
-              <h4 class="card-title invoice-name mb-1">{{ libro.titulo }}</h4>
-              <div class="invoice-line">{{ libro.autor || 'Sin autor' }}</div>
+              <h4 class="card-title invoice-name mb-1">{{ libro.marc245a || libro.titulo }}</h4>
+              <div class="invoice-line" *ngIf="libro.marc245b">
+                <span class="text-muted">245 $b:</span> {{ libro.marc245b }}
+              </div>
+              <div class="invoice-line">
+                <span class="text-muted">245 $c:</span> {{ libro.marc245c || libro.autor || 'Sin autor' }}
+              </div>
+              <div class="invoice-line text-muted" *ngIf="!libro.marc245a && !libro.marc245b && !libro.marc245c">
+                Sin datos MARC 245 cargados
+              </div>
               <div class="invoice-line text-muted">ISBN: {{ libro.isbn || '-' }}</div>
               <div class="invoice-line">
                 Categoría:
@@ -46,14 +65,26 @@
       </div>
     </div>
 
-    <div class="container-fluid">
+    <div class="container-fluid" *ngIf="libroTotalPages > 0">
+      <div class="text-center text-muted small mb-2">
+        Mostrando {{ libroRangeStart }}-{{ libroRangeEnd }} de {{ libroTotal }} libros
+      </div>
       <ul class="pagination justify-content-center">
-        <li class="page-item"><button class="page-link" type="button">&laquo;</button></li>
-        <li class="page-item"><button class="page-link" type="button">&lsaquo;</button></li>
-        <li class="page-item"><button class="page-link" type="button">1</button></li>
-        <li class="page-item"><button class="page-link" type="button">2</button></li>
-        <li class="page-item"><button class="page-link" type="button">3</button></li>
-        <li class="page-item"><button class="page-link" type="button">&rsaquo;</button></li>
+        <li class="page-item" [class.disabled]="libroPage === 1">
+          <button class="page-link" type="button" [disabled]="libroPage === 1" (click)="cambiarPaginaLibros(1)">&laquo;</button>
+        </li>
+        <li class="page-item" [class.disabled]="libroPage === 1">
+          <button class="page-link" type="button" [disabled]="libroPage === 1" (click)="cambiarPaginaLibros(libroPage - 1)">&lsaquo;</button>
+        </li>
+        <li class="page-item" *ngFor="let page of libroPageNumbers" [class.active]="page === libroPage">
+          <button class="page-link" type="button" (click)="cambiarPaginaLibros(page)">{{ page }}</button>
+        </li>
+        <li class="page-item" [class.disabled]="libroPage === libroTotalPages">
+          <button class="page-link" type="button" [disabled]="libroPage === libroTotalPages" (click)="cambiarPaginaLibros(libroPage + 1)">&rsaquo;</button>
+        </li>
+        <li class="page-item" [class.disabled]="libroPage === libroTotalPages">
+          <button class="page-link" type="button" [disabled]="libroPage === libroTotalPages" (click)="cambiarPaginaLibros(libroTotalPages)">&raquo;</button>
+        </li>
       </ul>
     </div>
   </section>
@@ -70,6 +101,11 @@
       </div>
 
       <div class="card-body">
+        <div *ngIf="editLoading" class="catalog-loading text-center text-muted py-4">
+          <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+          Cargando informacion del libro y registro MARC...
+        </div>
+
         <div class="row g-3 align-items-end mb-3">
           <div class="col-md-4">
             <label class="form-label">Tipo de documento</label>
@@ -86,8 +122,8 @@
             </div>
           </div>
           <div class="col-md-3 d-flex justify-content-end gap-2">
-            <button class="btn btn-outline-secondary" type="button" (click)="cancelarLibro()">Cancelar</button>
-            <button class="btn btn-success" type="button" (click)="guardarTodo()" [disabled]="isSaving">
+            <button class="btn btn-outline-secondary" type="button" (click)="cancelarLibro()" [disabled]="editLoading || isSaving">Cancelar</button>
+            <button class="btn btn-success" type="button" (click)="guardarTodo()" [disabled]="isSaving || editLoading || tagsLoading">
               {{ isSaving ? 'Guardando...' : 'Guardar libro y autoridad' }}
             </button>
           </div>
@@ -138,7 +174,7 @@
                   *ngIf="tagFilter"
                   class="btn btn-outline-secondary"
                   type="button"
-                  (click)="clearTagFilter()"
+                  (click)="limpiarFiltroTags()"
                   title="Limpiar filtro">
                   <i class="fa fa-times"></i>
                 </button>
@@ -157,12 +193,16 @@
             </button>
           </div>
           <div class="tags-table p-3">
+            <div *ngIf="tagsLoading" class="catalog-loading text-center text-muted py-4">
+              <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+              Cargando etiquetas y valores MARC...
+            </div>
             <div *ngIf="!selectedFormatoId" class="empty-section text-muted small">Selecciona un formato MARC para ver los tags.</div>
             <div *ngIf="selectedFormatoId && !libroForm.tipoMaterialId" class="empty-section text-muted small">Seleccione el tipo de documento para cargar sus etiquetas.</div>
-            <div *ngIf="selectedFormatoId && libroForm.tipoMaterialId && getTagsPorSeccion().length === 0" class="empty-section text-muted small">
+            <div *ngIf="!tagsLoading && selectedFormatoId && libroForm.tipoMaterialId && getTagsPorSeccion().length === 0" class="empty-section text-muted small">
               {{ isTagFilterActive ? 'No se encontraron tags para el filtro indicado.' : 'No hay etiquetas configuradas para este tipo de documento en esta sección.' }}
             </div>
-            <div *ngIf="selectedFormatoId && libroForm.tipoMaterialId && getTagsPorSeccion().length > 0" class="table-responsive">
+            <div *ngIf="!tagsLoading && selectedFormatoId && libroForm.tipoMaterialId && getTagsPorSeccion().length > 0" class="table-responsive">
               <table class="table table-hover table-sm align-middle mb-0">
                 <thead>
                   <tr>

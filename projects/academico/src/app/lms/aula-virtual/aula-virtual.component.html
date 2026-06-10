@@ -69,7 +69,12 @@
 </ul>
 
   <!-- CONTENIDO TABS -->
-   <app-aula-virtual-general [hidden]="!GeneralActivo" [Aula]="Aula" [Grupos]="Grupos"></app-aula-virtual-general>
+   <app-aula-virtual-general
+    [hidden]="!GeneralActivo"
+    [Aula]="Aula"
+    [Grupos]="Grupos"
+    (imagenSeleccionada)="handleImagenAulaSeleccionada($event)">
+   </app-aula-virtual-general>
    <app-semana-curso
   [hidden]="!SemanasActivo"
   [Aula]="Aula"

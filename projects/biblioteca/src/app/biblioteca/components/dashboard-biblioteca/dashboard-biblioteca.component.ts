@@ -7,7 +7,7 @@ import { BibliotecaDataService } from '../../services/biblioteca-data.service';
   styleUrls: ['./dashboard-biblioteca.component.css']
 })
 export class DashboardBibliotecaComponent implements OnInit {
-  librosDisponibles = 0;
+  librosRegistrados = 0;
   prestamosActivos = 0;
   prestamosVencidos = 0;
   reservasActivas = 0;
@@ -15,8 +15,7 @@ export class DashboardBibliotecaComponent implements OnInit {
   constructor(private dataService: BibliotecaDataService) {}
 
   async ngOnInit() {
-    const libros = await this.dataService.getLibros();
-    this.librosDisponibles = libros.filter(libro => libro.estado === 'disponible').length;
+    this.librosRegistrados = await this.dataService.countLibros();
 
     const prestamos = await this.dataService.getPrestamos();
     this.prestamosActivos = prestamos.filter(prestamo => prestamo.estado === 'activo').length;

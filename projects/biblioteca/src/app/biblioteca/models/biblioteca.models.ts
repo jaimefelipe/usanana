@@ -4,6 +4,9 @@ export interface Libro {
   subtitulo?: string;
   autor: string;
   autores?: string;
+  marc245a?: string;
+  marc245b?: string;
+  marc245c?: string;
   autoresIds?: number[];
   isbn: string;
   issn?: string;

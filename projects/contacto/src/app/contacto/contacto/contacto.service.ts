@@ -8,6 +8,58 @@ export class ContactoService {
 
   constructor(private apiService: ApiService) {}
 
+  private q(value: any): string {
+    const text = value === null || value === undefined ? '' : String(value);
+    return "'" + text.replace(/'/g, "''") + "'";
+  }
+
+  private normalizarIdentificacion(value: any): string {
+    return value === null || value === undefined ? '' : String(value).replace(/[^0-9A-Za-z]/g, '');
+  }
+
+  private requiereUsuario(Persona: any): boolean {
+    return Persona && (Persona.Alumno == '1' || Persona.Profesor == '1' || Persona.Empleado == '1');
+  }
+
+  private identificacionNormalizadaSql(campo: string): string {
+    return "REPLACE(REPLACE(REPLACE(REPLACE(TRIM(COALESCE(" + campo + ", '')), '-', ''), ' ', ''), '.', ''), '/', '')";
+  }
+
+  async validarContactoOUsuarioExistente(Persona: any) {
+    const nombre = String(Persona.Nombre || '').trim();
+    const identificacion = this.normalizarIdentificacion(Persona.Identificacion);
+    const idEmpresa = localStorage.getItem('Id_Empresa');
+
+    const condicionesPersona = [
+      'LOWER(TRIM(Gen_Persona.Nombre))=LOWER(' + this.q(nombre) + ')'
+    ];
+    const condicionesUsuario = [
+      'LOWER(TRIM(Seg_Usuario.Nombre))=LOWER(' + this.q(nombre) + ')'
+    ];
+
+    if(identificacion) {
+      condicionesPersona.push(this.identificacionNormalizadaSql('Gen_Persona.Identificacion') + '=' + this.q(identificacion));
+      condicionesUsuario.push(this.identificacionNormalizadaSql('Seg_Usuario.Numero_Identificacion') + '=' + this.q(identificacion));
+    }
+
+    const contactos = await this.apiService.executeSqlSyn({
+      table: 'Gen_Persona',
+      fields: "'Contacto' AS Tipo_Registro,Id_Persona AS Id_Registro,Nombre,Identificacion",
+      where: 'Gen_Persona.Id_Empresa=' + idEmpresa + ' AND (' + condicionesPersona.join(' OR ') + ')',
+      Empresa: false
+    });
+
+    const usuarios = await this.apiService.executeSqlSyn({
+      table: 'Seg_Usuario INNER JOIN Seg_Usuario_Empresa ON Seg_Usuario_Empresa.Id_Usuario=Seg_Usuario.Id_Usuario',
+      fields: "'Usuario' AS Tipo_Registro,Seg_Usuario.Id_Usuario AS Id_Registro,Seg_Usuario.Nombre,Seg_Usuario.Numero_Identificacion AS Identificacion",
+      where: 'Seg_Usuario_Empresa.Id_Empresa=' + idEmpresa + ' AND (' + condicionesUsuario.join(' OR ') + ')',
+      Empresa: false
+    });
+
+    const data = (contactos['data'] || []).concat(usuarios['data'] || []);
+    return { total: data.length, data: data };
+  }
+
   async loadPersonas(paginacion,search?,Tipo?,Estado?) {
     let where = '';
     if(Tipo){
@@ -77,7 +129,10 @@ export class ContactoService {
     return await this.apiService.executeSqlSyn(sqlConfig);
   }
   async savePersona(Persona){
-    Persona.Identificacion = Persona.Identificacion.replace(/[^0-9]/g, '');
+    Persona.Identificacion = this.normalizarIdentificacion(Persona.Identificacion);
+    if(this.requiereUsuario(Persona)) {
+      await this.asociarUsuarioAutomatico(Persona);
+    }
     
     if(Persona.PresentacionA == '0'){
       Persona.PresentacionA = '1';
@@ -209,7 +264,24 @@ export class ContactoService {
     }
     return await this.apiService.executeSqlSyn(sqlConfig);
   }
+  async validarCarreraPorAlumno(Id_Persona, Id_Carrera, Id_Carrera_Estudiante?) {
+    let where = 'Id_Persona=' + Id_Persona + ' and Id_Carrera=' + Id_Carrera;
+    if(Id_Carrera_Estudiante) {
+      where = where + ' and Id_Carrera_Estudiante<>' + Id_Carrera_Estudiante;
+    }
+    let sqlConfig = {
+      table: 'Edu_Carrera_Estudiante',
+      fields: 'Id_Carrera_Estudiante',
+      orderField: '',
+      where: where
+    }
+    return await this.apiService.executeSqlSyn(sqlConfig);
+  }
   async insertCarreraPorAlumno(Carrera){
+    let existe = await this.validarCarreraPorAlumno(Carrera.Id_Persona, Carrera.Id_Carrera);
+    if(existe['total'] > 0){
+      return { ok: false, total: existe['total'], data: existe['data'], error: 'La carrera ya esta asignada al alumno/contacto' };
+    }
     let sql = {
       table: 'Edu_Carrera_Estudiante',
       fields: 'Id_Persona,Id_Carrera,Fecha_Ingreso,Estado',
@@ -274,7 +346,7 @@ export class ContactoService {
     return await this.apiService.updateRecord(sql);
   }
 
-    async getPersonaPorNombre(Nombre,Apellido){
+  async getPersonaPorNombre(Nombre,Apellido){
     let sqlConfig = {
       table: 'Gen_Persona',
       fields: 'Nombre',
@@ -304,6 +376,40 @@ export class ContactoService {
       where:'Id_Persona='+Id_Persona
     };
     return await this.apiService.updateRecord(sql);
+  }
+
+  async asociarUsuarioAutomatico(Persona) {
+    if(!this.requiereUsuario(Persona)) {
+      return { ok: true, total: 0, data: [] };
+    }
+
+    const identificacion = this.normalizarIdentificacion(Persona.Identificacion);
+    const correo = Persona.Correo || '';
+    if(!identificacion && !correo) {
+      return { ok: false, total: 0, data: [], error: 'Contacto sin identificacion o correo para asociar usuario' };
+    }
+
+    let where = '';
+    if(identificacion) {
+      where = "Numero_Identificacion='" + identificacion + "'";
+    } else {
+      where = "Correo='" + correo.replace(/'/g, "''") + "'";
+    }
+
+    const usuario = await this.apiService.executeSqlSyn({
+      table: 'Seg_Usuario',
+      fields: 'Id_Usuario,Nombre',
+      where: where,
+      Empresa: false
+    });
+
+    if(usuario['total'] == 0) {
+      return { ok: false, total: 0, data: [], error: 'No existe usuario con la identificacion/correo del contacto' };
+    }
+
+    Persona.Id_Usuario = usuario['data'][0]['Id_Usuario'];
+    Persona.Nombre_Usuario = usuario['data'][0]['Nombre'];
+    return usuario;
   }
 
 }

@@ -62,18 +62,26 @@
           <div class="d-flex align-items-center mb-1">
             <i class="fa fa-file-alt text-secondary me-2"></i>
             <strong>Archivo {{ i + 1 }}:</strong>
-            <a [href]="'https://usantana.com' + p.Url" target="_blank" class="ms-2 text-decoration-underline text-primary">
+            <a [href]="getEntregaUrl(p)" target="_blank" class="ms-2 text-decoration-underline text-primary">
               {{ obtenerNombreArchivo(p.Url) }}
             </a>
+          </div>
+
+          <div *ngIf="p.Creado_El" class="mb-1 text-muted">
+            <strong>Fecha:</strong> {{ p.Creado_El | date:'short' }}
           </div>
 
           <div *ngIf="p.Nota !== null && p.Nota !== undefined" class="mb-1">
             <strong>Nota:</strong>
             <span class="badge bg-success ms-2">{{ p.Nota }}</span>
           </div>
+          <div *ngIf="p.Nota === null || p.Nota === undefined" class="mb-1">
+            <strong>Estado:</strong>
+            <span class="badge bg-secondary ms-2">Pendiente de revision</span>
+          </div>
 
           <div *ngIf="p.Comentario_Docente">
-            <strong>Comentario:</strong>
+            <strong>Retroalimentacion:</strong>
             <p class="mt-1 mb-0 text-muted">{{ p.Comentario_Docente }}</p>
           </div>
         </div>

@@ -1,13 +1,21 @@
-<!-- <div class="recurso-enlace p-3 border rounded bg-white shadow-sm text-center">
-  <p>Haz clic en el siguiente enlace para acceder al recurso:</p>
-  <a [href]="item.Contenido" target="_blank" class="btn btn-primary">
-    Abrir enlace
-  </a>
-</div>
--->
 <div class="recurso-pdf p-3 border rounded bg-white shadow-sm">
-  <ng-container>
-    <iframe loading="lazy" [src]="item.Contenido | safeUrl " width="100%" height="800px" frameborder="0" allowfullscreen="allowfullscreen" allow="fullscreen"></iframe>
+  <ng-container *ngIf="getEmbedUrl() as embedUrl; else enlaceExterno">
+    <iframe
+      loading="lazy"
+      [src]="embedUrl"
+      width="100%"
+      height="800px"
+      frameborder="0"
+      allowfullscreen="allowfullscreen"
+      allow="fullscreen">
+    </iframe>
   </ng-container>
+  <ng-template #enlaceExterno>
+    <div class="text-center p-4">
+      <p>Este recurso debe abrirse en una ventana nueva.</p>
+      <a [href]="getExternalUrl()" target="_blank" rel="noopener" class="btn btn-primary">
+        Abrir recurso
+      </a>
+    </div>
+  </ng-template>
 </div> 
-

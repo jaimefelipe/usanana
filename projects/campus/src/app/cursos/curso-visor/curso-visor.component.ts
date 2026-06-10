@@ -13,15 +13,8 @@ export class CursoVisorComponent implements OnInit {
      private route:Router
   ) {}
 
-  curso =  {
-    Codigo:'',
-    Creditos:'',
-    Curso:'',
-    Descripcion:'',
-    Horas:'',
-    Nombre:'',
-    Bienvenida:''
-  };
+  curso = this.crearCursoVacio();
+  cursoDisponible = true;
   semanas: any[] = [];
   semanaSeleccionada: any = null;
 
@@ -36,11 +29,18 @@ export class CursoVisorComponent implements OnInit {
   }
   async leerCurso(){
       let data = await this.cursoVisorService.leerCurso();
-      this.curso = data['data'][0];
+      const curso = data?.['data']?.[0];
+      if(curso){
+        this.curso = { ...this.crearCursoVacio(), ...curso };
+        this.cursoDisponible = true;
+      }else{
+        this.curso = this.crearCursoVacio();
+        this.cursoDisponible = false;
+      }
   }
   async leerSemanas() {
     let data = await this.cursoVisorService.leerSemanas();
-    this.semanas = data['data'];
+    this.semanas = data?.['data'] || [];
 
     // Seleccionar la primera semana automáticamente
     if (this.semanas && this.semanas.length > 0 && !this.semanaSeleccionada) {
@@ -51,5 +51,17 @@ export class CursoVisorComponent implements OnInit {
   volverACursos() {
   // Redirige a la pantalla principal (ajusta según tu routing)
     this.route.navigate(['/']);
+  }
+  private crearCursoVacio(){
+    return {
+      Codigo:'',
+      Creditos:'',
+      Curso:'',
+      Descripcion:'',
+      Horas:'',
+      Nombre:'',
+      Bienvenida:'',
+      Imagen:''
+    };
   }
 }

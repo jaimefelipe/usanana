@@ -1,5 +1,7 @@
 import { Component, OnInit,Input } from '@angular/core';
 import { SecurityUserService } from '../../../../../seguridad/src/app/security/security-user/security-user.service';
+import { ContactoService } from '../contacto/contacto.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-roll',
@@ -9,7 +11,8 @@ import { SecurityUserService } from '../../../../../seguridad/src/app/security/s
 export class RollComponent implements OnInit {
  @Input() Persona : any;
   constructor(
-    private securityUserService:SecurityUserService
+    private securityUserService:SecurityUserService,
+    private contactoService:ContactoService
   ) { }
 
   PantallaUsuarios = false;
@@ -60,5 +63,15 @@ export class RollComponent implements OnInit {
     this.Persona.Id_Usuario = Usuario.Id_Usuario;
     this.Persona.Nombre_Usuario = Usuario.Nombre;
     this.cerrarPantallaUsuarios();
+  }
+
+  async asociarUsuarioAutomatico(){
+    if(this.Persona.Alumno != '1' && this.Persona.Profesor != '1' && this.Persona.Empleado != '1'){
+      return;
+    }
+    const data = await this.contactoService.asociarUsuarioAutomatico(this.Persona);
+    if(data['total'] == 0){
+      Swal.fire('No se encontro un usuario con la identificacion o correo del contacto');
+    }
   }
 }

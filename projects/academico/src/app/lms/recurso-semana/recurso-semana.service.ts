@@ -11,7 +11,7 @@ constructor( private apiService:ApiService) { }
     const sqlConfig = {
       table: 'Lms_Recurso',
       fields: 'Id_Recurso, Id_Semana, Titulo, Tipo, URL,Contenido',
-      where: 'Id_Semana = ' + Id_Semana + ' and Estado = 1',
+      where: 'Id_Semana = ' + Id_Semana + ' and (Estado = 1 or Estado is null or CAST(Estado AS CHAR) = \'\')',
       orderField: 'Id_Recurso',
       orderDirection: ' ASC '
     };
@@ -23,15 +23,15 @@ constructor( private apiService:ApiService) { }
       // INSERT
       const sql = {
         table: 'Lms_Recurso',
-        fields: 'Id_Semana, Titulo, Tipo, URL,Contenido ',
-        values: `'${Recurso.Id_Semana}', '${Recurso.Titulo}', '${Recurso.Tipo}', '${Recurso.URL}', '${Recurso.Contenido}'`
+        fields: 'Id_Semana, Titulo, Tipo, URL,Contenido,Estado',
+        values: `'${Recurso.Id_Semana}', '${Recurso.Titulo}', '${Recurso.Tipo}', '${Recurso.URL}', '${Recurso.Contenido}', '1'`
       };
       return await this.apiService.insertRecord(sql);
     } else {
       // UPDATE
       const sql = {
         table: 'Lms_Recurso',
-        fields: `Titulo='${Recurso.Titulo}', Tipo='${Recurso.Tipo}', URL='${Recurso.URL}', Contenido='${Recurso.Contenido}'`,
+        fields: `Titulo='${Recurso.Titulo}', Tipo='${Recurso.Tipo}', URL='${Recurso.URL}', Contenido='${Recurso.Contenido}', Estado='1'`,
         where: `Id_Recurso=${Recurso.Id_Recurso}`
       };
       return await this.apiService.updateRecord(sql);
