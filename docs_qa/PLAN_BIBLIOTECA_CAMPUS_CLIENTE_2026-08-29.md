@@ -1,5 +1,17 @@
 # Plan de trabajo — Biblioteca + Campus (feedback del cliente)
 
+> **Nota de reconciliación (2026-08-29):** la documentación de trabajo real de
+> este módulo vive en
+> `C:\Users\Usuario\Desktop\jbrenes\Toxo\codex\_codex-work\docs\referencia\usantana\biblioteca\`
+> (`PLAN_RELEASES.md`, `CHANGELOG.md`, `releases/`). Este archivo se escribió
+> sin haber leído esa documentación primero — el fix de Etapa 0 quedó
+> registrado ahí como release **v2.0.2** (no v2.1, que ya estaba reservado
+> para "Licencia visible vía etiqueta MARC 533"). La Etapa 1 de este archivo
+> ya está cubierta con más detalle por los releases v2.2–v3.0 de
+> `PLAN_RELEASES.md`. Usar ese plan maestro como fuente de verdad; este
+> archivo queda solo como bitácora de la sesión y el mapeo a los documentos
+> originales del cliente.
+
 **Fecha:** 2026-08-29
 **Fuente:** `_codex-work/docs/Clientes/usantana/` (Modulos completos.pdf, Observaciones Campus lado estudiante.docx,
 observaciones.jpeg, error1-8.jpeg) — reporte del Departamento de Biblioteca sobre el release actual.
@@ -19,7 +31,7 @@ cliente pidió (Etapa 2+). No se pasa a la siguiente etapa hasta cerrar la anter
   campus libro-detalle.service.ts, campus mi-biblioteca.service.ts) inserta/lee Estado en
   `'En espera'` / `'Disponible'`, valores que el CHECK nunca permitió. Cada intento de reserva
   tronaba con el error visible en error2–5.jpeg (`ck_reserva_estado failed`).
-- **Fix:** `docs/sql/biblioteca-v2-1-fix-reserva-estado.sql` (idempotente) — amplía el CHECK a
+- **Fix:** `docs/sql/biblioteca-v2-0-2-fix-reserva-estado.sql` (idempotente) — amplía el CHECK a
   `LOWER(Estado) IN ('activa','en espera','disponible','atendida','cancelada','liberada')`.
   También actualizado `docs/sql/biblioteca-schema.sql` para que el doc de referencia quede igual a
   producción.
@@ -56,7 +68,7 @@ cliente pidió (Etapa 2+). No se pasa a la siguiente etapa hasta cerrar la anter
   lista de espera).
 
 ### Pendiente para cerrar la Etapa 0 (siguiente turno de esta sesión)
-- Ejecutar `biblioteca-v2-1-fix-reserva-estado.sql` en producción (FTP + runner PHP, ver más abajo).
+- Ejecutar `biblioteca-v2-0-2-fix-reserva-estado.sql` en producción (FTP + runner PHP, ver más abajo).
 - Compilar y publicar `biblioteca` y `campus` por FTP con estos cambios.
 - Probar en `usantana.com`: reservar un libro disponible → debe salir "Solicitar préstamo" y quedar en
   Mi Biblioteca; catalogar dos registros MARC seguidos sin ISBN → ambos deben guardar sin error.
@@ -97,5 +109,5 @@ Todavía no implementado. Orden sugerido:
 Producción usa hosting compartido (`usantana.com` / `usanwoig_santana`), sin acceso SSH/MySQL directo
 no interactivo confirmado desde esta máquina. Mecanismo usado: subir por FTP (`_codex-work/.secrets/ftp/usantana.xml`)
 un script PHP de un solo uso que reutiliza `epsMySqlDataBase_v2.php` para ejecutar
-`biblioteca-v2-1-fix-reserva-estado.sql`, dispararlo una vez por URL, confirmar el resultado y
+`biblioteca-v2-0-2-fix-reserva-estado.sql`, dispararlo una vez por URL, confirmar el resultado y
 eliminarlo del servidor.

@@ -363,7 +363,7 @@ export const RELEASES: Release[] = [
     ]
   },
   {
-    version: '2.1',
+    version: '2.0.2',
     fecha: '2026-08-29',
     titulo: 'Fix critico: reservas y catalogacion sin ISBN',
     modulo: 'Circulacion',
