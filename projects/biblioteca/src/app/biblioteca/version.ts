@@ -372,6 +372,18 @@ export const RELEASES: Release[] = [
       'Catalogar un segundo registro sin ISBN ya no falla: el ISBN vacio se guarda como NULL en vez de cadena vacia',
       'El identificador del libro recien creado se lee del campo real que devuelve el backend (Identity), evitando el error No se pudo obtener el identificador del libro'
     ]
+  },
+  {
+    version: '2.1',
+    fecha: '2026-08-31',
+    titulo: 'Licencia visible via etiqueta MARC 533',
+    modulo: 'Circulacion',
+    cambios: [
+      'El subcampo 533 $a de MARC ahora se captura con un selector: CC-BY, CC-BY-SA o Licencia Privada, en vez de texto libre',
+      'Al guardar el registro MARC, la licencia del libro se deriva del 533 y queda disponible en Bib_Libro.Licencia',
+      'El catalogo interno de Biblioteca muestra un badge de Licencia abierta/privada por libro',
+      'Campus muestra el mismo badge en la ficha del recurso (libro-detalle), como base para diferenciar el flujo de acceso abierto del flujo con prestamo en proximos releases'
+    ]
   }
   // Los releases se agregan aqui a medida que se implementan.
 ];

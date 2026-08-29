@@ -361,7 +361,17 @@
                 <td>{{ sub.codigo }}</td>
                 <td>{{ sub.nombre }}</td>
                 <td>
-                  <input class="form-control form-control-sm" type="text" [(ngModel)]="sub.valor"
+                  <select *ngIf="esSubcampoLicencia(activeSubcamposEntry?.tag, sub.codigo)"
+                    class="form-control form-control-sm" [(ngModel)]="sub.valor"
+                    (ngModelChange)="activeSubcamposEntry && onSubcampoValueChange(activeSubcamposEntry)"
+                    [name]="'modal-sub-' + activeSubcamposEntry?.tag + '-' + sub.codigo">
+                    <option value="">Sin definir</option>
+                    <option value="CC-BY">CC-BY (licencia abierta)</option>
+                    <option value="CC-BY-SA">CC-BY-SA (licencia abierta)</option>
+                    <option value="Licencia Privada">Licencia Privada (recurso de pago)</option>
+                  </select>
+                  <input *ngIf="!esSubcampoLicencia(activeSubcamposEntry?.tag, sub.codigo)"
+                    class="form-control form-control-sm" type="text" [(ngModel)]="sub.valor"
                     (ngModelChange)="activeSubcamposEntry && onSubcampoValueChange(activeSubcamposEntry)"
                     [name]="'modal-sub-' + activeSubcamposEntry?.tag + '-' + sub.codigo" />
                 </td>

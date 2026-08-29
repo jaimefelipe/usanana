@@ -24,6 +24,12 @@ export class LibroDetalleComponent implements OnInit {
     return this.ejemplares.filter((e: any) => e.Estado === 'disponible').length;
   }
 
+  /** v2.1: licencia del libro derivada del MARC 533 en Biblioteca. */
+  get esAccesoAbierto(): boolean {
+    const licencia = this.libro?.Licencia;
+    return licencia === 'CC-BY' || licencia === 'CC-BY-SA';
+  }
+
   get digitales(): any[] {
     return this.ejemplares.filter((e: any) => e.Tipo_Soporte === 'digital' && e.URL_Archivo);
   }

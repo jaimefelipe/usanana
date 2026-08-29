@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { BibliotecaDataService } from '../../services/biblioteca-data.service';
-import { Autor, Categoria, Editorial, Libro, TipoMaterial } from '../../models/biblioteca.models';
+import { Autor, Categoria, Editorial, Libro, TipoMaterial, esAccesoAbierto } from '../../models/biblioteca.models';
 
 @Component({
   selector: 'app-catalogo-libros',
@@ -10,6 +10,7 @@ import { Autor, Categoria, Editorial, Libro, TipoMaterial } from '../../models/b
   styleUrls: ['./catalogo-libros.component.css']
 })
 export class CatalogoLibrosComponent implements OnInit {
+  esAccesoAbierto = esAccesoAbierto;
   searchField = '';
   estado = 'todos';
   categoriaFiltro = 'todos';

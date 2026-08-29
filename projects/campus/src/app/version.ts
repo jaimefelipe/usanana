@@ -50,6 +50,16 @@ export const RELEASES: Release[] = [
       'Corregido el error de base de datos que bloqueaba toda reserva desde Campus (ck_reserva_estado)',
       'El prestamo directo valida el limite combinado de prestamos y reservas activos antes de registrar'
     ]
+  },
+  {
+    version: '1.0.4',
+    fecha: '2026-08-31',
+    titulo: 'Licencia del recurso visible en la ficha',
+    modulo: 'Biblioteca',
+    cambios: [
+      'La ficha del libro muestra si la licencia es abierta (CC-BY/CC-BY-SA) o privada, definida en Biblioteca desde la etiqueta MARC 533',
+      'Este dato es la base para diferenciar mas adelante el flujo de acceso abierto del flujo con prestamo'
+    ]
   }
 ];
 

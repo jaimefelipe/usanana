@@ -954,9 +954,22 @@ export class MarcCatalogacionComponent implements OnInit {
         }
         break;
       }
+      case '533': {
+        // v2.1: la licencia del libro se deriva del 533 $a, no de un campo manual.
+        const valor = subcampoValor('a') || this.extractSubcampoFromMarcValue(entry.valor, 'a');
+        if (valor) {
+          this.libroForm.licencia = valor;
+        }
+        break;
+      }
       default:
         break;
     }
+  }
+
+  /** v2.1: el $a de la etiqueta 533 (licencia) se captura con selector, no texto libre. */
+  esSubcampoLicencia(tag?: string, codigo?: string): boolean {
+    return tag === '533' && codigo === 'a';
   }
 
   private hydrateEntrySubcampos(entry: CatalogacionEntrada, saved: MarcSubcampo[]) {

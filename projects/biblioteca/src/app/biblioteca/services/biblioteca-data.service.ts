@@ -112,7 +112,7 @@ export class BibliotecaDataService {
 
   private getLibrosFields(): string {
     return `L.Id_Libro, L.Titulo, L.Subtitulo, L.ISBN, L.ISSN, L.DOI, L.Idioma, L.Anio_Publicacion,
-      L.Edicion, L.Descripcion, L.Palabras_Clave, L.URL_Publica, L.Categoria_Id, L.Editorial_Id, L.Id_Tipo_Material,
+      L.Edicion, L.Descripcion, L.Palabras_Clave, L.URL_Publica, L.Licencia, L.Categoria_Id, L.Editorial_Id, L.Id_Tipo_Material,
       C.Nombre AS Categoria, E.Nombre AS Editorial, TM.Nombre AS Tipo_Material,
       (SELECT MS245A.Valor
         FROM Bib_Marc_Registro MR245A
@@ -199,6 +199,7 @@ export class BibliotecaDataService {
       descripcion: row.Descripcion || '',
       palabrasClave: row.Palabras_Clave || '',
       urlPublica: row.URL_Publica || '',
+      licencia: row.Licencia || '',
       categoriaId: row.Categoria_Id ? Number(row.Categoria_Id) : undefined,
       editorialId: row.Editorial_Id ? Number(row.Editorial_Id) : undefined,
       tipoMaterialId: row.Id_Tipo_Material ? Number(row.Id_Tipo_Material) : undefined
@@ -371,13 +372,14 @@ export class BibliotecaDataService {
   async createLibro(libro: Libro): Promise<number | null> {
     const sql = {
       table: 'Bib_Libro',
-      fields: 'Titulo,Subtitulo,ISBN,ISSN,DOI,Editorial_Id,Categoria_Id,Id_Tipo_Material,Idioma,Anio_Publicacion,Edicion,Descripcion,Palabras_Clave,URL_Publica',
+      fields: 'Titulo,Subtitulo,ISBN,ISSN,DOI,Editorial_Id,Categoria_Id,Id_Tipo_Material,Idioma,Anio_Publicacion,Edicion,Descripcion,Palabras_Clave,URL_Publica,Licencia',
       values: `'${this.escapeSql(libro.titulo)}','${this.escapeSql(libro.subtitulo)}',${this.sqlIsbn(libro.isbn)},` +
         `'${this.escapeSql(libro.issn)}','${this.escapeSql(libro.doi)}',` +
         `${libro.editorialId || 'NULL'},${libro.categoriaId || 'NULL'},${libro.tipoMaterialId || 'NULL'},` +
         `'${this.escapeSql(libro.idioma)}',${libro.anioPublicacion || 'NULL'},` +
         `'${this.escapeSql(libro.edicion)}','${this.escapeSql(libro.descripcion)}',` +
-        `'${this.escapeSql(libro.palabrasClave)}','${this.escapeSql(libro.urlPublica)}'`
+        `'${this.escapeSql(libro.palabrasClave)}','${this.escapeSql(libro.urlPublica)}',` +
+        `'${this.escapeSql(libro.licencia)}'`
     };
     const data = await this.apiService.insertRecord(sql);
     const insertId = this.extractInsertId(data);
@@ -394,7 +396,8 @@ export class BibliotecaDataService {
         `Id_Tipo_Material=${libro.tipoMaterialId || 'NULL'},` +
         `Idioma='${this.escapeSql(libro.idioma)}',Anio_Publicacion=${libro.anioPublicacion || 'NULL'},` +
         `Edicion='${this.escapeSql(libro.edicion)}',Descripcion='${this.escapeSql(libro.descripcion)}',` +
-        `Palabras_Clave='${this.escapeSql(libro.palabrasClave)}',URL_Publica='${this.escapeSql(libro.urlPublica)}'`,
+        `Palabras_Clave='${this.escapeSql(libro.palabrasClave)}',URL_Publica='${this.escapeSql(libro.urlPublica)}',` +
+        `Licencia='${this.escapeSql(libro.licencia)}'`,
       where: 'Id_Libro=' + libro.id
     };
     return await this.apiService.updateRecord(sql);

@@ -50,6 +50,9 @@
             {{ libro.autores || libro.autor || '-' }} | {{ libro.isbn || '-' }}<br />
             {{ libro.categoria || '-' }} | {{ libro.tipoMaterial || '-' }}<br />
             Estado: {{ libro.estado | titlecase }}
+            <span class="badge ms-1" [ngClass]="esAccesoAbierto(libro.licencia) ? 'bg-success' : (libro.licencia ? 'bg-secondary' : 'bg-light text-dark')">
+              {{ esAccesoAbierto(libro.licencia) ? 'Licencia abierta' : (libro.licencia ? 'Licencia privada' : 'Sin licencia MARC') }}
+            </span>
           </div>
         </a>
       </div>
@@ -151,6 +154,11 @@
         <div class="col-md-6">
           <label class="form-label">URL publica</label>
           <input class="form-control" [(ngModel)]="libro.urlPublica" name="urlPublica" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Licencia (MARC 533)</label>
+          <input class="form-control" [value]="libro.licencia || 'Sin definir'" disabled />
+          <small class="text-muted">Se define catalogando la etiqueta 533 en MARC, no aqui.</small>
         </div>
 
         <div class="col-12">

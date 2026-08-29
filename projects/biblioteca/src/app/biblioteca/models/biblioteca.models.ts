@@ -30,6 +30,13 @@ export interface Libro {
   categoriaId?: number;
   editorialId?: number;
   tipoMaterialId?: number;
+  /** v2.1: derivada del MARC 533 $a. 'CC-BY' | 'CC-BY-SA' | 'Licencia Privada' | vacio. */
+  licencia?: string;
+}
+
+/** v2.1: true si la licencia corresponde a acceso abierto (sin prestamo/vencimiento). */
+export function esAccesoAbierto(licencia?: string): boolean {
+  return licencia === 'CC-BY' || licencia === 'CC-BY-SA';
 }
 
 export interface Prestamo {

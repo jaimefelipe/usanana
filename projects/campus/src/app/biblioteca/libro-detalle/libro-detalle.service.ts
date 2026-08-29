@@ -22,6 +22,7 @@ export class LibroDetalleService {
       SELECT
         L.Id_Libro, L.Titulo, L.Subtitulo, L.ISBN, L.ISSN, L.DOI,
         L.Idioma, L.Anio_Publicacion, L.Edicion, L.Descripcion, L.Palabras_Clave,
+        COALESCE(L.Licencia, '') AS Licencia,
         COALESCE(E.Nombre, '') AS Editorial,
         COALESCE(C.Nombre, '') AS Categoria,
         COALESCE(TM.Nombre, '') AS Tipo_Material

@@ -61,6 +61,7 @@ CREATE TABLE Bib_Libro (
   Descripcion TEXT,
   Palabras_Clave TEXT,
   URL_Publica VARCHAR(300),
+  Licencia VARCHAR(50), -- v2.1: derivada de MARC 533 ('CC-BY','CC-BY-SA','Licencia Privada')
   CONSTRAINT fk_libro_empresa FOREIGN KEY (Id_Empresa) REFERENCES Gen_Empresa(Id_Empresa),
   CONSTRAINT fk_libro_tipo FOREIGN KEY (Id_Tipo_Material) REFERENCES Bib_Tipo_Material(Id_Tipo_Material),
   CONSTRAINT fk_libro_editorial FOREIGN KEY (Editorial_Id) REFERENCES Bib_Editorial(Id_Editorial),

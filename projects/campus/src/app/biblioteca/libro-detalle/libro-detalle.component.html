@@ -5,7 +5,7 @@
 
   <ng-container *ngIf="!cargando">
     <button type="button" class="bib-back-btn" (click)="volver()">
-      <i class="fa fa-arrow-left" aria-hidden="true"></i> Volver al catÃ¡logo
+      <i class="fa fa-arrow-left" aria-hidden="true"></i> Volver al catálogo
     </button>
 
     <div class="bib-detalle-card" *ngIf="libro">
@@ -20,6 +20,8 @@
             <span class="bib-badge bib-badge-mat" *ngIf="libro.Tipo_Material">{{ libro.Tipo_Material }}</span>
             <span class="bib-badge bib-badge-disp" *ngIf="disponibles > 0">{{ disponibles }} disponible(s)</span>
             <span class="bib-badge bib-badge-nodisp" *ngIf="disponibles === 0 && ejemplares.length > 0">No disponible</span>
+            <span class="bib-badge bib-badge-disp" *ngIf="libro.Licencia && esAccesoAbierto">Licencia abierta</span>
+            <span class="bib-badge bib-badge-warn" *ngIf="libro.Licencia && !esAccesoAbierto">Licencia privada</span>
           </div>
 
           <h1>{{ libro.Titulo }}</h1>
@@ -39,11 +41,11 @@
               <span>{{ libro.Editorial }}</span>
             </div>
             <div class="bib-meta-item" *ngIf="libro.Anio_Publicacion">
-              <span class="bib-meta-label">AÃ±o de publicaciÃ³n</span>
+              <span class="bib-meta-label">Año de publicación</span>
               <span>{{ libro.Anio_Publicacion }}</span>
             </div>
             <div class="bib-meta-item" *ngIf="libro.Edicion">
-              <span class="bib-meta-label">EdiciÃ³n</span>
+              <span class="bib-meta-label">Edición</span>
               <span>{{ libro.Edicion }}</span>
             </div>
             <div class="bib-meta-item" *ngIf="libro.ISBN">
@@ -59,7 +61,7 @@
       </div>
 
       <div class="bib-descripcion" *ngIf="libro.Descripcion">
-        <h3>DescripciÃ³n</h3>
+        <h3>Descripción</h3>
         <p>{{ libro.Descripcion }}</p>
       </div>
 
@@ -81,7 +83,7 @@
         <table class="bib-table">
           <thead>
             <tr>
-              <th>CÃ³digo</th>
+              <th>Código</th>
               <th>Sede</th>
               <th>Tipo</th>
               <th>Estado</th>
@@ -91,7 +93,7 @@
             <tr *ngFor="let ej of ejemplares">
               <td>{{ ej.Codigo_Barra || '-' }}</td>
               <td>{{ ej.Sede || '-' }}</td>
-              <td>{{ ej.Tipo_Soporte === 'digital' ? 'Digital' : 'FÃ­sico' }}</td>
+              <td>{{ ej.Tipo_Soporte === 'digital' ? 'Digital' : 'Físico' }}</td>
               <td>
                 <span class="bib-badge"
                   [class.bib-badge-disp]="ej.Estado === 'disponible'"
@@ -105,16 +107,16 @@
         </table>
       </div>
 
-      <!-- SecciÃ³n reserva -->
+      <!-- Sección reserva -->
       <div class="bib-reserva-section">
         <div class="bib-aviso" *ngIf="!idUsuario">
           <i class="fa fa-info-circle" aria-hidden="true"></i>
-          No fue posible verificar tu registro en biblioteca. AsegÃºrate de completar tu perfil de estudiante e intenta de nuevo.
+          No fue posible verificar tu registro en biblioteca. Asegúrate de completar tu perfil de estudiante e intenta de nuevo.
         </div>
 
         <div class="bib-aviso bib-aviso-warn" *ngIf="idUsuario && usuarioBloqueado">
           <i class="fa fa-ban" aria-hidden="true"></i>
-          Tu cuenta de biblioteca estÃ¡ bloqueada. ComunÃ­cate con el bibliotecario.
+          Tu cuenta de biblioteca está bloqueada. Comunícate con el bibliotecario.
         </div>
 
         <div class="bib-alerta bib-alerta-ok" *ngIf="mensajeReserva && tipoMensaje === 'ok'">
@@ -142,8 +144,8 @@
     <div class="bib-empty" *ngIf="!libro">
       <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
       <h3>Libro no encontrado</h3>
-      <p>No se encontrÃ³ informaciÃ³n para este libro.</p>
-      <button type="button" class="btn bib-btn-prim" (click)="volver()">Volver al catÃ¡logo</button>
+      <p>No se encontró información para este libro.</p>
+      <button type="button" class="btn bib-btn-prim" (click)="volver()">Volver al catálogo</button>
     </div>
   </ng-container>
 </div>
