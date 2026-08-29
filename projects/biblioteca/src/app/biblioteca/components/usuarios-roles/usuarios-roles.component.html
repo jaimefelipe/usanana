@@ -18,7 +18,7 @@
         <div class="card h-100">
           <a class="page-card-link" (click)="seleccionar(item)">
             <div class="card-body">
-              <h4 class="card-title">{{ item.usuarioNombre || item.usuarioBibliotecaId }}</h4>
+              <h4 class="card-title">{{ item.usuarioNombre || item.usuarioId }}</h4>
               Rol: {{ item.rolNombre || item.rolId }}
             </div>
           </a>
@@ -32,13 +32,16 @@
   <h2>Asignacion de roles</h2>
   <form class="page-form">
     <div class="page-form-card">
-      <h5>Nueva asignacion</h5>
+      <h5>{{ relacion.id ? 'Editar asignacion' : 'Nueva asignacion' }}</h5>
       <div class="mb-2">
         <label class="form-label">Usuario</label>
-        <select class="form-select" [(ngModel)]="relacion.usuarioBibliotecaId" name="usuarioBibliotecaId">
-          <option [ngValue]="0">Seleccione...</option>
-          <option *ngFor="let usuario of usuarios" [ngValue]="usuario.id">{{ usuario.nombre }}</option>
-        </select>
+        <div class="input-group usuario-selector">
+          <button class="btn selector-search-button" type="button" (click)="abrirSelectorUsuarios()" title="Buscar usuario">
+            <i class="fa fa-search" aria-hidden="true"></i>
+          </button>
+          <input class="form-control selector-display" [value]="usuarioSeleccionadoNombre || 'Seleccione...'" readonly
+            name="usuarioNombre" type="text" (click)="abrirSelectorUsuarios()" />
+        </div>
       </div>
       <div class="mb-3">
         <label class="form-label">Rol</label>
@@ -49,8 +52,38 @@
       </div>
       <div class="page-actions d-flex gap-2">
         <button class="btn btn-success" type="button" (click)="guardar()">Grabar</button>
+        <button class="btn btn-outline-danger" type="button" *ngIf="relacion.id" (click)="eliminar(relacion)">Eliminar</button>
         <button class="btn btn-danger" type="button" (click)="cancelar()">Cancelar</button>
       </div>
     </div>
   </form>
+</div>
+
+<div [hidden]="!modalUsuarios" class="modal-main">
+  <div class="modal-content card selector-usuarios-modal">
+    <div class="selector-usuarios-header">
+      <h4>Seleccionar usuario</h4>
+      <button class="btn btn-sm btn-outline-secondary" type="button" (click)="cerrarSelectorUsuarios()">X</button>
+    </div>
+    <div class="selector-usuarios-search">
+      <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+      <input class="form-control" [(ngModel)]="searchUsuarioField" name="searchUsuarioField"
+        type="text" placeholder="Buscar por nombre, correo o codigo">
+    </div>
+    <div class="selector-usuarios-list">
+      <button class="selector-usuario-item" type="button" *ngFor="let usuario of usuariosFiltrados"
+        (click)="seleccionarUsuario(usuario)">
+        <span class="selector-usuario-nombre">{{ usuario.nombre }}</span>
+        <span class="selector-usuario-detalle">
+          {{ usuario.email || 'Sin correo' }} · {{ usuario.codigoUniversitario || 'Sin codigo' }}
+        </span>
+      </button>
+      <div class="selector-usuarios-empty" *ngIf="usuariosFiltrados.length === 0">
+        No se encontraron usuarios.
+      </div>
+    </div>
+    <div class="selector-usuarios-footer">
+      <button class="btn btn-danger" type="button" (click)="cerrarSelectorUsuarios()">Cancelar</button>
+    </div>
+  </div>
 </div>

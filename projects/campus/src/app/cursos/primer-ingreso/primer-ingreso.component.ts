@@ -27,6 +27,8 @@ export class PrimerIngresoComponent implements OnInit {
   Carreras = [];
   Persona = {
     Id_Persona:'',
+    Id_Usuario: '',
+    Nombre_Usuario: '',
     Nombre: '',
     Telefono: '',
     Direccion: '',
@@ -51,8 +53,10 @@ export class PrimerIngresoComponent implements OnInit {
     Carrera:'',
   };
   ngOnInit() {
-    //Validar si hay login entonces salir
-    if(localStorage.getItem('isLoggedin') =='true'){
+    const tieneSesionSinSolicitud = localStorage.getItem('isLoggedin') == 'true'
+      && !localStorage.getItem('Carrera_Interes');
+
+    if(tieneSesionSinSolicitud){
       window.location.href = "/campus/";
     }
     this.Registrado = false;
@@ -138,12 +142,23 @@ export class PrimerIngresoComponent implements OnInit {
     }
   }
   async aplicarRegistro(){
+    const usuarioSesion = localStorage.getItem('Id_Usuario') || '';
+    if (usuarioSesion) {
+      this.Persona.Id_Usuario = usuarioSesion;
+      this.Persona.Nombre_Usuario = localStorage.getItem('Nombre_Usuario') || this.Persona.Correo;
+    }
+
     let persona  = await this.contactoService.savePersona(this.Persona);
     this.Persona.Id_Persona = persona['Identity'];
     this.asignarCarreraEstudiante();
   }
   async asignarCarreraEstudiante(){
     let data = await this.carreraService.asignarCarreraEstudiante(this.Persona.Carrera,this.Persona.Id_Persona);
+    if (localStorage.getItem('isLoggedin') == 'true' && localStorage.getItem('Id_Usuario')) {
+      this.Registrado = true;
+      Swal.fire('Expediente actualizado', 'Ahora puede continuar con la solicitud de matrícula.');
+      return;
+    }
     this.crearUsuario();
   }
   async crearUsuario(){

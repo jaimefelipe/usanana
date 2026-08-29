@@ -71,9 +71,9 @@
            data-toggle="menu"
            (click)="toggleSection($event, 'operacion')"
            [attr.aria-expanded]="sectionState.operacion && !menuColapsado"
-           [attr.title]="menuColapsado ? 'Operacion' : null">
+           [attr.title]="menuColapsado ? 'Catalogación' : null">
           <span class="InventarioIcon"></span>
-          <span class="ms-2 flex-grow-1 nav-text">Operacion</span>
+          <span class="ms-2 flex-grow-1 nav-text">Catalogación</span>
           <span class="ms-auto menu-chevron nav-text">{{ sectionChevron('operacion') }}</span>
         </a>
         <ul class="nav flex-column ms-3" *ngIf="sectionState.operacion && !menuColapsado">
@@ -91,9 +91,9 @@
            data-toggle="menu"
            (click)="toggleSection($event, 'catalogacion')"
            [attr.aria-expanded]="sectionState.catalogacion && !menuColapsado"
-           [attr.title]="menuColapsado ? 'Catalogacion' : null">
+           [attr.title]="menuColapsado ? 'Configuración' : null">
           <span class="InventarioIcon"></span>
-          <span class="ms-2 flex-grow-1 nav-text">Catalogacion</span>
+          <span class="ms-2 flex-grow-1 nav-text">Configuración</span>
           <span class="ms-auto menu-chevron nav-text">{{ sectionChevron('catalogacion') }}</span>
         </a>
         <ul class="nav flex-column ms-3" *ngIf="sectionState.catalogacion && !menuColapsado">
@@ -103,6 +103,25 @@
           <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/ejemplares']" routerLinkActive="active">- Ejemplares</a></li>
           <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/marc-diccionario']" routerLinkActive="active">- MARC diccionario</a></li>
           <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/autoridad-diccionario']" routerLinkActive="active">- Autoridad diccionario</a></li>
+        </ul>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link text-grey d-flex align-items-center"
+           href="#"
+           data-toggle="menu"
+           (click)="toggleSection($event, 'circulacion')"
+           [attr.aria-expanded]="sectionState.circulacion && !menuColapsado"
+           [attr.title]="menuColapsado ? 'Circulacion' : null">
+          <span class="VentasIcon"></span>
+          <span class="ms-2 flex-grow-1 nav-text">Circulacion</span>
+          <span class="ms-auto menu-chevron nav-text">{{ sectionChevron('circulacion') }}</span>
+        </a>
+        <ul class="nav flex-column ms-3" *ngIf="sectionState.circulacion && !menuColapsado">
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/prestamos']" routerLinkActive="active">- Prestamos</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/reservas']" routerLinkActive="active">- Reservas</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/politicas-prestamo']" routerLinkActive="active">- Politicas de prestamo</a></li>
+          <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/multas']" routerLinkActive="active">- Multas</a></li>
         </ul>
       </li>
 
@@ -162,16 +181,15 @@
           
         </ul>
       </li>
-      <!-- 
       <li class="nav-item">
         <a class="nav-link text-grey d-flex align-items-center"
            href="#"
            data-toggle="menu"
            (click)="toggleSection($event, 'administracion')"
            [attr.aria-expanded]="sectionState.administracion && !menuColapsado"
-           [attr.title]="menuColapsado ? 'Administracion' : null">
+           [attr.title]="menuColapsado ? 'Seguridad' : null">
           <span class="SoporteIcon"></span>
-          <span class="ms-2 flex-grow-1 nav-text">Administracion</span>
+          <span class="ms-2 flex-grow-1 nav-text">Seguridad</span>
           <span class="ms-auto menu-chevron nav-text">{{ sectionChevron('administracion') }}</span>
         </a>
         <ul class="nav flex-column ms-3" *ngIf="sectionState.administracion && !menuColapsado">
@@ -181,7 +199,6 @@
           <li><a class="nav-link text-grey d-flex align-items-center" [routerLink]="['/usuarios-roles']" routerLinkActive="active">- Usuarios roles</a></li>
         </ul>
       </li>
-      -->
       
       <li class="nav-item">
         <a class="nav-link text-grey d-flex align-items-center"
@@ -233,6 +250,13 @@
         <ul class="nav flex-column ms-3" *ngIf="sectionState.general && !menuColapsado">
           <li><a class="nav-link text-grey d-flex align-items-center" href="/contacto/">- Contactos</a></li>
           <li><a class="nav-link text-grey d-flex align-items-center" href="/seguridad/">- Usuarios del sistema</a></li>
+          <li>
+            <a class="nav-link text-grey d-flex align-items-center justify-content-between"
+               [routerLink]="['/novedades']" routerLinkActive="active">
+              <span>- Novedades</span>
+              <span class="badge badge-primary" style="font-size:.7rem">v{{ appVersion }}</span>
+            </a>
+          </li>
         </ul>
       </li>
 
@@ -255,7 +279,11 @@
 
       <li class="nav-item px-2 sidebar-footer" *ngIf="!menuColapsado">
         <div class="text-muted small">{{ Company }} | {{ User }}</div>
-        <div class="sidebar-version">Biblioteca v{{ appVersion }}</div>
+        <div class="sidebar-version">
+          Biblioteca v{{ appVersion }}
+          <button class="btn btn-link btn-sm p-0 ml-2" style="font-size:0.7rem;color:#9ab;"
+                  (click)="mostrarNovedades=true" title="Ver novedades">Novedades</button>
+        </div>
       </li>
       </ng-container>
     </ul>
@@ -264,4 +292,28 @@
   <main class="main-content" [class.is-collapsed]="menuColapsado">
     <router-outlet></router-outlet>
   </main>
+</div>
+
+<!-- Modal Novedades -->
+<div *ngIf="mostrarNovedades"
+     style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;"
+     (click)="mostrarNovedades=false">
+  <div style="background:#fff;border-radius:8px;max-width:540px;width:92%;max-height:80vh;overflow-y:auto;padding:24px;"
+       (click)="$event.stopPropagation()">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="mb-0">Novedades — Biblioteca USASJ</h5>
+      <button class="btn btn-sm btn-outline-secondary" (click)="mostrarNovedades=false">✕</button>
+    </div>
+
+    <div *ngFor="let r of releases" class="mb-3">
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <span class="badge badge-primary" style="font-size:.75rem">v{{ r.version }}</span>
+        <strong style="font-size:.9rem">{{ r.titulo }}</strong>
+        <span class="text-muted ml-auto" style="font-size:.75rem">{{ r.fecha }}</span>
+      </div>
+      <ul class="mb-0 pl-3" style="font-size:.85rem">
+        <li *ngFor="let c of r.cambios">{{ c }}</li>
+      </ul>
+    </div>
+  </div>
 </div>

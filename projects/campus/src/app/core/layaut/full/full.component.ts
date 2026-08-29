@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FullService } from './full.service';
 import {Router} from '@angular/router';
+import { VERSION_ACTUAL } from '../../../version';
 
 
 @Component({
@@ -19,6 +20,11 @@ export class FullComponent implements OnInit {
 
   cursosActivos = [];
   readonly imagenCursoDefault = 'assets/estudiante-docente.png';
+  appVersion = VERSION_ACTUAL.version;
+
+  // ── Filtro Facultad / Carrera (para alumnos matriculados en varias carreras) ──
+  facultadSel = '';
+  carreraSel = '';
 
   ngOnInit() {
     //Determinar si ya se hizo login si no se ha hecho ir a la pantalla de login
@@ -34,6 +40,44 @@ export class FullComponent implements OnInit {
     let data = await this.fullService.CargarCursosUsuario();
     this.cursosActivos = data?.['data'] || [];
     console.log(data);
+  }
+
+  mostrarFiltroCarrera(): boolean {
+    return this.carrerasDisponibles().length > 1;
+  }
+
+  facultadesDisponibles(): any[] {
+    const vistos = new Map<string, string>();
+    for (const curso of this.cursosActivos) {
+      if (curso.Id_Facultad && !vistos.has(String(curso.Id_Facultad))) {
+        vistos.set(String(curso.Id_Facultad), curso.Facultad);
+      }
+    }
+    return Array.from(vistos, ([Id_Facultad, Facultad]) => ({ Id_Facultad, Facultad }));
+  }
+
+  carrerasDisponibles(): any[] {
+    const vistos = new Map<string, string>();
+    for (const curso of this.cursosActivos) {
+      if (!curso.Id_Carrera) continue;
+      if (this.facultadSel && String(curso.Id_Facultad) !== this.facultadSel) continue;
+      if (!vistos.has(String(curso.Id_Carrera))) {
+        vistos.set(String(curso.Id_Carrera), curso.Carrera);
+      }
+    }
+    return Array.from(vistos, ([Id_Carrera, Carrera]) => ({ Id_Carrera, Carrera }));
+  }
+
+  onFacultadChange(): void {
+    this.carreraSel = '';
+  }
+
+  cursosFiltrados(): any[] {
+    return this.cursosActivos.filter(curso => {
+      if (this.facultadSel && String(curso.Id_Facultad) !== this.facultadSel) return false;
+      if (this.carreraSel && String(curso.Id_Carrera) !== this.carreraSel) return false;
+      return true;
+    });
   }
 
   private tieneSesionCampus(){

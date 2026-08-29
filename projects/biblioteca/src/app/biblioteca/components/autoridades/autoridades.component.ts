@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import Swal from 'sweetalert2';
 import { BibliotecaDataService } from '../../services/biblioteca-data.service';
-import { Autoridad } from '../../models/biblioteca.models';
+import { Autor, Autoridad } from '../../models/biblioteca.models';
 
 @Component({
   selector: 'app-autoridades',
@@ -14,6 +14,13 @@ export class AutoridadesComponent implements OnInit {
   esEdicion = false;
   edit = false;
   searchField = '';
+
+  autorBuscador = '';
+  resultadosBusquedaAutor: Autor[] = [];
+
+  etiquetaBuscador = '';
+  resultadosBusquedaEtiqueta: Autoridad[] = [];
+  buscandoPorEtiqueta = false;
 
   constructor(private dataService: BibliotecaDataService) {}
 
@@ -38,6 +45,8 @@ export class AutoridadesComponent implements OnInit {
   resetForm() {
     this.autoridad = { id: 0, tipo: 'autor', encabezado: '', formato: 'MARC21' };
     this.esEdicion = false;
+    this.autorBuscador = '';
+    this.resultadosBusquedaAutor = [];
   }
 
   nuevo() {
@@ -49,6 +58,67 @@ export class AutoridadesComponent implements OnInit {
     this.autoridad = { ...item };
     this.esEdicion = true;
     this.edit = true;
+    this.autorBuscador = item.autorNombre || '';
+    this.resultadosBusquedaAutor = [];
+  }
+
+  async buscarAutor() {
+    if (!this.autorBuscador || this.autorBuscador.trim().length < 2) {
+      this.resultadosBusquedaAutor = [];
+      return;
+    }
+    this.resultadosBusquedaAutor = await this.dataService.buscarAutores(this.autorBuscador);
+  }
+
+  async vincularAutor(autor: Autor) {
+    this.autorBuscador = autor.nombre;
+    this.resultadosBusquedaAutor = [];
+
+    if (this.autoridad.autorId === autor.id) {
+      return;
+    }
+
+    const existente = await this.dataService.getAutoridadPorAutor(autor.id);
+    if (existente && existente.id !== this.autoridad.id) {
+      const resultado = await Swal.fire({
+        title: 'Este autor ya tiene una autoridad',
+        html: `<b>${existente.encabezado}</b> ya está vinculada a este autor.<br>¿Deseas editar esa autoridad en vez de vincular una nueva?`,
+        showCancelButton: true,
+        confirmButtonText: 'Editar la existente',
+        cancelButtonText: 'Vincular igual'
+      });
+      if (resultado.isConfirmed) {
+        this.editar(existente);
+        return;
+      }
+    }
+
+    this.autoridad.autorId = autor.id;
+    this.autoridad.autorNombre = autor.nombre;
+  }
+
+  desvincularAutor() {
+    this.autoridad.autorId = undefined;
+    this.autoridad.autorNombre = '';
+    this.autorBuscador = '';
+  }
+
+  async buscarPorEtiqueta() {
+    const texto = this.etiquetaBuscador.trim();
+    if (texto.length < 2) {
+      this.resultadosBusquedaEtiqueta = [];
+      this.buscandoPorEtiqueta = false;
+      return;
+    }
+    this.buscandoPorEtiqueta = true;
+    this.resultadosBusquedaEtiqueta = await this.dataService.buscarAutoridadPorEtiqueta(texto);
+    this.buscandoPorEtiqueta = false;
+  }
+
+  limpiarBusquedaEtiqueta() {
+    this.etiquetaBuscador = '';
+    this.resultadosBusquedaEtiqueta = [];
+    this.buscandoPorEtiqueta = false;
   }
 
   async guardar() {

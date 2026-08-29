@@ -17,6 +17,7 @@ import { PrimerIngresoComponent } from './primer-ingreso/primer-ingreso.componen
 import { PerfilComponent } from './perfil/perfil.component';
 import { MatriculaEstudianteComponent } from './matricula-estudiante/matricula-estudiante.component'
 import { SafeUrlPipe } from './recurso-enlace/safe-url.pipe';
+import { OfertaAcademicaComponent } from './oferta-academica/oferta-academica.component';
 
 @NgModule({
   imports: [
@@ -25,7 +26,7 @@ import { SafeUrlPipe } from './recurso-enlace/safe-url.pipe';
     FormsModule
   ],
   declarations: [SafeUrlPipe,CursoVisorComponent,SemanaDetalleComponent,SemanaEstudioComponent,RecursoVideoComponent,RecursoTextoComponent,
-    RecursoEnlaceComponent,RecursoPdfComponent,RecursoPresentacionComponent,ActividadAlumnoComponent,ForoComponent,PrimerIngresoComponent,PerfilComponent,MatriculaEstudianteComponent
+    RecursoEnlaceComponent,RecursoPdfComponent,RecursoPresentacionComponent,ActividadAlumnoComponent,ForoComponent,PrimerIngresoComponent,PerfilComponent,MatriculaEstudianteComponent,OfertaAcademicaComponent
   ]
 })
 export class CursosModule { }

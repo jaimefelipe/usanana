@@ -12,6 +12,31 @@
     </div>
   </div>
 
+  <div class="page-form-card mb-3">
+    <label class="form-label">Buscar por etiqueta MARC (100 autor personal, 400 nombre alternativo, 500 véase además)</label>
+    <div class="input-group">
+      <input [(ngModel)]="etiquetaBuscador" name="etiquetaBuscador" (input)="buscarPorEtiqueta()"
+             type="text" class="form-control" placeholder="Buscar por nombre y apellido...">
+      <button class="btn btn-outline-secondary" type="button" (click)="limpiarBusquedaEtiqueta()" *ngIf="etiquetaBuscador">
+        Limpiar
+      </button>
+    </div>
+    <div class="text-muted small mt-2" *ngIf="buscandoPorEtiqueta">Buscando...</div>
+    <div class="mt-2" *ngIf="!buscandoPorEtiqueta && etiquetaBuscador.trim().length >= 2">
+      <div class="text-muted small mb-1" *ngIf="resultadosBusquedaEtiqueta.length === 0">
+        Sin coincidencias en las etiquetas 100/400/500.
+      </div>
+      <div class="list-group" *ngIf="resultadosBusquedaEtiqueta.length > 0">
+        <a *ngFor="let item of resultadosBusquedaEtiqueta" (click)="editar(item)"
+           class="list-group-item list-group-item-action" style="cursor:pointer">
+          <strong>{{ item.encabezado }}</strong>
+          <span class="text-muted"> — {{ item.tipo }}</span>
+          <span class="text-muted" *ngIf="item.autorNombre"> · Autor: {{ item.autorNombre }}</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
   <form>
     <div class="row g-4 page-grid">
       <div class="form-group col-12 col-sm-6" *ngFor="let item of autoridades | bibliotecaSearch: searchField">
@@ -20,6 +45,9 @@
             <div class="card-body">
               <h4 class="card-title">{{ item.encabezado }}</h4>
               Tipo: {{ item.tipo }} · Formato: {{ item.formato }}
+              <div class="text-muted mt-1" *ngIf="item.autorNombre" style="font-size:.85rem">
+                Autor vinculado: {{ item.autorNombre }}
+              </div>
             </div>
           </a>
         </div>
@@ -52,6 +80,26 @@
           <option value="MARC21">MARC21</option>
           <option value="UNIMARC">UNIMARC</option>
         </select>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Autor vinculado</label>
+        <div class="input-group" *ngIf="!autoridad.autorId">
+          <input [(ngModel)]="autorBuscador" name="autorBuscador" (input)="buscarAutor()"
+                 type="text" class="form-control" placeholder="Buscar autor por nombre...">
+        </div>
+        <div *ngIf="autoridad.autorId" class="d-flex align-items-center p-2 border rounded">
+          <span class="flex-grow-1"><strong>{{ autoridad.autorNombre }}</strong></span>
+          <button type="button" class="btn btn-sm btn-outline-danger" (click)="desvincularAutor()">
+            <i class="fa fa-times"></i>
+          </button>
+        </div>
+        <div *ngIf="resultadosBusquedaAutor.length > 0" class="list-group mt-1" style="max-height:160px;overflow-y:auto">
+          <a *ngFor="let a of resultadosBusquedaAutor" (click)="vincularAutor(a)"
+             class="list-group-item list-group-item-action" style="cursor:pointer">
+            {{ a.nombre }}
+          </a>
+        </div>
+        <div class="form-text">Vincular esta autoridad a un autor del catálogo permite reutilizarla en todos sus libros.</div>
       </div>
       <div class="page-actions d-flex gap-2">
         <button class="btn btn-success" type="button" (click)="guardar()">Grabar</button>

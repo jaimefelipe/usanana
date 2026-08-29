@@ -1,0 +1,153 @@
+﻿<div class="bib-page">
+  <div class="bib-header">
+    <div>
+      <span class="bib-kicker">Biblioteca USASJ</span>
+      <h1>Mi Biblioteca</h1>
+      <p *ngIf="usuarioNombre">{{ usuarioNombre }}</p>
+    </div>
+    <button type="button" class="btn bib-btn-sec" (click)="irCatalogo()">
+      <i class="fa fa-search" aria-hidden="true"></i> Buscar libros
+    </button>
+  </div>
+
+  <div class="bib-loading" *ngIf="cargando">
+    <i class="fa fa-spinner fa-spin" aria-hidden="true"></i> Cargando tu cuenta...
+  </div>
+
+  <ng-container *ngIf="!cargando">
+    <div class="bib-no-usuario" *ngIf="!idUsuario">
+      <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+      <h3>No se pudo verificar tu usuario</h3>
+      <p>Tu usuario debe estar activo y asociado a la empresa para usar Biblioteca desde Campus.</p>
+      <button type="button" class="btn bib-btn-prim" (click)="irCatalogo()">Ver catalogo</button>
+    </div>
+
+    <ng-container *ngIf="idUsuario">
+      <div class="bib-multa-banner" *ngIf="multaAcumulada > 0">
+        <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+        Tienes sanciones pendientes por un total de
+        <strong>CRC {{ multaAcumulada | number:'1.0-0' }}</strong>.
+        Acercate a la Biblioteca para regularizarlas.
+      </div>
+
+      <div class="bib-tabs">
+        <button type="button" class="bib-tab" [class.active]="tabActivo === 'prestamos'"
+          (click)="tabActivo = 'prestamos'">
+          Prestamos activos
+          <span class="bib-tab-count" *ngIf="prestamos.length > 0">{{ prestamos.length }}</span>
+        </button>
+        <button type="button" class="bib-tab" [class.active]="tabActivo === 'reservas'"
+          (click)="tabActivo = 'reservas'">
+          Mis reservas
+          <span class="bib-tab-count" *ngIf="reservas.length > 0">{{ reservas.length }}</span>
+        </button>
+        <button type="button" class="bib-tab" [class.active]="tabActivo === 'multas'"
+          (click)="tabActivo = 'multas'">
+          Sanciones pendientes
+          <span class="bib-tab-count bib-tab-count-err" *ngIf="multas.length > 0">{{ multas.length }}</span>
+        </button>
+      </div>
+
+      <div *ngIf="tabActivo === 'prestamos'">
+        <div class="bib-empty-tab" *ngIf="prestamos.length === 0">
+          <i class="fa fa-check-circle" aria-hidden="true"></i>
+          <p>No tienes prestamos activos.</p>
+        </div>
+        <div class="bib-table-wrap" *ngIf="prestamos.length > 0">
+          <table class="bib-table">
+            <thead>
+              <tr>
+                <th>Libro</th>
+                <th>Fecha prestamo</th>
+                <th>Vence</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let p of prestamos" [class.fila-vencida]="estaVencido(p)">
+                <td>{{ p.Titulo }}</td>
+                <td>{{ formatearFecha(p.Fecha_Prestamo) }}</td>
+                <td>
+                  {{ formatearFecha(p.Fecha_Vencimiento) }}
+                  <span class="bib-vencido-label" *ngIf="estaVencido(p)">
+                    {{ p.Dias_Vencido }} dia(s) vencido
+                  </span>
+                </td>
+                <td>
+                  <span class="bib-badge"
+                    [class.bib-badge-disp]="!estaVencido(p)"
+                    [class.bib-badge-nodisp]="estaVencido(p)">
+                    {{ estaVencido(p) ? 'Vencido' : 'Activo' }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div *ngIf="tabActivo === 'reservas'">
+        <div class="bib-empty-tab" *ngIf="reservas.length === 0">
+          <i class="fa fa-bookmark" aria-hidden="true"></i>
+          <p>No tienes reservas activas.</p>
+          <button type="button" class="btn bib-btn-prim" (click)="irCatalogo()">Buscar un libro</button>
+        </div>
+        <div class="bib-table-wrap" *ngIf="reservas.length > 0">
+          <table class="bib-table">
+            <thead>
+              <tr>
+                <th>Libro</th>
+                <th>Fecha solicitud</th>
+                <th>Posicion en cola</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let r of reservas">
+                <td>{{ r.Titulo }}</td>
+                <td>{{ formatearFecha(r.Fecha_Reserva) }}</td>
+                <td>{{ r.Posicion }}</td>
+                <td>
+                  <span class="bib-badge"
+                    [class.bib-badge-disp]="estadoReserva(r) === 'Disponible'"
+                    [class.bib-badge-warn]="estadoReserva(r) !== 'Disponible'">
+                    {{ estadoReserva(r) }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div *ngIf="tabActivo === 'multas'">
+        <div class="bib-empty-tab" *ngIf="multas.length === 0">
+          <i class="fa fa-check-circle" aria-hidden="true"></i>
+          <p>No tienes sanciones pendientes.</p>
+        </div>
+        <div class="bib-table-wrap" *ngIf="multas.length > 0">
+          <table class="bib-table">
+            <thead>
+              <tr>
+                <th>Libro</th>
+                <th>Motivo</th>
+                <th>Monto</th>
+                <th>Saldo pendiente</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let m of multas">
+                <td>{{ m.Titulo }}</td>
+                <td>{{ m.Motivo }}</td>
+                <td>CRC {{ m.Monto | number:'1.0-2' }}</td>
+                <td>CRC {{ m.Saldo | number:'1.0-2' }}</td>
+                <td>{{ formatearFecha(m.Fecha_Generacion) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </ng-container>
+  </ng-container>
+</div>

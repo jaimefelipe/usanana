@@ -1,0 +1,22 @@
+<div class="container-fluid" *ngIf="totalPaginas > 0">
+  <div class="text-center text-muted small mb-2">
+    Mostrando {{ rangeStart }}-{{ rangeEnd }} de {{ total }} {{ etiqueta }}
+  </div>
+  <ul class="pagination justify-content-center">
+    <li class="page-item" [class.disabled]="paginaActual === 1">
+      <button class="page-link" type="button" [disabled]="paginaActual === 1" (click)="irAPagina(1)">&laquo;</button>
+    </li>
+    <li class="page-item" [class.disabled]="paginaActual === 1">
+      <button class="page-link" type="button" [disabled]="paginaActual === 1" (click)="irAPagina(paginaActual - 1)">&lsaquo;</button>
+    </li>
+    <li class="page-item" *ngFor="let pagina of paginasVisibles" [class.active]="pagina === paginaActual">
+      <button class="page-link" type="button" (click)="irAPagina(pagina)">{{ pagina }}</button>
+    </li>
+    <li class="page-item" [class.disabled]="paginaActual === totalPaginas">
+      <button class="page-link" type="button" [disabled]="paginaActual === totalPaginas" (click)="irAPagina(paginaActual + 1)">&rsaquo;</button>
+    </li>
+    <li class="page-item" [class.disabled]="paginaActual === totalPaginas">
+      <button class="page-link" type="button" [disabled]="paginaActual === totalPaginas" (click)="irAPagina(totalPaginas)">&raquo;</button>
+    </li>
+  </ul>
+</div>

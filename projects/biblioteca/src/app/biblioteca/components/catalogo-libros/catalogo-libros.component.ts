@@ -18,14 +18,13 @@ export class CatalogoLibrosComponent implements OnInit {
   categorias: Categoria[] = [];
   tiposMaterial: TipoMaterial[] = [];
   editoriales: Editorial[] = [];
-  autores: Autor[] = [];
   libro: Libro = {
     id: 0,
     titulo: '',
     subtitulo: '',
     autor: '',
     autores: '',
-    autoresIds: [],
+    autoresSeleccionados: [],
     isbn: '',
     issn: '',
     doi: '',
@@ -46,11 +45,61 @@ export class CatalogoLibrosComponent implements OnInit {
   edit = false;
   esEdicion = false;
 
+  autorBuscador = '';
+  autorRolSeleccionado = 'Autor';
+  rolesAutor = ['Autor', 'Coautor', 'Editor', 'Traductor', 'Ilustrador'];
+  resultadosBusquedaAutor: Autor[] = [];
+
   constructor(
     private dataService: BibliotecaDataService,
     private route: ActivatedRoute,
     private router: Router
   ) {}
+
+  private borradorKey(): string {
+    return 'biblioteca_borrador_libro_' + (this.libro.id || 'nuevo');
+  }
+
+  private guardarBorrador() {
+    try {
+      sessionStorage.setItem(this.borradorKey(), JSON.stringify({ savedAt: Date.now(), data: this.libro }));
+    } catch {
+      // sessionStorage no disponible: se pierde el autoguardado pero no interrumpe la edicion.
+    }
+  }
+
+  private limpiarBorrador() {
+    sessionStorage.removeItem(this.borradorKey());
+  }
+
+  private async ofrecerRecuperarBorrador() {
+    let borrador: { savedAt: number; data: Libro } | null = null;
+    try {
+      const raw = sessionStorage.getItem(this.borradorKey());
+      borrador = raw ? JSON.parse(raw) : null;
+    } catch {
+      borrador = null;
+    }
+    if (!borrador?.data) {
+      return;
+    }
+    if (JSON.stringify(borrador.data) === JSON.stringify(this.libro)) {
+      this.limpiarBorrador();
+      return;
+    }
+    const resultado = await Swal.fire({
+      title: 'Hay un borrador sin guardar',
+      text: 'Se encontraron cambios sin guardar para este libro. Deseas recuperarlos?',
+      showCancelButton: true,
+      confirmButtonText: 'Recuperar borrador',
+      cancelButtonText: 'Descartar'
+    });
+    if (resultado.isConfirmed) {
+      this.libro = { ...borrador.data };
+    } else {
+      this.limpiarBorrador();
+    }
+  }
 
   async ngOnInit() {
     await this.cargarListas();
@@ -74,16 +123,14 @@ export class CatalogoLibrosComponent implements OnInit {
   }
 
   async cargarListas() {
-    const [categorias, tiposMaterial, editoriales, autores] = await Promise.all([
+    const [categorias, tiposMaterial, editoriales] = await Promise.all([
       this.dataService.getCategorias(),
       this.dataService.getTiposMaterial(),
-      this.dataService.getEditoriales(),
-      this.dataService.getAutores()
+      this.dataService.getEditoriales()
     ]);
     this.categorias = categorias;
     this.tiposMaterial = tiposMaterial;
     this.editoriales = editoriales;
-    this.autores = autores;
   }
 
   async cargarLibros() {
@@ -125,7 +172,7 @@ export class CatalogoLibrosComponent implements OnInit {
       subtitulo: '',
       autor: '',
       autores: '',
-      autoresIds: [],
+      autoresSeleccionados: [],
       isbn: '',
       issn: '',
       doi: '',
@@ -146,26 +193,59 @@ export class CatalogoLibrosComponent implements OnInit {
     this.esEdicion = false;
   }
 
-  nuevo() {
+  async nuevo() {
     this.resetForm();
     this.edit = true;
+    await this.ofrecerRecuperarBorrador();
   }
 
   async editar(item: Libro) {
-    this.libro = { ...item, autoresIds: [] };
-    this.libro.autoresIds = await this.dataService.getAutoresPorLibro(item.id);
+    this.libro = { ...item, autoresSeleccionados: [] };
+    this.libro.autoresSeleccionados = await this.dataService.getAutoresPorLibro(item.id);
     this.esEdicion = true;
     this.edit = true;
+    await this.ofrecerRecuperarBorrador();
   }
 
   async editarPorId(id: number) {
     const libro = this.libros.find(item => item.id === id) || await this.dataService.getLibroById(id);
     if (!libro) return;
 
-    this.libro = { ...libro, autoresIds: [] };
-    this.libro.autoresIds = await this.dataService.getAutoresPorLibro(libro.id);
+    this.libro = { ...libro, autoresSeleccionados: [] };
+    this.libro.autoresSeleccionados = await this.dataService.getAutoresPorLibro(libro.id);
     this.esEdicion = true;
     this.edit = true;
+    await this.ofrecerRecuperarBorrador();
+  }
+
+  async buscarAutor() {
+    if (!this.autorBuscador || this.autorBuscador.trim().length < 2) {
+      this.resultadosBusquedaAutor = [];
+      return;
+    }
+    this.resultadosBusquedaAutor = await this.dataService.buscarAutores(this.autorBuscador);
+  }
+
+  agregarAutor(autor: Autor) {
+    const seleccionados = this.libro.autoresSeleccionados || (this.libro.autoresSeleccionados = []);
+    const yaAgregado = seleccionados.find(a => a.id === autor.id);
+    if (!yaAgregado) {
+      seleccionados.push({ id: autor.id, nombre: autor.nombre, rol: this.autorRolSeleccionado });
+    }
+    this.autorBuscador = '';
+    this.resultadosBusquedaAutor = [];
+    this.onFormularioLibroCambio();
+  }
+
+  quitarAutor(index: number) {
+    this.libro.autoresSeleccionados?.splice(index, 1);
+    this.onFormularioLibroCambio();
+  }
+
+  onFormularioLibroCambio() {
+    if (this.edit) {
+      this.guardarBorrador();
+    }
   }
 
   async guardar() {
@@ -177,7 +257,7 @@ export class CatalogoLibrosComponent implements OnInit {
     try {
       if (this.esEdicion) {
         await this.dataService.updateLibro(this.libro);
-        await this.dataService.saveLibroAutores(this.libro.id, this.libro.autoresIds || []);
+        await this.dataService.saveLibroAutores(this.libro.id, this.libro.autoresSeleccionados || []);
         Swal.fire('Libro actualizado');
       } else {
         const libroId = await this.dataService.createLibro(this.libro);
@@ -185,9 +265,10 @@ export class CatalogoLibrosComponent implements OnInit {
           Swal.fire('No se pudo obtener el id del libro');
           return;
         }
-        await this.dataService.saveLibroAutores(libroId, this.libro.autoresIds || []);
+        await this.dataService.saveLibroAutores(libroId, this.libro.autoresSeleccionados || []);
         Swal.fire('Libro creado');
       }
+      this.limpiarBorrador();
       await this.cargarLibros();
       this.resetForm();
       this.edit = false;

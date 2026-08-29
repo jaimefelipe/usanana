@@ -32,7 +32,8 @@ export class OpacDetalleComponent implements OnInit {
       Swal.fire('Reserva creada');
     } catch (error) {
       console.error(error);
-      Swal.fire('No se pudo crear la reserva');
+      const mensaje = error instanceof Error ? error.message : 'No se pudo crear la reserva';
+      Swal.fire('No se pudo crear la reserva', mensaje, 'warning');
     }
   }
 }

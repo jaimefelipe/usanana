@@ -12,17 +12,43 @@
     </div>
   </div>
 
-  <form>
+  <div class="mb-2 text-muted">
+    <strong>{{ totalPdf }}</strong> ejemplar(es) con PDF de {{ total }} totales
+  </div>
+
+  <app-paginador
+    *ngIf="!loading"
+    [paginaActual]="page"
+    [totalPaginas]="totalPages"
+    [paginasVisibles]="pageNumbers"
+    [rangeStart]="rangeStart"
+    [rangeEnd]="rangeEnd"
+    [total]="total"
+    etiqueta="ejemplares"
+    (cambio)="cambiarPagina($event)">
+  </app-paginador>
+
+  <div class="text-muted small mt-3" *ngIf="loading">Cargando ejemplares...</div>
+
+  <form *ngIf="!loading">
     <div class="row g-4 page-grid">
-      <div class="form-group col-12 col-sm-6" *ngFor="let item of ejemplares | bibliotecaSearch: searchField">
+      <div class="form-group col-12 col-sm-6" *ngFor="let item of ejemplares">
         <div class="card h-100">
           <a class="page-card-link" (click)="editar(item)">
             <div class="card-body">
+              <img *ngIf="item.imagenPortada" [src]="item.imagenPortada" loading="lazy"
+                   style="max-width:80px;float:right;margin-left:8px;border-radius:4px" />
               <h4 class="card-title">{{ item.libroTitulo || ('Libro ' + item.libroId) }}</h4>
               Codigo: {{ item.codigoBarra || '-' }}<br />
               Estado: {{ item.estado }}
+              <div class="mt-1">
+                <a [routerLink]="['/catalogo', item.libroId]" (click)="$event.stopPropagation()"
+                   class="text-muted" style="font-size:.85rem">
+                  Recurso #{{ item.libroId }} — {{ item.libroTitulo }}
+                </a>
+              </div>
               <div class="mt-2" *ngIf="canViewArchivo && item.urlArchivo">
-                <button class="btn btn-link btn-sm" type="button" (click)="abrirArchivo($event, item.urlArchivo)">Ver PDF</button>
+                <button class="btn btn-link btn-sm" type="button" (click)="abrirArchivo($event, item.urlArchivo)">Ver archivo</button>
               </div>
             </div>
           </a>
@@ -30,6 +56,18 @@
       </div>
     </div>
   </form>
+
+  <app-paginador
+    *ngIf="!loading"
+    [paginaActual]="page"
+    [totalPaginas]="totalPages"
+    [paginasVisibles]="pageNumbers"
+    [rangeStart]="rangeStart"
+    [rangeEnd]="rangeEnd"
+    [total]="total"
+    etiqueta="ejemplares"
+    (cambio)="cambiarPagina($event)">
+  </app-paginador>
 </div>
 
 <div [hidden]="!edit" class="container-fluid pb-5">
@@ -77,6 +115,12 @@
             <option value="mantenimiento">Mantenimiento</option>
           </select>
         </div>
+        <div class="col-md-6" *ngIf="ejemplar.tipoSoporte === 'digital'">
+          <label class="form-label">Maximo usuarios simultaneos</label>
+          <input [(ngModel)]="ejemplar.maxSimultaneos" name="maxSimultaneos"
+                 type="number" min="1" class="form-control" placeholder="1">
+          <small class="text-muted">Solo para recursos digitales (ver en linea)</small>
+        </div>
       </div>
       <div class="mb-2 mt-2">
         <label class="form-label">Inventario tag</label>
@@ -86,13 +130,31 @@
         <label class="form-label">URL archivo</label>
         <input class="form-control" [(ngModel)]="ejemplar.urlArchivo" name="urlArchivo" />
       </div>
-      <div class="mb-3" *ngIf="canUploadArchivo && ejemplar.tipoSoporte === 'digital'">
-        <label class="form-label">Subir PDF</label>
-        <input class="form-control" type="file" accept="application/pdf" (change)="handleArchivoInput($event)" />
-        <div class="form-text">El archivo se sube al servidor y se enlaza al ejemplar.</div>
+      <div class="mb-3">
+        <label class="form-label">Archivo digital</label>
+        <input class="form-control" type="file"
+               accept="application/pdf,.pdf,application/msword,.doc,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.docx"
+               [disabled]="!canUploadArchivo"
+               (change)="handleArchivoInput($event)" />
+        <div class="form-text">
+          Puede subir PDF o Word (.doc, .docx). Al seleccionar un archivo, el ejemplar se marca como digital.
+        </div>
+        <div class="text-danger small mt-1" *ngIf="!canUploadArchivo">
+          El usuario actual no tiene permiso para subir archivos digitales.
+        </div>
+        <div class="text-muted small mt-1" *ngIf="archivoSeleccionadoNombre">
+          Archivo seleccionado: {{ archivoSeleccionadoNombre }}
+        </div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Imagen de portada</label>
+        <input type="file" (change)="onImagenPortadaSeleccionada($event)" accept="image/*" class="form-control">
+        <div class="form-text">Solo imagenes de portada. Para el recurso digital use el campo Archivo digital.</div>
+        <img *ngIf="imagenPreviewUrl || ejemplar.imagenPortada" [src]="imagenPreviewUrl || ejemplar.imagenPortada"
+             style="max-width:120px;margin-top:8px;border-radius:4px">
       </div>
       <div class="mb-3" *ngIf="canViewArchivo && ejemplar.urlArchivo">
-        <button class="btn btn-outline-primary btn-sm" type="button" (click)="abrirArchivo($event, ejemplar.urlArchivo)">Ver PDF actual</button>
+        <button class="btn btn-outline-primary btn-sm" type="button" (click)="abrirArchivo($event, ejemplar.urlArchivo)">Ver archivo actual</button>
       </div>
       <div class="page-actions d-flex gap-2">
         <button class="btn btn-success" type="button" (click)="guardar()">Grabar</button>

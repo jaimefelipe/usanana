@@ -51,7 +51,7 @@
 
         <div class="col-12">
           <label class="form-label">Autores</label>
-          <select class="form-select autores-select" multiple [(ngModel)]="libro.autoresIds" name="autoresIds">
+          <select class="form-select autores-select" multiple [(ngModel)]="autorIdsSeleccionados" name="autoresIds">
             <option *ngFor="let a of autores" [ngValue]="a.id">{{ a.nombre }}</option>
           </select>
           <div class="form-text" *ngIf="autores.length === 0">No hay autores registrados.</div>

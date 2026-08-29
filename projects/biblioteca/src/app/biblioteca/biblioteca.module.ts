@@ -57,6 +57,8 @@ import { IntegracionesBibliotecaComponent } from './components/integraciones-bib
 import { BibliotecaSearchPipe } from './pipes/biblioteca-search.pipe';
 import { AutoridadDiccionarioComponent } from './components/autoridad-diccionario/autoridad-diccionario.component';
 import { AutoridadCatalogacionComponent } from './components/autoridad-catalogacion/autoridad-catalogacion.component';
+import { NovedadesComponent } from './components/novedades/novedades.component';
+import { PaginadorComponent } from './components/paginador/paginador.component';
 
 @NgModule({
   declarations: [
@@ -114,7 +116,9 @@ import { AutoridadCatalogacionComponent } from './components/autoridad-catalogac
     PrestamosComponent,
     ReservasComponent,
     UsuariosBibliotecaComponent,
-    ReportesBibliotecaComponent
+    ReportesBibliotecaComponent,
+    NovedadesComponent,
+    PaginadorComponent
   ],
   imports: [
     CommonModule,

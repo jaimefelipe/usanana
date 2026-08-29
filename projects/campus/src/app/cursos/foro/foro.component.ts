@@ -34,7 +34,7 @@ export class ForoComponent implements OnInit {
     
   }
 
-  enviarMensaje() {
+  async enviarMensaje() {
     if (!this.nuevoMensaje.trim()) return;
   
     const Mensaje = {
@@ -43,7 +43,7 @@ export class ForoComponent implements OnInit {
       Mensaje: this.nuevoMensaje
     };
 
-    let data = this.foroService.enviarMensaje(Mensaje);
+    let data = await this.foroService.enviarMensaje(Mensaje);
     this.nuevoMensaje = '';
     this.cargarMensajes();
   }

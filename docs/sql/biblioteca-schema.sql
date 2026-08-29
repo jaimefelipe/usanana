@@ -124,25 +124,6 @@ CREATE TABLE Bib_Ejemplar (
 CREATE INDEX ix_ejemplar_estado ON Bib_Ejemplar(Estado);
 CREATE INDEX ix_ejemplar_libro ON Bib_Ejemplar(Libro_Id);
 
--- Usuarios biblioteca (integracion institucional)
-CREATE TABLE Bib_Usuario_Biblioteca (
-  Id_Usuario_Biblioteca INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  Id_Empresa INT NOT NULL,
-  Id_Persona INT,
-  Id_Usuario INT,
-  Codigo_Universitario VARCHAR(50),
-  Nombre VARCHAR(200) NOT NULL,
-  Email VARCHAR(200),
-  Telefono VARCHAR(30),
-  Tipo_Usuario VARCHAR(30) NOT NULL DEFAULT 'alumno', -- alumno, docente, administrativo, externo
-  Bloqueado TINYINT(1) NOT NULL DEFAULT 0,
-  Multa_Acumulada DECIMAL(12,2) NOT NULL DEFAULT 0,
-  CONSTRAINT fk_usuario_biblioteca_empresa FOREIGN KEY (Id_Empresa) REFERENCES Gen_Empresa(Id_Empresa),
-  CONSTRAINT fk_usuario_biblioteca_persona FOREIGN KEY (Id_Persona) REFERENCES Gen_Persona(Id_Persona),
-  CONSTRAINT fk_usuario_biblioteca_usuario FOREIGN KEY (Id_Usuario) REFERENCES Seg_Usuario(Id_Usuario),
-  UNIQUE KEY uq_usuario_biblioteca_empresa_email (Id_Empresa, Email)
-);
-
 -- Adquisiciones
 CREATE TABLE Bib_Proveedor (
   Id_Proveedor INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -278,7 +259,7 @@ CREATE TABLE Bib_Prestamo (
   Observaciones TEXT,
   CONSTRAINT fk_prestamo_empresa FOREIGN KEY (Id_Empresa) REFERENCES Gen_Empresa(Id_Empresa),
   CONSTRAINT fk_prestamo_ejemplar FOREIGN KEY (Ejemplar_Id) REFERENCES Bib_Ejemplar(Id_Ejemplar),
-  CONSTRAINT fk_prestamo_usuario FOREIGN KEY (Usuario_Id) REFERENCES Bib_Usuario_Biblioteca(Id_Usuario_Biblioteca),
+  CONSTRAINT fk_prestamo_usuario FOREIGN KEY (Usuario_Id) REFERENCES Seg_Usuario(Id_Usuario),
   CONSTRAINT ck_prestamo_estado CHECK (Estado IN ('activo','vencido','devuelto','perdido'))
 );
 
@@ -293,8 +274,8 @@ CREATE TABLE Bib_Reserva (
   Fecha_Asignacion DATETIME,
   CONSTRAINT fk_reserva_empresa FOREIGN KEY (Id_Empresa) REFERENCES Gen_Empresa(Id_Empresa),
   CONSTRAINT fk_reserva_libro FOREIGN KEY (Libro_Id) REFERENCES Bib_Libro(Id_Libro) ON DELETE CASCADE,
-  CONSTRAINT fk_reserva_usuario FOREIGN KEY (Usuario_Id) REFERENCES Bib_Usuario_Biblioteca(Id_Usuario_Biblioteca),
-  CONSTRAINT ck_reserva_estado CHECK (Estado IN ('activa','atendida','cancelada','liberada'))
+  CONSTRAINT fk_reserva_usuario FOREIGN KEY (Usuario_Id) REFERENCES Seg_Usuario(Id_Usuario),
+  CONSTRAINT ck_reserva_estado CHECK (LOWER(Estado) IN ('activa','en espera','disponible','atendida','cancelada','liberada'))
 );
 
 CREATE TABLE Bib_Multa (
@@ -309,7 +290,7 @@ CREATE TABLE Bib_Multa (
   Fecha_Pago DATETIME,
   Estado VARCHAR(20) NOT NULL DEFAULT 'pendiente',
   CONSTRAINT fk_multa_empresa FOREIGN KEY (Id_Empresa) REFERENCES Gen_Empresa(Id_Empresa),
-  CONSTRAINT fk_multa_usuario FOREIGN KEY (Usuario_Id) REFERENCES Bib_Usuario_Biblioteca(Id_Usuario_Biblioteca),
+  CONSTRAINT fk_multa_usuario FOREIGN KEY (Usuario_Id) REFERENCES Seg_Usuario(Id_Usuario),
   CONSTRAINT fk_multa_prestamo FOREIGN KEY (Prestamo_Id) REFERENCES Bib_Prestamo(Id_Prestamo) ON DELETE SET NULL,
   CONSTRAINT ck_multa_estado CHECK (Estado IN ('pendiente','pagada','condonada'))
 );
@@ -327,7 +308,7 @@ CREATE TABLE Bib_Auditoria_Circulacion (
   Realizado_Por VARCHAR(150),
   Realizado_En DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_auditoria_empresa FOREIGN KEY (Id_Empresa) REFERENCES Gen_Empresa(Id_Empresa),
-  CONSTRAINT fk_auditoria_usuario FOREIGN KEY (Usuario_Id) REFERENCES Bib_Usuario_Biblioteca(Id_Usuario_Biblioteca),
+  CONSTRAINT fk_auditoria_usuario FOREIGN KEY (Usuario_Id) REFERENCES Seg_Usuario(Id_Usuario),
   CONSTRAINT fk_auditoria_ejemplar FOREIGN KEY (Ejemplar_Id) REFERENCES Bib_Ejemplar(Id_Ejemplar),
   CONSTRAINT fk_auditoria_prestamo FOREIGN KEY (Prestamo_Id) REFERENCES Bib_Prestamo(Id_Prestamo),
   CONSTRAINT fk_auditoria_reserva FOREIGN KEY (Reserva_Id) REFERENCES Bib_Reserva(Id_Reserva)
@@ -453,7 +434,7 @@ CREATE TABLE Bib_Opac_Comentario (
   Creado_El DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_opac_comentario_empresa FOREIGN KEY (Id_Empresa) REFERENCES Gen_Empresa(Id_Empresa),
   CONSTRAINT fk_opac_comentario_libro FOREIGN KEY (Libro_Id) REFERENCES Bib_Libro(Id_Libro) ON DELETE CASCADE,
-  CONSTRAINT fk_opac_comentario_usuario FOREIGN KEY (Usuario_Id) REFERENCES Bib_Usuario_Biblioteca(Id_Usuario_Biblioteca)
+  CONSTRAINT fk_opac_comentario_usuario FOREIGN KEY (Usuario_Id) REFERENCES Seg_Usuario(Id_Usuario)
 );
 
 CREATE TABLE Bib_Opac_Etiqueta (
@@ -465,7 +446,7 @@ CREATE TABLE Bib_Opac_Etiqueta (
   Creado_El DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_opac_etiqueta_empresa FOREIGN KEY (Id_Empresa) REFERENCES Gen_Empresa(Id_Empresa),
   CONSTRAINT fk_opac_etiqueta_libro FOREIGN KEY (Libro_Id) REFERENCES Bib_Libro(Id_Libro) ON DELETE CASCADE,
-  CONSTRAINT fk_opac_etiqueta_usuario FOREIGN KEY (Usuario_Id) REFERENCES Bib_Usuario_Biblioteca(Id_Usuario_Biblioteca)
+  CONSTRAINT fk_opac_etiqueta_usuario FOREIGN KEY (Usuario_Id) REFERENCES Seg_Usuario(Id_Usuario)
 );
 
 CREATE TABLE Bib_Opac_Lista (
@@ -475,7 +456,7 @@ CREATE TABLE Bib_Opac_Lista (
   Nombre VARCHAR(120) NOT NULL,
   Descripcion VARCHAR(200),
   CONSTRAINT fk_opac_lista_empresa FOREIGN KEY (Id_Empresa) REFERENCES Gen_Empresa(Id_Empresa),
-  CONSTRAINT fk_opac_lista_usuario FOREIGN KEY (Usuario_Id) REFERENCES Bib_Usuario_Biblioteca(Id_Usuario_Biblioteca)
+  CONSTRAINT fk_opac_lista_usuario FOREIGN KEY (Usuario_Id) REFERENCES Seg_Usuario(Id_Usuario)
 );
 
 CREATE TABLE Bib_Opac_Lista_Item (
@@ -495,7 +476,7 @@ CREATE TABLE Bib_Opac_Historial_Busqueda (
   Consulta VARCHAR(300) NOT NULL,
   Creado_El DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_opac_historial_empresa FOREIGN KEY (Id_Empresa) REFERENCES Gen_Empresa(Id_Empresa),
-  CONSTRAINT fk_opac_historial_usuario FOREIGN KEY (Usuario_Id) REFERENCES Bib_Usuario_Biblioteca(Id_Usuario_Biblioteca)
+  CONSTRAINT fk_opac_historial_usuario FOREIGN KEY (Usuario_Id) REFERENCES Seg_Usuario(Id_Usuario)
 );
 
 -- Roles y permisos (menu por perfil)
@@ -530,12 +511,12 @@ CREATE TABLE Bib_Rol_Permiso (
 CREATE TABLE Bib_Usuario_Rol (
   Id_Usuario_Rol INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   Id_Empresa INT NOT NULL,
-  Usuario_Biblioteca_Id INT NOT NULL,
+  Id_Usuario INT NOT NULL,
   Rol_Id INT NOT NULL,
   CONSTRAINT fk_usuario_rol_empresa FOREIGN KEY (Id_Empresa) REFERENCES Gen_Empresa(Id_Empresa),
-  CONSTRAINT fk_usuario_rol_usuario FOREIGN KEY (Usuario_Biblioteca_Id) REFERENCES Bib_Usuario_Biblioteca(Id_Usuario_Biblioteca),
+  CONSTRAINT fk_usuario_rol_usuario FOREIGN KEY (Id_Usuario) REFERENCES Seg_Usuario(Id_Usuario),
   CONSTRAINT fk_usuario_rol_rol FOREIGN KEY (Rol_Id) REFERENCES Bib_Rol(Id_Rol),
-  UNIQUE KEY uq_usuario_rol (Id_Empresa, Usuario_Biblioteca_Id, Rol_Id)
+  UNIQUE KEY uq_usuario_rol (Id_Empresa, Id_Usuario, Rol_Id)
 );
 
 SET FOREIGN_KEY_CHECKS = 1;

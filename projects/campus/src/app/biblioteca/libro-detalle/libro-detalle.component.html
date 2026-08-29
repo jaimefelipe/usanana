@@ -1,0 +1,150 @@
+﻿<div class="bib-page">
+  <div class="bib-loading" *ngIf="cargando">
+    <i class="fa fa-spinner fa-spin" aria-hidden="true"></i> Cargando...
+  </div>
+
+  <ng-container *ngIf="!cargando">
+    <button type="button" class="bib-back-btn" (click)="volver()">
+      <i class="fa fa-arrow-left" aria-hidden="true"></i> Volver al catÃ¡logo
+    </button>
+
+    <div class="bib-detalle-card" *ngIf="libro">
+      <div class="bib-detalle-top">
+        <div class="bib-detalle-cover">
+          <i class="fa fa-book" aria-hidden="true"></i>
+        </div>
+
+        <div class="bib-detalle-info">
+          <div class="bib-detalle-badges">
+            <span class="bib-badge bib-badge-cat" *ngIf="libro.Categoria">{{ libro.Categoria }}</span>
+            <span class="bib-badge bib-badge-mat" *ngIf="libro.Tipo_Material">{{ libro.Tipo_Material }}</span>
+            <span class="bib-badge bib-badge-disp" *ngIf="disponibles > 0">{{ disponibles }} disponible(s)</span>
+            <span class="bib-badge bib-badge-nodisp" *ngIf="disponibles === 0 && ejemplares.length > 0">No disponible</span>
+          </div>
+
+          <h1>{{ libro.Titulo }}</h1>
+          <p class="bib-subtitulo" *ngIf="libro.Subtitulo">{{ libro.Subtitulo }}</p>
+
+          <div class="bib-meta-grid">
+            <div class="bib-meta-item" *ngIf="autores.length > 0">
+              <span class="bib-meta-label">Autor(es)</span>
+              <span>
+                <span *ngFor="let a of autores; let last = last">
+                  {{ a.Nombre }}<span *ngIf="!last">, </span>
+                </span>
+              </span>
+            </div>
+            <div class="bib-meta-item" *ngIf="libro.Editorial">
+              <span class="bib-meta-label">Editorial</span>
+              <span>{{ libro.Editorial }}</span>
+            </div>
+            <div class="bib-meta-item" *ngIf="libro.Anio_Publicacion">
+              <span class="bib-meta-label">AÃ±o de publicaciÃ³n</span>
+              <span>{{ libro.Anio_Publicacion }}</span>
+            </div>
+            <div class="bib-meta-item" *ngIf="libro.Edicion">
+              <span class="bib-meta-label">EdiciÃ³n</span>
+              <span>{{ libro.Edicion }}</span>
+            </div>
+            <div class="bib-meta-item" *ngIf="libro.ISBN">
+              <span class="bib-meta-label">ISBN</span>
+              <span>{{ libro.ISBN }}</span>
+            </div>
+            <div class="bib-meta-item" *ngIf="libro.Idioma">
+              <span class="bib-meta-label">Idioma</span>
+              <span>{{ libro.Idioma }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bib-descripcion" *ngIf="libro.Descripcion">
+        <h3>DescripciÃ³n</h3>
+        <p>{{ libro.Descripcion }}</p>
+      </div>
+
+      <!-- Acceso digital -->
+      <div class="bib-digitales" *ngIf="digitales.length > 0">
+        <h3><i class="fa fa-download" aria-hidden="true"></i> Acceso digital</h3>
+        <div class="bib-digital-links">
+          <a *ngFor="let d of digitales; let i = index"
+             [href]="d.URL_Archivo" target="_blank" rel="noopener" class="btn bib-btn-digital">
+            <i class="fa fa-external-link" aria-hidden="true"></i>
+            Acceder al recurso{{ digitales.length > 1 ? ' ' + (i + 1) : '' }}
+          </a>
+        </div>
+      </div>
+
+      <!-- Ejemplares -->
+      <div class="bib-ejemplares-section" *ngIf="ejemplares.length > 0">
+        <h3>Ejemplares ({{ ejemplares.length }})</h3>
+        <table class="bib-table">
+          <thead>
+            <tr>
+              <th>CÃ³digo</th>
+              <th>Sede</th>
+              <th>Tipo</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let ej of ejemplares">
+              <td>{{ ej.Codigo_Barra || '-' }}</td>
+              <td>{{ ej.Sede || '-' }}</td>
+              <td>{{ ej.Tipo_Soporte === 'digital' ? 'Digital' : 'FÃ­sico' }}</td>
+              <td>
+                <span class="bib-badge"
+                  [class.bib-badge-disp]="ej.Estado === 'disponible'"
+                  [class.bib-badge-nodisp]="ej.Estado === 'prestado'"
+                  [class.bib-badge-warn]="ej.Estado === 'reservado'">
+                  {{ ej.Estado | titlecase }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- SecciÃ³n reserva -->
+      <div class="bib-reserva-section">
+        <div class="bib-aviso" *ngIf="!idUsuario">
+          <i class="fa fa-info-circle" aria-hidden="true"></i>
+          No fue posible verificar tu registro en biblioteca. AsegÃºrate de completar tu perfil de estudiante e intenta de nuevo.
+        </div>
+
+        <div class="bib-aviso bib-aviso-warn" *ngIf="idUsuario && usuarioBloqueado">
+          <i class="fa fa-ban" aria-hidden="true"></i>
+          Tu cuenta de biblioteca estÃ¡ bloqueada. ComunÃ­cate con el bibliotecario.
+        </div>
+
+        <div class="bib-alerta bib-alerta-ok" *ngIf="mensajeReserva && tipoMensaje === 'ok'">
+          <i class="fa fa-check-circle" aria-hidden="true"></i> {{ mensajeReserva }}
+        </div>
+        <div class="bib-alerta bib-alerta-warn" *ngIf="mensajeReserva && tipoMensaje === 'warn'">
+          <i class="fa fa-exclamation-circle" aria-hidden="true"></i> {{ mensajeReserva }}
+        </div>
+        <div class="bib-alerta bib-alerta-err" *ngIf="mensajeReserva && tipoMensaje === 'err'">
+          <i class="fa fa-times-circle" aria-hidden="true"></i> {{ mensajeReserva }}
+        </div>
+
+        <button type="button" class="btn bib-btn-prim bib-btn-reservar"
+          *ngIf="idUsuario && !usuarioBloqueado && !mensajeReserva"
+          [disabled]="reservando"
+          (click)="solicitar()">
+          <i class="fa" [class.fa-check]="disponibles > 0" [class.fa-bookmark]="disponibles === 0" aria-hidden="true"></i>
+          {{ reservando
+            ? (disponibles > 0 ? 'Registrando prestamo...' : 'Registrando reserva...')
+            : (disponibles > 0 ? 'Solicitar préstamo' : 'Solicitar reserva') }}
+        </button>
+      </div>
+    </div>
+
+    <div class="bib-empty" *ngIf="!libro">
+      <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+      <h3>Libro no encontrado</h3>
+      <p>No se encontrÃ³ informaciÃ³n para este libro.</p>
+      <button type="button" class="btn bib-btn-prim" (click)="volver()">Volver al catÃ¡logo</button>
+    </div>
+  </ng-container>
+</div>
+

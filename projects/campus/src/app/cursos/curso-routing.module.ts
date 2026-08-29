@@ -4,12 +4,14 @@ import { CursoVisorComponent } from './curso-visor/curso-visor.component';
 import { SemanaEstudioComponent } from './semana-estudio/semana-estudio.component';
 import { PerfilComponent } from './perfil/perfil.component';
 import { MatriculaEstudianteComponent } from './matricula-estudiante/matricula-estudiante.component';
+import { OfertaAcademicaComponent } from './oferta-academica/oferta-academica.component';
 
 const routes: Routes = [
   {path : 'curso', component : CursoVisorComponent},
   {path : 'semana', component : SemanaEstudioComponent},
   {path : 'perfil', component : PerfilComponent},
   {path : 'matricula', component : MatriculaEstudianteComponent},
+  {path : 'oferta', component : OfertaAcademicaComponent},
   
 ];
 

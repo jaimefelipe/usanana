@@ -2,7 +2,7 @@
   <h2>Mi cuenta</h2>
 
   <div class="section">
-    <h4>Prestamos activos</h4>
+    <h4>Prestamos y accesos</h4>
     <table class="table table-sm">
       <thead>
         <tr>
@@ -16,9 +16,14 @@
         <tr *ngFor="let prestamo of prestamos">
           <td>{{ prestamo.libroId }}</td>
           <td>{{ prestamo.fechaVencimiento | date:'shortDate' }}</td>
-          <td>{{ prestamo.estado }}</td>
+          <td>
+            {{ prestamo.estado }}
+            <span class="badge bg-danger ms-2" *ngIf="normalizarEstado(prestamo.estado) === 'vencido'">
+              Acceso vencido
+            </span>
+          </td>
           <td class="text-end">
-            <button class="btn btn-link btn-sm" (click)="renovar(prestamo)" [disabled]="prestamo.estado !== 'activo'">Renovar</button>
+            <button class="btn btn-link btn-sm" (click)="renovar(prestamo)" [disabled]="normalizarEstado(prestamo.estado) !== 'activo'">Renovar</button>
           </td>
         </tr>
         <tr *ngIf="prestamos.length === 0">
@@ -43,7 +48,15 @@
         <tr *ngFor="let reserva of reservas">
           <td>{{ reserva.libroId }}</td>
           <td>{{ reserva.posicion }}</td>
-          <td>{{ reserva.estado }}</td>
+          <td>
+            {{ reserva.estado }}
+            <span class="badge bg-success ms-2" *ngIf="normalizarEstado(reserva.estado) === 'disponible'">
+              Disponible: activa tu acceso antes de 48h
+            </span>
+            <span class="badge bg-info text-dark ms-2" *ngIf="normalizarEstado(reserva.estado) !== 'disponible' && normalizarEstado(reserva.estado) !== 'cancelada'">
+              Posicion #{{ reserva.posicion }} en lista
+            </span>
+          </td>
           <td class="text-end">
             <button class="btn btn-link btn-sm text-danger" (click)="cancelar(reserva)" [disabled]="reserva.estado === 'cancelada'">Cancelar</button>
           </td>

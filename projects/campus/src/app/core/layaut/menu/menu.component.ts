@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../../../../../core/src/app/lib/api.service';
 import {Router} from '@angular/router';
 import { ViewEncapsulation } from '@angular/core';
+import { VERSION_ACTUAL } from '../../../version';
 
 @Component({
   selector: 'app-menu',
@@ -38,6 +39,7 @@ export class MenuComponent implements OnInit {
   AppPOV = false;
   AppProyecto = false;
   LogedIn = false;
+  appVersion = VERSION_ACTUAL.version;
 
   UserMenu = [];
   ventasMenu = false;
@@ -54,7 +56,7 @@ export class MenuComponent implements OnInit {
   ngOnInit(): void {
     //Verificar Login
     const rutaActual = window.location.pathname.split('/')[2] || '';
-    const rutaPublica = rutaActual === 'login' || rutaActual === 'primeringreso';
+    const rutaPublica = rutaActual === 'login' || rutaActual === 'primeringreso' || rutaActual === 'oferta';
     this.LogedIn = this.tieneSesionCampus();
 
     if(!this.LogedIn && !rutaPublica){

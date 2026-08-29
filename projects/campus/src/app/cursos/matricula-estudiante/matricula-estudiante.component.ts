@@ -18,8 +18,53 @@ export class MatriculaEstudianteComponent implements OnInit {
   Matriculas = [];
   MatriculandoIdGrupo = '';
 
+  // ── Filtro Facultad / Carrera (para alumnos matriculados en varias carreras) ──
+  facultadSel = '';
+  carreraSel = '';
+
   ngOnInit() {
     this.cargarMatriculas();
+  }
+
+  private lista(valor: string): string[] {
+    return String(valor || '').split(',').map(v => v.trim()).filter(Boolean);
+  }
+
+  mostrarFiltroCarrera(): boolean {
+    return this.carrerasDisponibles().length > 1;
+  }
+
+  facultadesDisponibles(): any[] {
+    const vistos = new Map<string, string>();
+    for (const m of this.Matriculas) {
+      const ids = this.lista(m.Id_Facultad_Lista);
+      const nombres = this.lista(m.Facultad);
+      ids.forEach((id, idx) => { if (!vistos.has(id)) vistos.set(id, nombres[idx] || nombres[0] || ''); });
+    }
+    return Array.from(vistos, ([Id_Facultad, Facultad]) => ({ Id_Facultad, Facultad }));
+  }
+
+  carrerasDisponibles(): any[] {
+    const vistos = new Map<string, string>();
+    for (const m of this.Matriculas) {
+      if (this.facultadSel && !this.lista(m.Id_Facultad_Lista).includes(this.facultadSel)) continue;
+      const ids = this.lista(m.Id_Carrera_Lista);
+      const nombres = this.lista(m.Carrera);
+      ids.forEach((id, idx) => { if (!vistos.has(id)) vistos.set(id, nombres[idx] || nombres[0] || ''); });
+    }
+    return Array.from(vistos, ([Id_Carrera, Carrera]) => ({ Id_Carrera, Carrera }));
+  }
+
+  onFacultadChange(): void {
+    this.carreraSel = '';
+  }
+
+  matriculasFiltradas(): any[] {
+    return this.Matriculas.filter(m => {
+      if (this.facultadSel && !this.lista(m.Id_Facultad_Lista).includes(this.facultadSel)) return false;
+      if (this.carreraSel && !this.lista(m.Id_Carrera_Lista).includes(this.carreraSel)) return false;
+      return true;
+    });
   }
   search(){
     this.cargarMatriculas();

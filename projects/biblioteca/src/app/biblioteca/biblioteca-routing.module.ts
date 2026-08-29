@@ -53,6 +53,7 @@ import { FacturasCompraComponent } from './components/facturas-compra/facturas-c
 import { CotizacionesComponent } from './components/cotizaciones/cotizaciones.component';
 import { SedesBibliotecaComponent } from './components/sedes-biblioteca/sedes-biblioteca.component';
 import { IntegracionesBibliotecaComponent } from './components/integraciones-biblioteca/integraciones-biblioteca.component';
+import { NovedadesComponent } from './components/novedades/novedades.component';
 import { BibliotecaAuthGuard } from './guards/biblioteca-auth.guard';
 
 const routes: Routes = [
@@ -110,7 +111,8 @@ const routes: Routes = [
       { path: 'cotizaciones', component: CotizacionesComponent },
       { path: 'sedes', component: SedesBibliotecaComponent },
       { path: 'integraciones', component: IntegracionesBibliotecaComponent },
-      { path: 'reportes', component: ReportesBibliotecaComponent }
+      { path: 'reportes', component: ReportesBibliotecaComponent },
+      { path: 'novedades', component: NovedadesComponent }
     ]
   },
   {

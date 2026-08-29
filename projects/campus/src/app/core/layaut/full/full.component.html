@@ -10,6 +10,7 @@
       <span class="status-label">Cursos activos</span>
       <strong>{{ cursosActivos.length }}</strong>
       <span class="status-note">Disponibles para ingresar</span>
+      <a routerLink="/novedades" class="status-note">Campus v{{ appVersion }} - Novedades</a>
     </div>
   </section>
 
@@ -45,6 +46,20 @@
           <i class="fa fa-arrow-right" aria-hidden="true"></i>
         </span>
       </a>
+
+      <a routerLink="/biblioteca" class="quick-card">
+        <div class="quick-card-icon-wrap">
+          <i class="fa fa-book quick-card-icon" aria-hidden="true"></i>
+        </div>
+        <div>
+          <h3>Biblioteca</h3>
+          <p>Busca libros, realiza reservas y consulta tus prestamos.</p>
+        </div>
+        <span class="quick-action">
+          Ir a biblioteca
+          <i class="fa fa-arrow-right" aria-hidden="true"></i>
+        </span>
+      </a>
     </div>
   </section>
 
@@ -63,8 +78,25 @@
       <a routerLink="matricula" class="btn empty-action">Solicitar matricula</a>
     </div>
 
+    <div class="course-filters" *ngIf="mostrarFiltroCarrera()">
+      <div class="form-group">
+        <label>Facultad</label>
+        <select class="form-control" [(ngModel)]="facultadSel" (ngModelChange)="onFacultadChange()">
+          <option value="">Todas</option>
+          <option *ngFor="let f of facultadesDisponibles()" [value]="f.Id_Facultad">{{f.Facultad}}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Carrera</label>
+        <select class="form-control" [(ngModel)]="carreraSel">
+          <option value="">Todas</option>
+          <option *ngFor="let c of carrerasDisponibles()" [value]="c.Id_Carrera">{{c.Carrera}}</option>
+        </select>
+      </div>
+    </div>
+
     <div class="course-grid" *ngIf="cursosActivos.length > 0">
-      <article class="course-card" *ngFor="let curso of cursosActivos">
+      <article class="course-card" *ngFor="let curso of cursosFiltrados()">
         <img class="course-image" [src]="getImagenCurso(curso)" (error)="usarImagenCursoDefault($event)" alt="Curso" />
 
         <div class="course-body">
@@ -76,9 +108,13 @@
           <h3>{{ curso.Curso }}</h3>
 
           <div class="course-meta">
+            <span *ngIf="curso.Codigo">
+              <i class="fa fa-bookmark" aria-hidden="true"></i>
+              Codigo: {{ curso.Codigo }}
+            </span>
             <span *ngIf="curso.Grupo">
               <i class="fa fa-users" aria-hidden="true"></i>
-              {{ curso.Grupo }}
+              Grupo: {{ curso.Grupo }}
             </span>
             <span *ngIf="curso.Bloque || curso.Anio">
               <i class="fa fa-calendar" aria-hidden="true"></i>

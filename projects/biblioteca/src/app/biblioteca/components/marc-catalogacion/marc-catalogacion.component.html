@@ -25,6 +25,18 @@
       Cargando libros...
     </div>
 
+    <app-paginador
+      *ngIf="!librosLoading"
+      [paginaActual]="libroPage"
+      [totalPaginas]="libroTotalPages"
+      [paginasVisibles]="libroPageNumbers"
+      [rangeStart]="libroRangeStart"
+      [rangeEnd]="libroRangeEnd"
+      [total]="libroTotal"
+      etiqueta="libros"
+      (cambio)="cambiarPaginaLibros($event)">
+    </app-paginador>
+
     <div class="row g-4 invoice-grid" *ngIf="!librosLoading">
       <div class="col-12 col-md-6 col-xl-4" *ngFor="let libro of libros">
         <div class="card invoice-card h-100">
@@ -65,28 +77,16 @@
       </div>
     </div>
 
-    <div class="container-fluid" *ngIf="libroTotalPages > 0">
-      <div class="text-center text-muted small mb-2">
-        Mostrando {{ libroRangeStart }}-{{ libroRangeEnd }} de {{ libroTotal }} libros
-      </div>
-      <ul class="pagination justify-content-center">
-        <li class="page-item" [class.disabled]="libroPage === 1">
-          <button class="page-link" type="button" [disabled]="libroPage === 1" (click)="cambiarPaginaLibros(1)">&laquo;</button>
-        </li>
-        <li class="page-item" [class.disabled]="libroPage === 1">
-          <button class="page-link" type="button" [disabled]="libroPage === 1" (click)="cambiarPaginaLibros(libroPage - 1)">&lsaquo;</button>
-        </li>
-        <li class="page-item" *ngFor="let page of libroPageNumbers" [class.active]="page === libroPage">
-          <button class="page-link" type="button" (click)="cambiarPaginaLibros(page)">{{ page }}</button>
-        </li>
-        <li class="page-item" [class.disabled]="libroPage === libroTotalPages">
-          <button class="page-link" type="button" [disabled]="libroPage === libroTotalPages" (click)="cambiarPaginaLibros(libroPage + 1)">&rsaquo;</button>
-        </li>
-        <li class="page-item" [class.disabled]="libroPage === libroTotalPages">
-          <button class="page-link" type="button" [disabled]="libroPage === libroTotalPages" (click)="cambiarPaginaLibros(libroTotalPages)">&raquo;</button>
-        </li>
-      </ul>
-    </div>
+    <app-paginador
+      [paginaActual]="libroPage"
+      [totalPaginas]="libroTotalPages"
+      [paginasVisibles]="libroPageNumbers"
+      [rangeStart]="libroRangeStart"
+      [rangeEnd]="libroRangeEnd"
+      [total]="libroTotal"
+      etiqueta="libros"
+      (cambio)="cambiarPaginaLibros($event)">
+    </app-paginador>
   </section>
 
   <section [hidden]="!libroFormVisible" class="invoice-form">
@@ -128,7 +128,35 @@
             </button>
           </div>
         </div>
-       
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-3">
+            <div class="form-floating">
+              <input class="form-control" id="libroIsbn" type="text" [(ngModel)]="libroForm.isbn" [readonly]="true"
+                name="libroIsbn" placeholder="ISBN" />
+              <label for="libroIsbn">ISBN (020)</label>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-floating">
+              <input class="form-control" id="libroAnio" type="number" [(ngModel)]="libroForm.anioPublicacion" [readonly]="true"
+                name="libroAnio" placeholder="Año" />
+              <label for="libroAnio">Año (264 $c)</label>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="form-floating">
+              <textarea class="form-control" id="libroDescripcion" [(ngModel)]="libroForm.descripcion" [readonly]="true"
+                name="libroDescripcion" placeholder="Resumen" style="height: 70px"></textarea>
+              <label for="libroDescripcion">Resumen (520)</label>
+            </div>
+          </div>
+          <div class="col-12 text-muted small">
+            Estos campos se completan automáticamente al llenar las etiquetas MARC 020, 264 $c y 520 — no se editan aquí.
+            El autor (100) y la editorial (264 $b) se vinculan por separado en el catálogo (no como texto libre).
+          </div>
+        </div>
+
         <div class="card mt-4">
           <div class="card-body p-0">
         <div class="catalog-view-tabs d-flex gap-2 align-items-center my-3">

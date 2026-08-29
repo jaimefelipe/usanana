@@ -1,3 +1,9 @@
+export interface LibroAutorSeleccionado {
+  id: number;
+  nombre: string;
+  rol: string;
+}
+
 export interface Libro {
   id: number;
   titulo: string;
@@ -7,7 +13,7 @@ export interface Libro {
   marc245a?: string;
   marc245b?: string;
   marc245c?: string;
-  autoresIds?: number[];
+  autoresSeleccionados?: LibroAutorSeleccionado[];
   isbn: string;
   issn?: string;
   doi?: string;
@@ -36,7 +42,7 @@ export interface Prestamo {
   fechaVencimiento: string;
   fechaDevolucion?: string;
   renovaciones: number;
-  estado: 'activo' | 'vencido' | 'devuelto' | 'perdido';
+  estado: 'activo' | 'pendiente' | 'vencido' | 'devuelto' | 'cancelado' | 'perdido';
   observaciones?: string;
 }
 
@@ -46,7 +52,7 @@ export interface Reserva {
   usuarioId?: number;
   usuario: string;
   posicion: number;
-  estado: 'activa' | 'atendida' | 'liberada' | 'cancelada';
+  estado: 'activa' | 'En espera' | 'Disponible' | 'atendida' | 'liberada' | 'cancelada';
   fechaReserva?: string;
   fechaAsignacion?: string;
 }
@@ -113,6 +119,8 @@ export interface Ejemplar {
   estado: string;
   inventarioTag?: string;
   urlArchivo?: string;
+  imagenPortada?: string;
+  maxSimultaneos?: number;
 }
 
 export interface PoliticaPrestamo {
@@ -122,6 +130,7 @@ export interface PoliticaPrestamo {
   diasPrestamo: number;
   maxRenovaciones: number;
   maxPrestamos: number;
+  maxReservas?: number;
   multaDiaria: number;
 }
 
@@ -159,7 +168,8 @@ export interface RolPermiso {
 
 export interface UsuarioRol {
   id: number;
-  usuarioBibliotecaId: number;
+  usuarioId: number;
+  usuarioBibliotecaId?: number;
   rolId: number;
   usuarioNombre?: string;
   rolNombre?: string;
@@ -331,6 +341,8 @@ export interface Autoridad {
   tipo: string;
   encabezado: string;
   formato: string;
+  autorId?: number;
+  autorNombre?: string;
 }
 
 export interface AutoridadCampo {

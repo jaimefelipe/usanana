@@ -1,0 +1,121 @@
+<div class="oferta-page" id="contenido">
+  <section class="oferta-hero">
+    <div>
+      <span class="eyebrow">Oferta académica</span>
+      <h1>Carreras y cursos disponibles</h1>
+      <p>Consulta la descripción de cada carrera, revisa su plan de estudios y solicita matrícula cuando estés listo.</p>
+    </div>
+    <a routerLink="/" class="home-link">
+      <i class="fa fa-arrow-left" aria-hidden="true"></i>
+      Volver al campus
+    </a>
+  </section>
+
+  <section class="oferta-shell">
+    <aside class="carreras-panel">
+      <div class="panel-header">
+        <h2>Carreras</h2>
+        <input
+          type="search"
+          class="form-control"
+          [(ngModel)]="filtro"
+          placeholder="Buscar carrera, facultad o nivel">
+      </div>
+
+      <div class="loading-state" *ngIf="cargando">
+        Cargando oferta académica...
+      </div>
+
+      <div class="facultad-group" *ngFor="let grupo of carrerasAgrupadasPorFacultad()">
+        <h3>{{ grupo.facultad }}</h3>
+        <ng-container *ngFor="let carrera of grupo.carreras">
+          <button
+            type="button"
+            class="carrera-item"
+            [class.active]="carreraSeleccionada?.Id_Carrera == carrera.Id_Carrera"
+            (click)="seleccionarCarrera(carrera)">
+            <span class="program-code">{{ carrera.Codigo }}</span>
+            <strong>{{ carrera.Carrera }}</strong>
+            <small>{{ getNivel(carrera.Nivel) }}</small>
+            <p *ngIf="carrera.Descripcion">{{ resumen(carrera.Descripcion, 170) }}</p>
+          </button>
+
+          <div class="mobile-selected-note" *ngIf="carreraSeleccionada?.Id_Carrera == carrera.Id_Carrera">
+            <span>Seleccionada</span>
+            <button type="button" (click)="scrollDetalle()">Ver detalle y plan</button>
+          </div>
+        </ng-container>
+      </div>
+
+      <div class="empty-state" *ngIf="!cargando && carrerasFiltradas().length === 0">
+        No hay carreras con ese filtro.
+      </div>
+    </aside>
+
+    <main class="detalle-panel" #detallePanel *ngIf="carreraSeleccionada">
+      <div class="detalle-header">
+        <div>
+          <span class="program-code">{{ carreraSeleccionada.Codigo }}</span>
+          <h2>{{ carreraSeleccionada.Carrera }}</h2>
+          <p>{{ carreraSeleccionada.Descripcion || 'Programa académico disponible para solicitud de matrícula.' }}</p>
+        </div>
+        <button type="button" class="btn request-btn" (click)="solicitarMatricula()" [disabled]="solicitando">
+          <i class="fa fa-check-circle" aria-hidden="true"></i>
+          {{ solicitando ? 'Procesando...' : 'Solicitar matrícula' }}
+        </button>
+      </div>
+
+      <div class="summary-grid">
+        <div>
+          <span>Nivel</span>
+          <strong>{{ getNivel(carreraSeleccionada.Nivel) }}</strong>
+        </div>
+        <div>
+          <span>Duración</span>
+          <strong>{{ carreraSeleccionada.Duracion || 'Por definir' }}</strong>
+        </div>
+        <div>
+          <span>Cursos</span>
+          <strong>{{ carreraSeleccionada.Total_Cursos || cursos.length }}</strong>
+        </div>
+        <div>
+          <span>Créditos</span>
+          <strong>{{ carreraSeleccionada.Total_Creditos || carreraSeleccionada.Creditos || 'N/D' }}</strong>
+        </div>
+      </div>
+
+      <section class="info-block" *ngIf="carreraSeleccionada.Requisito">
+        <h3>Requisitos de ingreso</h3>
+        <p>{{ carreraSeleccionada.Requisito }}</p>
+      </section>
+
+      <section class="plan-section">
+        <div class="section-title">
+          <h3>Plan de estudios</h3>
+          <span *ngIf="cargandoPlan">Cargando cursos...</span>
+        </div>
+
+        <div class="empty-state" *ngIf="!cargandoPlan && cursos.length === 0">
+          Esta carrera aún no tiene cursos publicados en el plan de estudios.
+        </div>
+
+        <div class="bloque" *ngFor="let grupo of cursosPorBloque()">
+          <h4>Bloque {{ grupo.bloque }}</h4>
+          <div class="course-list">
+            <article class="course-row" *ngFor="let curso of grupo.cursos">
+              <div>
+                <span class="course-code">{{ curso.Codigo }}</span>
+                <h5>{{ curso.Curso }}</h5>
+                <p *ngIf="curso.Descripcion">{{ curso.Descripcion }}</p>
+              </div>
+              <div class="course-meta">
+                <span *ngIf="curso.Creditos">{{ curso.Creditos }} créditos</span>
+                <span *ngIf="curso.Horas">{{ curso.Horas }} horas</span>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+  </section>
+</div>

@@ -1,8 +1,14 @@
 <div class="semana-header text-center">
   <div class="header-superior d-flex justify-content-between align-items-center">
-    <h2 class="titulo-semana m-0 flex-grow-1 text-center">{{ Semana.Titulo}}</h2>
-    <button class="btn btn-outline-secondary ms-2" (click)="volverAlCurso()">
+    <button class="btn btn-outline-secondary me-2" (click)="volverAlCurso()">
       ← Volver al curso
+    </button>
+    <h2 class="titulo-semana m-0 flex-grow-1 text-center">{{ Semana.Titulo}}</h2>
+    <button
+      class="btn btn-warning ms-2"
+      (click)="siguienteSemana()"
+      [disabled]="!haySiguienteSemana() || avanzandoSemana">
+      {{ avanzandoSemana ? 'Procesando...' : (haySiguienteSemana() ? 'Siguiente semana →' : 'Última semana') }}
     </button>
   </div>
 

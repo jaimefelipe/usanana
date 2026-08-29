@@ -1,0 +1,57 @@
+﻿export interface Release {
+  version: string;
+  fecha: string;
+  titulo: string;
+  modulo: string;
+  cambios: string[];
+}
+
+export const RELEASES: Release[] = [
+  {
+    version: '1.0.0',
+    fecha: '2026-08-04',
+    titulo: 'Campus estudiantil integrado',
+    modulo: 'General',
+    cambios: [
+      'Inicio de Campus con cursos activos, acciones rapidas y acceso a Biblioteca',
+      'Aulas virtuales visibles solo para matriculas activas y grupos abiertos',
+      'Entrega de actividades conectada con Academico'
+    ]
+  },
+  {
+    version: '1.0.1',
+    fecha: '2026-08-12',
+    titulo: 'Version visible y validacion de acceso',
+    modulo: 'General',
+    cambios: [
+      'Campus muestra la version ejecutada y una vista de novedades para estudiantes',
+      'El login normaliza el correo antes de validar usuario y empresa',
+      'Se documenta el ajuste para evitar usuarios creados sin asociacion valida a empresa'
+    ]
+  },
+  {
+    version: '1.0.2',
+    fecha: '2026-08-21',
+    titulo: 'Biblioteca Campus sincronizada',
+    modulo: 'Biblioteca',
+    cambios: [
+      'Mi Biblioteca usa el usuario real de Seguridad y ya no crea usuarios sombra de Biblioteca',
+      'Prestamos y reservas se consultan con los mismos estados efectivos que Biblioteca',
+      'Las reservas desde Campus quedan en lista de espera y respetan estados bloqueantes activos'
+    ]
+  },
+  {
+    version: '1.0.3',
+    fecha: '2026-08-29',
+    titulo: 'Prestamo directo y fix critico de reservas',
+    modulo: 'Biblioteca',
+    cambios: [
+      'La ficha del libro ahora ofrece Solicitar prestamo cuando hay ejemplares disponibles, y Solicitar reserva solo cuando no los hay',
+      'Corregido el error de base de datos que bloqueaba toda reserva desde Campus (ck_reserva_estado)',
+      'El prestamo directo valida el limite combinado de prestamos y reservas activos antes de registrar'
+    ]
+  }
+];
+
+export const VERSION_ACTUAL: Release = RELEASES[RELEASES.length - 1];
+

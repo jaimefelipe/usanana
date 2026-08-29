@@ -12,6 +12,23 @@
     </a>
   </div>
 
+  <div class="course-filters" *ngIf="mostrarFiltroCarrera()">
+    <div class="form-group">
+      <label>Facultad</label>
+      <select class="form-control" [(ngModel)]="facultadSel" name="facultadSel" (ngModelChange)="onFacultadChange()">
+        <option value="">Todas</option>
+        <option *ngFor="let f of facultadesDisponibles()" [value]="f.Id_Facultad">{{f.Facultad}}</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Carrera</label>
+      <select class="form-control" [(ngModel)]="carreraSel" name="carreraSel">
+        <option value="">Todas</option>
+        <option *ngFor="let c of carrerasDisponibles()" [value]="c.Id_Carrera">{{c.Carrera}}</option>
+      </select>
+    </div>
+  </div>
+
   <form>
     <div class="form-row page-grid matricula-grid">
 
@@ -23,7 +40,7 @@
         </div>
       </div>
 
-      <div class="form-group col-12 col-sm-6" *ngFor="let Matricula of Matriculas;let i = index">
+      <div class="form-group col-12 col-sm-6" *ngFor="let Matricula of matriculasFiltradas();let i = index">
         <div class="card h-100 matricula-card">
           <div class="card-body">
 

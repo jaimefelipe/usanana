@@ -21,6 +21,22 @@
   font-weight: 600;
 }
 
+.curso-identidad {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.curso-identidad span {
+  border: 1px solid #cbd5e1;
+  border-radius: 999px;
+  color: #0f172a;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.25rem 0.65rem;
+}
+
 .curso-subtitulo {
   margin: 0 0 1rem;
   color: #6b7280;
@@ -136,6 +152,33 @@
   background: #e0fce0;
   color: #166534;
   font-weight: 600;
+  font-size: 0.78rem;
+}
+
+/* Avance del curso (semanas completadas / total) */
+
+.curso-avance {
+  background: #f9fafb;
+  border-radius: 10px;
+  padding: 0.6rem 0.75rem;
+}
+
+.curso-avance .barra-externa {
+  background-color: #e5e7eb;
+  border-radius: 999px;
+  overflow: hidden;
+  height: 10px;
+  margin-bottom: 0.3rem;
+}
+
+.curso-avance .barra-interna {
+  background-color: #16a34a;
+  height: 100%;
+  transition: width 0.5s ease;
+}
+
+.curso-avance small {
+  color: #6b7280;
   font-size: 0.78rem;
 }
 
@@ -255,11 +298,39 @@
   color: #111827;
 }
 
-/* Semana activa */
+.semana-check {
+  color: #16a34a;
+  font-weight: 700;
+  margin-right: 0.25rem;
+}
+
+.semana-badge-actual {
+  align-self: flex-start;
+  background: #fef3c7;
+  border-radius: 999px;
+  color: #92400e;
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin-top: 0.15rem;
+  padding: 0.05rem 0.5rem;
+  text-transform: uppercase;
+}
+
+/* Semana activa (seleccionada) */
 
 .semanas-list li.activa .semana-chip {
   background: #e0ecff;
   border-color: #2563eb;
+}
+
+/* Semana completada */
+
+.semanas-list li.completada .semana-chip {
+  background: #f0fdf4;
+}
+
+.semanas-list li.completada .semana-titulo {
+  color: #166534;
 }
 
 /* Panel derecho */

@@ -1,3 +1,64 @@
 .prestamos {
   max-width: 1200px;
 }
+
+.circulation-tabs {
+  gap: 4px;
+}
+
+.circulation-tabs .nav-link {
+  cursor: pointer;
+}
+
+.circulation-tabs .badge {
+  margin-left: 4px;
+}
+
+.user-type-summary {
+  margin-bottom: 16px;
+}
+
+.user-type-card {
+  align-items: center;
+  background: #fff;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  min-height: 64px;
+  padding: 14px 16px;
+}
+
+.user-type-card span {
+  color: #6c757d;
+  font-weight: 600;
+}
+
+.user-type-card strong {
+  color: #172033;
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.circulation-heading {
+  margin-bottom: 16px;
+}
+
+.circulation-heading h3 {
+  font-size: 1.15rem;
+  margin: 0;
+}
+
+.circulation-heading p {
+  color: #6c757d;
+  margin: 4px 0 0;
+}
+
+.empty-state {
+  background: #fff;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 8px;
+  color: #6c757d;
+  padding: 20px;
+  text-align: center;
+}

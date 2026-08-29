@@ -1,0 +1,81 @@
+<div class="bib-page">
+  <div class="bib-header">
+    <div>
+      <span class="bib-kicker">Campus USASJ</span>
+      <h1>Catálogo de Biblioteca</h1>
+      <p>Busca libros, consulta disponibilidad y realiza reservas.</p>
+    </div>
+    <button type="button" class="btn bib-btn-sec" (click)="irMiCuenta()">
+      <i class="fa fa-user" aria-hidden="true"></i> Mi cuenta
+    </button>
+  </div>
+
+  <div class="bib-search-bar">
+    <div class="bib-search-input-wrap">
+      <i class="fa fa-search bib-search-icon" aria-hidden="true"></i>
+      <input
+        type="text"
+        class="bib-search-input"
+        [(ngModel)]="termino"
+        placeholder="Buscar por título, autor o ISBN..."
+        (keyup.enter)="buscar()"
+      />
+    </div>
+    <select class="bib-select" [(ngModel)]="categoriaSeleccionada">
+      <option [value]="0">Todas las categorías</option>
+      <option *ngFor="let cat of categorias" [value]="cat.Id_Categoria">{{ cat.Nombre }}</option>
+    </select>
+    <button type="button" class="btn bib-btn-prim" (click)="buscar()">Buscar</button>
+    <button type="button" class="btn bib-btn-ghost" (click)="limpiar()"
+      *ngIf="termino || categoriaSeleccionada > 0">Limpiar</button>
+  </div>
+
+  <div class="bib-loading" *ngIf="cargando">
+    <i class="fa fa-spinner fa-spin" aria-hidden="true"></i> Buscando libros...
+  </div>
+
+  <div class="bib-empty" *ngIf="!cargando && buscado && libros.length === 0">
+    <i class="fa fa-book" aria-hidden="true"></i>
+    <h3>No se encontraron libros</h3>
+    <p>Intenta con otros términos de búsqueda o selecciona otra categoría.</p>
+  </div>
+
+  <div class="bib-grid" *ngIf="!cargando && libros.length > 0">
+    <article class="bib-card" *ngFor="let libro of libros">
+      <div class="bib-card-icon">
+        <i class="fa fa-book" aria-hidden="true"></i>
+      </div>
+      <div class="bib-card-body">
+        <div class="bib-card-badges">
+          <span class="bib-badge bib-badge-cat" *ngIf="libro.Categoria">{{ libro.Categoria }}</span>
+          <span class="bib-badge bib-badge-disp" *ngIf="libro.Disponibles > 0">Disponible</span>
+          <span class="bib-badge bib-badge-nodisp" *ngIf="libro.Disponibles == 0 && libro.TotalEjemplares > 0">No disponible</span>
+        </div>
+        <h3>{{ libro.Titulo }}</h3>
+        <p class="bib-card-sub" *ngIf="libro.Subtitulo">{{ libro.Subtitulo }}</p>
+        <div class="bib-card-meta">
+          <span *ngIf="libro.Autores">
+            <i class="fa fa-user" aria-hidden="true"></i> {{ libro.Autores }}
+          </span>
+          <span *ngIf="libro.Editorial">
+            <i class="fa fa-building-o" aria-hidden="true"></i> {{ libro.Editorial }}
+          </span>
+          <span *ngIf="libro.Anio_Publicacion">
+            <i class="fa fa-calendar" aria-hidden="true"></i> {{ libro.Anio_Publicacion }}
+          </span>
+          <span *ngIf="libro.Tipo_Material">
+            <i class="fa fa-tag" aria-hidden="true"></i> {{ libro.Tipo_Material }}
+          </span>
+        </div>
+        <p class="bib-ejemplares-count" *ngIf="libro.TotalEjemplares > 0">
+          {{ libro.Disponibles }}/{{ libro.TotalEjemplares }} ejemplares disponibles
+        </p>
+      </div>
+      <div class="bib-card-footer">
+        <button type="button" class="btn bib-btn-prim bib-btn-full" (click)="verDetalle(libro)">
+          Ver detalle <i class="fa fa-arrow-right" aria-hidden="true"></i>
+        </button>
+      </div>
+    </article>
+  </div>
+</div>

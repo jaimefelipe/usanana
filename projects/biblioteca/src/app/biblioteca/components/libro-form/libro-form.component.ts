@@ -16,7 +16,7 @@ export class LibroFormComponent implements OnInit {
     subtitulo: '',
     autor: '',
     autores: '',
-    autoresIds: [],
+    autoresSeleccionados: [],
     isbn: '',
     issn: '',
     doi: '',
@@ -37,6 +37,7 @@ export class LibroFormComponent implements OnInit {
   autores: Autor[] = [];
   tiposMaterial: TipoMaterial[] = [];
   esEdicion = false;
+  autorIdsSeleccionados: number[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -55,8 +56,9 @@ export class LibroFormComponent implements OnInit {
       this.esEdicion = true;
       const libro = await this.dataService.getLibroById(Number(idParam));
       if (libro) {
-        this.libro = { ...libro, autoresIds: [] };
-        this.libro.autoresIds = await this.dataService.getAutoresPorLibro(libro.id);
+        this.libro = { ...libro, autoresSeleccionados: [] };
+        this.libro.autoresSeleccionados = await this.dataService.getAutoresPorLibro(libro.id);
+        this.autorIdsSeleccionados = this.libro.autoresSeleccionados.map(a => a.id);
       }
     }
   }
@@ -67,10 +69,16 @@ export class LibroFormComponent implements OnInit {
       return;
     }
 
+    const autoresSeleccionados = this.autorIdsSeleccionados.map(id => ({
+      id,
+      nombre: this.autores.find(a => a.id === id)?.nombre || '',
+      rol: 'Autor'
+    }));
+
     try {
       if (this.esEdicion) {
         await this.dataService.updateLibro(this.libro);
-        await this.dataService.saveLibroAutores(this.libro.id, this.libro.autoresIds || []);
+        await this.dataService.saveLibroAutores(this.libro.id, autoresSeleccionados);
         Swal.fire('Libro actualizado');
       } else {
         const libroId = await this.dataService.createLibro(this.libro);
@@ -78,7 +86,7 @@ export class LibroFormComponent implements OnInit {
           Swal.fire('No se pudo obtener el id del libro');
           return;
         }
-        await this.dataService.saveLibroAutores(libroId, this.libro.autoresIds || []);
+        await this.dataService.saveLibroAutores(libroId, autoresSeleccionados);
         Swal.fire('Libro creado');
       }
       this.router.navigate(['/catalogo']);

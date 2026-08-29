@@ -59,7 +59,7 @@
 
 <div [hidden]="!edit" class="container-fluid pb-5 catalogo-libros">
   <h2>Libro</h2>
-  <form class="page-form">
+  <form class="page-form" (input)="onFormularioLibroCambio()" (change)="onFormularioLibroCambio()">
     <div class="page-form-card">
       <h5>{{ esEdicion ? 'Editar libro' : 'Nuevo libro' }}</h5>
       <div class="row g-3">
@@ -91,7 +91,7 @@
         <div class="col-md-4">
           <label class="form-label">Categoria</label>
           <select class="form-select" [(ngModel)]="libro.categoriaId" name="categoriaId">
-            <option [ngValue]="undefined">Seleccione...</option>
+            <option [ngValue]="undefined">Sin categoría</option>
             <option *ngFor="let c of categorias" [ngValue]="c.id">{{ c.nombre }}</option>
           </select>
         </div>
@@ -105,10 +105,30 @@
 
         <div class="col-12">
           <label class="form-label">Autores</label>
-          <select class="form-select autores-select" multiple [(ngModel)]="libro.autoresIds" name="autoresIds">
-            <option *ngFor="let a of autores" [ngValue]="a.id">{{ a.nombre }}</option>
-          </select>
-          <div class="form-text" *ngIf="autores.length === 0">No hay autores registrados.</div>
+
+          <div *ngFor="let a of libro.autoresSeleccionados; let i = index"
+               class="d-flex align-items-center mb-1 p-1 border rounded">
+            <span class="flex-grow-1"><strong>{{ a.nombre }}</strong> — {{ a.rol }}</span>
+            <button type="button" class="btn btn-sm btn-outline-danger ms-2" (click)="quitarAutor(i)">
+              <i class="fa fa-times"></i>
+            </button>
+          </div>
+
+          <div class="input-group mt-2">
+            <input [(ngModel)]="autorBuscador" name="autorBuscador" (input)="buscarAutor()"
+                   type="text" class="form-control" placeholder="Buscar autor por nombre...">
+            <select [(ngModel)]="autorRolSeleccionado" name="autorRol" class="form-select" style="max-width:140px">
+              <option *ngFor="let r of rolesAutor">{{ r }}</option>
+            </select>
+          </div>
+
+          <div *ngIf="resultadosBusquedaAutor.length > 0" class="list-group mt-1" style="max-height:160px;overflow-y:auto">
+            <a *ngFor="let a of resultadosBusquedaAutor"
+               (click)="agregarAutor(a)"
+               class="list-group-item list-group-item-action" style="cursor:pointer">
+              {{ a.nombre }}
+            </a>
+          </div>
         </div>
 
         <div class="col-md-4">

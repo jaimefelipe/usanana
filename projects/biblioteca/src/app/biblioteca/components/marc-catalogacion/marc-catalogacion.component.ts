@@ -90,6 +90,9 @@ export class MarcCatalogacionComponent implements OnInit {
   subcamposByTag: Record<string, MarcDicSubcampo[]> = {};
   tiposMaterial: TipoMaterial[] = [];
   currentRegistroId?: number;
+  private activeBorradorMarcKey = '';
+  private borradorMarcBaseline = '';
+  private borradorMarcRestaurando = false;
 
   isSaving = false;
   librosLoading = false;
@@ -100,6 +103,234 @@ export class MarcCatalogacionComponent implements OnInit {
 
   async ngOnInit() {
     await this.cargarDatosBase();
+  }
+
+  private borradorMarcKey(libroId = this.selectedLibroId): string {
+    return 'biblioteca_borrador_marc_' + (libroId || 'nuevo');
+  }
+
+  private currentBorradorMarcKey(): string {
+    return this.activeBorradorMarcKey || this.borradorMarcKey();
+  }
+
+  private setActiveBorradorMarcKey() {
+    this.activeBorradorMarcKey = this.borradorMarcKey();
+  }
+
+  private normalizeString(value: any): string {
+    return String(value ?? '').trim();
+  }
+
+  private buildSerializableEntry(entry: CatalogacionEntrada) {
+    const deletedSubcampoIds = (entry.deletedSubcampoIds || []).filter(id => Number(id) > 0);
+    const subcampos = (entry.subcampos || [])
+      .filter(sub => !!sub.id || this.normalizeString(sub.valor).length > 0)
+      .map(sub => ({
+        id: sub.id || undefined,
+        codigo: sub.codigo,
+        nombre: sub.nombre,
+        valor: this.normalizeString(sub.valor)
+      }));
+    const hasData =
+      this.normalizeString(entry.valor).length > 0 ||
+      this.normalizeString(entry.ind1).length > 0 ||
+      this.normalizeString(entry.ind2).length > 0 ||
+      subcampos.length > 0 ||
+      deletedSubcampoIds.length > 0 ||
+      !!entry.campoId;
+
+    if (!hasData) {
+      return null;
+    }
+
+    return {
+      tag: entry.tag,
+      nombre: entry.nombre || '',
+      valor: this.normalizeString(entry.valor),
+      ind1: this.normalizeString(entry.ind1),
+      ind2: this.normalizeString(entry.ind2),
+      campoId: entry.campoId || undefined,
+      subcampos,
+      deletedSubcampoIds
+    };
+  }
+
+  private buildBorradorMarcDataState() {
+    const entries = Object.values(this.recordEntries)
+      .map(entry => this.buildSerializableEntry(entry))
+      .filter((entry): entry is NonNullable<typeof entry> => !!entry)
+      .sort((a, b) => a.tag.localeCompare(b.tag));
+
+    return {
+      libroForm: {
+        id: this.libroForm.id || 0,
+        titulo: this.normalizeString(this.libroForm.titulo),
+        isbn: this.normalizeString(this.libroForm.isbn),
+        categoria: this.normalizeString(this.libroForm.categoria),
+        estado: this.normalizeString(this.libroForm.estado),
+        tipoMaterialId: this.libroForm.tipoMaterialId || undefined,
+        tipoMaterial: this.normalizeString(this.libroForm.tipoMaterial),
+        anioPublicacion: this.libroForm.anioPublicacion || undefined,
+        descripcion: this.normalizeString(this.libroForm.descripcion)
+      },
+      catalogForm: {
+        leader: this.normalizeString(this.catalogForm.leader),
+        control001: this.normalizeString(this.catalogForm.control001),
+        control005: this.normalizeString(this.catalogForm.control005),
+        control008: this.normalizeString(this.catalogForm.control008)
+      },
+      selectedFormatoId: this.selectedFormatoId || undefined,
+      recordEntries: entries
+    };
+  }
+
+  private buildBorradorMarcDataStateFromStored(borrador: any) {
+    const rawEntries = Array.isArray(borrador?.recordEntries)
+      ? borrador.recordEntries
+      : Object.values(borrador?.recordEntries || {});
+    const entries = rawEntries
+      .map((entry: any) => this.buildSerializableEntry({
+        tag: entry.tag,
+        nombre: entry.nombre || '',
+        valor: entry.valor || '',
+        ind1: entry.ind1 || '',
+        ind2: entry.ind2 || '',
+        campoId: entry.campoId,
+        subcampos: entry.subcampos || [],
+        deletedSubcampoIds: entry.deletedSubcampoIds || []
+      }))
+      .filter((entry): entry is NonNullable<typeof entry> => !!entry)
+      .sort((a, b) => a.tag.localeCompare(b.tag));
+
+    return {
+      libroForm: {
+        id: borrador?.libroForm?.id || 0,
+        titulo: this.normalizeString(borrador?.libroForm?.titulo),
+        isbn: this.normalizeString(borrador?.libroForm?.isbn),
+        categoria: this.normalizeString(borrador?.libroForm?.categoria),
+        estado: this.normalizeString(borrador?.libroForm?.estado),
+        tipoMaterialId: borrador?.libroForm?.tipoMaterialId || undefined,
+        tipoMaterial: this.normalizeString(borrador?.libroForm?.tipoMaterial),
+        anioPublicacion: borrador?.libroForm?.anioPublicacion || undefined,
+        descripcion: this.normalizeString(borrador?.libroForm?.descripcion)
+      },
+      catalogForm: {
+        leader: this.normalizeString(borrador?.catalogForm?.leader),
+        control001: this.normalizeString(borrador?.catalogForm?.control001),
+        control005: this.normalizeString(borrador?.catalogForm?.control005),
+        control008: this.normalizeString(borrador?.catalogForm?.control008)
+      },
+      selectedFormatoId: borrador?.selectedFormatoId || undefined,
+      recordEntries: entries
+    };
+  }
+
+  private buildBorradorMarcPayload() {
+    return {
+      savedAt: Date.now(),
+      ...this.buildBorradorMarcDataState(),
+      currentPage: this.currentPage,
+      tagFilter: this.tagFilter,
+      activeCatalogTab: this.activeCatalogTab
+    };
+  }
+
+  private getBorradorMarcDataSignature(): string {
+    return JSON.stringify(this.buildBorradorMarcDataState());
+  }
+
+  private markBorradorMarcBaseline() {
+    this.borradorMarcBaseline = this.getBorradorMarcDataSignature();
+  }
+
+  guardarBorradorMarc() {
+    if (!this.libroFormVisible || this.editLoading || this.tagsLoading || this.borradorMarcRestaurando) {
+      return;
+    }
+    try {
+      const currentSignature = this.getBorradorMarcDataSignature();
+      if (!this.borradorMarcBaseline) {
+        this.borradorMarcBaseline = currentSignature;
+        return;
+      }
+      if (currentSignature === this.borradorMarcBaseline) {
+        this.limpiarBorradorMarc();
+        return;
+      }
+      const borrador = this.buildBorradorMarcPayload();
+      sessionStorage.setItem(this.currentBorradorMarcKey(), JSON.stringify(borrador));
+    } catch {
+      // sessionStorage no disponible: se pierde el autoguardado pero no interrumpe la edicion.
+    }
+  }
+
+  private limpiarBorradorMarc() {
+    const keys = new Set([
+      this.currentBorradorMarcKey(),
+      this.borradorMarcKey(),
+      this.borradorMarcKey(this.libroForm.id),
+      'biblioteca_borrador_marc_nuevo'
+    ]);
+    keys.forEach(key => sessionStorage.removeItem(key));
+  }
+
+  private async ofrecerRecuperarBorradorMarc() {
+    let borrador: {
+      savedAt: number;
+      libroForm: Libro;
+      catalogForm: typeof this.catalogForm;
+      selectedFormatoId?: number;
+      currentPage?: number;
+      tagFilter?: string;
+      activeCatalogTab?: 'marc' | 'autoridad';
+      recordEntries: Record<string, CatalogacionEntrada>
+    } | null = null;
+    try {
+      const raw = sessionStorage.getItem(this.currentBorradorMarcKey());
+      borrador = raw ? JSON.parse(raw) : null;
+    } catch {
+      borrador = null;
+    }
+    if (!borrador) {
+      return;
+    }
+    const draftDataSignature = JSON.stringify(this.buildBorradorMarcDataStateFromStored(borrador));
+    if (draftDataSignature === this.borradorMarcBaseline) {
+      this.limpiarBorradorMarc();
+      return;
+    }
+    const resultado = await Swal.fire({
+      title: 'Hay un borrador sin guardar',
+      text: 'Se encontraron cambios de catalogacion MARC sin guardar para este libro. Deseas recuperarlos?',
+      showCancelButton: true,
+      confirmButtonText: 'Recuperar borrador',
+      cancelButtonText: 'Descartar'
+    });
+    if (resultado.isConfirmed) {
+      this.borradorMarcRestaurando = true;
+      try {
+        const draftEntries = Array.isArray(borrador.recordEntries)
+          ? borrador.recordEntries.reduce(
+              (acc: Record<string, CatalogacionEntrada>, entry: CatalogacionEntrada) => ({ ...acc, [entry.tag]: entry }),
+              {}
+            )
+          : { ...borrador.recordEntries };
+        this.libroForm = { ...borrador.libroForm };
+        this.catalogForm = { ...borrador.catalogForm };
+        this.selectedFormatoId = borrador.selectedFormatoId || this.selectedFormatoId;
+        this.currentPage = borrador.currentPage || 1;
+        this.tagFilter = borrador.tagFilter || '';
+        this.activeCatalogTab = borrador.activeCatalogTab || this.activeCatalogTab;
+        this.recordEntries = draftEntries;
+        this.syncTipoMaterialSeleccionado();
+        await this.actualizarCurrentTags();
+        this.recordEntries = { ...this.recordEntries, ...draftEntries };
+      } finally {
+        this.borradorMarcRestaurando = false;
+      }
+    } else {
+      this.limpiarBorradorMarc();
+    }
   }
 
   private resetCatalogForm() {
@@ -252,6 +483,7 @@ export class MarcCatalogacionComponent implements OnInit {
     this.currentPage = 1;
     this.pageLabels = {};
     await this.actualizarCurrentTags();
+    this.guardarBorradorMarc();
   }
 
   async onTagFilterChange(value: string) {
@@ -275,13 +507,16 @@ export class MarcCatalogacionComponent implements OnInit {
   onTagValueChange(tag: string, value: string) {
     if (this.isSystemManagedTag(tag)) {
       this.syncSystemManagedControlFields();
+      this.guardarBorradorMarc();
       return;
     }
     if (tag === '005') {
       this.catalogForm.control005 = value || '';
+      this.guardarBorradorMarc();
       return;
     }
     if (tag !== '245') {
+      this.guardarBorradorMarc();
       return;
     }
     const safeValue = value || '';
@@ -291,9 +526,11 @@ export class MarcCatalogacionComponent implements OnInit {
     if (tituloSubcampo) {
       tituloSubcampo.valor = safeValue;
       this.syncEntryValueFromSubcampos(entry245, true);
+      this.guardarBorradorMarc();
       return;
     }
     this.libroForm.titulo = this.extractTitulo245FromMarcValue(safeValue) || safeValue;
+    this.guardarBorradorMarc();
   }
 
   get selectedLibro() {
@@ -370,6 +607,7 @@ export class MarcCatalogacionComponent implements OnInit {
     this.currentPage = 1;
     this.pageLabels = {};
     await this.actualizarCurrentTags();
+    this.guardarBorradorMarc();
   }
 
   getEntry(tag: string, nombre: string) {
@@ -537,9 +775,7 @@ export class MarcCatalogacionComponent implements OnInit {
         entry.ind1 = match.ind1 || '';
         entry.ind2 = match.ind2 || '';
         this.hydrateEntrySubcampos(entry, storedSubcamposByCampoId.get(match.id) || []);
-        if (campo.tag === '245') {
-          this.libroForm.titulo = this.extractTitulo245FromMarcValue(entry.valor || '') || '';
-        }
+        this.syncLibroDesdeMarc(entry);
       }
     });
   }
@@ -608,6 +844,7 @@ export class MarcCatalogacionComponent implements OnInit {
       nombre: def?.nombre || codigo,
       valor: ''
     });
+    this.guardarBorradorMarc();
   }
 
   removeSubcampo(tag: string, index: number) {
@@ -622,10 +859,12 @@ export class MarcCatalogacionComponent implements OnInit {
     }
     entry.subcampos.splice(index, 1);
     this.syncEntryValueFromSubcampos(entry, true);
+    this.guardarBorradorMarc();
   }
 
   onSubcampoValueChange(entry: CatalogacionEntrada) {
     this.syncEntryValueFromSubcampos(entry, true);
+    this.guardarBorradorMarc();
   }
 
   private hasPersistedOrFilledSubcampos(entry: CatalogacionEntrada) {
@@ -636,7 +875,7 @@ export class MarcCatalogacionComponent implements OnInit {
     if (!entry.subcampos.length) {
       if (force) {
         entry.valor = '';
-        this.syncLibroTituloFrom245(entry, '');
+        this.syncLibroDesdeMarc(entry, '');
       }
       return;
     }
@@ -654,30 +893,70 @@ export class MarcCatalogacionComponent implements OnInit {
     if (force || rebuiltValue.length > 0) {
       entry.valor = rebuiltValue;
     }
-    this.syncLibroTituloFrom245(entry);
+    this.syncLibroDesdeMarc(entry);
   }
 
   private extractTitulo245FromMarcValue(value?: string) {
+    return this.extractSubcampoFromMarcValue(value, 'a');
+  }
+
+  private extractSubcampoFromMarcValue(value: string | undefined, codigo: string): string {
     const rawValue = String(value || '').trim();
     if (!rawValue) {
       return '';
     }
     const normalizedValue = rawValue.replace(/\$/g, '\n$');
-    const match = normalizedValue.match(/\$a\s*([\s\S]*?)(?=\n\$\w|\s*$)/i);
+    const match = normalizedValue.match(new RegExp(`\\$${codigo}\\s*([\\s\\S]*?)(?=\\n\\$\\w|\\s*$)`, 'i'));
     return match?.[1]?.trim() || '';
   }
 
-  private syncLibroTituloFrom245(entry: CatalogacionEntrada, fallback?: string) {
-    if (entry.tag !== '245') {
-      return;
+  /**
+   * v1.5: expande la sincronización que antes solo cubría el título (245) a
+   * ISBN (020), año (264 $c) y resumen (520), para que catalogar primero en
+   * MARC pre-rellene el libro "amigable" sin doble captura. Autor (100) y
+   * editorial (264 $b) quedan fuera porque Bib_Libro solo persiste IDs de
+   * catálogo (autoresSeleccionados/Editorial_Id), no texto libre — resolver
+   * nombre→ID automáticamente es una decisión de producto aparte.
+   */
+  private syncLibroDesdeMarc(entry: CatalogacionEntrada, fallback?: string) {
+    const subcampoValor = (codigo: string) =>
+      entry.subcampos.find(sub => sub.codigo === codigo && String(sub.valor ?? '').trim().length > 0)?.valor?.trim();
+
+    switch (entry.tag) {
+      case '245': {
+        const valor = subcampoValor('a') || this.extractSubcampoFromMarcValue(entry.valor, 'a') || fallback;
+        this.libroForm.titulo = valor || this.libroForm.titulo;
+        break;
+      }
+      case '020': {
+        const valor = subcampoValor('a') || this.extractSubcampoFromMarcValue(entry.valor, 'a');
+        if (valor) {
+          this.libroForm.isbn = valor;
+        }
+        break;
+      }
+      case '264': {
+        // Nota: 264 $b (editorial) no se sincroniza automáticamente porque Bib_Libro
+        // solo persiste Editorial_Id (FK a Bib_Editorial), no un texto libre — habría
+        // que resolver el nombre a un Id_Editorial existente o decidir si se autocrea
+        // uno nuevo, que es una decisión de producto aparte (igual que el autor, ver nota).
+        const anioTexto = subcampoValor('c') || this.extractSubcampoFromMarcValue(entry.valor, 'c');
+        const anioNumero = parseInt((anioTexto || '').replace(/[^0-9]/g, ''), 10);
+        if (!isNaN(anioNumero) && anioNumero > 0) {
+          this.libroForm.anioPublicacion = anioNumero;
+        }
+        break;
+      }
+      case '520': {
+        const valor = subcampoValor('a') || this.extractSubcampoFromMarcValue(entry.valor, 'a');
+        if (valor) {
+          this.libroForm.descripcion = valor;
+        }
+        break;
+      }
+      default:
+        break;
     }
-    const tituloSubcampo = entry.subcampos.find(sub => sub.codigo === 'a' && String(sub.valor ?? '').trim().length > 0);
-    if (tituloSubcampo) {
-      this.libroForm.titulo = tituloSubcampo.valor.trim();
-      return;
-    }
-    const fallbackTitulo = this.extractTitulo245FromMarcValue(entry.valor || '') || fallback || this.libroForm.titulo;
-    this.libroForm.titulo = fallbackTitulo;
   }
 
   private hydrateEntrySubcampos(entry: CatalogacionEntrada, saved: MarcSubcampo[]) {
@@ -740,6 +1019,7 @@ export class MarcCatalogacionComponent implements OnInit {
       entry.ind2 = safeValue;
     }
     this.closeIndicatorDropdown(entry);
+    this.guardarBorradorMarc();
   }
 
   toggleIndicatorDropdown(entry: CatalogacionEntrada, indicador: 1 | 2, event: MouseEvent) {
@@ -878,16 +1158,20 @@ async setActiveCatalogTab(tab: 'marc' | 'autoridad') {
     this.currentPage = 1;
     this.pageLabels = {};
     this.selectedLibroId = undefined;
+    this.setActiveBorradorMarcKey();
     this.syncSystemManagedControlFields('');
     if (!this.selectedFormatoId && this.formatos.length) {
       this.selectedFormatoId = this.formatos[0].id;
     }
     await this.actualizarCurrentTags();
     this.libroFormVisible = true;
+    this.markBorradorMarcBaseline();
+    await this.ofrecerRecuperarBorradorMarc();
   }
 
   async editarLibro(libro: Libro) {
     this.selectedLibroId = libro.id;
+    this.setActiveBorradorMarcKey();
     this.libroForm = { ...libro };
     this.recordEntries = {};
     this.resetCatalogForm();
@@ -908,6 +1192,8 @@ async setActiveCatalogTab(tab: 'marc' | 'autoridad') {
       await this.cargarMarcParaLibro(libroActual.id);
       await this.autoridadCatalogacion?.refreshForLibro(this.selectedLibroId);
       await this.actualizarCurrentTags();
+      this.markBorradorMarcBaseline();
+      await this.ofrecerRecuperarBorradorMarc();
     } catch (error: any) {
       console.error(error);
       const detail = error?.error?.message || error?.message || 'No se pudo cargar el libro para catalogacion.';
@@ -1018,6 +1304,8 @@ async setActiveCatalogTab(tab: 'marc' | 'autoridad') {
         }
       }
 
+      this.limpiarBorradorMarc();
+      this.markBorradorMarcBaseline();
       Swal.fire('Libro y registro MARC guardados correctamente');
     } catch (error: any) {
       console.error(error);
@@ -1036,6 +1324,7 @@ async setActiveCatalogTab(tab: 'marc' | 'autoridad') {
     this.currentPage = 1;
     this.pageLabels = {};
     this.libroFormVisible = false;
+    this.borradorMarcBaseline = '';
   }
 
   private ensureEntry(tag: string) {
@@ -1078,7 +1367,32 @@ async setActiveCatalogTab(tab: 'marc' | 'autoridad') {
       control008: registro.control008 || ''
     };
     this.syncSystemManagedControlFields(registro.control001 || '');
+    await this.cargarCamposMarcGuardados(registro.id);
     await this.loadTituloFromTag245();
+  }
+
+  private async cargarCamposMarcGuardados(registroId: number) {
+    const stored = await this.dataService.getMarcCamposByRegistro(registroId);
+    if (stored.length === 0) {
+      return;
+    }
+    const storedSubcampos = await this.dataService.getMarcSubcamposByCampos(stored.map(campo => campo.id));
+    const storedSubcamposByCampoId = new Map<number, MarcSubcampo[]>();
+    storedSubcampos.forEach(subcampo => {
+      const list = storedSubcamposByCampoId.get(subcampo.marcCampoId) || [];
+      list.push(subcampo);
+      storedSubcamposByCampoId.set(subcampo.marcCampoId, list);
+    });
+
+    stored.forEach(campo => {
+      const entry = this.ensureEntry(campo.tag);
+      entry.campoId = campo.id;
+      entry.valor = campo.valor || '';
+      entry.ind1 = campo.ind1 || '';
+      entry.ind2 = campo.ind2 || '';
+      this.hydrateEntrySubcampos(entry, storedSubcamposByCampoId.get(campo.id) || []);
+      this.syncLibroDesdeMarc(entry);
+    });
   }
 
   private async loadTituloFromTag245() {
@@ -1104,7 +1418,7 @@ async setActiveCatalogTab(tab: 'marc' | 'autoridad') {
         valor: sub.valor || '',
         id: sub.id
       }));
-      this.syncLibroTituloFrom245(entry245);
+      this.syncLibroDesdeMarc(entry245);
       return;
     }
 

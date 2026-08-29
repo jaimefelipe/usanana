@@ -3,11 +3,13 @@ import { RouterModule, Routes } from '@angular/router';
 import { FullComponent } from './layaut/full/full.component';
 import { LoginCampusComponent } from '../../../../seguridad/src/app/security/login-campus/login-campus.component';
 import { PrimerIngresoComponent } from '../cursos/primer-ingreso/primer-ingreso.component';
+import { NovedadesComponent } from './novedades/novedades.component';
 
 const routes: Routes = [
   {path : '', component : FullComponent},
   {path : 'login', component : LoginCampusComponent},
-  {path : 'primeringreso', component : PrimerIngresoComponent}
+  {path : 'primeringreso', component : PrimerIngresoComponent},
+  {path : 'novedades', component : NovedadesComponent}
 ];
 
 @NgModule({

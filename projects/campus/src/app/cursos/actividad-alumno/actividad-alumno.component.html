@@ -49,10 +49,15 @@
       <input type="file" class="form-control" (change)="handleFileInput($event)" />
 
       <!-- Botón de envío con altura completa -->
-      <button class="btn btn-warning d-flex align-items-center px-3" (click)="enviarActividad()" style="white-space: nowrap;">
-        <i class="fa fa-paper-plane me-1"></i> Enviar
+      <button class="btn btn-warning d-flex align-items-center px-3" (click)="enviarActividad()" [disabled]="enviandoActividad" style="white-space: nowrap;">
+        <i class="fa me-1" [ngClass]="enviandoActividad ? 'fa-spinner fa-spin' : 'fa-paper-plane'"></i>
+        {{ enviandoActividad ? 'Enviando...' : 'Enviar' }}
       </button>
 
+    </div>
+
+    <div *ngIf="mensajeEnvio" class="estado-envio mt-2" [ngClass]="actividadEnviada ? 'estado-envio-ok' : 'estado-envio-proceso'">
+      {{ mensajeEnvio }}
     </div>
 
     <div *ngIf="participacion?.length > 0" class="border rounded bg-light p-3 mt-3">

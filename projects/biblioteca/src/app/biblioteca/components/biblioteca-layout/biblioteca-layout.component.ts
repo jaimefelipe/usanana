@@ -1,7 +1,10 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { RELEASES, VERSION_ACTUAL, Release } from '../../version';
 
 type SectionKey = 'operacion' | 'catalogacion' | 'circulacion' | 'seriales' | 'adquisiciones' | 'administracion' | 'integraciones' | 'opac' | 'general';
+
+const SECTION_STATE_STORAGE_KEY = 'biblioteca_section_state';
 
 @Component({
   selector: 'app-biblioteca-layout',
@@ -14,18 +17,10 @@ export class BibliotecaLayoutComponent implements OnInit {
   logedIn = false;
   Company = localStorage.getItem('Id_Empresa');
   User = localStorage.getItem('Nombre_Usuario');
-  appVersion = '2.0.0.5';
-  sectionState: Record<SectionKey, boolean> = {
-    operacion: false,
-    catalogacion: false,
-    circulacion: false,
-    seriales: false,
-    adquisiciones: false,
-    administracion: false,
-    integraciones: false,
-    opac: false,
-    general: false
-  };
+  appVersion = VERSION_ACTUAL.version;
+  mostrarNovedades = false;
+  releases: Release[] = [...RELEASES].reverse();
+  sectionState: Record<SectionKey, boolean> = this.cargarSectionState();
 
   constructor(private router: Router) {}
 
@@ -36,6 +31,37 @@ export class BibliotecaLayoutComponent implements OnInit {
       return;
     }
     this.updateViewport();
+  }
+
+  private cargarSectionState(): Record<SectionKey, boolean> {
+    const estadoBase: Record<SectionKey, boolean> = {
+      operacion: false,
+      catalogacion: false,
+      circulacion: false,
+      seriales: false,
+      adquisiciones: false,
+      administracion: false,
+      integraciones: false,
+      opac: false,
+      general: false
+    };
+    try {
+      const guardado = sessionStorage.getItem(SECTION_STATE_STORAGE_KEY);
+      if (guardado) {
+        Object.assign(estadoBase, JSON.parse(guardado));
+      }
+    } catch {
+      // Estado corrupto o sessionStorage no disponible: se usa el estado base.
+    }
+    return estadoBase;
+  }
+
+  private guardarSectionState(): void {
+    try {
+      sessionStorage.setItem(SECTION_STATE_STORAGE_KEY, JSON.stringify(this.sectionState));
+    } catch {
+      // sessionStorage no disponible: no persiste, pero no interrumpe la navegacion.
+    }
   }
 
   @HostListener('window:resize')
@@ -56,6 +82,7 @@ export class BibliotecaLayoutComponent implements OnInit {
   toggleSection(event: Event, key: SectionKey): void {
     event.preventDefault();
     this.sectionState[key] = !this.sectionState[key];
+    this.guardarSectionState();
   }
 
   sectionChevron(key: SectionKey): string {

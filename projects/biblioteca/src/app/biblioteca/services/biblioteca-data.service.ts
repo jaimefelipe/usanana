@@ -16,6 +16,7 @@ import {
   FacturaCompraBiblioteca,
   IntegracionBiblioteca,
   Libro,
+  LibroAutorSeleccionado,
   MarcCampo,
   MarcRegistro,
   MarcSubcampo,
@@ -85,6 +86,17 @@ export class BibliotecaDataService {
 
   private escapeSql(value?: string): string {
     return (value || '').replace(/'/g, "''");
+  }
+
+  /**
+   * ISBN vacio debe ir como NULL: Bib_Libro tiene UNIQUE(Id_Empresa, ISBN) y
+   * MySQL/MariaDB solo exime a NULL de esa restriccion (varios NULL son
+   * validos, pero '' repetido dispara duplicate key en el segundo registro
+   * sin ISBN de la misma empresa).
+   */
+  private sqlIsbn(value?: string): string {
+    const trimmed = (value || '').trim();
+    return trimmed ? `'${this.escapeSql(trimmed)}'` : 'NULL';
   }
 
   private getTagOrderField(tagField: string): string {
@@ -294,45 +306,73 @@ export class BibliotecaDataService {
     }
   }
 
-  async getAutoresPorLibro(libroId: number): Promise<number[]> {
+  async getAutoresPorLibro(libroId: number): Promise<LibroAutorSeleccionado[]> {
     const sqlConfig = {
-      table: 'Bib_Libro_Autor',
-      fields: 'Autor_Id',
-      where: 'Libro_Id=' + libroId,
-      orderField: 'Autor_Id',
+      table: 'Bib_Libro_Autor LA INNER JOIN Bib_Autor A ON A.Id_Autor = LA.Autor_Id',
+      fields: 'LA.Autor_Id, A.Nombre, LA.Rol',
+      where: 'LA.Libro_Id=' + libroId,
+      orderField: 'A.Nombre',
       orderDirection: ' ASC ',
       Empresa: false
     };
     const data = await this.apiService.executeSqlSyn(sqlConfig);
     if (data && data['total'] > 0) {
-      return data['data'].map((row: any) => Number(row.Autor_Id));
+      return data['data'].map((row: any) => ({
+        id: Number(row.Autor_Id),
+        nombre: row.Nombre,
+        rol: row.Rol || 'Autor'
+      }));
     }
     return [];
   }
 
-  async saveLibroAutores(libroId: number, autoresIds: number[]): Promise<void> {
+  async saveLibroAutores(libroId: number, autores: LibroAutorSeleccionado[]): Promise<void> {
     const empresaId = localStorage.getItem('Id_Empresa') || 1;
     await this.apiService.postRecord(
       `DELETE FROM Bib_Libro_Autor WHERE Libro_Id=${libroId} AND Id_Empresa=${empresaId}`
     );
 
-    if (!autoresIds || autoresIds.length === 0) return;
+    if (!autores || autores.length === 0) return;
 
-    for (const autorId of autoresIds) {
+    for (const autor of autores) {
       const sql = {
         table: 'Bib_Libro_Autor',
         fields: 'Libro_Id,Autor_Id,Rol',
-        values: `${libroId},${autorId},'autor'`
+        values: `${libroId},${autor.id},'${this.escapeSql(autor.rol)}'`
       };
       await this.apiService.insertRecord(sql);
     }
+  }
+
+  async buscarAutores(texto: string): Promise<Autor[]> {
+    const termino = this.escapeSql(texto.trim());
+    if (!termino) return [];
+    const sqlConfig = {
+      table: 'Bib_Autor',
+      fields: 'Id_Autor, Nombre, Nacionalidad, Fecha_Nacimiento',
+      where: `Nombre LIKE '%${termino}%'`,
+      orderField: 'Nombre',
+      orderDirection: ' ASC ',
+      Empresa: true,
+      paginacion: { FirstRow: 1, LastRow: 10, TotalRows: 0 }
+    };
+    const data = await this.apiService.executeSqlSyn(sqlConfig);
+    if (data && data['total'] > 0) {
+      return data['data'].map((row: any) => ({
+        id: Number(row.Id_Autor),
+        nombre: row.Nombre,
+        nacionalidad: row.Nacionalidad || '',
+        fechaNacimiento: row.Fecha_Nacimiento || ''
+      }));
+    }
+    return [];
   }
 
   async createLibro(libro: Libro): Promise<number | null> {
     const sql = {
       table: 'Bib_Libro',
       fields: 'Titulo,Subtitulo,ISBN,ISSN,DOI,Editorial_Id,Categoria_Id,Id_Tipo_Material,Idioma,Anio_Publicacion,Edicion,Descripcion,Palabras_Clave,URL_Publica',
-      values: `'${this.escapeSql(libro.titulo)}','${this.escapeSql(libro.subtitulo)}','${this.escapeSql(libro.isbn)}',` +
+      values: `'${this.escapeSql(libro.titulo)}','${this.escapeSql(libro.subtitulo)}',${this.sqlIsbn(libro.isbn)},` +
         `'${this.escapeSql(libro.issn)}','${this.escapeSql(libro.doi)}',` +
         `${libro.editorialId || 'NULL'},${libro.categoriaId || 'NULL'},${libro.tipoMaterialId || 'NULL'},` +
         `'${this.escapeSql(libro.idioma)}',${libro.anioPublicacion || 'NULL'},` +
@@ -340,7 +380,7 @@ export class BibliotecaDataService {
         `'${this.escapeSql(libro.palabrasClave)}','${this.escapeSql(libro.urlPublica)}'`
     };
     const data = await this.apiService.insertRecord(sql);
-    const insertId = data && data['insertId'] ? Number(data['insertId']) : null;
+    const insertId = this.extractInsertId(data);
     if (insertId) return insertId;
     return await this.resolveLibroId(libro);
   }
@@ -349,7 +389,7 @@ export class BibliotecaDataService {
     const sql = {
       table: 'Bib_Libro',
       fields: `Titulo='${this.escapeSql(libro.titulo)}',Subtitulo='${this.escapeSql(libro.subtitulo)}',` +
-        `ISBN='${this.escapeSql(libro.isbn)}',ISSN='${this.escapeSql(libro.issn)}',DOI='${this.escapeSql(libro.doi)}',` +
+        `ISBN=${this.sqlIsbn(libro.isbn)},ISSN='${this.escapeSql(libro.issn)}',DOI='${this.escapeSql(libro.doi)}',` +
         `Editorial_Id=${libro.editorialId || 'NULL'},Categoria_Id=${libro.categoriaId || 'NULL'},` +
         `Id_Tipo_Material=${libro.tipoMaterialId || 'NULL'},` +
         `Idioma='${this.escapeSql(libro.idioma)}',Anio_Publicacion=${libro.anioPublicacion || 'NULL'},` +
@@ -381,7 +421,7 @@ export class BibliotecaDataService {
 
   private extractInsertId(response: any): number | null {
     if (!response) return null;
-    const candidate = response['insertId'] || response?.data?.insertId;
+    const candidate = response['Identity'] || response['insertId'] || response?.data?.Identity || response?.data?.insertId;
     return candidate ? Number(candidate) : null;
   }
 
@@ -412,6 +452,178 @@ export class BibliotecaDataService {
       return response[0];
     }
     return null;
+  }
+
+  private getResponseTotal(response: any, field = 'Total'): number {
+    const row = this.getFirstDataRow(response);
+    return Number(row?.[field] ?? row?.[field.toLowerCase()] ?? 0);
+  }
+
+  private fechaVencida(fecha?: string): boolean {
+    if (!fecha) return false;
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    const vencimiento = new Date(fecha);
+    vencimiento.setHours(0, 0, 0, 0);
+    return vencimiento.getTime() < hoy.getTime();
+  }
+
+  private estadoPrestamoEfectivo(estado: string, fechaVencimiento?: string, fechaDevolucion?: string): Prestamo['estado'] {
+    const estadoNormalizado = String(estado || '').trim().toLowerCase();
+    if (fechaDevolucion || ['devuelto', 'cancelado', 'perdido'].includes(estadoNormalizado)) {
+      return estadoNormalizado as Prestamo['estado'];
+    }
+    if (['activo', 'pendiente'].includes(estadoNormalizado) && this.fechaVencida(fechaVencimiento)) {
+      return 'vencido';
+    }
+    return (estadoNormalizado || 'activo') as Prestamo['estado'];
+  }
+
+  private async getPoliticaCirculacion(): Promise<{ diasPrestamo: number; maxPrestamos: number; maxReservas: number }> {
+    const politicas = await this.getPoliticasPrestamo();
+    const politica = politicas[0];
+    if (politica) {
+      return {
+        diasPrestamo: Number(politica.diasPrestamo || 7),
+        maxPrestamos: Number(politica.maxPrestamos || 2),
+        maxReservas: Number(politica.maxReservas ?? politica.maxPrestamos ?? 2)
+      };
+    }
+
+    try {
+      const tipoMaterialId = await this.getDefaultTipoMaterialId();
+      if (!tipoMaterialId) {
+        return { diasPrestamo: 7, maxPrestamos: 2, maxReservas: 2 };
+      }
+      await this.createPoliticaPrestamo({
+        id: 0,
+        tipoUsuario: 'General',
+        tipoMaterialId,
+        diasPrestamo: 7,
+        maxRenovaciones: 0,
+        maxPrestamos: 2,
+        maxReservas: 2,
+        multaDiaria: 0
+      });
+    } catch (error) {
+      console.error(error);
+    }
+
+    return { diasPrestamo: 7, maxPrestamos: 2, maxReservas: 2 };
+  }
+
+  private async getDefaultTipoMaterialId(): Promise<number | null> {
+    try {
+      const data = await this.apiService.executeSqlSyn({
+        table: 'Bib_Tipo_Material',
+        fields: 'Id_Tipo_Material',
+        orderField: 'Id_Tipo_Material',
+        orderDirection: ' ASC ',
+        simple: true,
+        Empresa: true
+      });
+      if (data && data['total'] > 0) {
+        return Number(data['data'][0]['Id_Tipo_Material']);
+      }
+      return null;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  }
+
+  private async usuarioPuedeSolicitar(usuarioId: number): Promise<{ ok: boolean; motivo?: string }> {
+    const usuario = (await this.getUsuarios()).find(item => item.id === usuarioId);
+    if (!usuario) {
+      return { ok: false, motivo: 'Usuario no encontrado' };
+    }
+    if (usuario.bloqueado) {
+      return { ok: false, motivo: 'El usuario no esta activo para solicitar recursos' };
+    }
+    if (Number(usuario.multasPendientes || 0) > 0 || Number(usuario.multaAcumulada || 0) > 0) {
+      return { ok: false, motivo: 'El usuario tiene sanciones pendientes' };
+    }
+
+    try {
+      const data = await this.apiService.executeSqlSyn({
+        table: 'Bib_Bloqueo_Usuario',
+        fields: 'COUNT(*) AS Total',
+        where: `Usuario_Id=${usuarioId} AND Estado='Activo'`,
+        simple: true,
+        Empresa: true
+      });
+      if (this.getResponseTotal(data) > 0) {
+        return { ok: false, motivo: 'El usuario tiene una sancion activa' };
+      }
+    } catch (error) {
+      console.error(error);
+    }
+
+    return { ok: true };
+  }
+
+  private async contarCirculacionActiva(usuarioId: number): Promise<number> {
+    const empresaId = this.getEmpresaId();
+    const data = await this.apiService.postRecord(
+      `SELECT ` +
+      `(SELECT COUNT(*) FROM Bib_Prestamo ` +
+      `WHERE Usuario_Id=${usuarioId} AND Id_Empresa=${empresaId} ` +
+      `AND Estado IN ('activo','Activo','pendiente','Pendiente')) + ` +
+      `(SELECT COUNT(*) FROM Bib_Reserva ` +
+      `WHERE Usuario_Id=${usuarioId} AND Id_Empresa=${empresaId} ` +
+      `AND Estado IN ('activa','Activa','En espera','Disponible','disponible')) AS Total`
+    );
+    return this.getResponseTotal(data);
+  }
+
+  private getEstadosReservaBloqueantesSql(alias = ''): string {
+    const prefix = alias ? `${alias}.` : '';
+    return `LOWER(${prefix}Estado) IN ('activa','en espera','disponible')`;
+  }
+
+  private async getLibroIdPrestamo(prestamoId: number): Promise<number> {
+    const empresaId = this.getEmpresaId();
+    const data = await this.apiService.postRecord(
+      `SELECT E.Libro_Id ` +
+      `FROM Bib_Prestamo P ` +
+      `INNER JOIN Bib_Ejemplar E ON E.Id_Ejemplar=P.Ejemplar_Id AND E.Id_Empresa=P.Id_Empresa ` +
+      `WHERE P.Id_Prestamo=${prestamoId} AND P.Id_Empresa=${empresaId} LIMIT 1`
+    );
+    const row = this.getFirstDataRow(data);
+    return Number(row?.Libro_Id || 0);
+  }
+
+  async contarReservasBloqueantesLibro(libroId: number): Promise<number> {
+    const empresaId = this.getEmpresaId();
+    const data = await this.apiService.postRecord(
+      `SELECT COUNT(*) AS Total ` +
+      `FROM Bib_Reserva R ` +
+      `WHERE R.Libro_Id=${libroId} AND R.Id_Empresa=${empresaId} ` +
+      `AND ${this.getEstadosReservaBloqueantesSql('R')}`
+    );
+    return this.getResponseTotal(data);
+  }
+
+  async validarSolicitudCirculacion(usuarioId: number): Promise<{ ok: boolean; motivo?: string; total: number; limite: number }> {
+    const puedeSolicitar = await this.usuarioPuedeSolicitar(usuarioId);
+    const politica = await this.getPoliticaCirculacion();
+    const limite = Math.max(1, Number(politica.maxPrestamos || 2));
+
+    if (!puedeSolicitar.ok) {
+      return { ...puedeSolicitar, total: 0, limite };
+    }
+
+    const total = await this.contarCirculacionActiva(usuarioId);
+    if (total >= limite) {
+      return {
+        ok: false,
+        total,
+        limite,
+        motivo: `Este usuario ya tiene ${total} prestamo(s)/reserva(s) activos. El maximo permitido es ${limite}.`
+      };
+    }
+
+    return { ok: true, total, limite };
   }
 
   private async resolveMarcRegistroSummary(libroId: number, formato: string): Promise<{ id: number; control001: string } | null> {
@@ -539,7 +751,7 @@ export class BibliotecaDataService {
   async getPrestamos(): Promise<Prestamo[]> {
     try {
       const sqlConfig = {
-        table: 'Bib_Prestamo P INNER JOIN Bib_Ejemplar E ON P.Ejemplar_Id = E.Id_Ejemplar INNER JOIN Bib_Usuario_Biblioteca U ON P.Usuario_Id = U.Id_Usuario_Biblioteca',
+        table: 'Bib_Prestamo P INNER JOIN Bib_Ejemplar E ON P.Ejemplar_Id = E.Id_Ejemplar INNER JOIN Seg_Usuario U ON P.Usuario_Id = U.Id_Usuario',
         fields: 'P.Id_Prestamo, P.Ejemplar_Id, E.Libro_Id, P.Usuario_Id, U.Nombre AS Usuario, P.Fecha_Prestamo, P.Fecha_Vencimiento, P.Fecha_Devolucion, P.Renovaciones, P.Estado, P.Observaciones',
         orderField: 'P.Fecha_Prestamo',
         orderDirection: ' DESC ',
@@ -557,7 +769,7 @@ export class BibliotecaDataService {
           fechaVencimiento: row.Fecha_Vencimiento,
           fechaDevolucion: row.Fecha_Devolucion,
           renovaciones: Number(row.Renovaciones),
-          estado: row.Estado,
+          estado: this.estadoPrestamoEfectivo(row.Estado, row.Fecha_Vencimiento, row.Fecha_Devolucion),
           observaciones: row.Observaciones || ''
         }));
       }
@@ -571,7 +783,7 @@ export class BibliotecaDataService {
   async getReservas(): Promise<Reserva[]> {
     try {
       const sqlConfig = {
-        table: 'Bib_Reserva R INNER JOIN Bib_Usuario_Biblioteca U ON R.Usuario_Id = U.Id_Usuario_Biblioteca',
+        table: 'Bib_Reserva R INNER JOIN Seg_Usuario U ON R.Usuario_Id = U.Id_Usuario',
         fields: 'R.Id_Reserva, R.Libro_Id, R.Usuario_Id, U.Nombre AS Usuario, R.Posicion, R.Estado, R.Fecha_Reserva, R.Fecha_Asignacion',
         orderField: 'R.Fecha_Reserva',
         orderDirection: ' DESC ',
@@ -599,26 +811,29 @@ export class BibliotecaDataService {
 
   async getUsuarios(): Promise<UsuarioBiblioteca[]> {
     try {
+      const empresaId = this.getEmpresaId();
       const sqlConfig = {
-        table: 'Bib_Usuario_Biblioteca',
-        fields: 'Id_Usuario_Biblioteca, Id_Persona, Id_Usuario, Codigo_Universitario, Nombre, Email, Telefono, Tipo_Usuario, Bloqueado, Multa_Acumulada',
-        orderField: 'Nombre',
+        table: 'Seg_Usuario_Empresa UE INNER JOIN Seg_Usuario U ON UE.Id_Usuario = U.Id_Usuario',
+        fields: `U.Id_Usuario, U.Nombre, U.Correo, U.Telefono, U.Numero_Identificacion, U.Tipo_Usuario, U.Estado,
+          (SELECT COUNT(*) FROM Bib_Prestamo P WHERE P.Id_Empresa=${empresaId} AND P.Usuario_Id=U.Id_Usuario AND P.Estado IN ('activo','Activo','pendiente','Pendiente')) AS Prestamos_Activos,
+          (SELECT COALESCE(SUM(M.Saldo),0) FROM Bib_Multa M WHERE M.Id_Empresa=${empresaId} AND M.Usuario_Id=U.Id_Usuario AND M.Estado IN ('pendiente','Pendiente','activo','Activo')) AS Multa_Acumulada`,
+        where: `UE.Id_Empresa=${empresaId} AND UE.Estado=1`,
+        orderField: 'U.Nombre',
         orderDirection: ' ASC ',
-        Empresa: true
+        Empresa: false
       };
       const data = await this.apiService.executeSqlSyn(sqlConfig);
       if (data && data['total'] > 0) {
         return data['data'].map((row: any) => ({
-          id: Number(row.Id_Usuario_Biblioteca),
-          idPersona: row.Id_Persona ? Number(row.Id_Persona) : undefined,
-          idUsuario: row.Id_Usuario ? Number(row.Id_Usuario) : undefined,
-          codigoUniversitario: row.Codigo_Universitario || '',
+          id: Number(row.Id_Usuario),
+          idUsuario: Number(row.Id_Usuario),
+          codigoUniversitario: row.Numero_Identificacion || '',
           nombre: row.Nombre,
-          email: row.Email || '',
+          email: row.Correo || '',
           telefono: row.Telefono || '',
           tipoUsuario: row.Tipo_Usuario || '',
-          bloqueado: Number(row.Bloqueado) === 1,
-          prestamosActivos: 0,
+          bloqueado: Number(row.Estado) !== 1,
+          prestamosActivos: Number(row.Prestamos_Activos || 0),
           multasPendientes: Number(row.Multa_Acumulada || 0),
           multaAcumulada: Number(row.Multa_Acumulada || 0)
         }));
@@ -630,36 +845,61 @@ export class BibliotecaDataService {
     }
   }
 
+  async getUsuariosActivosPorTipo(): Promise<{ tipo: string; cantidad: number }[]> {
+    const base = [
+      { tipo: 'Estudiantes', cantidad: 0 },
+      { tipo: 'Docentes', cantidad: 0 },
+      { tipo: 'Administrativos', cantidad: 0 }
+    ];
+
+    try {
+      const empresaId = this.getEmpresaId();
+      const data = await this.apiService.postRecord(
+        `SELECT
+          CASE
+            WHEN LOWER(TRIM(COALESCE(U.Tipo_Usuario,''))) IN ('estudiante','estudiantes','alumno','alumnos') THEN 'Estudiantes'
+            WHEN LOWER(TRIM(COALESCE(U.Tipo_Usuario,''))) IN ('docente','docentes','profesor','profesores') THEN 'Docentes'
+            WHEN LOWER(TRIM(COALESCE(U.Tipo_Usuario,''))) IN ('administrativo','administrativos','administracion') THEN 'Administrativos'
+            ELSE 'Otros'
+          END AS Tipo,
+          COUNT(U.Id_Usuario) AS Cantidad
+        FROM Seg_Usuario_Empresa UE
+        INNER JOIN Seg_Usuario U ON UE.Id_Usuario = U.Id_Usuario
+        WHERE UE.Id_Empresa=${empresaId}
+          AND UE.Estado=1
+          AND U.Estado=1
+        GROUP BY
+          CASE
+            WHEN LOWER(TRIM(COALESCE(U.Tipo_Usuario,''))) IN ('estudiante','estudiantes','alumno','alumnos') THEN 'Estudiantes'
+            WHEN LOWER(TRIM(COALESCE(U.Tipo_Usuario,''))) IN ('docente','docentes','profesor','profesores') THEN 'Docentes'
+            WHEN LOWER(TRIM(COALESCE(U.Tipo_Usuario,''))) IN ('administrativo','administrativos','administracion') THEN 'Administrativos'
+            ELSE 'Otros'
+          END`
+      );
+      const rows = Array.isArray(data?.data) ? data.data : [];
+      return base.map(item => {
+        const row = rows.find((value: any) => String(value.Tipo || '').toLowerCase() === item.tipo.toLowerCase());
+        return {
+          tipo: item.tipo,
+          cantidad: Number(row?.Cantidad || row?.cantidad || 0)
+        };
+      });
+    } catch (error) {
+      console.error(error);
+      return base;
+    }
+  }
+
   async createUsuarioBiblioteca(usuario: UsuarioBiblioteca): Promise<any> {
-    const sql = {
-      table: 'Bib_Usuario_Biblioteca',
-      fields: 'Id_Persona,Id_Usuario,Codigo_Universitario,Nombre,Email,Telefono,Tipo_Usuario,Bloqueado,Multa_Acumulada',
-      values: `${usuario.idPersona || 'NULL'},${usuario.idUsuario || 'NULL'},` +
-        `'${this.escapeSql(usuario.codigoUniversitario)}','${this.escapeSql(usuario.nombre)}',` +
-        `'${this.escapeSql(usuario.email)}','${this.escapeSql(usuario.telefono)}',` +
-        `'${this.escapeSql(usuario.tipoUsuario)}',${usuario.bloqueado ? 1 : 0},${usuario.multaAcumulada || 0}`
-    };
-    return await this.apiService.insertRecord(sql);
+    throw new Error('Los usuarios se crean en Seguridad, no en Biblioteca');
   }
 
   async updateUsuarioBiblioteca(usuario: UsuarioBiblioteca): Promise<any> {
-    const sql = {
-      table: 'Bib_Usuario_Biblioteca',
-      fields: `Id_Persona=${usuario.idPersona || 'NULL'},Id_Usuario=${usuario.idUsuario || 'NULL'},` +
-        `Codigo_Universitario='${this.escapeSql(usuario.codigoUniversitario)}',Nombre='${this.escapeSql(usuario.nombre)}',` +
-        `Email='${this.escapeSql(usuario.email)}',Telefono='${this.escapeSql(usuario.telefono)}',` +
-        `Tipo_Usuario='${this.escapeSql(usuario.tipoUsuario)}',Bloqueado=${usuario.bloqueado ? 1 : 0},` +
-        `Multa_Acumulada=${usuario.multaAcumulada || 0}`,
-      where: 'Id_Usuario_Biblioteca=' + usuario.id
-    };
-    return await this.apiService.updateRecord(sql);
+    throw new Error('Los usuarios se actualizan en Seguridad, no en Biblioteca');
   }
 
   async deleteUsuarioBiblioteca(id: number): Promise<any> {
-    const empresaId = localStorage.getItem('Id_Empresa') || 1;
-    return await this.apiService.postRecord(
-      `DELETE FROM Bib_Usuario_Biblioteca WHERE Id_Usuario_Biblioteca=${id} AND Id_Empresa=${empresaId}`
-    );
+    throw new Error('Los usuarios se administran en Seguridad, no en Biblioteca');
   }
 
   async getCategorias(): Promise<Categoria[]> {
@@ -920,29 +1160,55 @@ export class BibliotecaDataService {
     );
   }
 
+  private getEjemplaresTable(): string {
+    return 'Bib_Ejemplar E LEFT JOIN Bib_Libro L ON E.Libro_Id = L.Id_Libro';
+  }
+
+  private getEjemplaresFields(): string {
+    return 'E.Id_Ejemplar, E.Libro_Id, L.Titulo AS Libro_Titulo, E.Codigo_Barra, E.Ubicacion, E.Sede, ' +
+      'E.Tipo_Soporte, E.Estado, E.Inventario_Tag, E.URL_Archivo, E.Imagen_Portada, E.Max_Simultaneos';
+  }
+
+  private getEjemplaresWhere(search = ''): string {
+    const text = this.escapeSql(search.trim());
+    if (!text) {
+      return '';
+    }
+    return `(L.Titulo LIKE '%${text}%' ` +
+      `OR E.Codigo_Barra LIKE '%${text}%' ` +
+      `OR E.Ubicacion LIKE '%${text}%' ` +
+      `OR E.Inventario_Tag LIKE '%${text}%')`;
+  }
+
+  private mapEjemplarRow(row: any): Ejemplar {
+    return {
+      id: Number(row.Id_Ejemplar),
+      libroId: Number(row.Libro_Id),
+      libroTitulo: row.Libro_Titulo || '',
+      codigoBarra: row.Codigo_Barra || '',
+      ubicacion: row.Ubicacion || '',
+      sede: row.Sede || '',
+      tipoSoporte: row.Tipo_Soporte || 'fisico',
+      estado: row.Estado || 'disponible',
+      inventarioTag: row.Inventario_Tag || '',
+      urlArchivo: row.URL_Archivo || '',
+      imagenPortada: row.Imagen_Portada || '',
+      maxSimultaneos: row.Max_Simultaneos != null ? Number(row.Max_Simultaneos) : undefined
+    };
+  }
+
   async getEjemplares(): Promise<Ejemplar[]> {
     try {
       const sqlConfig = {
-        table: 'Bib_Ejemplar E LEFT JOIN Bib_Libro L ON E.Libro_Id = L.Id_Libro',
-        fields: 'E.Id_Ejemplar, E.Libro_Id, L.Titulo AS Libro_Titulo, E.Codigo_Barra, E.Ubicacion, E.Sede, E.Tipo_Soporte, E.Estado, E.Inventario_Tag, E.URL_Archivo',
+        table: this.getEjemplaresTable(),
+        fields: this.getEjemplaresFields(),
         orderField: 'E.Id_Ejemplar',
         orderDirection: ' DESC ',
         Empresa: true
       };
       const data = await this.apiService.executeSqlSyn(sqlConfig);
       if (data && data['total'] > 0) {
-        return data['data'].map((row: any) => ({
-          id: Number(row.Id_Ejemplar),
-          libroId: Number(row.Libro_Id),
-          libroTitulo: row.Libro_Titulo || '',
-          codigoBarra: row.Codigo_Barra || '',
-          ubicacion: row.Ubicacion || '',
-          sede: row.Sede || '',
-          tipoSoporte: row.Tipo_Soporte || 'fisico',
-          estado: row.Estado || 'disponible',
-          inventarioTag: row.Inventario_Tag || '',
-          urlArchivo: row.URL_Archivo || ''
-        }));
+        return data['data'].map((row: any) => this.mapEjemplarRow(row));
       }
       return [];
     } catch (error) {
@@ -951,14 +1217,83 @@ export class BibliotecaDataService {
     }
   }
 
+  async getEjemplaresPage(page = 1, pageSize = 50, search = ''): Promise<{ ejemplares: Ejemplar[]; total: number }> {
+    try {
+      const total = await this.countEjemplares(search);
+      if (total === 0) {
+        return { ejemplares: [], total };
+      }
+      const sqlConfig = {
+        table: this.getEjemplaresTable(),
+        fields: this.getEjemplaresFields(),
+        where: this.getEjemplaresWhere(search),
+        orderField: 'E.Id_Ejemplar',
+        orderDirection: ' DESC ',
+        Empresa: true,
+        paginacion: {
+          FirstRow: (Math.max(1, page) - 1) * pageSize + 1,
+          LastRow: Math.max(1, page) * pageSize,
+          TotalRows: 0
+        }
+      };
+      const data = await this.apiService.executeSqlSyn(sqlConfig);
+      const ejemplares = data && data['data'] ? data['data'].map((row: any) => this.mapEjemplarRow(row)) : [];
+      return { ejemplares, total };
+    } catch (error) {
+      console.error(error);
+      return { ejemplares: [], total: 0 };
+    }
+  }
+
+  async countEjemplares(search = ''): Promise<number> {
+    try {
+      const sqlConfig = {
+        table: this.getEjemplaresTable(),
+        fields: 'COUNT(*) AS total',
+        where: this.getEjemplaresWhere(search),
+        simple: true,
+        Empresa: true
+      };
+      const data = await this.apiService.executeSqlSyn(sqlConfig);
+      if (data && data['data'] && data['data'].length > 0) {
+        return Number(data['data'][0].total || 0);
+      }
+      return 0;
+    } catch (error) {
+      console.error(error);
+      return 0;
+    }
+  }
+
+  async countEjemplaresPdf(): Promise<number> {
+    try {
+      const sqlConfig = {
+        table: this.getEjemplaresTable(),
+        fields: 'COUNT(*) AS total',
+        where: `(LOWER(E.URL_Archivo) LIKE '%.pdf' OR LOWER(E.URL_Archivo) LIKE '%.doc' OR LOWER(E.URL_Archivo) LIKE '%.docx')`,
+        simple: true,
+        Empresa: true
+      };
+      const data = await this.apiService.executeSqlSyn(sqlConfig);
+      if (data && data['data'] && data['data'].length > 0) {
+        return Number(data['data'][0].total || 0);
+      }
+      return 0;
+    } catch (error) {
+      console.error(error);
+      return 0;
+    }
+  }
+
   async createEjemplar(ejemplar: Ejemplar): Promise<any> {
     const sql = {
       table: 'Bib_Ejemplar',
-      fields: 'Libro_Id,Codigo_Barra,Ubicacion,Sede,Tipo_Soporte,Estado,Inventario_Tag,URL_Archivo',
+      fields: 'Libro_Id,Codigo_Barra,Ubicacion,Sede,Tipo_Soporte,Estado,Inventario_Tag,URL_Archivo,Imagen_Portada,Max_Simultaneos',
       values: `${ejemplar.libroId},'${this.escapeSql(ejemplar.codigoBarra)}',` +
         `'${this.escapeSql(ejemplar.ubicacion)}','${this.escapeSql(ejemplar.sede)}',` +
         `'${this.escapeSql(ejemplar.tipoSoporte)}','${this.escapeSql(ejemplar.estado)}',` +
-        `'${this.escapeSql(ejemplar.inventarioTag)}','${this.escapeSql(ejemplar.urlArchivo)}'`
+        `'${this.escapeSql(ejemplar.inventarioTag)}','${this.escapeSql(ejemplar.urlArchivo)}',` +
+        `'${this.escapeSql(ejemplar.imagenPortada)}',${ejemplar.maxSimultaneos || 1}`
     };
     return await this.apiService.insertRecord(sql);
   }
@@ -969,7 +1304,8 @@ export class BibliotecaDataService {
       fields: `Libro_Id=${ejemplar.libroId},Codigo_Barra='${this.escapeSql(ejemplar.codigoBarra)}',` +
         `Ubicacion='${this.escapeSql(ejemplar.ubicacion)}',Sede='${this.escapeSql(ejemplar.sede)}',` +
         `Tipo_Soporte='${this.escapeSql(ejemplar.tipoSoporte)}',Estado='${this.escapeSql(ejemplar.estado)}',` +
-        `Inventario_Tag='${this.escapeSql(ejemplar.inventarioTag)}',URL_Archivo='${this.escapeSql(ejemplar.urlArchivo)}'`,
+        `Inventario_Tag='${this.escapeSql(ejemplar.inventarioTag)}',URL_Archivo='${this.escapeSql(ejemplar.urlArchivo)}',` +
+        `Imagen_Portada='${this.escapeSql(ejemplar.imagenPortada)}',Max_Simultaneos=${ejemplar.maxSimultaneos || 1}`,
       where: 'Id_Ejemplar=' + ejemplar.id
     };
     return await this.apiService.updateRecord(sql);
@@ -986,7 +1322,7 @@ export class BibliotecaDataService {
     try {
       const sqlConfig = {
         table: 'Bib_Politica_Prestamo',
-        fields: 'Id_Politica_Prestamo, Tipo_Usuario, Tipo_Material_Id, Dias_Prestamo, Max_Renovaciones, Max_Prestamos, Multa_Diaria',
+        fields: 'Id_Politica_Prestamo, Tipo_Usuario, Tipo_Material_Id, Dias_Prestamo, Max_Renovaciones, Max_Prestamos, Max_Reservas, Multa_Diaria',
         orderField: 'Tipo_Usuario',
         orderDirection: ' ASC ',
         Empresa: true
@@ -1000,6 +1336,7 @@ export class BibliotecaDataService {
           diasPrestamo: Number(row.Dias_Prestamo),
           maxRenovaciones: Number(row.Max_Renovaciones),
           maxPrestamos: Number(row.Max_Prestamos),
+          maxReservas: Number(row.Max_Reservas ?? row.Max_Prestamos ?? 2),
           multaDiaria: Number(row.Multa_Diaria)
         }));
       }
@@ -1013,9 +1350,9 @@ export class BibliotecaDataService {
   async createPoliticaPrestamo(politica: PoliticaPrestamo): Promise<any> {
     const sql = {
       table: 'Bib_Politica_Prestamo',
-      fields: 'Tipo_Usuario,Tipo_Material_Id,Dias_Prestamo,Max_Renovaciones,Max_Prestamos,Multa_Diaria',
+      fields: 'Tipo_Usuario,Tipo_Material_Id,Dias_Prestamo,Max_Renovaciones,Max_Prestamos,Max_Reservas,Multa_Diaria',
       values: `'${this.escapeSql(politica.tipoUsuario)}',${politica.tipoMaterialId},${politica.diasPrestamo},` +
-        `${politica.maxRenovaciones},${politica.maxPrestamos},${politica.multaDiaria}`
+        `${politica.maxRenovaciones},${politica.maxPrestamos},${politica.maxReservas ?? politica.maxPrestamos},${politica.multaDiaria}`
     };
     return await this.apiService.insertRecord(sql);
   }
@@ -1025,7 +1362,8 @@ export class BibliotecaDataService {
       table: 'Bib_Politica_Prestamo',
       fields: `Tipo_Usuario='${this.escapeSql(politica.tipoUsuario)}',Tipo_Material_Id=${politica.tipoMaterialId},` +
         `Dias_Prestamo=${politica.diasPrestamo},Max_Renovaciones=${politica.maxRenovaciones},` +
-        `Max_Prestamos=${politica.maxPrestamos},Multa_Diaria=${politica.multaDiaria}`,
+        `Max_Prestamos=${politica.maxPrestamos},Max_Reservas=${politica.maxReservas ?? politica.maxPrestamos},` +
+        `Multa_Diaria=${politica.multaDiaria}`,
       where: 'Id_Politica_Prestamo=' + politica.id
     };
     return await this.apiService.updateRecord(sql);
@@ -1041,7 +1379,7 @@ export class BibliotecaDataService {
   async getMultas(): Promise<Multa[]> {
     try {
       const sqlConfig = {
-        table: 'Bib_Multa M INNER JOIN Bib_Usuario_Biblioteca U ON M.Usuario_Id = U.Id_Usuario_Biblioteca',
+        table: 'Bib_Multa M INNER JOIN Seg_Usuario U ON M.Usuario_Id = U.Id_Usuario',
         fields: 'M.Id_Multa, M.Usuario_Id, U.Nombre AS Usuario, M.Prestamo_Id, M.Monto, M.Saldo, M.Motivo, M.Fecha_Generacion, M.Fecha_Pago, M.Estado',
         orderField: 'M.Fecha_Generacion',
         orderDirection: ' DESC ',
@@ -1120,6 +1458,176 @@ export class BibliotecaDataService {
     }
   }
 
+  private getPermisosBaseBiblioteca(): PermisoBiblioteca[] {
+    return [
+      { id: 0, codigo: 'biblioteca.seguridad.gestionar', descripcion: 'Gestionar seguridad, roles y permisos de biblioteca' },
+      { id: 0, codigo: 'biblioteca.catalogacion.gestionar', descripcion: 'Gestionar catalogacion, catalogos y ejemplares' },
+      { id: 0, codigo: 'biblioteca.archivo.subir', descripcion: 'Subir archivos digitales en ejemplares' },
+      { id: 0, codigo: 'biblioteca.archivo.ver', descripcion: 'Ver archivos digitales en ejemplares' },
+      { id: 0, codigo: 'biblioteca.circulacion.gestionar', descripcion: 'Gestionar prestamos, reservas y circulacion digital' },
+      { id: 0, codigo: 'biblioteca.reportes.ver', descripcion: 'Ver reportes de biblioteca' },
+      { id: 0, codigo: 'biblioteca.adquisiciones.gestionar', descripcion: 'Gestionar adquisiciones de biblioteca' },
+      { id: 0, codigo: 'biblioteca.opac.gestionar', descripcion: 'Gestionar contenidos sociales de OPAC' },
+      { id: 0, codigo: 'biblioteca.opac.ver', descripcion: 'Consultar OPAC y catalogo publico' },
+      { id: 0, codigo: 'biblioteca.opac.reservar', descripcion: 'Solicitar o reservar recursos digitales desde OPAC' }
+    ];
+  }
+
+  private getRolesBaseBiblioteca(): string[] {
+    return ['Administrador', 'Bibliotecario', 'Docente', 'Estudiante', 'Administrativo'];
+  }
+
+  private getPermisosPorRolBase(): Record<string, string[]> {
+    const todos = this.getPermisosBaseBiblioteca().map(permiso => permiso.codigo);
+    return {
+      Administrador: todos,
+      Bibliotecario: [
+        'biblioteca.catalogacion.gestionar',
+        'biblioteca.archivo.subir',
+        'biblioteca.archivo.ver',
+        'biblioteca.circulacion.gestionar',
+        'biblioteca.reportes.ver',
+        'biblioteca.adquisiciones.gestionar',
+        'biblioteca.opac.gestionar',
+        'biblioteca.opac.ver',
+        'biblioteca.opac.reservar'
+      ],
+      Docente: [
+        'biblioteca.archivo.ver',
+        'biblioteca.opac.ver',
+        'biblioteca.opac.reservar'
+      ],
+      Estudiante: [
+        'biblioteca.archivo.ver',
+        'biblioteca.opac.ver',
+        'biblioteca.opac.reservar'
+      ],
+      Administrativo: [
+        'biblioteca.archivo.ver',
+        'biblioteca.opac.ver',
+        'biblioteca.opac.reservar'
+      ]
+    };
+  }
+
+  private async countTableRows(table: string): Promise<number> {
+    try {
+      const data = await this.apiService.executeSqlSyn({
+        table,
+        fields: 'COUNT(*) AS Total',
+        simple: true,
+        Empresa: true
+      });
+      return this.getResponseTotal(data);
+    } catch (error) {
+      console.error(error);
+      return 0;
+    }
+  }
+
+  private async getRolByNombre(nombre: string): Promise<RolBiblioteca | null> {
+    const data = await this.apiService.executeSqlSyn({
+      table: 'Bib_Rol',
+      fields: 'Id_Rol, Nombre',
+      where: `Nombre='${this.escapeSql(nombre)}'`,
+      orderField: 'Id_Rol',
+      orderDirection: ' ASC ',
+      simple: true,
+      Empresa: true
+    });
+    if (data && data['total'] > 0) {
+      return { id: Number(data['data'][0]['Id_Rol']), nombre: data['data'][0]['Nombre'] };
+    }
+    return null;
+  }
+
+  private async getPermisoByCodigo(codigo: string): Promise<PermisoBiblioteca | null> {
+    const data = await this.apiService.executeSqlSyn({
+      table: 'Bib_Permiso',
+      fields: 'Id_Permiso, Codigo, Descripcion',
+      where: `Codigo='${this.escapeSql(codigo)}'`,
+      orderField: 'Id_Permiso',
+      orderDirection: ' ASC ',
+      simple: true,
+      Empresa: true
+    });
+    if (data && data['total'] > 0) {
+      return {
+        id: Number(data['data'][0]['Id_Permiso']),
+        codigo: data['data'][0]['Codigo'],
+        descripcion: data['data'][0]['Descripcion'] || ''
+      };
+    }
+    return null;
+  }
+
+  private async ensureRolPermiso(rolId: number, permisoId: number): Promise<void> {
+    const existe = await this.apiService.executeSqlSyn({
+      table: 'Bib_Rol_Permiso',
+      fields: 'Id_Rol_Permiso',
+      where: `Rol_Id=${rolId} AND Permiso_Id=${permisoId}`,
+      orderField: 'Id_Rol_Permiso',
+      orderDirection: ' ASC ',
+      simple: true,
+      Empresa: true
+    });
+    if (existe && existe['total'] > 0) {
+      return;
+    }
+    await this.createRolPermiso({ id: 0, rolId, permisoId });
+  }
+
+  private async ensureUsuarioAdministradorInicial(): Promise<void> {
+    const asignaciones = await this.countTableRows('Bib_Usuario_Rol');
+    if (asignaciones > 0) {
+      return;
+    }
+    const usuarioId = await this.getUsuarioSistemaId();
+    const rolAdministrador = await this.getRolByNombre('Administrador');
+    if (!usuarioId || !rolAdministrador) {
+      return;
+    }
+    await this.createUsuarioRol({
+      id: 0,
+      usuarioId,
+      rolId: rolAdministrador.id
+    });
+  }
+
+  async ensureSeguridadBaseBiblioteca(): Promise<void> {
+    try {
+      for (const nombre of this.getRolesBaseBiblioteca()) {
+        const existente = await this.getRolByNombre(nombre);
+        if (!existente) {
+          await this.createRol({ id: 0, nombre });
+        }
+      }
+
+      for (const permiso of this.getPermisosBaseBiblioteca()) {
+        const existente = await this.getPermisoByCodigo(permiso.codigo);
+        if (!existente) {
+          await this.createPermiso(permiso);
+        }
+      }
+
+      const matriz = this.getPermisosPorRolBase();
+      for (const [nombreRol, codigos] of Object.entries(matriz)) {
+        const rol = await this.getRolByNombre(nombreRol);
+        if (!rol) continue;
+        for (const codigo of codigos) {
+          const permiso = await this.getPermisoByCodigo(codigo);
+          if (permiso) {
+            await this.ensureRolPermiso(rol.id, permiso.id);
+          }
+        }
+      }
+
+      await this.ensureUsuarioAdministradorInicial();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   async createRol(rol: RolBiblioteca): Promise<any> {
     const sql = {
       table: 'Bib_Rol',
@@ -1169,38 +1677,63 @@ export class BibliotecaDataService {
     }
   }
 
+  private esPermisoBaseBiblioteca(codigo: string): boolean {
+    return this.getPermisosBaseBiblioteca().some(permiso => permiso.codigo === codigo);
+  }
+
+  private getPostRecordRows(response: any): any[] {
+    if (Array.isArray(response?.data)) {
+      return response.data;
+    }
+    if (Array.isArray(response)) {
+      return response;
+    }
+    return [];
+  }
+
   async hasPermiso(codigo: string): Promise<boolean> {
     try {
-      const permisoConfig = {
-        table: 'Bib_Permiso',
-        fields: 'Id_Permiso',
-        where: `Codigo='${this.escapeSql(codigo)}'`,
-        orderField: 'Id_Permiso',
-        orderDirection: ' ASC ',
-        Empresa: true
-      };
-      const permiso = await this.apiService.executeSqlSyn(permisoConfig);
-      if (!permiso || permiso['total'] === 0) {
-        return true;
-      }
-
-      const usuarioId = await this.getUsuarioBibliotecaId();
+      const usuarioId = await this.getUsuarioSistemaId();
       if (!usuarioId) {
         return false;
       }
 
-      const accesoConfig = {
-        table: 'Bib_Usuario_Rol UR INNER JOIN Bib_Rol_Permiso RP ON UR.Rol_Id = RP.Rol_Id ' +
-          'INNER JOIN Bib_Permiso P ON RP.Permiso_Id = P.Id_Permiso',
-        fields: 'COUNT(*) AS Total',
-        where: `UR.Usuario_Biblioteca_Id=${usuarioId} AND P.Codigo='${this.escapeSql(codigo)}'`,
-        Empresa: true
-      };
-      const acceso = await this.apiService.executeSqlSyn(accesoConfig);
-      if (acceso && acceso['total'] > 0) {
-        return Number(acceso['data'][0]['Total'] || 0) > 0;
+      const empresaId = this.getEmpresaId();
+      const codigoEscapado = this.escapeSql(codigo);
+      const data = await this.apiService.postRecord(
+        `SELECT
+          (SELECT COUNT(P.Id_Permiso)
+             FROM Bib_Permiso P
+            WHERE P.Id_Empresa=${empresaId}
+              AND P.Codigo='${codigoEscapado}') AS PermisoExiste,
+          (SELECT COUNT(UR.Id_Usuario_Rol)
+             FROM Bib_Usuario_Rol UR
+             INNER JOIN Bib_Rol R ON UR.Rol_Id = R.Id_Rol
+            WHERE UR.Id_Empresa=${empresaId}
+              AND R.Id_Empresa=${empresaId}
+              AND UR.Id_Usuario=${usuarioId}
+              AND LOWER(TRIM(R.Nombre))='administrador') AS EsAdministrador,
+          (SELECT COUNT(UR2.Id_Usuario_Rol)
+             FROM Bib_Usuario_Rol UR2
+             INNER JOIN Bib_Rol_Permiso RP ON UR2.Rol_Id = RP.Rol_Id
+             INNER JOIN Bib_Permiso P2 ON RP.Permiso_Id = P2.Id_Permiso
+            WHERE UR2.Id_Empresa=${empresaId}
+              AND RP.Id_Empresa=${empresaId}
+              AND P2.Id_Empresa=${empresaId}
+              AND UR2.Id_Usuario=${usuarioId}
+              AND P2.Codigo='${codigoEscapado}') AS TienePermiso`
+      );
+      const row = this.getPostRecordRows(data)[0];
+      if (!row) {
+        return false;
       }
-      return false;
+      if (Number(row.PermisoExiste || row.permisoExiste || 0) === 0) {
+        return true;
+      }
+      if (this.esPermisoBaseBiblioteca(codigo) && Number(row.EsAdministrador || row.esAdministrador || 0) > 0) {
+        return true;
+      }
+      return Number(row.TienePermiso || row.tienePermiso || 0) > 0;
     } catch (error) {
       console.error(error);
       return false;
@@ -1281,8 +1814,8 @@ export class BibliotecaDataService {
   async getUsuariosRoles(): Promise<UsuarioRol[]> {
     try {
       const sqlConfig = {
-        table: 'Bib_Usuario_Rol UR INNER JOIN Bib_Usuario_Biblioteca U ON UR.Usuario_Biblioteca_Id = U.Id_Usuario_Biblioteca INNER JOIN Bib_Rol R ON UR.Rol_Id = R.Id_Rol',
-        fields: 'UR.Id_Usuario_Rol, UR.Usuario_Biblioteca_Id, UR.Rol_Id, U.Nombre AS Usuario, R.Nombre AS Rol',
+        table: 'Bib_Usuario_Rol UR INNER JOIN Seg_Usuario U ON UR.Id_Usuario = U.Id_Usuario INNER JOIN Bib_Rol R ON UR.Rol_Id = R.Id_Rol',
+        fields: 'UR.Id_Usuario_Rol, UR.Id_Usuario, UR.Rol_Id, U.Nombre AS Usuario, R.Nombre AS Rol',
         orderField: 'U.Nombre',
         orderDirection: ' ASC ',
         Empresa: true
@@ -1291,7 +1824,7 @@ export class BibliotecaDataService {
       if (data && data['total'] > 0) {
         return data['data'].map((row: any) => ({
           id: Number(row.Id_Usuario_Rol),
-          usuarioBibliotecaId: Number(row.Usuario_Biblioteca_Id),
+          usuarioId: Number(row.Id_Usuario),
           rolId: Number(row.Rol_Id),
           usuarioNombre: row.Usuario,
           rolNombre: row.Rol
@@ -1304,13 +1837,46 @@ export class BibliotecaDataService {
     }
   }
 
+  private async bibUsuarioRolTieneIdUsuario(): Promise<boolean> {
+    try {
+      const data = await this.apiService.postRecord(
+        'SELECT Id_Usuario FROM Bib_Usuario_Rol WHERE 1=0'
+      );
+      return !!data && data['success'] !== false && data['success'] !== 'false';
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  }
+
   async createUsuarioRol(item: UsuarioRol): Promise<any> {
+    const migrado = await this.bibUsuarioRolTieneIdUsuario();
+    if (!migrado) {
+      throw new Error('Pendiente ejecutar migracion SQL: docs/sql/biblioteca-v1-6-7-migrar-usuario-rol.sql');
+    }
+
+    const data = await this.apiService.postRecord(
+      `INSERT INTO Bib_Usuario_Rol (Id_Usuario,Rol_Id,Id_Empresa,Creado_Por,Creado_El) ` +
+      `VALUES (${item.usuarioId},${item.rolId},${this.getEmpresaId()},'${this.escapeSql(this.getNombreUsuarioActual())}',NOW())`
+    );
+    if (!data || data['success'] !== 'true') {
+      throw new Error(data?.['error'] || 'Error al asignar el rol');
+    }
+    return data;
+  }
+
+  async updateUsuarioRol(item: UsuarioRol): Promise<any> {
+    const migrado = await this.bibUsuarioRolTieneIdUsuario();
+    if (!migrado) {
+      throw new Error('Pendiente ejecutar migracion SQL: docs/sql/biblioteca-v1-6-7-migrar-usuario-rol.sql');
+    }
+
     const sql = {
       table: 'Bib_Usuario_Rol',
-      fields: 'Usuario_Biblioteca_Id,Rol_Id',
-      values: `${item.usuarioBibliotecaId},${item.rolId}`
+      fields: `Id_Usuario=${item.usuarioId},Rol_Id=${item.rolId}`,
+      where: `Id_Usuario_Rol=${item.id} AND Id_Empresa=${this.getEmpresaId()}`
     };
-    return await this.apiService.insertRecord(sql);
+    return await this.apiService.updateRecord(sql);
   }
 
   async deleteUsuarioRol(id: number): Promise<any> {
@@ -1991,7 +2557,8 @@ export class BibliotecaDataService {
         where: `Marc_Campo_Id IN (${ids.join(',')})`,
         orderField: 'Id_Marc_Subcampo',
         orderDirection: ' ASC ',
-        Empresa: true
+        Empresa: true,
+        simple: true
       };
       const data = await this.apiService.executeSqlSyn(sqlConfig);
       if (data && data['total'] > 0) {
@@ -2326,9 +2893,9 @@ export class BibliotecaDataService {
   async getAutoridades(): Promise<Autoridad[]> {
     try {
       const sqlConfig = {
-        table: 'Bib_Autoridad',
-        fields: 'Id_Autoridad, Tipo, Encabezado, Formato',
-        orderField: 'Encabezado',
+        table: 'Bib_Autoridad A LEFT JOIN Bib_Autor AU ON AU.Id_Autor = A.Autor_Id',
+        fields: 'A.Id_Autoridad, A.Tipo, A.Encabezado, A.Formato, A.Autor_Id, AU.Nombre AS Autor_Nombre',
+        orderField: 'A.Encabezado',
         orderDirection: ' ASC ',
         Empresa: true
       };
@@ -2338,7 +2905,72 @@ export class BibliotecaDataService {
           id: Number(row.Id_Autoridad),
           tipo: row.Tipo,
           encabezado: row.Encabezado,
-          formato: row.Formato
+          formato: row.Formato,
+          autorId: row.Autor_Id ? Number(row.Autor_Id) : undefined,
+          autorNombre: row.Autor_Nombre || ''
+        }));
+      }
+      return [];
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
+  async getAutoridadPorAutor(autorId: number): Promise<Autoridad | undefined> {
+    try {
+      const sqlConfig = {
+        table: 'Bib_Autoridad A LEFT JOIN Bib_Autor AU ON AU.Id_Autor = A.Autor_Id',
+        fields: 'A.Id_Autoridad, A.Tipo, A.Encabezado, A.Formato, A.Autor_Id, AU.Nombre AS Autor_Nombre',
+        where: `A.Autor_Id=${autorId}`,
+        orderField: 'A.Id_Autoridad',
+        orderDirection: ' DESC ',
+        Empresa: true,
+        simple: true
+      };
+      const data = await this.apiService.executeSqlSyn(sqlConfig);
+      if (data && data['data'] && data['data'].length > 0) {
+        const row = data['data'][0];
+        return {
+          id: Number(row.Id_Autoridad),
+          tipo: row.Tipo,
+          encabezado: row.Encabezado,
+          formato: row.Formato,
+          autorId: row.Autor_Id ? Number(row.Autor_Id) : undefined,
+          autorNombre: row.Autor_Nombre || ''
+        };
+      }
+      return undefined;
+    } catch (error) {
+      console.error(error);
+      return undefined;
+    }
+  }
+
+  async buscarAutoridadPorEtiqueta(texto: string): Promise<Autoridad[]> {
+    const termino = this.escapeSql(texto.trim());
+    if (!termino) return [];
+    try {
+      const sqlConfig = {
+        table: 'Bib_Autoridad A ' +
+          'INNER JOIN Bib_Autoridad_Campo C ON C.Autoridad_Id = A.Id_Autoridad AND C.Tag IN (\'100\',\'400\',\'500\') ' +
+          'LEFT JOIN Bib_Autor AU ON AU.Id_Autor = A.Autor_Id',
+        fields: 'DISTINCT A.Id_Autoridad, A.Tipo, A.Encabezado, A.Formato, A.Autor_Id, AU.Nombre AS Autor_Nombre',
+        where: `C.Valor LIKE '%${termino}%'`,
+        orderField: 'A.Encabezado',
+        orderDirection: ' ASC ',
+        Empresa: true,
+        simple: true
+      };
+      const data = await this.apiService.executeSqlSyn(sqlConfig);
+      if (data && data['data'] && data['data'].length > 0) {
+        return data['data'].map((row: any) => ({
+          id: Number(row.Id_Autoridad),
+          tipo: row.Tipo,
+          encabezado: row.Encabezado,
+          formato: row.Formato,
+          autorId: row.Autor_Id ? Number(row.Autor_Id) : undefined,
+          autorNombre: row.Autor_Nombre || ''
         }));
       }
       return [];
@@ -2351,8 +2983,8 @@ export class BibliotecaDataService {
   async createAutoridad(item: Autoridad): Promise<any> {
     const sql = {
       table: 'Bib_Autoridad',
-      fields: 'Tipo,Encabezado,Formato',
-      values: `'${this.escapeSql(item.tipo)}','${this.escapeSql(item.encabezado)}','${this.escapeSql(item.formato)}'`
+      fields: 'Tipo,Encabezado,Formato,Autor_Id',
+      values: `'${this.escapeSql(item.tipo)}','${this.escapeSql(item.encabezado)}','${this.escapeSql(item.formato)}',${item.autorId || 'NULL'}`
     };
     return await this.apiService.insertRecord(sql);
   }
@@ -2360,7 +2992,8 @@ export class BibliotecaDataService {
   async updateAutoridad(item: Autoridad): Promise<any> {
     const sql = {
       table: 'Bib_Autoridad',
-      fields: `Tipo='${this.escapeSql(item.tipo)}',Encabezado='${this.escapeSql(item.encabezado)}',Formato='${this.escapeSql(item.formato)}'`,
+      fields: `Tipo='${this.escapeSql(item.tipo)}',Encabezado='${this.escapeSql(item.encabezado)}',` +
+        `Formato='${this.escapeSql(item.formato)}',Autor_Id=${item.autorId || 'NULL'}`,
       where: 'Id_Autoridad=' + item.id
     };
     return await this.apiService.updateRecord(sql);
@@ -2510,7 +3143,40 @@ export class BibliotecaDataService {
       where: `Marc_Registro_Id=${registroId} AND Tag IN (${tagsList})`,
       orderField: 'Id_Marc_Campo',
       orderDirection: ' DESC ',
-      Empresa: true
+      Empresa: true,
+      simple: true
+    };
+    try {
+      const data = await this.apiService.executeSqlSyn(sqlConfig);
+      if (data && data['total'] > 0) {
+        return data['data'].map((row: any) => ({
+          id: Number(row.Id_Marc_Campo),
+          marcRegistroId: Number(row.Marc_Registro_Id),
+          tag: row.Tag,
+          ind1: row.Ind1 || '',
+          ind2: row.Ind2 || '',
+          valor: row.Valor || ''
+        }));
+      }
+      return [];
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
+  async getMarcCamposByRegistro(registroId: number): Promise<MarcCampo[]> {
+    if (!registroId) {
+      return [];
+    }
+    const sqlConfig = {
+      table: 'Bib_Marc_Campo',
+      fields: 'Id_Marc_Campo, Marc_Registro_Id, Tag, Ind1, Ind2, Valor',
+      where: `Marc_Registro_Id=${registroId}`,
+      orderField: this.getTagOrderField('Tag') + ', Id_Marc_Campo',
+      orderDirection: ' ASC ',
+      Empresa: true,
+      simple: true
     };
     try {
       const data = await this.apiService.executeSqlSyn(sqlConfig);
@@ -3095,7 +3761,7 @@ export class BibliotecaDataService {
   async getOpacComentarios(): Promise<OpacComentario[]> {
     try {
       const sqlConfig = {
-        table: 'Bib_Opac_Comentario C INNER JOIN Bib_Usuario_Biblioteca U ON C.Usuario_Id = U.Id_Usuario_Biblioteca',
+        table: 'Bib_Opac_Comentario C INNER JOIN Seg_Usuario U ON C.Usuario_Id = U.Id_Usuario',
         fields: 'C.Id_Opac_Comentario, C.Libro_Id, C.Usuario_Id, U.Nombre AS Usuario, C.Calificacion, C.Comentario, C.Estado, C.Creado_El',
         orderField: 'C.Creado_El',
         orderDirection: ' DESC ',
@@ -3757,41 +4423,44 @@ export class BibliotecaDataService {
     );
   }
 
-  private async getUsuarioBibliotecaId(): Promise<number | null> {
-    try {
-      const idUsuario = localStorage.getItem('Id_Usuario');
-      const sqlConfig = {
-        table: 'Bib_Usuario_Biblioteca',
-        fields: 'Id_Usuario_Biblioteca',
-        where: idUsuario ? 'Id_Usuario = ' + idUsuario : 'Id_Usuario IS NULL',
-        Empresa: true
-      };
-      const data = await this.apiService.executeSqlSyn(sqlConfig);
-      if (data && data['total'] > 0) {
-        return Number(data['data'][0]['Id_Usuario_Biblioteca']);
-      }
-      return null;
-    } catch (error) {
-      console.error(error);
-      return null;
-    }
+  private async getUsuarioSistemaId(): Promise<number | null> {
+    const idUsuario = Number(localStorage.getItem('Id_Usuario') || 0);
+    return idUsuario || null;
   }
 
   async createReserva(libroId: number): Promise<any> {
-    const usuarioId = await this.getUsuarioBibliotecaId();
+    const usuarioId = await this.getUsuarioSistemaId();
     if (!usuarioId) {
-      throw new Error('Usuario biblioteca no encontrado');
+      throw new Error('Usuario no encontrado');
     }
 
+    const validacion = await this.validarSolicitudCirculacion(usuarioId);
+    if (!validacion.ok) {
+      throw new Error(validacion.motivo || 'El usuario no cumple con las politicas de circulacion');
+    }
+
+    const empresaId = this.getEmpresaId();
+    const posicionData = await this.apiService.postRecord(
+      `SELECT COALESCE(MAX(Posicion),0)+1 AS Posicion ` +
+      `FROM Bib_Reserva ` +
+      `WHERE Libro_Id=${libroId} AND Id_Empresa=${empresaId} ` +
+      `AND ${this.getEstadosReservaBloqueantesSql()}`
+    );
+    const posicion = Math.max(1, this.getResponseTotal(posicionData, 'Posicion'));
     const sqlConfig = {
       table: 'Bib_Reserva',
       fields: 'Libro_Id,Usuario_Id,Posicion,Estado',
-      values: `${libroId},${usuarioId},1,'activa'`
+      values: `${libroId},${usuarioId},${posicion},'En espera'`
     };
     return await this.apiService.insertRecord(sqlConfig);
   }
 
   async createPrestamo(ejemplarId: number, usuarioId: number, fechaVencimiento: string, observaciones?: string): Promise<any> {
+    const validacion = await this.validarSolicitudCirculacion(usuarioId);
+    if (!validacion.ok) {
+      throw new Error(validacion.motivo || 'El usuario no cumple con las politicas de circulacion');
+    }
+
     const sql = {
       table: 'Bib_Prestamo',
       fields: 'Ejemplar_Id,Usuario_Id,Fecha_Vencimiento,Estado,Observaciones',
@@ -3806,12 +4475,19 @@ export class BibliotecaDataService {
     return data;
   }
 
-  async renovarPrestamo(prestamoId: number, nuevaFecha: string): Promise<any> {
-    return await this.apiService.updateRecord({
+  async renovarPrestamo(prestamoId: number, nuevaFecha: string, libroId?: number): Promise<{ renovado: boolean; enEspera: number; data?: any }> {
+    const idLibro = libroId || await this.getLibroIdPrestamo(prestamoId);
+    const enEspera = idLibro ? await this.contarReservasBloqueantesLibro(idLibro) : 0;
+    if (enEspera > 0) {
+      return { renovado: false, enEspera };
+    }
+
+    const data = await this.apiService.updateRecord({
       table: 'Bib_Prestamo',
       fields: `Fecha_Vencimiento='${nuevaFecha}',Renovaciones=Renovaciones+1,Estado='activo'`,
       where: 'Id_Prestamo=' + prestamoId
     });
+    return { renovado: true, enEspera: 0, data };
   }
 
   async devolverPrestamo(prestamoId: number, ejemplarId: number): Promise<any> {
@@ -3826,6 +4502,59 @@ export class BibliotecaDataService {
       where: 'Id_Ejemplar=' + ejemplarId
     });
     return data;
+  }
+
+  async notificarSiguienteEnLista(libroId: number): Promise<{ notificado: boolean; reservaId?: number; usuario?: string }> {
+    const empresaId = this.getEmpresaId();
+    const data = await this.apiService.postRecord(
+      `SELECT R.Id_Reserva, R.Posicion, U.Nombre AS Usuario ` +
+      `FROM Bib_Reserva R ` +
+      `INNER JOIN Seg_Usuario U ON U.Id_Usuario=R.Usuario_Id ` +
+      `WHERE R.Libro_Id=${libroId} AND R.Id_Empresa=${empresaId} ` +
+      `AND LOWER(R.Estado) IN ('activa','en espera') ` +
+      `ORDER BY R.Posicion ASC, R.Fecha_Reserva ASC, R.Id_Reserva ASC LIMIT 1`
+    );
+    const row = this.getFirstDataRow(data);
+    if (!row) {
+      return { notificado: false };
+    }
+
+    const reservaId = Number(row.Id_Reserva);
+    const posicion = Number(row.Posicion || 1);
+    await this.apiService.updateRecord({
+      table: 'Bib_Reserva',
+      fields: "Estado='Disponible',Fecha_Asignacion=NOW(),Posicion=1",
+      where: `Id_Reserva=${reservaId} AND Id_Empresa=${empresaId}`
+    });
+    await this.apiService.postRecord(
+      `UPDATE Bib_Reserva ` +
+      `SET Posicion=GREATEST(Posicion-1,1) ` +
+      `WHERE Libro_Id=${libroId} AND Id_Empresa=${empresaId} ` +
+      `AND LOWER(Estado) IN ('activa','en espera') AND Posicion>${posicion}`
+    );
+
+    return {
+      notificado: true,
+      reservaId,
+      usuario: row.Usuario || ''
+    };
+  }
+
+  async devolverPrestamoConNotificacion(
+    prestamoId: number,
+    ejemplarId: number,
+    libroId: number
+  ): Promise<{ data: any; notificado: boolean; reservaId?: number; usuario?: string }> {
+    const data = await this.devolverPrestamo(prestamoId, ejemplarId);
+    const notificacion = await this.notificarSiguienteEnLista(libroId);
+    if (notificacion.notificado) {
+      await this.apiService.updateRecord({
+        table: 'Bib_Ejemplar',
+        fields: "Estado='reservado'",
+        where: `Id_Ejemplar=${ejemplarId} AND Id_Empresa=${this.getEmpresaId()}`
+      });
+    }
+    return { data, ...notificacion };
   }
 
   async cancelReserva(reservaId: number): Promise<any> {
@@ -3845,7 +4574,7 @@ export class BibliotecaDataService {
   }
 
   async getPrestamosUsuario(): Promise<Prestamo[]> {
-    const usuarioId = await this.getUsuarioBibliotecaId();
+    const usuarioId = await this.getUsuarioSistemaId();
     if (!usuarioId) return [];
 
     const sqlConfig = {
@@ -3867,7 +4596,7 @@ export class BibliotecaDataService {
         fechaVencimiento: row.Fecha_Vencimiento,
         fechaDevolucion: row.Fecha_Devolucion,
         renovaciones: Number(row.Renovaciones),
-        estado: row.Estado,
+        estado: this.estadoPrestamoEfectivo(row.Estado, row.Fecha_Vencimiento, row.Fecha_Devolucion),
         observaciones: row.Observaciones || ''
       }));
     }
@@ -3905,7 +4634,7 @@ export class BibliotecaDataService {
   }
 
   async getReservasUsuario(): Promise<Reserva[]> {
-    const usuarioId = await this.getUsuarioBibliotecaId();
+    const usuarioId = await this.getUsuarioSistemaId();
     if (!usuarioId) return [];
 
     const sqlConfig = {

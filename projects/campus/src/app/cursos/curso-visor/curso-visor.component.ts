@@ -17,11 +17,38 @@ export class CursoVisorComponent implements OnInit {
   cursoDisponible = true;
   semanas: any[] = [];
   semanaSeleccionada: any = null;
+  semanasCompletadas = new Set<number>();
 
 
   ngOnInit(): void {
     this.leerCurso();
-    this.leerSemanas();
+    this.cargarSemanasYProgreso();
+  }
+
+  async cargarSemanasYProgreso() {
+    await this.leerSemanas();
+    await this.leerProgreso();
+  }
+
+  async leerProgreso() {
+    const data = await this.cursoVisorService.leerProgreso();
+    const filas = data?.['data'] || [];
+    this.semanasCompletadas = new Set(filas.map((f: any) => Number(f.Id_Semana)));
+  }
+
+  estaCompletada(semana: any): boolean {
+    return this.semanasCompletadas.has(Number(semana.Id_Semana));
+  }
+
+  esSemanaActual(semana: any): boolean {
+    const actual = this.semanas.find(s => !this.estaCompletada(s));
+    const idActual = actual ? actual.Id_Semana : this.semanas[this.semanas.length - 1]?.Id_Semana;
+    return idActual === semana.Id_Semana;
+  }
+
+  avanceCurso(): number {
+    if (!this.semanas.length) return 0;
+    return Math.round((this.semanasCompletadas.size / this.semanas.length) * 100);
   }
 
   seleccionarSemana(semana: any) {
@@ -58,7 +85,9 @@ export class CursoVisorComponent implements OnInit {
       Creditos:'',
       Curso:'',
       Descripcion:'',
+      Grupo:'',
       Horas:'',
+      Modalidad:'',
       Nombre:'',
       Bienvenida:'',
       Imagen:''

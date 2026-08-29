@@ -5,6 +5,10 @@
     <!-- Columna izquierda: título + bienvenida -->
     <div class="curso-hero-main">
       <h1 class="curso-titulo">{{ curso.Curso }}</h1>
+      <div class="curso-identidad">
+        <span *ngIf="curso.Codigo">Codigo: {{ curso.Codigo }}</span>
+        <span *ngIf="curso.Grupo">Grupo: {{ curso.Grupo }}</span>
+      </div>
 
       <!-- si tienes un subtítulo fijo podrías ponerlo aquí -->
       <!-- <p class="curso-subtitulo">Curso avanzado de Doctorado</p> -->
@@ -39,8 +43,15 @@
         </div>
         <div class="meta-item">
           <span class="meta-label">Modalidad</span>
-          <span class="meta-badge">Virtual</span>
+          <span class="meta-badge">{{ curso.Modalidad || 'Virtual' }}</span>
         </div>
+      </div>
+
+      <div class="curso-avance" *ngIf="semanas.length">
+        <div class="barra-externa">
+          <div class="barra-interna" [style.width.%]="avanceCurso()"></div>
+        </div>
+        <small>{{ avanceCurso() }}% del curso completado</small>
       </div>
 
       <div class="docs-panel">
@@ -77,10 +88,13 @@
             *ngFor="let semana of semanas"
             (click)="seleccionarSemana(semana)"
             [class.activa]="semanaSeleccionada?.Id_Semana === semana.Id_Semana"
+            [class.completada]="estaCompletada(semana)"
           >
             <div class="semana-chip">
+              <span class="semana-check" *ngIf="estaCompletada(semana)">✓</span>
               <span class="semana-numero">Semana {{ semana.Numero_Semana }}</span>
               <span class="semana-titulo">{{ semana.Titulo }}</span>
+              <span class="semana-badge-actual" *ngIf="esSemanaActual(semana) && !estaCompletada(semana)">Actual</span>
             </div>
           </li>
         </ul>

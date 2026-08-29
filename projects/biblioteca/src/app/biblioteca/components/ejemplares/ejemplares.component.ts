@@ -22,6 +22,8 @@ export class EjemplaresComponent implements OnInit {
   edit = false;
   searchField = '';
   archivoSeleccionado: File | null = null;
+  imagenSeleccionada: File | null = null;
+  imagenPreviewUrl: string | null = null;
   canViewArchivo = false;
   canUploadArchivo = false;
   PantallaLibros = false;
@@ -32,16 +34,73 @@ export class EjemplaresComponent implements OnInit {
   libroLoading = false;
   libroSeleccionadoTexto = '';
 
+  page = 1;
+  pageSize = 50;
+  total = 0;
+  totalPdf = 0;
+  loading = false;
+
   constructor(private dataService: BibliotecaDataService) {}
+
+  get archivoSeleccionadoNombre(): string {
+    return this.archivoSeleccionado?.name || '';
+  }
 
   async ngOnInit() {
     this.canViewArchivo = await this.dataService.hasPermiso('biblioteca.archivo.ver');
     this.canUploadArchivo = await this.dataService.hasPermiso('biblioteca.archivo.subir');
     await this.cargar();
+    this.totalPdf = await this.dataService.countEjemplaresPdf();
   }
 
-  async cargar() {
-    this.ejemplares = await this.dataService.getEjemplares();
+  async cargar(resetPage = false) {
+    if (resetPage) {
+      this.page = 1;
+    }
+    this.loading = true;
+    try {
+      const resultado = await this.dataService.getEjemplaresPage(this.page, this.pageSize, this.searchField);
+      this.ejemplares = resultado.ejemplares;
+      this.total = resultado.total;
+      const totalPages = this.totalPages;
+      if (totalPages > 0 && this.page > totalPages) {
+        this.page = totalPages;
+        await this.cargar();
+      }
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  get totalPages() {
+    return this.total > 0 ? Math.ceil(this.total / this.pageSize) : 0;
+  }
+
+  get pageNumbers() {
+    const total = this.totalPages;
+    if (total <= 0) {
+      return [];
+    }
+    const start = Math.max(1, this.page - 2);
+    const end = Math.min(total, start + 4);
+    return Array.from({ length: end - start + 1 }, (_, index) => start + index);
+  }
+
+  get rangeStart() {
+    return this.total === 0 ? 0 : ((this.page - 1) * this.pageSize) + 1;
+  }
+
+  get rangeEnd() {
+    return Math.min(this.page * this.pageSize, this.total);
+  }
+
+  async cambiarPagina(page: number) {
+    const totalPages = this.totalPages;
+    if (page < 1 || (totalPages > 0 && page > totalPages) || page === this.page) {
+      return;
+    }
+    this.page = page;
+    await this.cargar();
   }
 
   keytab(event: KeyboardEvent) {
@@ -50,8 +109,17 @@ export class EjemplaresComponent implements OnInit {
     }
   }
 
-  search() {
+  async search() {
     this.searchField = this.searchField.trim();
+    await this.cargar(true);
+  }
+
+  private limpiarSeleccionImagen() {
+    if (this.imagenPreviewUrl) {
+      URL.revokeObjectURL(this.imagenPreviewUrl);
+    }
+    this.imagenSeleccionada = null;
+    this.imagenPreviewUrl = null;
   }
 
   resetForm() {
@@ -64,6 +132,7 @@ export class EjemplaresComponent implements OnInit {
     this.esEdicion = false;
     this.archivoSeleccionado = null;
     this.libroSeleccionadoTexto = '';
+    this.limpiarSeleccionImagen();
   }
 
   nuevo() {
@@ -77,6 +146,7 @@ export class EjemplaresComponent implements OnInit {
     this.edit = true;
     this.archivoSeleccionado = null;
     this.libroSeleccionadoTexto = this.getLibroTexto(item);
+    this.limpiarSeleccionImagen();
   }
 
   async guardar() {
@@ -104,6 +174,20 @@ export class EjemplaresComponent implements OnInit {
         }
       }
 
+      if (this.imagenSeleccionada) {
+        const formDataImagen = new FormData();
+        formDataImagen.append('archivo', this.imagenSeleccionada);
+        formDataImagen.append('Id_Empresa', localStorage.getItem('Id_Empresa') || '');
+        formDataImagen.append('Modulo', 'biblioteca');
+        const respImagen = await this.dataService.subirArchivoPublico(formDataImagen);
+        if (respImagen && respImagen.success === true && respImagen.url) {
+          this.ejemplar.imagenPortada = encodeURI(respImagen.url);
+        } else {
+          Swal.fire(respImagen?.message || 'Error al subir la imagen de portada');
+          return;
+        }
+      }
+
       if (this.esEdicion) {
         await this.dataService.updateEjemplar(this.ejemplar);
         Swal.fire('Ejemplar actualizado');
@@ -114,6 +198,7 @@ export class EjemplaresComponent implements OnInit {
       this.resetForm();
       this.edit = false;
       await this.cargar();
+      this.totalPdf = await this.dataService.countEjemplaresPdf();
     } catch (error) {
       console.error(error);
       Swal.fire('Error al guardar el ejemplar');
@@ -138,6 +223,7 @@ export class EjemplaresComponent implements OnInit {
     try {
       await this.dataService.deleteEjemplar(item.id);
       await this.cargar();
+      this.totalPdf = await this.dataService.countEjemplaresPdf();
       if (this.esEdicion && this.ejemplar.id === item.id) {
         this.cancelar();
       }
@@ -148,19 +234,47 @@ export class EjemplaresComponent implements OnInit {
     }
   }
 
+  onImagenPortadaSeleccionada(event: Event) {
+    const input = event.target as HTMLInputElement | null;
+    const file = input?.files?.[0];
+    if (!file || !input) return;
+    if (!file.type.startsWith('image/')) {
+      if (this.esArchivoDigitalPermitido(file)) {
+        this.setArchivoDigital(file);
+        Swal.fire('Archivo digital seleccionado', 'El archivo se subira como recurso digital. La portada debe ser una imagen.', 'info');
+      } else {
+        Swal.fire('Archivo no permitido', 'La portada debe ser imagen. Para el recurso digital use PDF o Word.', 'warning');
+      }
+      input.value = '';
+      return;
+    }
+    this.limpiarSeleccionImagen();
+    this.imagenSeleccionada = file;
+    this.imagenPreviewUrl = URL.createObjectURL(file);
+  }
+
+  private esArchivoDigitalPermitido(file: File): boolean {
+    const extension = file.name.split('.').pop()?.toLowerCase();
+    return ['pdf', 'doc', 'docx'].includes(extension || '');
+  }
+
+  private setArchivoDigital(file: File) {
+    this.archivoSeleccionado = file;
+    this.ejemplar.tipoSoporte = 'digital';
+  }
+
   handleArchivoInput(event: Event) {
     const input = event.target as HTMLInputElement | null;
     const file = input?.files?.[0];
     if (!file || !input) {
       return;
     }
-    const extension = file.name.split('.').pop()?.toLowerCase();
-    if (extension !== 'pdf') {
-      Swal.fire('Solo se permiten archivos PDF');
+    if (!this.esArchivoDigitalPermitido(file)) {
+      Swal.fire('Archivo no permitido', 'Solo se permiten archivos PDF o Word (.doc, .docx).', 'warning');
       input.value = '';
       return;
     }
-    this.archivoSeleccionado = file;
+    this.setArchivoDigital(file);
   }
 
   abrirArchivo(event: Event, url?: string) {

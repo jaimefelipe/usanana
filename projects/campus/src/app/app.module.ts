@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
 import { SecurityModule } from '../../../seguridad/src/app/security/security.module';
 import { CursosModule } from './cursos/cursos.module';
+import { BibliotecaModule } from './biblioteca/biblioteca.module';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { CursosModule } from './cursos/cursos.module';
     AppRoutingModule,
     CoreModule,
     SecurityModule,
-    CursosModule
+    CursosModule,
+    BibliotecaModule
   ],
   providers: [],
   bootstrap: [AppComponent]

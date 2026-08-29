@@ -1,8 +1,8 @@
 <div [hidden]="edit" class="container-fluid pb-5">
   <div class="page-toolbar">
     <div>
-      <h2 class="page-title">Prestamos</h2>
-      <div class="page-subtitle">Control de prestamos, devoluciones y renovaciones.</div>
+      <h2 class="page-title">Circulacion digital</h2>
+      <div class="page-subtitle">Monitoreo de prestamos, reservas, renovaciones, vencidos e historial.</div>
     </div>
     <div class="input-group page-search">
       <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
@@ -13,19 +13,102 @@
     </div>
   </div>
 
+  <div class="alert alert-warning" *ngIf="cantidadVencidos > 0">
+    {{ cantidadVencidos }} prestamo(s) tienen acceso vencido. El sistema corta la renovacion automaticamente y no genera multas automaticas.
+  </div>
+
+  <ul class="nav nav-tabs circulation-tabs mb-3">
+    <li class="nav-item">
+      <button class="nav-link" type="button" [class.active]="tabActivo === 'activos'" (click)="cambiarTab('activos')">
+        Activos <span class="badge bg-secondary">{{ cantidadActivos }}</span>
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" type="button" [class.active]="tabActivo === 'pendientes'" (click)="cambiarTab('pendientes')">
+        Pendientes <span class="badge bg-warning text-dark">{{ cantidadPendientes }}</span>
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" type="button" [class.active]="tabActivo === 'reservados'" (click)="cambiarTab('reservados')">
+        Reservados <span class="badge bg-info text-dark">{{ cantidadReservados }}</span>
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" type="button" [class.active]="tabActivo === 'renovaciones'" (click)="cambiarTab('renovaciones')">
+        Renovaciones <span class="badge bg-primary">{{ cantidadRenovaciones }}</span>
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" type="button" [class.active]="tabActivo === 'vencidos'" (click)="cambiarTab('vencidos')">
+        Vencidos <span class="badge bg-danger">{{ cantidadVencidos }}</span>
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" type="button" [class.active]="tabActivo === 'historial'" (click)="cambiarTab('historial')">
+        Historial <span class="badge bg-dark">{{ cantidadHistorial }}</span>
+      </button>
+    </li>
+  </ul>
+
+  <div class="row g-3 user-type-summary">
+    <div class="col-12 col-md-4" *ngFor="let item of usuariosActivosPorTipo">
+      <div class="user-type-card">
+        <span>{{ item.tipo }}</span>
+        <strong>{{ item.cantidad }}</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="circulation-heading">
+    <h3>{{ tituloTabActivo }}</h3>
+    <p *ngIf="tabActivo === 'pendientes'">Vista de monitoreo automatico. Las solicitudes digitales avanzan por las reglas del sistema.</p>
+    <p *ngIf="tabActivo === 'reservados'">Reservas activas y posicion actual en la lista de espera.</p>
+  </div>
+
   <div class="row g-4 page-grid">
-    <div class="form-group col-12 col-sm-6" *ngFor="let prestamo of prestamos | bibliotecaSearch: searchField">
+    <div class="form-group col-12 col-sm-6" *ngFor="let prestamo of prestamosVisibles | bibliotecaSearch: searchField">
       <div class="card h-100">
         <div class="card-body">
           <h4 class="card-title">{{ prestamo.titulo }}</h4>
-          Usuario: {{ prestamo.usuario }} · Vence: {{ prestamo.fechaVencimiento }}<br />
+          Usuario: {{ prestamo.usuario }} - Vence: {{ prestamo.fechaVencimiento }}<br />
           Estado: {{ prestamo.estado | titlecase }}
-          <div class="mt-2">
+          <div *ngIf="tabActivo === 'renovaciones'" class="small text-muted mt-2">
+            Renovaciones realizadas: {{ prestamo.renovaciones || 0 }}
+          </div>
+          <div class="small text-muted mt-2" *ngIf="tabActivo === 'historial' && prestamo.fechaDevolucion">
+            Devuelto: {{ prestamo.fechaDevolucion }}
+          </div>
+          <div class="mt-2" *ngIf="tabActivo === 'activos'">
             <button class="btn btn-link btn-sm" (click)="renovar(prestamo)" [disabled]="prestamo.estado !== 'activo'">Renovar</button>
             <button class="btn btn-link btn-sm text-danger" (click)="devolver(prestamo)" [disabled]="prestamo.estado === 'devuelto'">Devolver</button>
           </div>
         </div>
       </div>
+    </div>
+    <ng-container *ngIf="tabActivo === 'reservados'">
+      <div class="form-group col-12 col-sm-6" *ngFor="let reserva of reservasVisibles | bibliotecaSearch: searchField">
+        <div class="card h-100">
+          <div class="card-body">
+            <h4 class="card-title">{{ reserva.titulo }}</h4>
+            Usuario: {{ reserva.usuario }} - Posicion: {{ reserva.posicion }}<br />
+            Estado: {{ reserva.estado | titlecase }}
+            <span class="badge bg-success ms-2" *ngIf="normalizarEstado(reserva.estado) === 'disponible'">Disponible</span>
+            <span class="badge bg-info text-dark ms-2" *ngIf="normalizarEstado(reserva.estado) !== 'disponible'">En espera #{{ reserva.posicion }}</span>
+            <div class="small text-muted mt-2" *ngIf="reserva.fechaReserva">
+              Reserva: {{ reserva.fechaReserva }}
+            </div>
+            <div class="small text-muted mt-2" *ngIf="reserva.fechaAsignacion">
+              Disponible desde: {{ reserva.fechaAsignacion }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <div class="col-12" *ngIf="tabActivo !== 'reservados' && prestamosVisibles.length === 0">
+      <div class="empty-state">No hay registros para esta vista.</div>
+    </div>
+    <div class="col-12" *ngIf="tabActivo === 'reservados' && reservasVisibles.length === 0">
+      <div class="empty-state">No hay reservas activas.</div>
     </div>
   </div>
 </div>

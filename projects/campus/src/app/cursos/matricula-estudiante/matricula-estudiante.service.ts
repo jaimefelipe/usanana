@@ -40,13 +40,18 @@ constructor(
         pa.Periodo,
         pa.Bloque AS Periodo_Bloque,
         pa.Anio,
-        GROUP_CONCAT(DISTINCT ca.Carrera ORDER BY ca.Carrera SEPARATOR ', ') AS Carrera
+        GROUP_CONCAT(DISTINCT ca.Carrera ORDER BY ca.Carrera SEPARATOR ', ') AS Carrera,
+        GROUP_CONCAT(DISTINCT ca.Id_Carrera ORDER BY ca.Carrera SEPARATOR ',') AS Id_Carrera_Lista,
+        GROUP_CONCAT(DISTINCT fa.Facultad ORDER BY fa.Facultad SEPARATOR ', ') AS Facultad,
+        GROUP_CONCAT(DISTINCT fa.Id_Facultad ORDER BY fa.Facultad SEPARATOR ',') AS Id_Facultad_Lista
       FROM Gen_Persona alumno
       INNER JOIN Edu_Carrera_Estudiante ce
         ON ce.Id_Persona = alumno.Id_Persona
         AND ce.Estado = 1
       INNER JOIN Edu_Carrera ca
         ON ca.Id_Carrera = ce.Id_Carrera
+      LEFT JOIN Edu_Facultad fa
+        ON fa.Id_Facultad = ca.Id_Facultad
       INNER JOIN Edu_Curso_Carrera cc
         ON cc.Id_Carrera = ce.Id_Carrera
       INNER JOIN Edu_Curso c
