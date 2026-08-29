@@ -1,4 +1,4 @@
-﻿export interface Release {
+export interface Release {
   version: string;
   fecha: string;
   titulo: string;
@@ -6,70 +6,70 @@
   cambios: string[];
 }
 
-// Historial de versiones â€” se actualiza despuÃ©s de implementar cada release.
-// La ÃšLTIMA entrada de este array es la versiÃ³n actualmente en producciÃ³n.
+// Historial de versiones — se actualiza después de implementar cada release.
+// La ÚLTIMA entrada de este array es la versión actualmente en producción.
 export const RELEASES: Release[] = [
   {
     version: '0.0',
     fecha: '2026-07-04',
-    titulo: 'VersiÃ³n inicial',
+    titulo: 'Versión inicial',
     modulo: 'General',
     cambios: [
-      'Estructura inicial del mÃ³dulo biblioteca',
+      'Estructura inicial del módulo biblioteca',
       'Componentes base creados con datos de prueba'
     ]
   },
   {
     version: '0.2',
     fecha: '2026-07-08',
-    titulo: 'AuditorÃ­a de reconciliaciÃ³n + datos reales',
+    titulo: 'Auditoría de reconciliación + datos reales',
     modulo: 'Infraestructura',
     cambios: [
-      'Confirmado uso de datos reales vÃ­a ApiService compartido (eps_execSql_v21.php)',
-      'Auditados los 24 releases planificados contra el cÃ³digo real',
-      'PLAN_RELEASES.md corregido para reflejar el estado verdadero del mÃ³dulo'
+      'Confirmado uso de datos reales vía ApiService compartido (eps_execSql_v21.php)',
+      'Auditados los 24 releases planificados contra el código real',
+      'PLAN_RELEASES.md corregido para reflejar el estado verdadero del módulo'
     ]
   },
   {
     version: '1.0',
     fecha: '2026-07-08',
-    titulo: 'MenÃº CatalogaciÃ³n + CategorÃ­a opcional',
-    modulo: 'CatalogaciÃ³n',
+    titulo: 'Menú Catalogación + Categoría opcional',
+    modulo: 'Catalogación',
     cambios: [
-      'MenÃº lateral renombrado de "OperaciÃ³n" a "CatalogaciÃ³n"',
-      'SecciÃ³n de datos de referencia renombrada a "ConfiguraciÃ³n" (confirmado contra PDF de requerimientos)',
-      'Confirmado que CategorÃ­a es opcional al catalogar un libro; placeholder actualizado a "Sin categorÃ­a"'
+      'Menú lateral renombrado de "Operación" a "Catalogación"',
+      'Sección de datos de referencia renombrada a "Configuración" (confirmado contra PDF de requerimientos)',
+      'Confirmado que Categoría es opcional al catalogar un libro; placeholder actualizado a "Sin categoría"'
     ]
   },
   {
     version: '1.1',
     fecha: '2026-07-09',
-    titulo: 'Autoguardado de borrador + navegaciÃ³n persistente + paginaciÃ³n arriba',
-    modulo: 'CatalogaciÃ³n',
+    titulo: 'Autoguardado de borrador + navegación persistente + paginación arriba',
+    modulo: 'Catalogación',
     cambios: [
-      'Autoguardado de borrador en sessionStorage al catalogar un libro (catÃ¡logo simple y catalogaciÃ³n MARC), con opciÃ³n de recuperar cambios sin guardar',
-      'La secciÃ³n activa del menÃº lateral permanece expandida al navegar a otra pantalla y volver',
-      'Nuevo componente reutilizable app-paginador; el listado de catalogaciÃ³n MARC ahora muestra el control de paginaciÃ³n arriba y abajo de los resultados'
+      'Autoguardado de borrador en sessionStorage al catalogar un libro (catálogo simple y catalogación MARC), con opción de recuperar cambios sin guardar',
+      'La sección activa del menú lateral permanece expandida al navegar a otra pantalla y volver',
+      'Nuevo componente reutilizable app-paginador; el listado de catalogación MARC ahora muestra el control de paginación arriba y abajo de los resultados'
     ]
   },
   {
     version: '1.2',
     fecha: '2026-07-10',
-    titulo: 'Ejemplares: imagen de portada + usuarios simultÃ¡neos',
-    modulo: 'CatalogaciÃ³n',
+    titulo: 'Ejemplares: imagen de portada + usuarios simultáneos',
+    modulo: 'Catalogación',
     cambios: [
-      'Formulario de Ejemplar: campo de imagen de portada (subida como base64) y mÃ¡ximo de usuarios simultÃ¡neos para recursos digitales',
-      'Listado de Ejemplares: contador de cuÃ¡ntos son de tipo PDF y enlace visible al nÃºmero de recurso (libro) de cada ejemplar',
-      'Pendiente: ejecutar script SQL que agrega las columnas Imagen_Portada y Max_Simultaneos en Bib_Ejemplar antes de que el guardado funcione en producciÃ³n'
+      'Formulario de Ejemplar: campo de imagen de portada (subida como base64) y máximo de usuarios simultáneos para recursos digitales',
+      'Listado de Ejemplares: contador de cuántos son de tipo PDF y enlace visible al número de recurso (libro) de cada ejemplar',
+      'Pendiente: ejecutar script SQL que agrega las columnas Imagen_Portada y Max_Simultaneos en Bib_Ejemplar antes de que el guardado funcione en producción'
     ]
   },
   {
     version: '1.3',
     fecha: '2026-07-14',
-    titulo: 'MÃºltiples autores por registro + rol por autor',
-    modulo: 'CatalogaciÃ³n',
+    titulo: 'Múltiples autores por registro + rol por autor',
+    modulo: 'Catalogación',
     cambios: [
-      'Buscador de autores con autocompletar (reemplaza el select mÃºltiple) al catalogar un libro',
+      'Buscador de autores con autocompletar (reemplaza el select múltiple) al catalogar un libro',
       'Cada autor agregado tiene un rol propio: Autor, Coautor, Editor, Traductor o Ilustrador',
       'Al editar un libro existente, se recuperan los autores y roles ya guardados'
     ]
@@ -77,35 +77,35 @@ export const RELEASES: Release[] = [
   {
     version: '1.3.1',
     fecha: '2026-07-15',
-    titulo: 'Ejemplares: portada por URL + paginaciÃ³n real (fix + migraciÃ³n de datos)',
-    modulo: 'CatalogaciÃ³n',
+    titulo: 'Ejemplares: portada por URL + paginación real (fix + migración de datos)',
+    modulo: 'Catalogación',
     cambios: [
       'La imagen de portada del ejemplar ahora se sube al servidor y se guarda su URL, en vez de un base64 completo en la base de datos',
       'El listado de Ejemplares ahora pagina de verdad; antes se cortaba en 50 sin poder ver el resto',
-      'El contador de ejemplares en PDF ahora refleja el total real, no solo la pÃ¡gina cargada',
-      'Se migraron las 50 portadas que ya estaban guardadas en base64 (creadas antes de este fix): se subieron como archivos reales al servidor y se actualizÃ³ cada registro con su URL. NingÃºn usuario perdiÃ³ su imagen ni necesita volver a subirla'
+      'El contador de ejemplares en PDF ahora refleja el total real, no solo la página cargada',
+      'Se migraron las 50 portadas que ya estaban guardadas en base64 (creadas antes de este fix): se subieron como archivos reales al servidor y se actualizó cada registro con su URL. Ningún usuario perdió su imagen ni necesita volver a subirla'
     ]
   },
   {
     version: '1.4',
     fecha: '2026-07-16',
-    titulo: 'Autoridades: bÃºsqueda por etiqueta + un registro por autor',
-    modulo: 'CatalogaciÃ³n',
+    titulo: 'Autoridades: búsqueda por etiqueta + un registro por autor',
+    modulo: 'Catalogación',
     cambios: [
-      'Cada autoridad puede vincularse a un autor del catÃ¡logo, para reutilizar el mismo registro en todos sus libros',
+      'Cada autoridad puede vincularse a un autor del catálogo, para reutilizar el mismo registro en todos sus libros',
       'Buscador de autores con autocompletar para vincular una autoridad; avisa si ese autor ya tiene una para no duplicar',
-      'Nueva bÃºsqueda de autoridades por etiqueta MARC: autor personal (100), nombre alternativo (400) y vÃ©ase ademÃ¡s (500)'
+      'Nueva búsqueda de autoridades por etiqueta MARC: autor personal (100), nombre alternativo (400) y véase además (500)'
     ]
   },
   {
     version: '1.5',
     fecha: '2026-07-18',
-    titulo: 'IntegraciÃ³n MARC â†’ CatalogaciÃ³n',
-    modulo: 'CatalogaciÃ³n',
+    titulo: 'Integración MARC -> Catalogación',
+    modulo: 'Catalogación',
     cambios: [
-      'Al catalogar en MARC, el ISBN, el aÃ±o de publicaciÃ³n y el resumen del libro ahora se completan automÃ¡ticamente desde las etiquetas 020, 264 y 520',
-      'Estos campos ya se ven en el formulario de catalogaciÃ³n MARC, junto al tÃ­tulo (que ya se sincronizaba)',
-      'El autor y la editorial no se sincronizan en automÃ¡tico: requieren vincularse desde el catÃ¡logo, no como texto libre'
+      'Al catalogar en MARC, el ISBN, el año de publicación y el resumen del libro ahora se completan automáticamente desde las etiquetas 020, 264 y 520',
+      'Estos campos ya se ven en el formulario de catalogación MARC, junto al título (que ya se sincronizaba)',
+      'El autor y la editorial no se sincronizan en automático: requieren vincularse desde el catálogo, no como texto libre'
     ]
   },
   {

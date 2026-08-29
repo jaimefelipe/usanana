@@ -156,7 +156,7 @@ export class PrimerIngresoComponent implements OnInit {
     let data = await this.carreraService.asignarCarreraEstudiante(this.Persona.Carrera,this.Persona.Id_Persona);
     if (localStorage.getItem('isLoggedin') == 'true' && localStorage.getItem('Id_Usuario')) {
       this.Registrado = true;
-      Swal.fire('Expediente actualizado', 'Ahora puede continuar con la solicitud de matrícula.');
+      Swal.fire('Expediente actualizado', 'Ahora puede continuar con la solicitud de matrÃ­cula.');
       return;
     }
     this.crearUsuario();
