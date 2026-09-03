@@ -53,7 +53,7 @@ export const RELEASES: Release[] = [
   },
   {
     version: '1.0.4',
-    fecha: '2026-08-31',
+    fecha: '2026-08-29',
     titulo: 'Licencia del recurso visible en la ficha',
     modulo: 'Biblioteca',
     cambios: [
@@ -63,7 +63,7 @@ export const RELEASES: Release[] = [
   },
   {
     version: '1.0.5',
-    fecha: '2026-09-01',
+    fecha: '2026-09-03',
     titulo: 'Catalogo con portada y licencia',
     modulo: 'Biblioteca',
     cambios: [

@@ -375,7 +375,7 @@ export const RELEASES: Release[] = [
   },
   {
     version: '2.1',
-    fecha: '2026-08-31',
+    fecha: '2026-08-29',
     titulo: 'Licencia visible via etiqueta MARC 533',
     modulo: 'Circulacion',
     cambios: [
@@ -387,7 +387,7 @@ export const RELEASES: Release[] = [
   },
   {
     version: '2.2',
-    fecha: '2026-09-01',
+    fecha: '2026-09-03',
     titulo: 'OPAC: tarjetas de resultados enriquecidas',
     modulo: 'OPAC',
     cambios: [
