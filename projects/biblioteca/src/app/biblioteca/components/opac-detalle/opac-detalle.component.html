@@ -1,32 +1,93 @@
-<div class="opac-detalle" *ngIf="libro; else noData">
+<div class="opac-loading" *ngIf="cargando">Cargando...</div>
+
+<div class="opac-detalle" *ngIf="!cargando && libro; else noData">
   <div class="detalle-header">
-    <div>
+    <div class="detalle-portada">
+      <img *ngIf="libro.imagenPortada" [src]="libro.imagenPortada" [alt]="libro.titulo" />
+      <i *ngIf="!libro.imagenPortada" class="fa fa-book" aria-hidden="true"></i>
+    </div>
+    <div class="detalle-info">
+      <div class="detalle-badges">
+        <span class="badge" [ngClass]="disponibles > 0 ? 'bg-success' : 'bg-secondary'">
+          {{ disponibles > 0 ? disponibles + ' disponible(s)' : 'No disponible' }}
+        </span>
+        <span class="badge bg-light text-dark border" *ngIf="libro.tipoMaterial">{{ libro.tipoMaterial }}</span>
+        <span class="badge bg-info" *ngIf="libro.licencia && esAccesoAbierto(libro.licencia)">Licencia abierta</span>
+        <span class="badge bg-light text-dark border" *ngIf="libro.licencia && !esAccesoAbierto(libro.licencia)">{{ libro.licencia }}</span>
+      </div>
       <h2>{{ libro.titulo }}</h2>
       <p class="text-muted" *ngIf="libro.subtitulo">{{ libro.subtitulo }}</p>
-      <p class="text-muted">{{ libro.autores || libro.autor }} | ISBN {{ libro.isbn }}</p>
+      <p class="text-muted">{{ libro.autores || libro.autor }} <span *ngIf="libro.isbn">| ISBN {{ libro.isbn }}</span></p>
     </div>
-    <button class="btn btn-primary" (click)="reservar()">Reservar</button>
   </div>
 
-  <p><strong>Tipo material:</strong> {{ libro.tipoMaterial || 'No definido' }}</p>
-  <p><strong>Categoria:</strong> {{ libro.categoria }}</p>
-  <p><strong>Editorial:</strong> {{ libro.editorial || 'No definido' }}</p>
-  <p><strong>Idioma:</strong> {{ libro.idioma || 'No definido' }}</p>
-  <p><strong>Ano publicacion:</strong> {{ libro.anioPublicacion || 'No definido' }}</p>
-  <p><strong>Edicion:</strong> {{ libro.edicion || 'No definido' }}</p>
-  <p><strong>ISSN:</strong> {{ libro.issn || 'No definido' }}</p>
-  <p><strong>DOI:</strong> {{ libro.doi || 'No definido' }}</p>
-  <p><strong>URL publica:</strong>
-    <span *ngIf="libro.urlPublica; else sinUrl">
-      <a [href]="libro.urlPublica" target="_blank" rel="noopener">{{ libro.urlPublica }}</a>
-    </span>
-  </p>
-  <p><strong>Descripcion:</strong> {{ libro.descripcion || 'Sin descripcion' }}</p>
-  <p><strong>Palabras clave:</strong> {{ libro.palabrasClave || 'Sin palabras clave' }}</p>
+  <div class="detalle-acciones">
+    <a *ngIf="digitales.length > 0 && libro.licencia && esAccesoAbierto(libro.licencia)"
+       [href]="digitales[0].urlArchivo" target="_blank" rel="noopener" class="btn btn-outline-primary">
+      <i class="fa fa-download" aria-hidden="true"></i> Descargar
+    </a>
+    <button type="button" class="btn btn-success" *ngIf="disponibles > 0" [disabled]="procesando" (click)="solicitarPrestamo()">
+      <i class="fa fa-book" aria-hidden="true"></i> {{ procesando ? 'Procesando...' : 'Solicitar prestamo' }}
+    </button>
+    <button type="button" class="btn btn-warning" *ngIf="disponibles === 0" [disabled]="procesando" (click)="reservar()">
+      <i class="fa fa-clock-o" aria-hidden="true"></i> {{ procesando ? 'Procesando...' : 'Reservar' }}
+    </button>
+  </div>
+
+  <div class="detalle-datos">
+    <p><strong>Categoria:</strong> {{ libro.categoria || 'No definido' }}</p>
+    <p><strong>Editorial:</strong> {{ libro.editorial || 'No definido' }}</p>
+    <p><strong>Idioma:</strong> {{ libro.idioma || 'No definido' }}</p>
+    <p><strong>Ano publicacion:</strong> {{ libro.anioPublicacion || 'No definido' }}</p>
+    <p><strong>Edicion:</strong> {{ libro.edicion || 'No definido' }}</p>
+    <p><strong>ISSN:</strong> {{ libro.issn || 'No definido' }}</p>
+    <p><strong>DOI:</strong>
+      <span *ngIf="libro.doi; else sinDoi">
+        <a [href]="'https://doi.org/' + libro.doi" target="_blank" rel="noopener">{{ libro.doi }}</a>
+      </span>
+    </p>
+    <p><strong>URL publica:</strong>
+      <span *ngIf="libro.urlPublica; else sinUrl">
+        <a [href]="libro.urlPublica" target="_blank" rel="noopener">{{ libro.urlPublica }}</a>
+      </span>
+    </p>
+    <p><strong>Descripcion:</strong> {{ libro.descripcion || 'Sin descripcion' }}</p>
+    <p><strong>Palabras clave:</strong> {{ libro.palabrasClave || 'Sin palabras clave' }}</p>
+  </div>
+
+  <div class="detalle-ejemplares" *ngIf="ejemplares.length > 0">
+    <h4>Ejemplares ({{ ejemplares.length }})</h4>
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th>Codigo</th>
+          <th>Sede</th>
+          <th>Tipo</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let ej of ejemplares">
+          <td>{{ ej.codigoBarra || '-' }}</td>
+          <td>{{ ej.sede || '-' }}</td>
+          <td>{{ ej.tipoSoporte === 'digital' ? 'Digital' : 'Fisico' }}</td>
+          <td>
+            <span class="badge"
+              [ngClass]="{
+                'bg-success': ej.estado === 'disponible',
+                'bg-secondary': ej.estado === 'prestado',
+                'bg-warning': ej.estado === 'reservado'
+              }">{{ ej.estado | titlecase }}</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 
 <ng-template #noData>
-  <p>No se encontro el material solicitado.</p>
+  <p *ngIf="!cargando">No se encontro el material solicitado.</p>
 </ng-template>
 
 <ng-template #sinUrl>No definido</ng-template>
+<ng-template #sinDoi>No definido</ng-template>

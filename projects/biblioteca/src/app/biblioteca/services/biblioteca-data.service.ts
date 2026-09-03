@@ -1232,6 +1232,29 @@ export class BibliotecaDataService {
     }
   }
 
+  /** v2.3: ejemplares de un libro puntual, para la ficha completa del recurso (OPAC). */
+  async getEjemplaresPorLibro(libroId: number): Promise<Ejemplar[]> {
+    try {
+      const empresaId = this.getEmpresaId();
+      const sqlConfig = {
+        table: this.getEjemplaresTable(),
+        fields: this.getEjemplaresFields(),
+        where: `E.Libro_Id=${libroId} AND E.Id_Empresa=${empresaId}`,
+        orderField: 'E.Id_Ejemplar',
+        orderDirection: ' ASC ',
+        Empresa: false
+      };
+      const data = await this.apiService.executeSqlSyn(sqlConfig);
+      if (data && data['total'] > 0) {
+        return data['data'].map((row: any) => this.mapEjemplarRow(row));
+      }
+      return [];
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
   async getEjemplaresPage(page = 1, pageSize = 50, search = ''): Promise<{ ejemplares: Ejemplar[]; total: number }> {
     try {
       const total = await this.countEjemplares(search);

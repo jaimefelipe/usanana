@@ -396,6 +396,17 @@ export const RELEASES: Release[] = [
       'Boton Descargar visible para recursos de acceso abierto con archivo digital, y boton de favorito (guardado local del navegador)',
       'Campus muestra la misma portada y licencia en el catalogo del estudiante'
     ]
+  },
+  {
+    version: '2.3',
+    fecha: '2026-09-03',
+    titulo: 'OPAC: ficha completa del recurso',
+    modulo: 'OPAC',
+    cambios: [
+      'La ficha publica de un libro (opac-detalle) ahora muestra portada, badges de disponibilidad y licencia, y la tabla de ejemplares con su estado',
+      'Se puede solicitar prestamo o reservar directamente desde la ficha, igual que ya funcionaba en Campus',
+      'Boton Descargar visible cuando el recurso es de acceso abierto y tiene un ejemplar digital'
+    ]
   }
   // Los releases se agregan aqui a medida que se implementan.
 ];
