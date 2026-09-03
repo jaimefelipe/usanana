@@ -31,21 +31,20 @@
               "zone.js"
             ],
             "tsConfig": "projects/academico/tsconfig.app.json",
-            "allowedCommonJsDependencies": ["sweetalert2"],
+            "allowedCommonJsDependencies": [
+              "sweetalert2"
+            ],
             "assets": [
               "projects/academico/src/favicon.ico",
-              "projects/academico/src/assets"
+              "projects/academico/src/assets",
+              {
+                "glob": ".htaccess",
+                "input": "projects/academico/src",
+                "output": "/"
+              }
             ],
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "node_modules/@syncfusion/ej2-base/styles/bootstrap.css",
-              "node_modules/@syncfusion/ej2-buttons/styles/bootstrap.css",
-              "node_modules/@syncfusion/ej2-inputs/styles/bootstrap.css",
-              "node_modules/@syncfusion/ej2-lists/styles/bootstrap.css",
-              "node_modules/@syncfusion/ej2-navigations/styles/bootstrap.css",
-              "node_modules/@syncfusion/ej2-popups/styles/bootstrap.css",
-              "node_modules/@syncfusion/ej2-splitbuttons/styles/bootstrap.css",
-              "node_modules/@syncfusion/ej2-richtexteditor/styles/bootstrap.css",
               "projects/academico/src/styles.css"
             ],
             "scripts": [
@@ -64,7 +63,7 @@
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "20kb",
-                  "maximumError": "40kb"
+                  "maximumError": "2mb"
                 }
               ],
               "outputHashing": "all"
@@ -169,7 +168,7 @@
               "node_modules/@syncfusion/ej2-gantt/styles/bootstrap.css",
               "node_modules/@syncfusion/ej2-richtexteditor/styles/bootstrap.css",
               "node_modules/@syncfusion/ej2-angular-pivotview/styles/bootstrap.css",
-              "node_modules/@syncfusion/ej2-icons/styles/bootstrap.css"            
+              "node_modules/@syncfusion/ej2-icons/styles/bootstrap.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
@@ -995,20 +994,24 @@
               "zone.js"
             ],
             "tsConfig": "projects/biblioteca/tsconfig.app.json",
-            "allowedCommonJsDependencies": ["sweetalert2"],
+            "allowedCommonJsDependencies": [
+              "sweetalert2"
+            ],
             "assets": [
               "projects/biblioteca/src/favicon.ico",
-              "projects/biblioteca/src/assets"
+              "projects/biblioteca/src/assets",
+              {
+                "glob": ".htaccess",
+                "input": "projects/biblioteca/src",
+                "output": "/"
+              }
             ],
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "projects/main/src/styles.css",
               "projects/biblioteca/src/styles.css"
             ],
-            "scripts": [
-              "node_modules/jquery/dist/jquery.min.js",
-              "node_modules/bootstrap/dist/js/bootstrap.min.js"
-            ]
+            "scripts": []
           },
           "configurations": {
             "production": {
@@ -1101,7 +1104,9 @@
               "zone.js"
             ],
             "tsConfig": "projects/main/tsconfig.app.json",
-            "allowedCommonJsDependencies": ["sweetalert2"],
+            "allowedCommonJsDependencies": [
+              "sweetalert2"
+            ],
             "assets": [
               "projects/main/src/favicon.ico",
               "projects/main/src/assets"
@@ -1308,7 +1313,9 @@
               "zone.js"
             ],
             "tsConfig": "projects/proyecto/tsconfig.app.json",
-             "allowedCommonJsDependencies": ["sweetalert2"],
+            "allowedCommonJsDependencies": [
+              "sweetalert2"
+            ],
             "assets": [
               "projects/proyecto/src/favicon.ico",
               "projects/proyecto/src/assets"
@@ -1339,14 +1346,12 @@
               "node_modules/@syncfusion/ej2-richtexteditor/styles/bootstrap.css",
               "node_modules/@syncfusion/ej2-angular-pivotview/styles/bootstrap.css",
               "node_modules/@syncfusion/ej2-icons/styles/bootstrap.css"
-              
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
               "./node_modules/jqwidgets-ng/jqwidgets/jqxcore.js",
               "node_modules/bootstrap/dist/js/bootstrap.min.js"
             ]
-
           },
           "configurations": {
             "production": {
@@ -1960,7 +1965,7 @@
               "node_modules/@syncfusion/ej2-navigations/styles/bootstrap.css",
               "node_modules/@syncfusion/ej2-popups/styles/bootstrap.css",
               "node_modules/@syncfusion/ej2-splitbuttons/styles/bootstrap.css",
-              "node_modules/@syncfusion/ej2-richtexteditor/styles/bootstrap.css"       
+              "node_modules/@syncfusion/ej2-richtexteditor/styles/bootstrap.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
@@ -2059,7 +2064,12 @@
             "tsConfig": "projects/campus/tsconfig.app.json",
             "assets": [
               "projects/campus/src/favicon.ico",
-              "projects/campus/src/assets"
+              "projects/campus/src/assets",
+              {
+                "glob": ".htaccess",
+                "input": "projects/campus/src",
+                "output": "/"
+              }
             ],
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",

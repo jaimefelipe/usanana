@@ -1,3 +1,15 @@
+/* Estilos de Syncfusion Rich Text Editor: movidos aca desde angular.json (styles
+   globales) para que solo se descarguen cuando se usa este componente, en vez
+   de en cada carga de la app. Ver lms.module.ts para el import de JS. */
+@import '../../../../../../node_modules/@syncfusion/ej2-base/styles/bootstrap.css';
+@import '../../../../../../node_modules/@syncfusion/ej2-buttons/styles/bootstrap.css';
+@import '../../../../../../node_modules/@syncfusion/ej2-inputs/styles/bootstrap.css';
+@import '../../../../../../node_modules/@syncfusion/ej2-lists/styles/bootstrap.css';
+@import '../../../../../../node_modules/@syncfusion/ej2-navigations/styles/bootstrap.css';
+@import '../../../../../../node_modules/@syncfusion/ej2-popups/styles/bootstrap.css';
+@import '../../../../../../node_modules/@syncfusion/ej2-splitbuttons/styles/bootstrap.css';
+@import '../../../../../../node_modules/@syncfusion/ej2-richtexteditor/styles/bootstrap.css';
+
 /* Estilos para el componente de recursos con diseño tipo Teams */
 .resource-icon {
   width: 40px;
