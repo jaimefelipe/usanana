@@ -148,7 +148,17 @@ export class BibliotecaDataService {
           ELSE 'disponible'
         END
         FROM Bib_Ejemplar E2
-        WHERE E2.Libro_Id = L.Id_Libro) AS Estado_Ejemplar`;
+        WHERE E2.Libro_Id = L.Id_Libro) AS Estado_Ejemplar,
+      (SELECT E3.Imagen_Portada
+        FROM Bib_Ejemplar E3
+        WHERE E3.Libro_Id = L.Id_Libro AND E3.Imagen_Portada IS NOT NULL AND E3.Imagen_Portada <> ''
+        ORDER BY E3.Id_Ejemplar ASC
+        LIMIT 1) AS Imagen_Portada,
+      (SELECT E4.URL_Archivo
+        FROM Bib_Ejemplar E4
+        WHERE E4.Libro_Id = L.Id_Libro AND E4.Tipo_Soporte = 'digital' AND E4.URL_Archivo IS NOT NULL AND E4.URL_Archivo <> ''
+        ORDER BY E4.Id_Ejemplar ASC
+        LIMIT 1) AS Url_Digital`;
   }
 
   private getLibrosWhere(search = ''): string {
@@ -200,6 +210,8 @@ export class BibliotecaDataService {
       palabrasClave: row.Palabras_Clave || '',
       urlPublica: row.URL_Publica || '',
       licencia: row.Licencia || '',
+      imagenPortada: row.Imagen_Portada || '',
+      urlDigital: row.Url_Digital || '',
       categoriaId: row.Categoria_Id ? Number(row.Categoria_Id) : undefined,
       editorialId: row.Editorial_Id ? Number(row.Editorial_Id) : undefined,
       tipoMaterialId: row.Id_Tipo_Material ? Number(row.Id_Tipo_Material) : undefined
@@ -4456,6 +4468,28 @@ export class BibliotecaDataService {
       values: `${libroId},${usuarioId},${posicion},'En espera'`
     };
     return await this.apiService.insertRecord(sqlConfig);
+  }
+
+  /** v2.2: prestamo directo desde OPAC (cards de resultados / ficha), sin pasar por la pantalla admin. */
+  async solicitarPrestamoLibro(libroId: number): Promise<any> {
+    const usuarioId = await this.getUsuarioSistemaId();
+    if (!usuarioId) {
+      throw new Error('Usuario no encontrado');
+    }
+    const empresaId = this.getEmpresaId();
+    const ejemplarData = await this.apiService.postRecord(
+      `SELECT Id_Ejemplar FROM Bib_Ejemplar ` +
+      `WHERE Libro_Id=${libroId} AND Id_Empresa=${empresaId} AND Estado='disponible' ` +
+      `ORDER BY Id_Ejemplar ASC LIMIT 1`
+    );
+    const ejemplarId = Number(ejemplarData?.['data']?.[0]?.Id_Ejemplar || 0);
+    if (!ejemplarId) {
+      throw new Error('Ya no hay ejemplares disponibles. Intenta reservar el libro.');
+    }
+    const vencimiento = new Date();
+    vencimiento.setDate(vencimiento.getDate() + 7);
+    const fechaVencimiento = vencimiento.toISOString().slice(0, 10);
+    return await this.createPrestamo(ejemplarId, usuarioId, fechaVencimiento);
   }
 
   async createPrestamo(ejemplarId: number, usuarioId: number, fechaVencimiento: string, observaciones?: string): Promise<any> {

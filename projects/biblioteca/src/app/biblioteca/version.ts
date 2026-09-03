@@ -384,6 +384,18 @@ export const RELEASES: Release[] = [
       'El catalogo interno de Biblioteca muestra un badge de Licencia abierta/privada por libro',
       'Campus muestra el mismo badge en la ficha del recurso (libro-detalle), como base para diferenciar el flujo de acceso abierto del flujo con prestamo en proximos releases'
     ]
+  },
+  {
+    version: '2.2',
+    fecha: '2026-09-01',
+    titulo: 'OPAC: tarjetas de resultados enriquecidas',
+    modulo: 'OPAC',
+    cambios: [
+      'El catalogo publico (OPAC) muestra portada, estado de disponibilidad y licencia por libro, con resumen visible en la tarjeta',
+      'Se puede solicitar prestamo o reservar directamente desde el listado de resultados, sin entrar al detalle',
+      'Boton Descargar visible para recursos de acceso abierto con archivo digital, y boton de favorito (guardado local del navegador)',
+      'Campus muestra la misma portada y licencia en el catalogo del estudiante'
+    ]
   }
   // Los releases se agregan aqui a medida que se implementan.
 ];

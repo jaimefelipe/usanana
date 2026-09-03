@@ -60,6 +60,16 @@ export const RELEASES: Release[] = [
       'La ficha del libro muestra si la licencia es abierta (CC-BY/CC-BY-SA) o privada, definida en Biblioteca desde la etiqueta MARC 533',
       'Este dato es la base para diferenciar mas adelante el flujo de acceso abierto del flujo con prestamo'
     ]
+  },
+  {
+    version: '1.0.5',
+    fecha: '2026-09-01',
+    titulo: 'Catalogo con portada y licencia',
+    modulo: 'Biblioteca',
+    cambios: [
+      'El catalogo de Biblioteca en Campus muestra la portada del libro y un badge de licencia (abierta/privada), igual que el OPAC de Biblioteca',
+      'Se agrego un resumen corto por libro en cada tarjeta de resultados'
+    ]
   }
 ];
 

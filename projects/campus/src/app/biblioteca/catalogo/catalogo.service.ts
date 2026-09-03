@@ -27,6 +27,11 @@ export class CatalogoService {
         L.ISBN,
         L.Anio_Publicacion,
         L.Descripcion,
+        COALESCE(L.Licencia, '') AS Licencia,
+        (SELECT EJI.Imagen_Portada FROM Bib_Ejemplar EJI
+         WHERE EJI.Libro_Id = L.Id_Libro AND EJI.Id_Empresa = ${idEmpresa}
+           AND EJI.Imagen_Portada IS NOT NULL AND EJI.Imagen_Portada <> ''
+         ORDER BY EJI.Id_Ejemplar ASC LIMIT 1) AS Imagen_Portada,
         COALESCE(E.Nombre, '') AS Editorial,
         COALESCE(C.Nombre, '') AS Categoria,
         COALESCE(C.Id_Categoria, 0) AS Id_Categoria,

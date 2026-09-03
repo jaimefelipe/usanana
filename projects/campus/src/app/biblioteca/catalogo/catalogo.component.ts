@@ -9,6 +9,10 @@ import { CatalogoService } from './catalogo.service';
 })
 export class CatalogoComponent implements OnInit {
 
+  esAccesoAbierto(licencia?: string): boolean {
+    return licencia === 'CC-BY' || licencia === 'CC-BY-SA';
+  }
+
   termino = '';
   categoriaSeleccionada = 0;
   categorias = [];

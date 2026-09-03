@@ -32,6 +32,10 @@ export interface Libro {
   tipoMaterialId?: number;
   /** v2.1: derivada del MARC 533 $a. 'CC-BY' | 'CC-BY-SA' | 'Licencia Privada' | vacio. */
   licencia?: string;
+  /** v2.2: portada del primer ejemplar que tenga una, para tarjetas de resultados. */
+  imagenPortada?: string;
+  /** v2.2: enlace del primer ejemplar digital, para el boton Descargar en OPAC. */
+  urlDigital?: string;
 }
 
 /** v2.1: true si la licencia corresponde a acceso abierto (sin prestamo/vencimiento). */

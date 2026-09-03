@@ -43,13 +43,16 @@
   <div class="bib-grid" *ngIf="!cargando && libros.length > 0">
     <article class="bib-card" *ngFor="let libro of libros">
       <div class="bib-card-icon">
-        <i class="fa fa-book" aria-hidden="true"></i>
+        <img *ngIf="libro.Imagen_Portada" [src]="libro.Imagen_Portada" [alt]="libro.Titulo" class="bib-card-portada" />
+        <i *ngIf="!libro.Imagen_Portada" class="fa fa-book" aria-hidden="true"></i>
       </div>
       <div class="bib-card-body">
         <div class="bib-card-badges">
           <span class="bib-badge bib-badge-cat" *ngIf="libro.Categoria">{{ libro.Categoria }}</span>
           <span class="bib-badge bib-badge-disp" *ngIf="libro.Disponibles > 0">Disponible</span>
           <span class="bib-badge bib-badge-nodisp" *ngIf="libro.Disponibles == 0 && libro.TotalEjemplares > 0">No disponible</span>
+          <span class="bib-badge bib-badge-disp" *ngIf="libro.Licencia && esAccesoAbierto(libro.Licencia)">Acceso abierto</span>
+          <span class="bib-badge" *ngIf="libro.Licencia && !esAccesoAbierto(libro.Licencia)">{{ libro.Licencia }}</span>
         </div>
         <h3>{{ libro.Titulo }}</h3>
         <p class="bib-card-sub" *ngIf="libro.Subtitulo">{{ libro.Subtitulo }}</p>
@@ -67,6 +70,7 @@
             <i class="fa fa-tag" aria-hidden="true"></i> {{ libro.Tipo_Material }}
           </span>
         </div>
+        <p class="bib-card-resumen" *ngIf="libro.Descripcion">{{ libro.Descripcion }}</p>
         <p class="bib-ejemplares-count" *ngIf="libro.TotalEjemplares > 0">
           {{ libro.Disponibles }}/{{ libro.TotalEjemplares }} ejemplares disponibles
         </p>
