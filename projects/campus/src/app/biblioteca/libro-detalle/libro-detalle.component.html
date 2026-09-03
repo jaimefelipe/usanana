@@ -11,7 +11,8 @@
     <div class="bib-detalle-card" *ngIf="libro">
       <div class="bib-detalle-top">
         <div class="bib-detalle-cover">
-          <i class="fa fa-book" aria-hidden="true"></i>
+          <img *ngIf="libro.Imagen_Portada" [src]="libro.Imagen_Portada" [alt]="libro.Titulo" />
+          <i *ngIf="!libro.Imagen_Portada" class="fa fa-book" aria-hidden="true"></i>
         </div>
 
         <div class="bib-detalle-info">

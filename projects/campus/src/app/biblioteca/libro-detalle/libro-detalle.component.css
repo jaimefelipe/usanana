@@ -68,7 +68,14 @@
   display: flex;
   height: 180px;
   justify-content: center;
+  overflow: hidden;
   width: 140px;
+}
+
+.bib-detalle-cover img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
 }
 
 .bib-detalle-cover .fa {

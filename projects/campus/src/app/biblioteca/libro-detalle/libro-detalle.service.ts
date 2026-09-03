@@ -23,6 +23,10 @@ export class LibroDetalleService {
         L.Id_Libro, L.Titulo, L.Subtitulo, L.ISBN, L.ISSN, L.DOI,
         L.Idioma, L.Anio_Publicacion, L.Edicion, L.Descripcion, L.Palabras_Clave,
         COALESCE(L.Licencia, '') AS Licencia,
+        (SELECT EJI.Imagen_Portada FROM Bib_Ejemplar EJI
+         WHERE EJI.Libro_Id = L.Id_Libro AND EJI.Id_Empresa = ${idEmpresa}
+           AND EJI.Imagen_Portada IS NOT NULL AND EJI.Imagen_Portada <> ''
+         ORDER BY EJI.Id_Ejemplar ASC LIMIT 1) AS Imagen_Portada,
         COALESCE(E.Nombre, '') AS Editorial,
         COALESCE(C.Nombre, '') AS Categoria,
         COALESCE(TM.Nombre, '') AS Tipo_Material
