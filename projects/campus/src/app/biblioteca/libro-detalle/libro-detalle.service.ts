@@ -25,7 +25,7 @@ export class LibroDetalleService {
         COALESCE(L.Licencia, '') AS Licencia,
         (SELECT EJI.Imagen_Portada FROM Bib_Ejemplar EJI
          WHERE EJI.Libro_Id = L.Id_Libro AND EJI.Id_Empresa = ${idEmpresa}
-           AND EJI.Imagen_Portada IS NOT NULL AND EJI.Imagen_Portada <> ''
+           AND LENGTH(EJI.Imagen_Portada) > 0
          ORDER BY EJI.Id_Ejemplar ASC LIMIT 1) AS Imagen_Portada,
         COALESCE(E.Nombre, '') AS Editorial,
         COALESCE(C.Nombre, '') AS Categoria,

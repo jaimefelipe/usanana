@@ -151,12 +151,12 @@ export class BibliotecaDataService {
         WHERE E2.Libro_Id = L.Id_Libro) AS Estado_Ejemplar,
       (SELECT E3.Imagen_Portada
         FROM Bib_Ejemplar E3
-        WHERE E3.Libro_Id = L.Id_Libro AND E3.Imagen_Portada IS NOT NULL AND E3.Imagen_Portada <> ''
+        WHERE E3.Libro_Id = L.Id_Libro AND LENGTH(E3.Imagen_Portada) > 0
         ORDER BY E3.Id_Ejemplar ASC
         LIMIT 1) AS Imagen_Portada,
       (SELECT E4.URL_Archivo
         FROM Bib_Ejemplar E4
-        WHERE E4.Libro_Id = L.Id_Libro AND E4.Tipo_Soporte = 'digital' AND E4.URL_Archivo IS NOT NULL AND E4.URL_Archivo <> ''
+        WHERE E4.Libro_Id = L.Id_Libro AND E4.Tipo_Soporte = 'digital' AND LENGTH(E4.URL_Archivo) > 0
         ORDER BY E4.Id_Ejemplar ASC
         LIMIT 1) AS Url_Digital`;
   }
