@@ -407,6 +407,27 @@ export const RELEASES: Release[] = [
       'Se puede solicitar prestamo o reservar directamente desde la ficha, igual que ya funcionaba en Campus',
       'Boton Descargar visible cuando el recurso es de acceso abierto y tiene un ejemplar digital'
     ]
+  },
+  {
+    version: '2.3.1',
+    fecha: '2026-09-03',
+    titulo: 'Hotfix: portadas no se mostraban en catalogo/ficha',
+    modulo: 'OPAC',
+    cambios: [
+      'Corregida la causa raiz: ApiService convierte cualquier comilla vacia en NULL antes de enviar el SQL, lo que rompia el filtro de portadas (columna <> \'\')',
+      'Portada agregada tambien a la ficha de Campus y al catalogo interno de Biblioteca, que se habian quedado sin ella al implementar v2.2'
+    ]
+  },
+  {
+    version: '2.4',
+    fecha: '2026-09-08',
+    titulo: 'Busqueda basica mapeada a MARC',
+    modulo: 'OPAC',
+    cambios: [
+      'La busqueda del OPAC ahora consulta la base de datos real (antes filtraba solo lo ya cargado en el navegador)',
+      'Un mismo termino de busqueda encuentra coincidencias por titulo, autor, ISBN, ISSN, DOI y tema/palabras clave',
+      'Campus recibe la misma cobertura de busqueda en su catalogo'
+    ]
   }
   // Los releases se agregan aqui a medida que se implementan.
 ];

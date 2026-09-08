@@ -70,6 +70,25 @@ export const RELEASES: Release[] = [
       'El catalogo de Biblioteca en Campus muestra la portada del libro y un badge de licencia (abierta/privada), igual que el OPAC de Biblioteca',
       'Se agrego un resumen corto por libro en cada tarjeta de resultados'
     ]
+  },
+  {
+    version: '1.0.6',
+    fecha: '2026-09-03',
+    titulo: 'Hotfix: portada no se veia en la ficha del libro',
+    modulo: 'Biblioteca',
+    cambios: [
+      'La ficha de un libro (libro-detalle) ahora si muestra su portada real, no solo un icono generico',
+      'Corregida la causa raiz compartida con Biblioteca: un filtro interno del sistema convertia el chequeo de portada en una condicion que nunca era verdadera'
+    ]
+  },
+  {
+    version: '1.0.7',
+    fecha: '2026-09-08',
+    titulo: 'Busqueda del catalogo ampliada',
+    modulo: 'Biblioteca',
+    cambios: [
+      'El buscador del catalogo ahora tambien encuentra libros por autor, DOI, ISSN y tema/palabras clave, no solo titulo e ISBN'
+    ]
   }
 ];
 

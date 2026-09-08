@@ -16,25 +16,41 @@ export class OpacHomeComponent implements OnInit {
   tiposMaterial: TipoMaterial[] = [];
   procesandoId: number | null = null;
   favoritos: number[] = this.cargarFavoritos();
+  cargando = false;
+  buscado = false;
 
   constructor(private dataService: BibliotecaDataService) {}
 
   async ngOnInit() {
-    this.libros = await this.dataService.getLibros();
     this.tiposMaterial = await this.dataService.getTiposMaterial();
+    await this.buscar();
+  }
+
+  /**
+   * v2.4: busqueda real contra BD (getLibrosPage/getLibrosWhere), no solo
+   * filtro en memoria sobre lo ya cargado. getLibrosWhere ya cubre
+   * titulo/ISBN/ISSN/DOI/palabras clave/categoria/editorial/tipo/autor.
+   */
+  async buscar() {
+    this.cargando = true;
+    this.buscado = false;
+    const { libros } = await this.dataService.getLibrosPage(1, 50, this.termino);
+    this.libros = libros;
+    this.cargando = false;
+    this.buscado = true;
+  }
+
+  limpiar() {
+    this.termino = '';
+    this.tipoMaterial = 'todos';
+    this.buscar();
   }
 
   get resultados(): Libro[] {
-    return this.libros.filter(libro => {
-      const termino = this.termino.toLowerCase();
-      const coincideTexto =
-        this.termino === '' ||
-        libro.titulo.toLowerCase().includes(termino) ||
-        (libro.autores || libro.autor || '').toLowerCase().includes(termino) ||
-        (libro.isbn || '').toLowerCase().includes(termino);
-      const coincideTipo = this.tipoMaterial === 'todos' || String(libro.tipoMaterialId) === this.tipoMaterial;
-      return coincideTexto && coincideTipo;
-    });
+    if (this.tipoMaterial === 'todos') {
+      return this.libros;
+    }
+    return this.libros.filter(libro => String(libro.tipoMaterialId) === this.tipoMaterial);
   }
 
   async solicitarPrestamo(libro: Libro) {
@@ -42,7 +58,7 @@ export class OpacHomeComponent implements OnInit {
     try {
       await this.dataService.solicitarPrestamoLibro(libro.id);
       Swal.fire('Prestamo registrado', 'Ya puedes ver el ejemplar en Mi cuenta.', 'success');
-      this.libros = await this.dataService.getLibros();
+      await this.buscar();
     } catch (error) {
       console.error(error);
       const mensaje = error instanceof Error ? error.message : 'No se pudo registrar el prestamo';

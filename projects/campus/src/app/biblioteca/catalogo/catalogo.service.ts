@@ -12,8 +12,14 @@ export class CatalogoService {
 
     let filtros = `L.Id_Empresa = ${idEmpresa}`;
     if (termino) {
+      // v2.4: cubre titulo/ISBN/ISSN/DOI/tema (Palabras_Clave) y autor, igual que el
+      // OPAC de Biblioteca (getLibrosWhere en biblioteca-data.service.ts).
       const t = termino.replace(/'/g, "''");
-      filtros += ` AND (L.Titulo LIKE '%${t}%' OR L.Subtitulo LIKE '%${t}%' OR L.ISBN LIKE '%${t}%')`;
+      filtros += ` AND (L.Titulo LIKE '%${t}%' OR L.Subtitulo LIKE '%${t}%' ` +
+        `OR L.ISBN LIKE '%${t}%' OR L.ISSN LIKE '%${t}%' OR L.DOI LIKE '%${t}%' ` +
+        `OR L.Palabras_Clave LIKE '%${t}%' ` +
+        `OR EXISTS (SELECT 1 FROM Bib_Libro_Autor LAT INNER JOIN Bib_Autor AT ON AT.Id_Autor = LAT.Autor_Id ` +
+        `WHERE LAT.Libro_Id = L.Id_Libro AND AT.Nombre LIKE '%${t}%'))`;
     }
     if (categoriaId > 0) {
       filtros += ` AND L.Categoria_Id = ${categoriaId}`;

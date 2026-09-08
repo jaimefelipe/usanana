@@ -169,6 +169,8 @@ export class BibliotecaDataService {
     return `(L.Titulo LIKE '%${text}%' ` +
       `OR L.ISBN LIKE '%${text}%' ` +
       `OR L.ISSN LIKE '%${text}%' ` +
+      `OR L.DOI LIKE '%${text}%' ` +
+      `OR L.Palabras_Clave LIKE '%${text}%' ` +
       `OR C.Nombre LIKE '%${text}%' ` +
       `OR E.Nombre LIKE '%${text}%' ` +
       `OR TM.Nombre LIKE '%${text}%' ` +

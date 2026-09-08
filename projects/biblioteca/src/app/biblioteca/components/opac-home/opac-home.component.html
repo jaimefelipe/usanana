@@ -1,14 +1,19 @@
 <div class="opac-home">
   <h2>Buscar en el catalogo</h2>
   <div class="search-bar">
-    <input class="form-control" placeholder="Buscar por titulo, autor o ISBN" [(ngModel)]="termino" />
+    <input class="form-control" placeholder="Buscar por titulo, autor, ISBN, ISSN, DOI o tema"
+      [(ngModel)]="termino" (keyup.enter)="buscar()" />
     <select class="form-select" [(ngModel)]="tipoMaterial">
       <option value="todos">Tipos material</option>
       <option *ngFor="let tipo of tiposMaterial" [value]="tipo.id">{{ tipo.nombre }}</option>
     </select>
+    <button type="button" class="btn btn-primary" (click)="buscar()">Buscar</button>
+    <button type="button" class="btn btn-outline-secondary" (click)="limpiar()" *ngIf="termino || tipoMaterial !== 'todos'">Limpiar</button>
   </div>
 
-  <div class="resultados">
+  <div class="opac-loading" *ngIf="cargando">Buscando...</div>
+
+  <div class="resultados" *ngIf="!cargando">
     <div *ngFor="let libro of resultados" class="resultado-card">
       <div class="resultado-portada">
         <img *ngIf="libro.imagenPortada" [src]="libro.imagenPortada" [alt]="libro.titulo" />
