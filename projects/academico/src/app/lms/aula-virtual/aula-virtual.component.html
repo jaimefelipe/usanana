@@ -5,8 +5,10 @@
     <h2 class="page-title">Configuración de Aula Virtual</h2>
     <div class="input-group page-search">
       <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
-      <input [(ngModel)]="searchField" name="searchField" (blur)="search()" (keydown)="keytab($event)" type="text" class="form-control"
+      <input [(ngModel)]="searchField" name="searchField" (keydown)="keytab($event)" type="text" class="form-control"
         placeholder="Buscar">
+      <button class="btn btn-outline-secondary" type="button" (click)="search()" title="Buscar"><i class="fa fa-search"
+          aria-hidden="true"></i></button>
       <button class="btn btn-success" type="button" (click)="editRecord('')"><i class="fa fa-plus-circle"
           aria-hidden="true"></i></button>
     </div>

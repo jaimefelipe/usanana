@@ -70,12 +70,20 @@ constructor(private aulaService: AulaVirtualService) { }
    * inicial (sin filtro, cruza 4 tablas y puede ser mas lenta), esa respuesta
    * vieja podia llegar despues y pisar el resultado de la busqueda con la
    * lista completa. Solo se aplica la respuesta de la consulta mas reciente.
+   * Ademas se limpia Aulas de una vez (no solo cargando) para que nunca se
+   * vea el listado anterior mientras corre una consulta nueva, y hay un
+   * tope duro de tiempo para que "cargando" nunca quede pegado si la
+   * promesa de red nunca resuelve.
    */
   async loadAulas() {
     const consultaActual = ++this.ultimaConsulta;
     this.cargando = true;
+    this.Aulas = [];
     try {
-      const data = await this.aulaService.getAulas(this.paginacion, this.searchField);
+      const data = await this.conTopeDeTiempo(
+        this.aulaService.getAulas(this.paginacion, this.searchField),
+        35000
+      );
       if (consultaActual !== this.ultimaConsulta) {
         return; // llego una respuesta vieja despues de una busqueda mas reciente
       }
@@ -94,6 +102,16 @@ constructor(private aulaService: AulaVirtualService) { }
     }
   }
 
+  private conTopeDeTiempo<T>(promesa: Promise<T>, ms: number): Promise<T> {
+    return new Promise((resolve, reject) => {
+      const timer = setTimeout(() => reject(new Error('Tiempo de espera agotado')), ms);
+      promesa.then(
+        (v) => { clearTimeout(timer); resolve(v); },
+        (e) => { clearTimeout(timer); reject(e); }
+      );
+    });
+  }
+
   search() {
     this.paginacion.FirstRow = 1;
     this.paginacion.LastRow = 50;
@@ -101,7 +119,10 @@ constructor(private aulaService: AulaVirtualService) { }
   }
 
   keytab(event: KeyboardEvent) {
-    if (event.key === 'Enter') this.search();
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      this.search();
+    }
   }
 
   editRecord(aula?: any) {
