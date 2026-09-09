@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { AulaVirtualService } from './aula-virtual.service';
-import { GrupoAcademicoService } from '../../registro/grupo-academico/grupo-academico.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -10,7 +9,7 @@ import Swal from 'sweetalert2';
 })
 export class AulaVirtualComponent implements OnInit {
 
-constructor(private aulaService: AulaVirtualService, private grupoService: GrupoAcademicoService) { }
+constructor(private aulaService: AulaVirtualService) { }
 
   tituloSeccion = 'Aulas Virtuales';
   formularioEditando = false;
@@ -36,7 +35,6 @@ constructor(private aulaService: AulaVirtualService, private grupoService: Grupo
   };
 
   Aulas = [];
-  Grupos = [];
   imagenAulaFile: File | null = null;
 
   paginacion = {
@@ -46,10 +44,11 @@ constructor(private aulaService: AulaVirtualService, private grupoService: Grupo
   };
 
   searchField = '';
+  cargando = false;
+  private ultimaConsulta = 0;
 
   ngOnInit(): void {
     this.loadAulas();
-    this.loadGrupos();
   }
 
   ChangePage(action: number) {
@@ -66,23 +65,26 @@ constructor(private aulaService: AulaVirtualService, private grupoService: Grupo
     this.loadAulas();
   }
 
-  async loadGrupos() {
-    let paginacion = {
-      FirstRow: 1,
-      LastRow: 50,
-      TotalRows: 0
-    };
-    let data = await this.grupoService.loadGrupos(paginacion,'');
-    //onst data = await this.grupoService.getGruposActivos();
-    this.Grupos = data?.data || data;
-  }
-
+  /**
+   * Guardia de secuencia: si el usuario busca antes de que termine la carga
+   * inicial (sin filtro, cruza 4 tablas y puede ser mas lenta), esa respuesta
+   * vieja podia llegar despues y pisar el resultado de la busqueda con la
+   * lista completa. Solo se aplica la respuesta de la consulta mas reciente.
+   */
   async loadAulas() {
+    const consultaActual = ++this.ultimaConsulta;
+    this.cargando = true;
     const data = await this.aulaService.getAulas(this.paginacion, this.searchField);
+    if (consultaActual !== this.ultimaConsulta) {
+      return; // llego una respuesta vieja despues de una busqueda mas reciente
+    }
     this.Aulas = data?.data || [];
+    this.cargando = false;
   }
 
   search() {
+    this.paginacion.FirstRow = 1;
+    this.paginacion.LastRow = 50;
     this.loadAulas();
   }
 

@@ -13,7 +13,10 @@
 
   </div>
   <!-- LISTADO DE AULAS -->
-  <div class="row g-4 page-grid">
+  <div class="text-center text-muted py-3" *ngIf="cargando">
+    <i class="fa fa-spinner fa-spin" aria-hidden="true"></i> Cargando...
+  </div>
+  <div class="row g-4 page-grid" *ngIf="!cargando">
     <div class="col-12 col-md-6 col-xl-4" *ngFor="let aula of Aulas; let i = index">
       <div class="card h-100 shadow-sm hover-shadow-sm" (click)="editRecord(aula)">
         <div class="card-body">
@@ -72,7 +75,6 @@
    <app-aula-virtual-general
     [hidden]="!GeneralActivo"
     [Aula]="Aula"
-    [Grupos]="Grupos"
     (imagenSeleccionada)="handleImagenAulaSeleccionada($event)">
    </app-aula-virtual-general>
    <app-semana-curso
