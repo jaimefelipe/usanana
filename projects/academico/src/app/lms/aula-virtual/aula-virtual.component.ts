@@ -74,12 +74,24 @@ constructor(private aulaService: AulaVirtualService) { }
   async loadAulas() {
     const consultaActual = ++this.ultimaConsulta;
     this.cargando = true;
-    const data = await this.aulaService.getAulas(this.paginacion, this.searchField);
-    if (consultaActual !== this.ultimaConsulta) {
-      return; // llego una respuesta vieja despues de una busqueda mas reciente
+    try {
+      const data = await this.aulaService.getAulas(this.paginacion, this.searchField);
+      if (consultaActual !== this.ultimaConsulta) {
+        return; // llego una respuesta vieja despues de una busqueda mas reciente
+      }
+      this.Aulas = data?.data || [];
+    } catch (error) {
+      console.error(error);
+      if (consultaActual === this.ultimaConsulta) {
+        this.Aulas = [];
+      }
+    } finally {
+      // Si mientras tanto se disparo una busqueda mas nueva, esa es quien
+      // controla "cargando" al terminar; esta llamada vieja no lo toca.
+      if (consultaActual === this.ultimaConsulta) {
+        this.cargando = false;
+      }
     }
-    this.Aulas = data?.data || [];
-    this.cargando = false;
   }
 
   search() {
