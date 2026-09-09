@@ -70,6 +70,16 @@ export const RELEASES: Release[] = [
       'El listado se limpia de inmediato al iniciar una busqueda nueva, para que nunca se vea el listado anterior mezclado con el de "Cargando..."',
       'Se agrego un tope duro de tiempo para que la pantalla nunca quede pegada en "Cargando..." aunque la conexion se cuelgue por completo'
     ]
+  },
+  {
+    version: '1.0.6',
+    fecha: '2026-09-09',
+    titulo: 'Aula Virtual: se simplifica la busqueda al mismo patron de Curso/Carrera/Grupo',
+    modulo: 'Aula Virtual',
+    cambios: [
+      'Se quita el indicador de "Cargando..." y el bloque separado que mostraba u ocultaba el listado, que en algunos casos se quedaba mostrando ambos a la vez',
+      'La busqueda ahora sigue el mismo patron simple que ya usan Curso, Carrera y Grupo en Academico: se reemplaza el listado directamente cuando llega la respuesta'
+    ]
   }
 ];
 

@@ -44,7 +44,6 @@ constructor(private aulaService: AulaVirtualService) { }
   };
 
   searchField = '';
-  cargando = false;
   private ultimaConsulta = 0;
 
   ngOnInit(): void {
@@ -70,46 +69,17 @@ constructor(private aulaService: AulaVirtualService) { }
    * inicial (sin filtro, cruza 4 tablas y puede ser mas lenta), esa respuesta
    * vieja podia llegar despues y pisar el resultado de la busqueda con la
    * lista completa. Solo se aplica la respuesta de la consulta mas reciente.
-   * Ademas se limpia Aulas de una vez (no solo cargando) para que nunca se
-   * vea el listado anterior mientras corre una consulta nueva, y hay un
-   * tope duro de tiempo para que "cargando" nunca quede pegado si la
-   * promesa de red nunca resuelve.
+   * Mismo patron simple que usan Curso/Carrera/Grupo: sin bandera de
+   * "cargando" ni bloque separado en el HTML, solo se reemplaza Aulas
+   * cuando llega la respuesta correcta.
    */
   async loadAulas() {
     const consultaActual = ++this.ultimaConsulta;
-    this.cargando = true;
-    this.Aulas = [];
-    try {
-      const data = await this.conTopeDeTiempo(
-        this.aulaService.getAulas(this.paginacion, this.searchField),
-        35000
-      );
-      if (consultaActual !== this.ultimaConsulta) {
-        return; // llego una respuesta vieja despues de una busqueda mas reciente
-      }
-      this.Aulas = data?.data || [];
-    } catch (error) {
-      console.error(error);
-      if (consultaActual === this.ultimaConsulta) {
-        this.Aulas = [];
-      }
-    } finally {
-      // Si mientras tanto se disparo una busqueda mas nueva, esa es quien
-      // controla "cargando" al terminar; esta llamada vieja no lo toca.
-      if (consultaActual === this.ultimaConsulta) {
-        this.cargando = false;
-      }
+    const data = await this.aulaService.getAulas(this.paginacion, this.searchField);
+    if (consultaActual !== this.ultimaConsulta) {
+      return; // llego una respuesta vieja despues de una busqueda mas reciente
     }
-  }
-
-  private conTopeDeTiempo<T>(promesa: Promise<T>, ms: number): Promise<T> {
-    return new Promise((resolve, reject) => {
-      const timer = setTimeout(() => reject(new Error('Tiempo de espera agotado')), ms);
-      promesa.then(
-        (v) => { clearTimeout(timer); resolve(v); },
-        (e) => { clearTimeout(timer); reject(e); }
-      );
-    });
+    this.Aulas = data?.data || [];
   }
 
   search() {
